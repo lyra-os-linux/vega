@@ -25,6 +25,7 @@ BuildRequires:  cargo
 BuildRequires:  rust
 BuildRequires:  pkgconfig(gtk4)
 BuildRequires:  pkgconfig(libadwaita-1)
+BuildRequires:  gettext-tools
 Requires:       vegad
 Requires:       secret-tool
 Provides:       vega = %{version}-%{release}
@@ -60,11 +61,21 @@ install -Dm644 packaging/vega/vega.desktop \
   %{buildroot}%{_datadir}/applications/vega.desktop
 install -Dm644 packaging/vega/vega.svg \
   %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/vega.svg
+for locale in en_US pt_BR es_ES zh_CN; do
+  install -Dm644 "vega-gtk/po/locale/${locale}/LC_MESSAGES/vega-gtk.mo" \
+    "%{buildroot}%{_datadir}/locale/${locale}/LC_MESSAGES/vega-gtk.mo"
+  install -Dm644 "vega-gtk/po/locale/${locale}/LC_MESSAGES/vega-gtk-fallback.mo" \
+    "%{buildroot}%{_datadir}/locale/${locale}/LC_MESSAGES/vega-gtk-fallback.mo"
+done
 
 %files
 %{_bindir}/vega-gtk
 %{_bindir}/lyra-vega-gtk
 %{_datadir}/applications/vega.desktop
 %{_datadir}/icons/hicolor/scalable/apps/vega.svg
+%lang(en) %{_datadir}/locale/en_US/LC_MESSAGES/vega-gtk*.mo
+%lang(pt_BR) %{_datadir}/locale/pt_BR/LC_MESSAGES/vega-gtk*.mo
+%lang(es) %{_datadir}/locale/es_ES/LC_MESSAGES/vega-gtk*.mo
+%lang(zh_CN) %{_datadir}/locale/zh_CN/LC_MESSAGES/vega-gtk*.mo
 
 %changelog

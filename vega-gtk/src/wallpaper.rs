@@ -5,7 +5,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use gettextrs::gettext;
+use crate::i18n::gettext;
 use gtk::{gio, gio::prelude::*, glib};
 
 const SCHEMA_ID: &str = "org.gnome.desktop.background";

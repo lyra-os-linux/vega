@@ -2,35 +2,33 @@ use std::path::Path;
 use std::process::Command;
 
 const DOMAIN: &str = "vega-gtk";
+const LOCALES: &[(&str, &str)] = &[
+    ("en-US", "en_US"),
+    ("pt-BR", "pt_BR"),
+    ("es-ES", "es_ES"),
+    ("zh-CN", "zh_CN"),
+];
 
 fn main() {
     println!("cargo:rerun-if-changed=po");
 
     let po_dir = Path::new("po");
-    let Ok(entries) = std::fs::read_dir(po_dir) else {
-        return;
-    };
-
     if Command::new("msgfmt").arg("--version").output().is_err() {
-        println!(
-            "cargo:warning=msgfmt não encontrado; pulando compilação dos catálogos de tradução (.po -> .mo)"
-        );
-        return;
+        panic!("msgfmt is required to build the four vega-gtk translation catalogs");
     }
 
-    for entry in entries.flatten() {
-        let po_path = entry.path();
-        if po_path.extension().and_then(|ext| ext.to_str()) != Some("po") {
-            continue;
-        }
-        let Some(lang) = po_path.file_stem().and_then(|stem| stem.to_str()) else {
-            continue;
-        };
+    for (catalog, locale_dir) in LOCALES {
+        let po_path = po_dir.join(format!("{catalog}.po"));
+        assert!(
+            po_path.is_file(),
+            "missing required catalog: {}",
+            po_path.display()
+        );
 
         // "locale/<lang>/LC_MESSAGES/" espelha o layout que o pacote instala
         // em /usr/share/locale — é o que `TextDomain::prepend` espera achar
         // dentro do diretório que a gente passa (ele sempre soma "locale").
-        let out_dir = po_dir.join("locale").join(lang).join("LC_MESSAGES");
+        let out_dir = po_dir.join("locale").join(locale_dir).join("LC_MESSAGES");
         if let Err(error) = std::fs::create_dir_all(&out_dir) {
             println!(
                 "cargo:warning=não foi possível criar {}: {error}",
@@ -47,10 +45,23 @@ fn main() {
             .status()
         {
             Ok(status) if status.success() => {}
-            _ => println!(
-                "cargo:warning=falha ao compilar {} para .mo",
-                po_path.display()
-            ),
+            _ => panic!("failed to compile {}", po_path.display()),
         }
+
+        // A second, English-only domain in every supported locale provides
+        // deterministic per-key fallback when the active catalog is damaged
+        // or incomplete. GNU gettext otherwise returns the Portuguese msgid.
+        let fallback_path = out_dir.join(format!("{DOMAIN}-fallback.mo"));
+        let english_po = po_dir.join("en-US.po");
+        let status = Command::new("msgfmt")
+            .arg("-o")
+            .arg(&fallback_path)
+            .arg(&english_po)
+            .status()
+            .expect("failed to run msgfmt for English fallback catalog");
+        assert!(
+            status.success(),
+            "failed to compile English fallback catalog"
+        );
     }
 }

@@ -1,5 +1,5 @@
+use crate::i18n::gettext;
 use adw::prelude::*;
-use gettextrs::gettext;
 
 use super::{DockPage, MenuPage, ScreensaverPage, WallpaperPage};
 use crate::appearance::{AccentColor, Theme};

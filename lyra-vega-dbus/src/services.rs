@@ -64,6 +64,8 @@ pub trait ServicesClient: Send + Sync {
 trait Services {
     async fn list_services(&self) -> zbus::Result<Vec<ServiceRow>>;
     async fn list_all_services(&self) -> zbus::Result<Vec<ServiceRow>>;
+    async fn list_services_localized(&self, locale: &str) -> zbus::Result<Vec<ServiceRow>>;
+    async fn list_all_services_localized(&self, locale: &str) -> zbus::Result<Vec<ServiceRow>>;
     async fn set_service_enabled(&self, name: &str, enabled: bool) -> zbus::Result<()>;
     async fn set_service_running(&self, name: &str, running: bool) -> zbus::Result<()>;
     async fn restart_service(&self, name: &str) -> zbus::Result<()>;
@@ -97,10 +99,10 @@ fn convert(rows: Vec<ServiceRow>) -> Vec<ManagedService> {
 #[async_trait]
 impl ServicesClient for ZbusServicesClient {
     async fn list(&self) -> Result<Vec<ManagedService>, ServicesClientError> {
-        call!(self, list_services()).map(convert)
+        call!(self, list_services_localized(crate::current_locale())).map(convert)
     }
     async fn list_all(&self) -> Result<Vec<ManagedService>, ServicesClientError> {
-        call!(self, list_all_services()).map(convert)
+        call!(self, list_all_services_localized(crate::current_locale())).map(convert)
     }
     async fn set_enabled(&self, name: &str, enabled: bool) -> Result<(), ServicesClientError> {
         call!(self, set_service_enabled(name, enabled))
@@ -130,7 +132,9 @@ mod tests {
             methods,
             [
                 "ListAllServices",
+                "ListAllServicesLocalized",
                 "ListServices",
+                "ListServicesLocalized",
                 "RestartService",
                 "SetServiceEnabled",
                 "SetServiceRunning",

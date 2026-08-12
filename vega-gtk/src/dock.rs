@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use gettextrs::gettext;
+use crate::i18n::gettext;
 use gtk::{gio, gio::prelude::*, glib};
 
 const EXTENSION_UUID: &str = "sheliak@lyraos.org";

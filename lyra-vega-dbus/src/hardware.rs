@@ -52,6 +52,8 @@ pub trait HardwareClient: Send + Sync {
 trait Hardware {
     async fn inventory(&self) -> zbus::Result<(String, String, String)>;
     async fn firmware_status(&self) -> zbus::Result<String>;
+    async fn inventory_localized(&self, locale: &str) -> zbus::Result<(String, String, String)>;
+    async fn firmware_status_localized(&self, locale: &str) -> zbus::Result<String>;
     async fn switch_nvidia_driver(&self, driver: &str) -> zbus::Result<()>;
 }
 
@@ -89,7 +91,7 @@ impl HardwareClient for ZbusHardwareClient {
     async fn inventory(&self) -> Result<HardwareInventory, HardwareClientError> {
         self.proxy()
             .await?
-            .inventory()
+            .inventory_localized(crate::current_locale())
             .await
             .map(Into::into)
             .map_err(HardwareClientError::unavailable)
@@ -98,7 +100,7 @@ impl HardwareClient for ZbusHardwareClient {
     async fn firmware_status(&self) -> Result<String, HardwareClientError> {
         self.proxy()
             .await?
-            .firmware_status()
+            .firmware_status_localized(crate::current_locale())
             .await
             .map_err(HardwareClientError::unavailable)
     }
@@ -151,7 +153,9 @@ mod tests {
             .collect();
         let expected = BTreeMap::from([
             ("FirmwareStatus", vec![("out", "s")]),
+            ("FirmwareStatusLocalized", vec![("in", "s"), ("out", "s")]),
             ("Inventory", vec![("out", "(sss)")]),
+            ("InventoryLocalized", vec![("in", "s"), ("out", "(sss)")]),
             ("SwitchNvidiaDriver", vec![("in", "s")]),
         ]);
         assert_eq!(methods, expected);

@@ -1,7 +1,7 @@
 use std::{cell::RefCell, path::Path, rc::Rc};
 
+use crate::i18n::gettext;
 use adw::prelude::*;
-use gettextrs::gettext;
 
 use crate::wallpaper::{ThumbnailData, WallpaperEntry, thumbnail_to_pixbuf};
 

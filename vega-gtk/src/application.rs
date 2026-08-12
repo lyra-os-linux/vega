@@ -1,5 +1,5 @@
+use crate::i18n::gettext;
 use adw::prelude::*;
-use gettextrs::gettext;
 use gtk::{gio, glib};
 use std::{
     cell::{Cell, RefCell},

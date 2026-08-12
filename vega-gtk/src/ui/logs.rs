@@ -1,5 +1,5 @@
+use crate::i18n::gettext;
 use adw::prelude::*;
-use gettextrs::gettext;
 
 const PRIORITIES: &[&str] = &["", "err", "warning", "info", "debug"];
 const SINCE_VALUES: &[&str] = &["-15min", "-1hour", "-24hour", "-7day", ""];

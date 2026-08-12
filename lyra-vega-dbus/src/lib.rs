@@ -5,6 +5,7 @@ mod datetime;
 mod firewall;
 mod hardware;
 mod kernel;
+mod locale;
 mod logs;
 mod mock;
 mod monitor;
@@ -32,6 +33,7 @@ pub use firewall::{
 };
 pub use hardware::{HardwareClient, HardwareClientError, HardwareInventory, ZbusHardwareClient};
 pub use kernel::{BootStatus, KernelClient, KernelClientError, ZbusKernelClient};
+pub use locale::{DEFAULT_LOCALE, current_locale, normalize_locale};
 pub use logs::{LogsClient, LogsClientError, ZbusLogsClient};
 pub use mock::MockSystemClient;
 pub use monitor::{

@@ -7,8 +7,8 @@ use std::{
     time::Duration,
 };
 
+use crate::i18n::gettext;
 use base64::{Engine, engine::general_purpose::STANDARD as base64_engine};
-use gettextrs::gettext;
 use gtk::glib;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
@@ -226,14 +226,12 @@ impl std::fmt::Display for AssistantError {
             Self::Io(error) => write!(
                 f,
                 "{}",
-                gettextrs::gettext("falha de I/O: {detail}")
-                    .replace("{detail}", &error.to_string())
+                gettext("falha de I/O: {detail}").replace("{detail}", &error.to_string())
             ),
             Self::Json(error) => write!(
                 f,
                 "{}",
-                gettextrs::gettext("resposta JSON inválida: {detail}")
-                    .replace("{detail}", &error.to_string())
+                gettext("resposta JSON inválida: {detail}").replace("{detail}", &error.to_string())
             ),
         }
     }

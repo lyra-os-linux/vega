@@ -62,6 +62,11 @@ trait Snapshots {
     async fn list_snapshots(&self) -> zbus::Result<Vec<(u32, i64, String, String)>>;
     async fn create_snapshot(&self, description: &str) -> zbus::Result<u32>;
     async fn diff_packages(&self, snapshot_id: u32) -> zbus::Result<Vec<String>>;
+    async fn diff_packages_localized(
+        &self,
+        snapshot_id: u32,
+        locale: &str,
+    ) -> zbus::Result<Vec<String>>;
     async fn rollback(&self, snapshot_id: u32) -> zbus::Result<()>;
     async fn delete_snapshot(&self, snapshot_id: u32) -> zbus::Result<()>;
     async fn set_retention_policy(&self, keep_count: u32) -> zbus::Result<()>;
@@ -101,7 +106,7 @@ impl SnapshotsClient for ZbusSnapshotsClient {
         call!(self, create_snapshot(description))
     }
     async fn diff_packages(&self, id: u32) -> Result<Vec<String>, SnapshotsClientError> {
-        call!(self, diff_packages(id))
+        call!(self, diff_packages_localized(id, crate::current_locale()))
     }
     async fn rollback(&self, id: u32) -> Result<(), SnapshotsClientError> {
         call!(self, rollback(id))
@@ -134,6 +139,7 @@ mod tests {
                 "CreateSnapshot",
                 "DeleteSnapshot",
                 "DiffPackages",
+                "DiffPackagesLocalized",
                 "ListSnapshots",
                 "Rollback",
                 "SetRetentionPolicy",

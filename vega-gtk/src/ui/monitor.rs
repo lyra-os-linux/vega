@@ -1,7 +1,7 @@
 use std::{cell::RefCell, rc::Rc};
 
+use crate::i18n::gettext;
 use adw::prelude::*;
-use gettextrs::gettext;
 
 use super::sparkline::Sparkline;
 use lyra_vega_dbus::{ProcessInfo, SystemMetrics};

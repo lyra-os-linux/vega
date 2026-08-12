@@ -9,6 +9,11 @@
       <arg name="inventory" type="(sss)" direction="out"/>
       <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="HardwareInventory"/>
     </method>
+    <method name="InventoryLocalized">
+      <arg name="locale" type="s" direction="in"/>
+      <arg name="inventory" type="(sss)" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="HardwareInventory"/>
+    </method>
 
     <method name="SwitchNvidiaDriver">
       <!-- polkit: org.lyraos.vega.hardware.switch-driver -->
@@ -18,6 +23,10 @@
 
     <method name="FirmwareStatus">
       <!-- polkit: none (read-only); backed by fwupd -->
+      <arg name="status" type="s" direction="out"/>
+    </method>
+    <method name="FirmwareStatusLocalized">
+      <arg name="locale" type="s" direction="in"/>
       <arg name="status" type="s" direction="out"/>
     </method>
   </interface>

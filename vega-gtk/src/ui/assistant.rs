@@ -1,6 +1,6 @@
 use crate::assistant::{Attachment, Message, Provider, Settings};
+use crate::i18n::gettext;
 use adw::prelude::*;
-use gettextrs::gettext;
 use std::{cell::RefCell, rc::Rc};
 
 #[derive(Clone)]

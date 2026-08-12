@@ -25,6 +25,11 @@
       <arg name="snapshotId" type="u" direction="in"/>
       <arg name="changes" type="as" direction="out"/>
     </method>
+    <method name="DiffPackagesLocalized">
+      <arg name="snapshotId" type="u" direction="in"/>
+      <arg name="locale" type="s" direction="in"/>
+      <arg name="changes" type="as" direction="out"/>
+    </method>
 
     <method name="Rollback">
       <!-- polkit: org.lyraos.vega.snapshots.rollback -->

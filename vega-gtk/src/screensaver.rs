@@ -1,4 +1,4 @@
-use gettextrs::gettext;
+use crate::i18n::gettext;
 use gtk::{gio, gio::prelude::*};
 
 const SCREENSAVER_SCHEMA: &str = "org.gnome.desktop.screensaver";
