@@ -1,5 +1,3 @@
-use std::{cell::RefCell, rc::Rc};
-
 use crate::i18n::gettext;
 use adw::prelude::*;
 
@@ -11,8 +9,6 @@ pub struct KernelPage {
     pub status: gtk::Label,
     pub installed: gtk::ListBox,
     pub available: gtk::ListBox,
-    pub install: gtk::Button,
-    pub remove: gtk::Button,
     pub boot_loader: gtk::Label,
     pub boot_default: gtk::Label,
     pub boot_timeout: gtk::Label,
@@ -22,8 +18,6 @@ pub struct KernelPage {
     pub boot_timeout_input: gtk::SpinButton,
     pub boot_cmdline_input: gtk::Entry,
     pub apply_boot: gtk::Button,
-    installed_items: Rc<RefCell<Vec<String>>>,
-    available_items: Rc<RefCell<Vec<String>>>,
 }
 
 impl KernelPage {
@@ -38,18 +32,6 @@ impl KernelPage {
         let available = list();
         installed.add_css_class("kernel-list");
         available.add_css_class("kernel-list");
-        let install = gtk::Button::builder()
-            .label(gettext("Instalar selecionado"))
-            .sensitive(false)
-            .css_classes(["suggested-action"])
-            .build();
-        let remove = gtk::Button::builder()
-            .label(gettext("Remover selecionado"))
-            .sensitive(false)
-            .css_classes(["destructive-action"])
-            .build();
-        let installed_items = Rc::new(RefCell::new(Vec::<String>::new()));
-        let available_items = Rc::new(RefCell::new(Vec::<String>::new()));
         let boot_loader = value(&gettext("Carregando…"));
         let boot_default = value(&gettext("Carregando…"));
         let boot_timeout = value(&gettext("Carregando…"));
@@ -71,11 +53,9 @@ impl KernelPage {
         let installed_column = gtk::Box::new(gtk::Orientation::Vertical, 8);
         installed_column.set_hexpand(true);
         installed_column.append(&section(&gettext("Kernels instalados"), &installed));
-        installed_column.append(&remove);
         let available_column = gtk::Box::new(gtk::Orientation::Vertical, 8);
         available_column.set_hexpand(true);
         available_column.append(&section(&gettext("Kernels disponíveis"), &available));
-        available_column.append(&install);
         let kernel_columns = gtk::Box::new(gtk::Orientation::Horizontal, 12);
         kernel_columns.set_homogeneous(true);
         kernel_columns.append(&installed_column);
@@ -107,25 +87,11 @@ impl KernelPage {
             .hscrollbar_policy(gtk::PolicyType::Never)
             .build()
             .upcast();
-        let install_button = install.clone();
-        available.connect_row_selected(move |_, row| {
-            install_button.set_sensitive(row.is_some());
-        });
-        let remove_button = remove.clone();
-        let removable_items = installed_items.clone();
-        installed.connect_row_selected(move |_, row| {
-            remove_button.set_sensitive(kernel_removal_allowed(
-                removable_items.borrow().len(),
-                row.is_some(),
-            ));
-        });
         Self {
             root,
             status,
             installed,
             available,
-            install,
-            remove,
             boot_loader,
             boot_default,
             boot_timeout,
@@ -135,18 +101,11 @@ impl KernelPage {
             boot_timeout_input,
             boot_cmdline_input,
             apply_boot,
-            installed_items,
-            available_items,
         }
     }
 
     pub fn show_installed(&self, kernels: &[String]) {
-        *self.installed_items.borrow_mut() = kernels.to_vec();
         fill_list(&self.installed, kernels, &gettext("Nenhum kernel listado"));
-        self.remove.set_sensitive(kernel_removal_allowed(
-            kernels.len(),
-            self.installed.selected_row().is_some(),
-        ));
     }
 
     pub fn show_available(&self, kernels: &[String], installed: &[String]) {
@@ -156,7 +115,6 @@ impl KernelPage {
             &kernels,
             &gettext("Todos os kernels disponíveis já estão instalados"),
         );
-        *self.available_items.borrow_mut() = kernels;
     }
 
     pub fn show_boot(&self, status: &BootStatus, entries: &[String]) {
@@ -200,16 +158,6 @@ impl KernelPage {
         self.apply_boot.set_sensitive(supported);
     }
 
-    pub fn selected_installed(&self) -> Option<String> {
-        let index = self.installed.selected_row()?.index() as usize;
-        self.installed_items.borrow().get(index).cloned()
-    }
-
-    pub fn selected_available(&self) -> Option<String> {
-        let index = self.available.selected_row()?.index() as usize;
-        self.available_items.borrow().get(index).cloned()
-    }
-
     pub fn selected_boot_entry(&self) -> String {
         self.boot_entry
             .selected_item()
@@ -221,7 +169,7 @@ impl KernelPage {
 
 fn list() -> gtk::ListBox {
     gtk::ListBox::builder()
-        .selection_mode(gtk::SelectionMode::Single)
+        .selection_mode(gtk::SelectionMode::None)
         .css_classes(["boxed-list"])
         .build()
 }
@@ -261,7 +209,7 @@ fn fill_list(list: &gtk::ListBox, values: &[String], empty: &str) {
         list.append(&adw::ActionRow::builder().title(empty).build());
         return;
     }
-    list.set_selection_mode(gtk::SelectionMode::Single);
+    list.set_selection_mode(gtk::SelectionMode::None);
     for value in values {
         list.append(
             &adw::ActionRow::builder()
@@ -308,13 +256,9 @@ fn available_not_installed(available: &[String], installed: &[String]) -> Vec<St
         .collect()
 }
 
-fn kernel_removal_allowed(installed_count: usize, has_selection: bool) -> bool {
-    installed_count > 1 && has_selection
-}
-
 #[cfg(test)]
 mod tests {
-    use super::{available_not_installed, kernel_removal_allowed};
+    use super::available_not_installed;
 
     #[test]
     fn installed_kernels_are_removed_from_install_choices() {
@@ -324,12 +268,5 @@ mod tests {
             available_not_installed(&available, &installed),
             ["kernel-zen"]
         );
-    }
-
-    #[test]
-    fn last_installed_kernel_cannot_be_removed() {
-        assert!(!kernel_removal_allowed(1, true));
-        assert!(!kernel_removal_allowed(2, false));
-        assert!(kernel_removal_allowed(2, true));
     }
 }
