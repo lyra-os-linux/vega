@@ -61,12 +61,12 @@ class VegaGtkI18nTests(unittest.TestCase):
                     if token in key:
                         self.assertIn(token, value, f"{locale}: {key}")
 
-    def test_rpm_specs_install_all_catalogs_and_fallback_domains(self):
+    def test_rpm_specs_install_all_catalogs(self):
         for relative in ("packaging/opensuse/vega.spec", "packaging/obs/vega-gtk.spec"):
             spec = (ROOT / relative).read_text(encoding="utf-8")
             for locale in ("en_US", "pt_BR", "es_ES", "zh_CN"):
                 self.assertIn(locale, spec)
-            self.assertIn("vega-gtk-fallback.mo", spec)
+            self.assertNotIn("vega-gtk-fallback.mo", spec)
 
 
 if __name__ == "__main__":

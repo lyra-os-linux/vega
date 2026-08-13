@@ -50,8 +50,6 @@ install -Dm644 packaging/vega/vega.svg \
 for locale in en_US pt_BR es_ES zh_CN; do
   install -Dm644 "vega-gtk/po/locale/${locale}/LC_MESSAGES/vega-gtk.mo" \
     "%{buildroot}%{_datadir}/locale/${locale}/LC_MESSAGES/vega-gtk.mo"
-  install -Dm644 "vega-gtk/po/locale/${locale}/LC_MESSAGES/vega-gtk-fallback.mo" \
-    "%{buildroot}%{_datadir}/locale/${locale}/LC_MESSAGES/vega-gtk-fallback.mo"
 done
 
 %files

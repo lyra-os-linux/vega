@@ -11,6 +11,10 @@ const DOMAIN: &str = "vega-gtk";
 /// fallback while keeping locale changes effective on the next launch.
 pub fn init() {
     let locale = session_locale();
+    init_locale(locale);
+}
+
+fn init_locale(locale: &str) {
     // SAFETY: called once on the GTK main thread, before worker threads and
     // before any translated widget is created.
     unsafe { std::env::set_var("LANGUAGE", locale) };
@@ -18,15 +22,9 @@ pub fn init() {
     // pacote instalado), procura também os .mo que o build.rs acabou de
     // gerar em `po/`, pra `cargo run` local funcionar sem instalar nada.
     let local_path = concat!(env!("CARGO_MANIFEST_DIR"), "/po");
-    if let Err(error) = TextDomain::new("vega-gtk-fallback")
-        .prepend(local_path)
-        .locale_category(LocaleCategory::LcMessages)
-        .init()
-    {
-        eprintln!("i18n: English fallback catalog unavailable: {error}");
-    }
     let result = TextDomain::new(DOMAIN)
         .prepend(local_path)
+        .locale(locale)
         .locale_category(LocaleCategory::LcMessages)
         .init();
     if let Err(error) = result {
@@ -117,25 +115,13 @@ fn normalize_locale(value: &str) -> &'static str {
     }
 }
 
-/// Translates UI text and falls back to the complete English domain if the
-/// active catalog does not contain this individual key.
 pub fn gettext(message: &str) -> String {
-    let translated = gettextrs::gettext(message);
-    if translated == message {
-        gettextrs::dgettext("vega-gtk-fallback", message)
-    } else {
-        translated
-    }
+    gettextrs::gettext(message)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn init_does_not_panic_regardless_of_locale() {
-        init();
-    }
 
     #[test]
     fn locale_normalization_and_fallback() {
@@ -172,5 +158,41 @@ mod tests {
             "es_ES"
         );
         assert_eq!(resolve_locale(None, ["C.UTF-8", "POSIX"]), "en_US");
+    }
+
+    /// Runs in a dedicated process because gettext's locale and active domain
+    /// are process-global state and Rust executes unit tests concurrently.
+    #[test]
+    fn translation_subprocess() {
+        let Ok(locale) = std::env::var("VEGA_GTK_TEST_LOCALE") else {
+            return;
+        };
+        let expected = std::env::var("VEGA_GTK_TEST_EXPECTED").unwrap();
+        init_locale(&locale);
+        assert_eq!(gettext("Painel"), expected);
+    }
+
+    #[test]
+    fn loads_each_catalog_even_when_parent_locale_is_portable() {
+        let executable = std::env::current_exe().unwrap();
+        for (locale, expected) in [
+            ("en_US", "Dashboard"),
+            ("pt_BR", "Painel"),
+            ("es_ES", "Panel de control"),
+            ("zh_CN", "仪表板"),
+        ] {
+            let status = std::process::Command::new(&executable)
+                .arg("--exact")
+                .arg("i18n::tests::translation_subprocess")
+                .arg("--nocapture")
+                .env("LC_ALL", "C.UTF-8")
+                .env("LC_MESSAGES", "C.UTF-8")
+                .env("LANG", "C.UTF-8")
+                .env("VEGA_GTK_TEST_LOCALE", locale)
+                .env("VEGA_GTK_TEST_EXPECTED", expected)
+                .status()
+                .unwrap();
+            assert!(status.success(), "failed to load {locale} catalog");
+        }
     }
 }

@@ -36,15 +36,17 @@ um evento de domínio tipado; descartar o stream remove as subscriptions D-Bus.
 
 ## Internacionalização
 
-A interface possui catálogos completos para `en-US` (padrão e fallback),
+A interface possui catálogos completos para `en-US` (padrão),
 `pt-BR`, `es-ES` e `zh-CN`. O idioma é resolvido automaticamente a cada
-abertura a partir de `LC_ALL`, `LC_MESSAGES` e `LANG`; não há seletor nem
-preferência paralela. Locales ausentes, malformados ou não suportados usam
-inglês americano.
+abertura. A preferência registrada pelo GNOME AccountsService tem prioridade;
+se ela não estiver disponível, são consultados `LC_ALL`, `LC_MESSAGES` e
+`LANG`. Locales portáteis (`C` e `POSIX`) não escondem o idioma da sessão. Não
+há seletor nem preferência paralela, e idiomas ausentes, malformados ou não
+suportados usam inglês americano.
 
 `build.rs` exige `msgfmt` e compila os quatro arquivos `po/<lang>.po` para
-`po/locale/<locale>/LC_MESSAGES/vega-gtk.mo`. Também gera o domínio inglês de
-fallback por chave. Para testar um catálogo localmente sem instalar o pacote:
+`po/locale/<locale>/LC_MESSAGES/vega-gtk.mo`. Para testar um catálogo localmente
+sem instalar o pacote:
 
 ```bash
 LANG=en_US.UTF-8 cargo run --manifest-path vega-gtk/Cargo.toml

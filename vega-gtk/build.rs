@@ -47,21 +47,5 @@ fn main() {
             Ok(status) if status.success() => {}
             _ => panic!("failed to compile {}", po_path.display()),
         }
-
-        // A second, English-only domain in every supported locale provides
-        // deterministic per-key fallback when the active catalog is damaged
-        // or incomplete. GNU gettext otherwise returns the Portuguese msgid.
-        let fallback_path = out_dir.join(format!("{DOMAIN}-fallback.mo"));
-        let english_po = po_dir.join("en-US.po");
-        let status = Command::new("msgfmt")
-            .arg("-o")
-            .arg(&fallback_path)
-            .arg(&english_po)
-            .status()
-            .expect("failed to run msgfmt for English fallback catalog");
-        assert!(
-            status.success(),
-            "failed to compile English fallback catalog"
-        );
     }
 }
