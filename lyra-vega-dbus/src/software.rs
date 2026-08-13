@@ -129,6 +129,56 @@ pub struct SoftwarePackageProgress {
     pub percent: u32,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct NvidiaStatus {
+    pub supported: bool,
+    pub installed: bool,
+    pub reboot_required: bool,
+    pub gpu: String,
+    pub secure_boot: String,
+    pub state: String,
+    pub detail: String,
+    pub recovery_snapshot: u32,
+}
+
+type NvidiaStatusRow = (bool, bool, bool, String, String, String, String, u32);
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct NonFreeFirmwareStatus {
+    pub detected: bool,
+    pub installed: bool,
+    pub detail: String,
+    pub packages: Vec<String>,
+}
+
+type NonFreeFirmwareStatusRow = (bool, bool, String, Vec<String>);
+
+impl From<NonFreeFirmwareStatusRow> for NonFreeFirmwareStatus {
+    fn from(row: NonFreeFirmwareStatusRow) -> Self {
+        Self {
+            detected: row.0,
+            installed: row.1,
+            detail: row.2,
+            packages: row.3,
+        }
+    }
+}
+
+impl From<NvidiaStatusRow> for NvidiaStatus {
+    fn from(row: NvidiaStatusRow) -> Self {
+        Self {
+            supported: row.0,
+            installed: row.1,
+            reboot_required: row.2,
+            gpu: row.3,
+            secure_boot: row.4,
+            state: row.5,
+            detail: row.6,
+            recovery_snapshot: row.7,
+        }
+    }
+}
+
 /// A repository's signing key discovered by AddRepo/TrustRepoKey that isn't
 /// trusted yet — the UI shows `user_id`/`fingerprint` and lets the user
 /// approve importing it via `SoftwareClient::trust_repo_key`. This is
@@ -194,6 +244,11 @@ pub trait SoftwareClient: Send + Sync {
     async fn add_repo(&self, name: &str, url: &str) -> Result<u32, SoftwareClientError>;
     async fn trust_repo_key(&self, repo: &str, key_id: &str) -> Result<u32, SoftwareClientError>;
     async fn clear_cache(&self) -> Result<u32, SoftwareClientError>;
+    async fn nvidia_status(&self) -> Result<NvidiaStatus, SoftwareClientError>;
+    async fn install_nvidia(&self, confirmed: bool) -> Result<u32, SoftwareClientError>;
+    async fn check_nvidia(&self) -> Result<(bool, String), SoftwareClientError>;
+    async fn non_free_firmware_status(&self) -> Result<NonFreeFirmwareStatus, SoftwareClientError>;
+    async fn install_non_free_firmware(&self, confirmed: bool) -> Result<u32, SoftwareClientError>;
 }
 
 #[zbus::proxy(
@@ -218,6 +273,11 @@ trait Software {
     async fn add_repo(&self, name: &str, url: &str) -> zbus::Result<u32>;
     async fn trust_repo_key(&self, repo: &str, key_id: &str) -> zbus::Result<u32>;
     async fn clear_cache(&self) -> zbus::Result<u32>;
+    async fn nvidia_status(&self) -> zbus::Result<NvidiaStatusRow>;
+    async fn install_nvidia(&self, confirmed: bool) -> zbus::Result<u32>;
+    async fn check_nvidia(&self) -> zbus::Result<(bool, String)>;
+    async fn non_free_firmware_status(&self) -> zbus::Result<NonFreeFirmwareStatusRow>;
+    async fn install_non_free_firmware(&self, confirmed: bool) -> zbus::Result<u32>;
 
     #[zbus(signal)]
     async fn transaction_progress(
@@ -451,6 +511,26 @@ impl SoftwareClient for ZbusSoftwareClient {
     async fn clear_cache(&self) -> Result<u32, SoftwareClientError> {
         proxy_call!(self, clear_cache())
     }
+
+    async fn nvidia_status(&self) -> Result<NvidiaStatus, SoftwareClientError> {
+        proxy_call!(self, nvidia_status()).map(Into::into)
+    }
+
+    async fn install_nvidia(&self, confirmed: bool) -> Result<u32, SoftwareClientError> {
+        proxy_call!(self, install_nvidia(confirmed))
+    }
+
+    async fn check_nvidia(&self) -> Result<(bool, String), SoftwareClientError> {
+        proxy_call!(self, check_nvidia())
+    }
+
+    async fn non_free_firmware_status(&self) -> Result<NonFreeFirmwareStatus, SoftwareClientError> {
+        proxy_call!(self, non_free_firmware_status()).map(Into::into)
+    }
+
+    async fn install_non_free_firmware(&self, confirmed: bool) -> Result<u32, SoftwareClientError> {
+        proxy_call!(self, install_non_free_firmware(confirmed))
+    }
 }
 
 #[cfg(test)]
@@ -515,6 +595,7 @@ mod tests {
                 args(&[("in", "s"), ("in", "s"), ("out", "u")]),
             ),
             ("ClearCache".into(), args(&[("out", "u")])),
+            ("CheckNvidia".into(), args(&[("out", "b"), ("out", "s")])),
             ("CommunityLayerName".into(), args(&[("out", "s")])),
             ("GetAurPkgbuild".into(), args(&[("in", "s"), ("out", "s")])),
             (
@@ -525,10 +606,17 @@ mod tests {
                 "Install".into(),
                 args(&[("in", "s"), ("in", "s"), ("out", "u")]),
             ),
+            ("InstallNvidia".into(), args(&[("in", "b"), ("out", "u")])),
+            (
+                "InstallNonFreeFirmware".into(),
+                args(&[("in", "b"), ("out", "u")]),
+            ),
             ("ListInstalled".into(), args(&[("out", package_rows)])),
             ("ListRepos".into(), args(&[("out", "a(sb)")])),
             ("ListUpdates".into(), args(&[("out", package_rows)])),
             ("PackageManagerName".into(), args(&[("out", "s")])),
+            ("NvidiaStatus".into(), args(&[("out", "(bbbssssu)")])),
+            ("NonFreeFirmwareStatus".into(), args(&[("out", "(bbsas)")])),
             (
                 "Remove".into(),
                 args(&[("in", "s"), ("in", "s"), ("out", "u")]),

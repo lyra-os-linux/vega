@@ -2936,3 +2936,63 @@ msgstr "提供商拒绝请求（{status}）：{detail}"
 #: /home/rbrito/Git/Vega/vega-gtk/src/assistant.rs:959
 msgid "Falha de comunicação com o provedor: {detail}"
 msgstr "与提供商的通信失败：{detail}"
+
+msgid "A instalação G06 é opcional e usa o repositório oficial da NVIDIA."
+msgstr "G06 安装是可选的，并使用 NVIDIA 官方软件源。"
+
+msgid "Secure Boot ativado; será usado o módulo aberto assinado."
+msgstr "安全启动已启用；将使用已签名的开放内核模块。"
+
+msgid "Verificar driver"
+msgstr "验证驱动程序"
+
+msgid "Driver NVIDIA requer atenção"
+msgstr "NVIDIA 驱动程序需要处理"
+
+msgid "Driver NVIDIA opcional"
+msgstr "可选 NVIDIA 驱动程序"
+
+msgid "Secure Boot desativado."
+msgstr "安全启动已禁用。"
+
+msgid "NVIDIA G06 — {gpu}"
+msgstr "NVIDIA G06 — {gpu}"
+
+msgid "{detail}\n{secure_boot}"
+msgstr "{detail}\n{secure_boot}"
+
+msgid "O Vega criará um snapshot somente leitura, adicionará o repositório oficial da NVIDIA, instalará módulo assinado, userspace e firmware em conjunto e regenerará o initramfs. Será necessário reiniciar. Não desligue o computador durante a transação."
+msgstr "Vega 将创建只读快照、添加 NVIDIA 官方软件源、同时安装已签名模块、用户空间组件和固件，并重新生成 initramfs。之后需要重启。事务期间请勿关闭计算机。"
+
+msgid "Instalar o driver NVIDIA G06?"
+msgstr "安装 NVIDIA G06 驱动程序？"
+
+msgid "Preparando instalação NVIDIA G06…"
+msgstr "正在准备安装 NVIDIA G06…"
+
+msgid "Driver NVIDIA ativo"
+msgstr "NVIDIA 驱动程序已启用"
+
+msgid "Não foi possível determinar o estado do Secure Boot."
+msgstr "无法确定安全启动状态。"
+
+msgid "Instalar driver NVIDIA G06"
+msgstr "安装 NVIDIA G06 驱动程序"
+
+msgid "Verificando hardware NVIDIA…"
+msgstr "正在检查 NVIDIA 硬件…"
+
+msgid "Instalar firmware compatível"
+msgstr "安装兼容固件"
+
+msgid "Instalar firmware não livre?"
+msgstr "安装非自由固件？"
+
+msgid "Verificando firmware compatível…"
+msgstr "正在检查兼容固件…"
+
+msgid "Firmware não livre"
+msgstr "非自由固件"
+
+msgid "O Vega instalará somente pacotes do repositório non-oss associados de forma inequívoca ao hardware detectado. Um snapshot somente leitura será criado antes da alteração."
+msgstr "Vega 仅安装 non-oss 软件源中与检测到的硬件明确关联的软件包。更改前将创建只读快照。"

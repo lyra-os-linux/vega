@@ -106,6 +106,34 @@
       <arg name="transactionId" type="u" direction="out"/>
     </method>
 
+    <method name="NvidiaStatus">
+      <!-- Read-only conservative G06 hardware/package preflight. -->
+      <arg name="status" type="(bbbssssu)" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="NvidiaStatus"/>
+    </method>
+
+    <method name="InstallNvidia">
+      <!-- polkit: org.lyraos.vega.software.install-nvidia; confirmed must be true. -->
+      <arg name="confirmed" type="b" direction="in"/>
+      <arg name="transactionId" type="u" direction="out"/>
+    </method>
+
+    <method name="CheckNvidia">
+      <!-- Post-reboot read-only validation of nvidia-smi and DRM connectors. -->
+      <arg name="success" type="b" direction="out"/>
+      <arg name="message" type="s" direction="out"/>
+    </method>
+
+    <method name="NonFreeFirmwareStatus">
+      <arg name="status" type="(bbsas)" direction="out"/>
+    </method>
+
+    <method name="InstallNonFreeFirmware">
+      <!-- polkit: org.lyraos.vega.software.install-firmware -->
+      <arg name="confirmed" type="b" direction="in"/>
+      <arg name="transactionId" type="u" direction="out"/>
+    </method>
+
     <signal name="TransactionProgress">
       <arg name="transactionId" type="u"/>
       <arg name="percent" type="u"/>
