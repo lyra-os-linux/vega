@@ -246,14 +246,18 @@ fn crop_center(
     let x_offset = (src_width - target_width) / 2;
     let y_offset = (src_height - target_height) / 2;
 
+    // `pixel_bytes()` só retorna Some quando o Pixbuf já é respaldado por um
+    // GBytes imutável. Pixbufs carregados de arquivo normalmente mantêm um
+    // buffer mutável e faziam a função devolver None, produzindo previews com
+    // metadados válidos mas nenhum pixel. `read_pixel_bytes()` sempre fornece
+    // uma visão imutável (copiando quando necessário).
+    let pixels = pixbuf.read_pixel_bytes();
     let mut bytes = Vec::with_capacity((target_width * target_height * channels) as usize);
-    if let Some(pixels) = pixbuf.pixel_bytes() {
-        for row in 0..target_height {
-            let start = ((y_offset + row) * rowstride + x_offset * channels) as usize;
-            let end = start + (target_width * channels) as usize;
-            if let Some(slice) = pixels.get(start..end) {
-                bytes.extend_from_slice(slice);
-            }
+    for row in 0..target_height {
+        let start = ((y_offset + row) * rowstride + x_offset * channels) as usize;
+        let end = start + (target_width * channels) as usize;
+        if let Some(slice) = pixels.get(start..end) {
+            bytes.extend_from_slice(slice);
         }
     }
 
@@ -516,6 +520,31 @@ mod tests {
         let result = import_to_dir(&source, &root.join("destination"));
         assert!(result.is_err());
         assert!(!root.join("destination").exists());
+
+        std::fs::remove_dir_all(&root).unwrap();
+    }
+
+    #[test]
+    fn loaded_thumbnail_contains_all_cropped_pixels() {
+        let root = std::env::temp_dir().join(format!(
+            "vega-wallpaper-thumbnail-test-{}",
+            std::process::id()
+        ));
+        std::fs::create_dir_all(&root).unwrap();
+        let source = root.join("wallpaper.png");
+        let pixbuf =
+            gtk::gdk_pixbuf::Pixbuf::new(gtk::gdk_pixbuf::Colorspace::Rgb, false, 8, 320, 192)
+                .unwrap();
+        pixbuf.fill(0x3584_e4ff);
+        pixbuf.savev(&source, "png", &[]).unwrap();
+
+        let thumbnail = load_cover_thumbnail(&source).unwrap();
+        assert_eq!(thumbnail.width, THUMBNAIL_WIDTH);
+        assert_eq!(thumbnail.height, THUMBNAIL_HEIGHT);
+        assert_eq!(
+            thumbnail.bytes.len(),
+            (thumbnail.rowstride * thumbnail.height) as usize
+        );
 
         std::fs::remove_dir_all(&root).unwrap();
     }

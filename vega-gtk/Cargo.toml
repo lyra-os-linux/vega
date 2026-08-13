@@ -1,6 +1,6 @@
 [package]
 name = "vega-gtk"
-version = "4.0.3"
+version = "5.0.1"
 edition.workspace = true
 license.workspace = true
 authors.workspace = true
