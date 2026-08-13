@@ -1,4 +1,8 @@
 use gettextrs::{LocaleCategory, TextDomain};
+use gtk::gio;
+use gtk::gio::prelude::DBusProxyExt;
+use gtk::glib;
+use gtk::glib::variant::ToVariant;
 
 const DOMAIN: &str = "vega-gtk";
 
@@ -31,14 +35,62 @@ pub fn init() {
 }
 
 fn session_locale() -> &'static str {
-    ["LC_ALL", "LC_MESSAGES", "LANG"]
-        .into_iter()
-        .find_map(|name| {
-            std::env::var(name)
-                .ok()
-                .filter(|value| !value.trim().is_empty())
-        })
-        .map_or("en-US", |value| normalize_locale(&value))
+    resolve_locale(
+        gnome_language().as_deref(),
+        ["LC_ALL", "LC_MESSAGES", "LANG"]
+            .into_iter()
+            .find_map(|name| {
+                std::env::var(name)
+                    .ok()
+                    .filter(|value| !value.trim().is_empty())
+            })
+            .as_deref(),
+    )
+}
+
+/// GNOME stores the language selected for the logged-in user in AccountsService.
+/// Reading it over D-Bus avoids inheriting a stale process environment when the
+/// user changes the language in GNOME Settings. The new language takes effect on
+/// Vega's next launch, just like other GNOME applications.
+fn gnome_language() -> Option<String> {
+    let accounts = gio::DBusProxy::for_bus_sync(
+        gio::BusType::System,
+        gio::DBusProxyFlags::NONE,
+        None,
+        "org.freedesktop.Accounts",
+        "/org/freedesktop/Accounts",
+        "org.freedesktop.Accounts",
+        gio::Cancellable::NONE,
+    )
+    .ok()?;
+    let username = glib::user_name().to_string_lossy().into_owned();
+    let reply = accounts
+        .call_sync(
+            "FindUserByName",
+            Some(&(username.as_str(),).to_variant()),
+            gio::DBusCallFlags::NONE,
+            1_000,
+            gio::Cancellable::NONE,
+        )
+        .ok()?;
+    let (path,) = reply.get::<(glib::variant::ObjectPath,)>()?;
+    let user = gio::DBusProxy::for_bus_sync(
+        gio::BusType::System,
+        gio::DBusProxyFlags::NONE,
+        None,
+        "org.freedesktop.Accounts",
+        &path,
+        "org.freedesktop.Accounts.User",
+        gio::Cancellable::NONE,
+    )
+    .ok()?;
+    user.cached_property("Language")?
+        .get::<String>()
+        .filter(|value| !value.trim().is_empty())
+}
+
+fn resolve_locale(gnome: Option<&str>, environment: Option<&str>) -> &'static str {
+    gnome.or(environment).map_or("en_US", normalize_locale)
 }
 
 fn normalize_locale(value: &str) -> &'static str {
@@ -85,5 +137,15 @@ mod tests {
         ] {
             assert_eq!(normalize_locale(input), expected);
         }
+    }
+
+    #[test]
+    fn gnome_language_takes_precedence_over_environment() {
+        assert_eq!(
+            resolve_locale(Some("es_ES.UTF-8"), Some("pt_BR.UTF-8")),
+            "es_ES"
+        );
+        assert_eq!(resolve_locale(None, Some("zh_CN.UTF-8")), "zh_CN");
+        assert_eq!(resolve_locale(None, None), "en_US");
     }
 }
