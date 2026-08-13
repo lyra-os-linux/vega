@@ -35,16 +35,11 @@ pub fn init() {
 }
 
 fn session_locale() -> &'static str {
+    let gnome = gnome_language();
+    let environment = ["LC_ALL", "LC_MESSAGES", "LANG"].map(std::env::var);
     resolve_locale(
-        gnome_language().as_deref(),
-        ["LC_ALL", "LC_MESSAGES", "LANG"]
-            .into_iter()
-            .find_map(|name| {
-                std::env::var(name)
-                    .ok()
-                    .filter(|value| !value.trim().is_empty())
-            })
-            .as_deref(),
+        gnome.as_deref(),
+        environment.iter().filter_map(|value| value.as_deref().ok()),
     )
 }
 
@@ -89,8 +84,25 @@ fn gnome_language() -> Option<String> {
         .filter(|value| !value.trim().is_empty())
 }
 
-fn resolve_locale(gnome: Option<&str>, environment: Option<&str>) -> &'static str {
-    gnome.or(environment).map_or("en_US", normalize_locale)
+fn resolve_locale<'a>(
+    gnome: Option<&'a str>,
+    environment: impl IntoIterator<Item = &'a str>,
+) -> &'static str {
+    gnome
+        .into_iter()
+        .chain(environment)
+        .into_iter()
+        .find(|value| !value.trim().is_empty() && !is_portable_locale(value))
+        .map_or("en_US", normalize_locale)
+}
+
+/// `C` and `POSIX` describe a portable process environment, not the language
+/// selected by the user. Continue to the next locale variable when launchers
+/// set either value globally while `LANG` still carries the desktop language.
+fn is_portable_locale(value: &str) -> bool {
+    let base = value.trim().split('@').next().unwrap_or("");
+    let base = base.split('.').next().unwrap_or("");
+    base.eq_ignore_ascii_case("C") || base.eq_ignore_ascii_case("POSIX")
 }
 
 fn normalize_locale(value: &str) -> &'static str {
@@ -142,10 +154,23 @@ mod tests {
     #[test]
     fn gnome_language_takes_precedence_over_environment() {
         assert_eq!(
-            resolve_locale(Some("es_ES.UTF-8"), Some("pt_BR.UTF-8")),
+            resolve_locale(Some("es_ES.UTF-8"), ["pt_BR.UTF-8"]),
             "es_ES"
         );
-        assert_eq!(resolve_locale(None, Some("zh_CN.UTF-8")), "zh_CN");
-        assert_eq!(resolve_locale(None, None), "en_US");
+        assert_eq!(resolve_locale(None, ["zh_CN.UTF-8"]), "zh_CN");
+        assert_eq!(resolve_locale(None, []), "en_US");
+    }
+
+    #[test]
+    fn portable_locale_does_not_hide_desktop_language() {
+        assert_eq!(
+            resolve_locale(None, ["C.UTF-8", "C.UTF-8", "pt_BR.UTF-8"]),
+            "pt_BR"
+        );
+        assert_eq!(
+            resolve_locale(Some("C.UTF-8"), ["POSIX", "es_ES.UTF-8"]),
+            "es_ES"
+        );
+        assert_eq!(resolve_locale(None, ["C.UTF-8", "POSIX"]), "en_US");
     }
 }
