@@ -82,6 +82,10 @@ impl VegaShell {
 
         let stack = gtk::Stack::builder()
             .transition_type(gtk::StackTransitionType::Crossfade)
+            // Each page must negotiate its own width. The default horizontal
+            // homogeneity makes every page inherit the widest page's minimum
+            // size, pushing otherwise responsive content past the viewport.
+            .hhomogeneous(false)
             .hexpand(true)
             .vexpand(true)
             .build();
@@ -583,7 +587,7 @@ fn dashboard_page(stack: &gtk::Stack, widgets: DashboardWidgets<'_>) -> gtk::Wid
     let grid = gtk::FlowBox::builder()
         .column_spacing(8)
         .row_spacing(8)
-        .min_children_per_line(2)
+        .min_children_per_line(1)
         .max_children_per_line(4)
         .selection_mode(gtk::SelectionMode::None)
         .homogeneous(true)
@@ -773,6 +777,8 @@ fn nvidia_card() -> NvidiaWidgets {
         .label(gettext("Verificando hardware NVIDIA…"))
         .xalign(0.0)
         .hexpand(true)
+        .wrap(true)
+        .wrap_mode(gtk::pango::WrapMode::WordChar)
         .css_classes(["title-3"])
         .build();
     let detail = gtk::Label::builder()
@@ -850,6 +856,7 @@ fn tabbed_page(title: &str, subtitle: &str, tabs: &[(String, gtk::Widget)]) -> g
     tab_box.add_css_class("module-tabs");
     let stack = gtk::Stack::builder()
         .transition_type(gtk::StackTransitionType::Crossfade)
+        .hhomogeneous(false)
         .vexpand(true)
         .build();
     let mut group: Option<gtk::ToggleButton> = None;
@@ -924,7 +931,8 @@ fn property_row(title: &str, value: &gtk::Label) -> adw::ActionRow {
     value.set_wrap(true);
     value.set_wrap_mode(gtk::pango::WrapMode::WordChar);
     value.set_ellipsize(gtk::pango::EllipsizeMode::None);
-    value.set_max_width_chars(-1);
+    value.set_width_chars(24);
+    value.set_max_width_chars(48);
     let row = adw::ActionRow::builder()
         .title(title)
         .title_lines(1)
@@ -957,7 +965,9 @@ fn scrolled(content: gtk::Box) -> gtk::Widget {
     gtk::ScrolledWindow::builder()
         .child(&content)
         .hscrollbar_policy(gtk::PolicyType::Never)
-        .propagate_natural_width(true)
+        // The content must adapt to the viewport. Propagating its natural
+        // width lets wide cards and forms grow every page past the window.
+        .propagate_natural_width(false)
         .build()
         .upcast()
 }

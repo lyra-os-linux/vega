@@ -3525,6 +3525,7 @@ fn configure_nvidia(shell: &VegaShell, dbus: VegaDbus) {
                 Err(error) => {
                     page.nvidia_detail.set_label(&error.to_string());
                     page.nvidia_progress.set_visible(false);
+                    page.nvidia_install.set_sensitive(true);
                     return;
                 }
             };
@@ -3533,6 +3534,7 @@ fn configure_nvidia(shell: &VegaShell, dbus: VegaDbus) {
                 Err(error) => {
                     page.nvidia_detail.set_label(&error.to_string());
                     page.nvidia_progress.set_visible(false);
+                    page.nvidia_install.set_sensitive(true);
                     return;
                 }
             };
@@ -3561,6 +3563,7 @@ fn configure_nvidia(shell: &VegaShell, dbus: VegaDbus) {
                     Err(error) => {
                         page.nvidia_detail.set_label(&error.to_string());
                         page.nvidia_progress.set_visible(false);
+                        page.nvidia_install.set_sensitive(true);
                         break;
                     }
                 }

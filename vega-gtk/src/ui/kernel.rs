@@ -56,10 +56,16 @@ impl KernelPage {
         let available_column = gtk::Box::new(gtk::Orientation::Vertical, 8);
         available_column.set_hexpand(true);
         available_column.append(&section(&gettext("Kernels disponíveis"), &available));
-        let kernel_columns = gtk::Box::new(gtk::Orientation::Horizontal, 12);
-        kernel_columns.set_homogeneous(true);
-        kernel_columns.append(&installed_column);
-        kernel_columns.append(&available_column);
+        let kernel_columns = gtk::FlowBox::builder()
+            .column_spacing(12)
+            .row_spacing(12)
+            .min_children_per_line(1)
+            .max_children_per_line(2)
+            .selection_mode(gtk::SelectionMode::None)
+            .homogeneous(true)
+            .build();
+        kernel_columns.insert(&installed_column, -1);
+        kernel_columns.insert(&available_column, -1);
         content.append(&kernel_columns);
 
         let boot = adw::PreferencesGroup::builder()
@@ -235,7 +241,8 @@ fn property(title: &str, value: &gtk::Label) -> adw::ActionRow {
     value.set_wrap(true);
     value.set_wrap_mode(gtk::pango::WrapMode::WordChar);
     value.set_ellipsize(gtk::pango::EllipsizeMode::None);
-    value.set_max_width_chars(-1);
+    value.set_width_chars(24);
+    value.set_max_width_chars(48);
     let row = adw::ActionRow::builder()
         .title(title)
         .title_lines(1)
