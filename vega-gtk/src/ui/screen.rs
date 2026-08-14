@@ -2,7 +2,7 @@ use crate::i18n::gettext;
 use adw::prelude::*;
 
 use super::{DockPage, MenuPage, ScreensaverPage, WallpaperPage};
-use crate::appearance::{AccentColor, Theme};
+use crate::appearance::Theme;
 
 /// Reúne tudo relacionado a "tela": aparência, bloqueio de tela, papel de
 /// parede, o menu e o dock do Sheliak (quando instalado) —
@@ -133,13 +133,11 @@ fn tab_button(label: &str) -> gtk::ToggleButton {
         .build()
 }
 
-/// Tema e cor de destaque escrevem direto em `org.gnome.desktop.interface`
-/// (veja `crate::appearance`): não é preferência do Vega, é a mesma
+/// O tema escreve direto em `org.gnome.desktop.interface` (veja
+/// `crate::appearance`): não é preferência do Vega, é a mesma
 /// configuração do painel Aparência do GNOME — muda o Shell, o Nautilus e
 /// qualquer app libadwaita em execução, não só a janela do Vega.
 fn appearance_page() -> gtk::Widget {
-    install_swatch_css();
-
     let unavailable = !crate::appearance::schema_available();
 
     let theme_group = adw::PreferencesGroup::builder()
@@ -147,7 +145,8 @@ fn appearance_page() -> gtk::Widget {
         .build();
 
     let cards = gtk::Box::new(gtk::Orientation::Horizontal, 16);
-    cards.set_halign(gtk::Align::Center);
+    cards.set_homogeneous(true);
+    cards.set_hexpand(true);
     cards.set_margin_top(4);
     cards.set_margin_bottom(4);
 
@@ -186,40 +185,6 @@ fn appearance_page() -> gtk::Widget {
     cards.append(&dark_card);
     theme_group.add(&cards);
 
-    let accent_group = adw::PreferencesGroup::builder()
-        .title(gettext("Cor de destaque"))
-        .description(gettext(
-            "Aplica no GNOME inteiro, como no painel Aparência das Configurações.",
-        ))
-        .build();
-    let accent_row = adw::ActionRow::builder()
-        .title(gettext("Cor de destaque"))
-        .sensitive(!unavailable)
-        .build();
-    let swatches = gtk::Box::new(gtk::Orientation::Horizontal, 6);
-    swatches.set_valign(gtk::Align::Center);
-
-    let current = crate::appearance::current_accent_color().unwrap_or(AccentColor::Blue);
-    let mut group_anchor: Option<gtk::ToggleButton> = None;
-    for color in AccentColor::ALL {
-        let button = accent_swatch(color, group_anchor.as_ref());
-        if group_anchor.is_none() {
-            group_anchor = Some(button.clone());
-        }
-        button.set_active(color == current);
-
-        button.connect_toggled(move |button| {
-            if !button.is_active() {
-                return;
-            }
-            crate::appearance::apply_accent_color(color);
-        });
-
-        swatches.append(&button);
-    }
-    accent_row.add_suffix(&swatches);
-    accent_group.add(&accent_row);
-
     let content = gtk::Box::new(gtk::Orientation::Vertical, 18);
     if unavailable {
         content.append(
@@ -234,7 +199,6 @@ fn appearance_page() -> gtk::Widget {
         );
     }
     content.append(&theme_group);
-    content.append(&accent_group);
 
     gtk::ScrolledWindow::builder()
         .child(&content)
@@ -286,6 +250,10 @@ fn theme_card(
     let button = gtk::ToggleButton::builder()
         .child(&content)
         .css_classes(["flat", "vega-theme-card"])
+        .height_request(250)
+        .hexpand(true)
+        .halign(gtk::Align::Fill)
+        .valign(gtk::Align::Center)
         .build();
     if let Some(group) = group {
         button.set_group(Some(group));
@@ -334,80 +302,4 @@ fn theme_preview(dark: bool) -> gtk::Widget {
     window.append(&header);
     window.append(&body);
     window.upcast()
-}
-
-fn accent_key(color: AccentColor) -> &'static str {
-    match color {
-        AccentColor::Blue => "blue",
-        AccentColor::Teal => "teal",
-        AccentColor::Green => "green",
-        AccentColor::Yellow => "yellow",
-        AccentColor::Orange => "orange",
-        AccentColor::Red => "red",
-        AccentColor::Pink => "pink",
-        AccentColor::Purple => "purple",
-        AccentColor::Slate => "slate",
-    }
-}
-
-fn accent_label(color: AccentColor) -> String {
-    match color {
-        AccentColor::Blue => gettext("Azul"),
-        AccentColor::Teal => gettext("Verde-azulado"),
-        AccentColor::Green => gettext("Verde"),
-        AccentColor::Yellow => gettext("Amarelo"),
-        AccentColor::Orange => gettext("Laranja"),
-        AccentColor::Red => gettext("Vermelho"),
-        AccentColor::Pink => gettext("Rosa"),
-        AccentColor::Purple => gettext("Roxo"),
-        AccentColor::Slate => gettext("Ardósia"),
-    }
-}
-
-fn accent_swatch(color: AccentColor, group: Option<&gtk::ToggleButton>) -> gtk::ToggleButton {
-    let button = gtk::ToggleButton::builder()
-        .css_classes([
-            "flat",
-            "circular",
-            "vega-accent-swatch",
-            &format!("vega-accent-swatch-{}", accent_key(color)),
-        ])
-        .tooltip_text(accent_label(color))
-        .width_request(28)
-        .height_request(28)
-        .build();
-    if let Some(group) = group {
-        button.set_group(Some(group));
-    }
-    button
-}
-
-/// Provider de CSS instalado uma vez por processo, definindo a cor sólida de
-/// cada botão-amostra do seletor de cor de destaque (`AccentColor::swatch`).
-fn install_swatch_css() {
-    use std::sync::OnceLock;
-    static INSTALLED: OnceLock<()> = OnceLock::new();
-    INSTALLED.get_or_init(|| {
-        let mut css = String::from(
-            ".vega-accent-swatch { min-width: 0; min-height: 0; padding: 0; }\n\
-             .vega-accent-swatch:checked { outline: 2px solid @window_fg_color; outline-offset: 2px; }\n",
-        );
-        for color in AccentColor::ALL {
-            css.push_str(&format!(
-                ".vega-accent-swatch-{} {{ background-color: {}; }}\n",
-                accent_key(color),
-                color.swatch(),
-            ));
-        }
-
-        let provider = gtk::CssProvider::new();
-        provider.load_from_data(&css);
-        if let Some(display) = gtk::gdk::Display::default() {
-            gtk::style_context_add_provider_for_display(
-                &display,
-                &provider,
-                gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
-            );
-        }
-    });
 }
