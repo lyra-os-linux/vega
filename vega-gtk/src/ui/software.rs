@@ -158,6 +158,11 @@ impl SoftwarePage {
         cards.add_css_class("software-cards");
         let result_stack = gtk::Stack::builder()
             .transition_type(gtk::StackTransitionType::Crossfade)
+            // List and card views have very different size requests. Measure
+            // only the active child so the hidden card grid cannot reserve
+            // space beside/below the list (and vice versa).
+            .hhomogeneous(false)
+            .vhomogeneous(false)
             .build();
         result_stack.add_named(&results, Some("list"));
         result_stack.add_named(&cards, Some("cards"));
