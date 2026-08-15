@@ -64,7 +64,12 @@
     </method>
 
     <method name="GetUpdateStatus">
-      <arg name="status" type="(ssuuus)" direction="out"/>
+      <arg name="status" type="(ssuuuubs)" direction="out"/>
+    </method>
+
+    <method name="RequestUpdateCheck">
+      <!-- Read-only and non-blocking; stale checks are deduplicated. -->
+      <arg name="status" type="(ssuuuubs)" direction="out"/>
     </method>
 
     <method name="ListInstalled">
@@ -201,6 +206,9 @@
       <!-- emitted by vegad-update-check.timer (every 4h) when ListUpdates
            changes; count can be zero when the system becomes current -->
       <arg name="count" type="u"/>
+    </signal>
+    <signal name="UpdateStateChanged">
+      <arg name="status" type="(ssuuuubs)"/>
     </signal>
   </interface>
 </node>

@@ -158,10 +158,12 @@ pub struct UpdateStatus {
     pub native_count: u32,
     pub flatpak_count: u32,
     pub total_count: u32,
+    pub security_count: u32,
+    pub in_progress: bool,
     pub error: String,
 }
 
-type UpdateStatusRow = (String, String, u32, u32, u32, String);
+type UpdateStatusRow = (String, String, u32, u32, u32, u32, bool, String);
 
 impl From<UpdateStatusRow> for UpdateStatus {
     fn from(row: UpdateStatusRow) -> Self {
@@ -171,7 +173,9 @@ impl From<UpdateStatusRow> for UpdateStatus {
             native_count: row.2,
             flatpak_count: row.3,
             total_count: row.4,
-            error: row.5,
+            security_count: row.5,
+            in_progress: row.6,
+            error: row.7,
         }
     }
 }
@@ -262,6 +266,7 @@ pub trait SoftwareClient: Send + Sync {
     async fn list_updates(&self) -> Result<Vec<PackageRef>, SoftwareClientError>;
     async fn list_native_updates(&self) -> Result<Vec<PackageRef>, SoftwareClientError>;
     async fn update_status(&self) -> Result<UpdateStatus, SoftwareClientError>;
+    async fn request_update_check(&self) -> Result<UpdateStatus, SoftwareClientError>;
     async fn list_installed(&self) -> Result<Vec<PackageRef>, SoftwareClientError>;
     async fn list_native_installed(&self) -> Result<Vec<PackageRef>, SoftwareClientError>;
     async fn list_repos(&self) -> Result<Vec<RepositoryRef>, SoftwareClientError>;
@@ -297,6 +302,7 @@ trait Software {
     async fn list_updates(&self) -> zbus::Result<Vec<PackageRefRow>>;
     async fn list_native_updates(&self) -> zbus::Result<Vec<PackageRefRow>>;
     async fn get_update_status(&self) -> zbus::Result<UpdateStatusRow>;
+    async fn request_update_check(&self) -> zbus::Result<UpdateStatusRow>;
     async fn list_installed(&self) -> zbus::Result<Vec<PackageRefRow>>;
     async fn list_native_installed(&self) -> zbus::Result<Vec<PackageRefRow>>;
     async fn list_repos(&self) -> zbus::Result<Vec<RepositoryRefRow>>;
@@ -343,6 +349,9 @@ trait Software {
 
     #[zbus(signal)]
     async fn updates_available(&self, count: u32) -> zbus::Result<()>;
+
+    #[zbus(signal)]
+    async fn update_state_changed(&self, status: UpdateStatusRow) -> zbus::Result<()>;
 
     #[zbus(signal)]
     async fn repo_key_pending(
@@ -523,6 +532,10 @@ impl SoftwareClient for ZbusSoftwareClient {
         proxy_call!(self, get_update_status()).map(Into::into)
     }
 
+    async fn request_update_check(&self) -> Result<UpdateStatus, SoftwareClientError> {
+        proxy_call!(self, request_update_check()).map(Into::into)
+    }
+
     async fn list_installed(&self) -> Result<Vec<PackageRef>, SoftwareClientError> {
         proxy_call!(self, list_installed()).map(|rows| rows.into_iter().map(Into::into).collect())
     }
@@ -667,7 +680,8 @@ mod tests {
                 "GetPackageDetails".into(),
                 args(&[("in", "s"), ("in", "s"), ("out", "(ssssbssssasasss)")]),
             ),
-            ("GetUpdateStatus".into(), args(&[("out", "(ssuuus)")])),
+            ("GetUpdateStatus".into(), args(&[("out", "(ssuuuubs)")])),
+            ("RequestUpdateCheck".into(), args(&[("out", "(ssuuuubs)")])),
             (
                 "Install".into(),
                 args(&[("in", "s"), ("in", "s"), ("out", "u")]),
@@ -717,6 +731,7 @@ mod tests {
                 args(&[("out", "u"), ("out", "u"), ("out", "s")]),
             ),
             ("UpdatesAvailable".into(), args(&[("out", "u")])),
+            ("UpdateStateChanged".into(), args(&[("out", "(ssuuuubs)")])),
             (
                 "RepoKeyPending".into(),
                 args(&[
