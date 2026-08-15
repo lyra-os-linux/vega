@@ -6,7 +6,7 @@ import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 PO_DIR = ROOT / "vega-gtk" / "po"
-LOCALES = ("en-US", "pt-BR", "es-ES", "zh-CN")
+LOCALES = ("en-US", "pt-BR", "es-ES")
 PLACEHOLDER = re.compile(r"\{[A-Za-z_][A-Za-z0-9_]*\}")
 
 
@@ -64,9 +64,16 @@ class VegaGtkI18nTests(unittest.TestCase):
     def test_rpm_specs_install_all_catalogs(self):
         for relative in ("packaging/opensuse/vega.spec", "packaging/obs/vega-gtk.spec"):
             spec = (ROOT / relative).read_text(encoding="utf-8")
-            for locale in ("en_US", "pt_BR", "es_ES", "zh_CN"):
+            for locale in ("en_US", "pt_BR", "es_ES"):
                 self.assertIn(locale, spec)
+            self.assertNotIn("zh_CN", spec)
             self.assertNotIn("vega-gtk-fallback.mo", spec)
+
+    def test_chinese_catalogs_are_not_shipped(self):
+        self.assertFalse((PO_DIR / "zh-CN.po").exists())
+        self.assertFalse(
+            (ROOT / "vegad" / "internal" / "i18n" / "catalog" / "zh-CN.json").exists()
+        )
 
 
 if __name__ == "__main__":

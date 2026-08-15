@@ -41,6 +41,9 @@
     <method name="RestoreSnapshot">
       <!-- polkit: org.lyraos.vega.backup.restore -->
       <!-- mode: "replace" | "separate-folder" -->
+      <!-- targetPath is canonicalized by vegad and restricted to the
+           caller's home (or configured backup roots for uid 0) before a
+           replace transaction can remove anything. -->
       <arg name="snapshotId" type="s" direction="in"/>
       <arg name="targetPath" type="s" direction="in"/>
       <arg name="mode" type="s" direction="in"/>
@@ -50,6 +53,7 @@
     <method name="RestoreItems">
       <!-- polkit: org.lyraos.vega.backup.restore -->
       <!-- mode: "replace" | "separate-folder" -->
+      <!-- Uses the same fail-closed target policy as RestoreSnapshot. -->
       <arg name="snapshotId" type="s" direction="in"/>
       <arg name="targetPath" type="s" direction="in"/>
       <arg name="mode" type="s" direction="in"/>

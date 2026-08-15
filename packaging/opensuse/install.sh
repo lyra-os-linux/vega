@@ -49,6 +49,9 @@ install -Dm755 "$REPO_ROOT/vegad/vegad" /usr/lib/vega/vegad
 install -Dm644 "$REPO_ROOT/packaging/vegad/vegad.service" /usr/lib/systemd/system/vegad.service
 install -Dm644 "$REPO_ROOT/packaging/vegad/vegad-update-check.service" /usr/lib/systemd/system/vegad-update-check.service
 install -Dm644 "$REPO_ROOT/packaging/vegad/vegad-update-check.timer" /usr/lib/systemd/system/vegad-update-check.timer
+install -Dm644 "$REPO_ROOT/packaging/vegad/vegad.conf" /etc/vega/vegad.conf
+install -Dm644 "$REPO_ROOT/packaging/vegad/profiles/desktop.conf" /usr/share/vega/profiles/desktop.conf
+install -Dm644 "$REPO_ROOT/packaging/vegad/profiles/server.conf" /usr/share/vega/profiles/server.conf
 install -Dm644 "$REPO_ROOT/packaging/vegad/org.lyraos.Vega1.conf" /usr/share/dbus-1/system.d/org.lyraos.Vega1.conf
 install -Dm644 "$REPO_ROOT/packaging/vegad/org.lyraos.Vega1.service" /usr/share/dbus-1/system-services/org.lyraos.Vega1.service
 install -Dm644 "$REPO_ROOT/packaging/vegad/org.lyraos.vega.policy" /usr/share/polkit-1/actions/org.lyraos.vega.policy

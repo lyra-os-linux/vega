@@ -1,8 +1,8 @@
 use super::{
     ZbusBackupClient, ZbusBluetoothClient, ZbusDateTimeClient, ZbusFirewallClient,
-    ZbusHardwareClient, ZbusKernelClient, ZbusLogsClient, ZbusMonitorClient, ZbusNetworkClient,
-    ZbusServicesClient, ZbusSnapshotsClient, ZbusSoftwareClient, ZbusStorageClient,
-    ZbusSystemClient, ZbusUsersClient,
+    ZbusHardwareClient, ZbusKernelClient, ZbusLogsClient, ZbusMetadataClient, ZbusMonitorClient,
+    ZbusNetworkClient, ZbusServicesClient, ZbusSnapshotsClient, ZbusSoftwareClient,
+    ZbusStorageClient, ZbusSystemClient, ZbusUsersClient,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -36,6 +36,10 @@ impl VegaDbus {
 
     pub fn system(&self) -> ZbusSystemClient {
         ZbusSystemClient::from_connection(self.connection.clone())
+    }
+
+    pub fn metadata(&self) -> ZbusMetadataClient {
+        ZbusMetadataClient::from_connection(self.connection.clone())
     }
 
     pub fn software(&self) -> ZbusSoftwareClient {
@@ -98,13 +102,21 @@ impl VegaDbus {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{ServicesClient, SnapshotsClient};
+    use crate::{MetadataClient, ServicesClient, SnapshotsClient};
 
     #[test]
     #[ignore = "requer vegad instalado e acesso ao system bus"]
     fn dashboard_read_clients_work_against_the_real_daemon() {
         futures_lite::future::block_on(async {
             let dbus = VegaDbus::connect().await.unwrap();
+            let metadata = dbus.metadata().metadata().await.unwrap();
+            assert!(matches!(metadata.profile.as_str(), "desktop" | "server"));
+            assert!(
+                metadata
+                    .capabilities
+                    .iter()
+                    .any(|item| item == "packages-native")
+            );
             dbus.snapshots().available().await.unwrap();
             dbus.services().list().await.unwrap();
         });

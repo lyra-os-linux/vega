@@ -17,7 +17,6 @@ pub fn normalize_locale(value: &str) -> &'static str {
         "en-us" => "en-US",
         "pt-br" => "pt-BR",
         "es-es" => "es-ES",
-        "zh-cn" => "zh-CN",
         _ => DEFAULT_LOCALE,
     }
 }
@@ -105,7 +104,7 @@ mod tests {
             ("en_US.UTF-8", "en-US"),
             ("pt_BR.UTF-8", "pt-BR"),
             ("es_ES.UTF-8@custom", "es-ES"),
-            ("zh_CN.UTF-8", "zh-CN"),
+            ("zh_CN.UTF-8", DEFAULT_LOCALE),
             ("", "en-US"),
             ("de_DE.UTF-8", "en-US"),
             ("../../pt_BR", "en-US"),
@@ -120,7 +119,7 @@ mod tests {
             resolve_locale(Some("es_ES.UTF-8"), Some("pt_BR.UTF-8")),
             "es-ES"
         );
-        assert_eq!(resolve_locale(None, Some("zh_CN.UTF-8")), "zh-CN");
+        assert_eq!(resolve_locale(None, Some("zh_CN.UTF-8")), DEFAULT_LOCALE);
         assert_eq!(resolve_locale(None, None), DEFAULT_LOCALE);
     }
 

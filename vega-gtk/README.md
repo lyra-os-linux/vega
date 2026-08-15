@@ -37,7 +37,7 @@ um evento de domínio tipado; descartar o stream remove as subscriptions D-Bus.
 ## Internacionalização
 
 A interface possui catálogos completos para `en-US` (padrão),
-`pt-BR`, `es-ES` e `zh-CN`. O idioma é resolvido automaticamente a cada
+`pt-BR`, `en-US` e `es-ES`. O idioma é resolvido automaticamente a cada
 abertura. A preferência registrada pelo GNOME AccountsService tem prioridade;
 se ela não estiver disponível, são consultados `LC_ALL`, `LC_MESSAGES` e
 `LANG`. Locales portáteis (`C` e `POSIX`) não escondem o idioma da sessão. Não

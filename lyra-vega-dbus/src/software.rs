@@ -151,6 +151,31 @@ pub struct NonFreeFirmwareStatus {
     pub packages: Vec<String>,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct UpdateStatus {
+    pub checked_at: String,
+    pub profile: String,
+    pub native_count: u32,
+    pub flatpak_count: u32,
+    pub total_count: u32,
+    pub error: String,
+}
+
+type UpdateStatusRow = (String, String, u32, u32, u32, String);
+
+impl From<UpdateStatusRow> for UpdateStatus {
+    fn from(row: UpdateStatusRow) -> Self {
+        Self {
+            checked_at: row.0,
+            profile: row.1,
+            native_count: row.2,
+            flatpak_count: row.3,
+            total_count: row.4,
+            error: row.5,
+        }
+    }
+}
+
 type NonFreeFirmwareStatusRow = (bool, bool, String, Vec<String>);
 
 impl From<NonFreeFirmwareStatusRow> for NonFreeFirmwareStatus {
@@ -227,6 +252,7 @@ pub trait SoftwareClient: Send + Sync {
     async fn package_manager_name(&self) -> Result<String, SoftwareClientError>;
     async fn community_layer_name(&self) -> Result<String, SoftwareClientError>;
     async fn search(&self, query: &str) -> Result<Vec<PackageRef>, SoftwareClientError>;
+    async fn search_native(&self, query: &str) -> Result<Vec<PackageRef>, SoftwareClientError>;
     async fn package_details(
         &self,
         origin: &str,
@@ -234,16 +260,21 @@ pub trait SoftwareClient: Send + Sync {
     ) -> Result<PackageDetails, SoftwareClientError>;
     async fn aur_pkgbuild(&self, id: &str) -> Result<String, SoftwareClientError>;
     async fn list_updates(&self) -> Result<Vec<PackageRef>, SoftwareClientError>;
+    async fn list_native_updates(&self) -> Result<Vec<PackageRef>, SoftwareClientError>;
+    async fn update_status(&self) -> Result<UpdateStatus, SoftwareClientError>;
     async fn list_installed(&self) -> Result<Vec<PackageRef>, SoftwareClientError>;
+    async fn list_native_installed(&self) -> Result<Vec<PackageRef>, SoftwareClientError>;
     async fn list_repos(&self) -> Result<Vec<RepositoryRef>, SoftwareClientError>;
     async fn install(&self, origin: &str, id: &str) -> Result<u32, SoftwareClientError>;
     async fn remove(&self, origin: &str, id: &str) -> Result<u32, SoftwareClientError>;
     async fn update_all(&self) -> Result<u32, SoftwareClientError>;
+    async fn update_all_native(&self) -> Result<u32, SoftwareClientError>;
     async fn update_package(&self, origin: &str, id: &str) -> Result<u32, SoftwareClientError>;
     async fn set_repo_enabled(&self, repo: &str, enabled: bool) -> Result<(), SoftwareClientError>;
     async fn add_repo(&self, name: &str, url: &str) -> Result<u32, SoftwareClientError>;
     async fn trust_repo_key(&self, repo: &str, key_id: &str) -> Result<u32, SoftwareClientError>;
     async fn clear_cache(&self) -> Result<u32, SoftwareClientError>;
+    async fn clear_native_cache(&self) -> Result<u32, SoftwareClientError>;
     async fn nvidia_status(&self) -> Result<NvidiaStatus, SoftwareClientError>;
     async fn install_nvidia(&self, confirmed: bool) -> Result<u32, SoftwareClientError>;
     async fn check_nvidia(&self) -> Result<(bool, String), SoftwareClientError>;
@@ -260,19 +291,25 @@ trait Software {
     async fn package_manager_name(&self) -> zbus::Result<String>;
     async fn community_layer_name(&self) -> zbus::Result<String>;
     async fn search(&self, query: &str) -> zbus::Result<Vec<PackageRefRow>>;
+    async fn search_native(&self, query: &str) -> zbus::Result<Vec<PackageRefRow>>;
     async fn get_package_details(&self, origin: &str, id: &str) -> zbus::Result<PackageDetailsRow>;
     async fn get_aur_pkgbuild(&self, id: &str) -> zbus::Result<String>;
     async fn list_updates(&self) -> zbus::Result<Vec<PackageRefRow>>;
+    async fn list_native_updates(&self) -> zbus::Result<Vec<PackageRefRow>>;
+    async fn get_update_status(&self) -> zbus::Result<UpdateStatusRow>;
     async fn list_installed(&self) -> zbus::Result<Vec<PackageRefRow>>;
+    async fn list_native_installed(&self) -> zbus::Result<Vec<PackageRefRow>>;
     async fn list_repos(&self) -> zbus::Result<Vec<RepositoryRefRow>>;
     async fn install(&self, origin: &str, id: &str) -> zbus::Result<u32>;
     async fn remove(&self, origin: &str, id: &str) -> zbus::Result<u32>;
     async fn update_all(&self) -> zbus::Result<u32>;
+    async fn update_all_native(&self) -> zbus::Result<u32>;
     async fn update_package(&self, origin: &str, id: &str) -> zbus::Result<u32>;
     async fn set_repo_enabled(&self, repo: &str, enabled: bool) -> zbus::Result<()>;
     async fn add_repo(&self, name: &str, url: &str) -> zbus::Result<u32>;
     async fn trust_repo_key(&self, repo: &str, key_id: &str) -> zbus::Result<u32>;
     async fn clear_cache(&self) -> zbus::Result<u32>;
+    async fn clear_native_cache(&self) -> zbus::Result<u32>;
     async fn nvidia_status(&self) -> zbus::Result<NvidiaStatusRow>;
     async fn install_nvidia(&self, confirmed: bool) -> zbus::Result<u32>;
     async fn check_nvidia(&self) -> zbus::Result<(bool, String)>;
@@ -456,6 +493,11 @@ impl SoftwareClient for ZbusSoftwareClient {
         proxy_call!(self, search(query)).map(|rows| rows.into_iter().map(Into::into).collect())
     }
 
+    async fn search_native(&self, query: &str) -> Result<Vec<PackageRef>, SoftwareClientError> {
+        proxy_call!(self, search_native(query))
+            .map(|rows| rows.into_iter().map(Into::into).collect())
+    }
+
     async fn package_details(
         &self,
         origin: &str,
@@ -472,8 +514,22 @@ impl SoftwareClient for ZbusSoftwareClient {
         proxy_call!(self, list_updates()).map(|rows| rows.into_iter().map(Into::into).collect())
     }
 
+    async fn list_native_updates(&self) -> Result<Vec<PackageRef>, SoftwareClientError> {
+        proxy_call!(self, list_native_updates())
+            .map(|rows| rows.into_iter().map(Into::into).collect())
+    }
+
+    async fn update_status(&self) -> Result<UpdateStatus, SoftwareClientError> {
+        proxy_call!(self, get_update_status()).map(Into::into)
+    }
+
     async fn list_installed(&self) -> Result<Vec<PackageRef>, SoftwareClientError> {
         proxy_call!(self, list_installed()).map(|rows| rows.into_iter().map(Into::into).collect())
+    }
+
+    async fn list_native_installed(&self) -> Result<Vec<PackageRef>, SoftwareClientError> {
+        proxy_call!(self, list_native_installed())
+            .map(|rows| rows.into_iter().map(Into::into).collect())
     }
 
     async fn list_repos(&self) -> Result<Vec<RepositoryRef>, SoftwareClientError> {
@@ -490,6 +546,10 @@ impl SoftwareClient for ZbusSoftwareClient {
 
     async fn update_all(&self) -> Result<u32, SoftwareClientError> {
         proxy_call!(self, update_all())
+    }
+
+    async fn update_all_native(&self) -> Result<u32, SoftwareClientError> {
+        proxy_call!(self, update_all_native())
     }
 
     async fn update_package(&self, origin: &str, id: &str) -> Result<u32, SoftwareClientError> {
@@ -510,6 +570,10 @@ impl SoftwareClient for ZbusSoftwareClient {
 
     async fn clear_cache(&self) -> Result<u32, SoftwareClientError> {
         proxy_call!(self, clear_cache())
+    }
+
+    async fn clear_native_cache(&self) -> Result<u32, SoftwareClientError> {
+        proxy_call!(self, clear_native_cache())
     }
 
     async fn nvidia_status(&self) -> Result<NvidiaStatus, SoftwareClientError> {
@@ -595,6 +659,7 @@ mod tests {
                 args(&[("in", "s"), ("in", "s"), ("out", "u")]),
             ),
             ("ClearCache".into(), args(&[("out", "u")])),
+            ("ClearNativeCache".into(), args(&[("out", "u")])),
             ("CheckNvidia".into(), args(&[("out", "b"), ("out", "s")])),
             ("CommunityLayerName".into(), args(&[("out", "s")])),
             ("GetAurPkgbuild".into(), args(&[("in", "s"), ("out", "s")])),
@@ -602,6 +667,7 @@ mod tests {
                 "GetPackageDetails".into(),
                 args(&[("in", "s"), ("in", "s"), ("out", "(ssssbssssasasss)")]),
             ),
+            ("GetUpdateStatus".into(), args(&[("out", "(ssuuus)")])),
             (
                 "Install".into(),
                 args(&[("in", "s"), ("in", "s"), ("out", "u")]),
@@ -612,6 +678,8 @@ mod tests {
                 args(&[("in", "b"), ("out", "u")]),
             ),
             ("ListInstalled".into(), args(&[("out", package_rows)])),
+            ("ListNativeInstalled".into(), args(&[("out", package_rows)])),
+            ("ListNativeUpdates".into(), args(&[("out", package_rows)])),
             ("ListRepos".into(), args(&[("out", "a(sb)")])),
             ("ListUpdates".into(), args(&[("out", package_rows)])),
             ("PackageManagerName".into(), args(&[("out", "s")])),
@@ -622,8 +690,13 @@ mod tests {
                 args(&[("in", "s"), ("in", "s"), ("out", "u")]),
             ),
             ("Search".into(), args(&[("in", "s"), ("out", package_rows)])),
+            (
+                "SearchNative".into(),
+                args(&[("in", "s"), ("out", package_rows)]),
+            ),
             ("SetRepoEnabled".into(), args(&[("in", "s"), ("in", "b")])),
             ("UpdateAll".into(), args(&[("out", "u")])),
+            ("UpdateAllNative".into(), args(&[("out", "u")])),
             (
                 "UpdatePackage".into(),
                 args(&[("in", "s"), ("in", "s"), ("out", "u")]),

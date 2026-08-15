@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extract vega-gtk messages and refresh the four Alpha 4 PO catalogs.
+"""Extract vega-gtk messages and refresh the three supported PO catalogs.
 
 Translations fetched by this maintainer tool are drafts. Runtime/builds never
 contact the network. Placeholders are protected and validated before writing.
@@ -20,7 +20,7 @@ import urllib.request
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 GTK = ROOT / "vega-gtk"
 POT = GTK / "po" / "vega-gtk.pot"
-LANGUAGES = {"en-US": "en", "pt-BR": None, "es-ES": "es", "zh-CN": "zh-CN"}
+LANGUAGES = {"en-US": "en", "pt-BR": None, "es-ES": "es"}
 PLACEHOLDER = re.compile(r"\{[A-Za-z_][A-Za-z0-9_]*\}")
 
 
@@ -109,7 +109,7 @@ def translate_batch(values: list[str], target: str) -> list[str]:
 
 
 def header(locale: str) -> str:
-    plural = "nplurals=1; plural=0;" if locale == "zh-CN" else "nplurals=2; plural=(n != 1);"
+    plural = "nplurals=2; plural=(n != 1);"
     return "\n".join(
         [
             "# Vega GTK translation catalog.",

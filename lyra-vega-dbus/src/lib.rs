@@ -7,6 +7,7 @@ mod hardware;
 mod kernel;
 mod locale;
 mod logs;
+mod metadata;
 mod mock;
 mod monitor;
 mod network;
@@ -35,6 +36,7 @@ pub use hardware::{HardwareClient, HardwareClientError, HardwareInventory, ZbusH
 pub use kernel::{BootStatus, KernelClient, KernelClientError, ZbusKernelClient};
 pub use locale::{DEFAULT_LOCALE, current_locale, normalize_locale};
 pub use logs::{LogsClient, LogsClientError, ZbusLogsClient};
+pub use metadata::{DaemonMetadata, MetadataClient, MetadataClientError, ZbusMetadataClient};
 pub use mock::MockSystemClient;
 pub use monitor::{
     MonitorClient, MonitorClientError, NotNan, ProcessInfo, SystemMetrics, ZbusMonitorClient,
@@ -48,7 +50,7 @@ pub use snapshots::{Snapshot, SnapshotsClient, SnapshotsClientError, ZbusSnapsho
 pub use software::{
     NonFreeFirmwareStatus, NvidiaStatus, PackageDetails, PackageRef, RepositoryKeyInfo,
     RepositoryRef, SoftwareClient, SoftwareClientError, SoftwareEvent, SoftwareEventStream,
-    SoftwareTransactionFinished, SoftwareTransactionProgress, ZbusSoftwareClient,
+    SoftwareTransactionFinished, SoftwareTransactionProgress, UpdateStatus, ZbusSoftwareClient,
 };
 pub use storage::{StorageClient, StorageClientError, StorageVolume, ZbusStorageClient};
 pub use system::{

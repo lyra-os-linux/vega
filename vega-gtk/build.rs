@@ -2,12 +2,7 @@ use std::path::Path;
 use std::process::Command;
 
 const DOMAIN: &str = "vega-gtk";
-const LOCALES: &[(&str, &str)] = &[
-    ("en-US", "en_US"),
-    ("pt-BR", "pt_BR"),
-    ("es-ES", "es_ES"),
-    ("zh-CN", "zh_CN"),
-];
+const LOCALES: &[(&str, &str)] = &[("en-US", "en_US"), ("pt-BR", "pt_BR"), ("es-ES", "es_ES")];
 
 fn main() {
     println!("cargo:rerun-if-changed=po");

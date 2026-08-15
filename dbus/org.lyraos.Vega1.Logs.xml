@@ -2,6 +2,8 @@
  "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node name="/org/lyraos/Vega1">
   <interface name="org.lyraos.Vega1.Logs">
+    <!-- org.lyraos.vega.logs.read-admin is required because the daemon
+         executes journalctl with root privileges. -->
     <method name="Query">
       <arg name="unit" type="s" direction="in"/>
       <arg name="priority" type="s" direction="in"/>

@@ -64,7 +64,7 @@ install -Dm644 packaging/vega/vega.desktop \
   %{buildroot}%{_datadir}/applications/vega.desktop
 install -Dm644 packaging/vega/vega.svg \
   %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/vega.svg
-for locale in en_US pt_BR es_ES zh_CN; do
+for locale in en_US pt_BR es_ES; do
   install -Dm644 "vega-gtk/po/locale/${locale}/LC_MESSAGES/vega-gtk.mo" \
     "%{buildroot}%{_datadir}/locale/${locale}/LC_MESSAGES/vega-gtk.mo"
 done
@@ -77,6 +77,5 @@ done
 %lang(en) %{_datadir}/locale/en_US/LC_MESSAGES/vega-gtk*.mo
 %lang(pt_BR) %{_datadir}/locale/pt_BR/LC_MESSAGES/vega-gtk*.mo
 %lang(es) %{_datadir}/locale/es_ES/LC_MESSAGES/vega-gtk*.mo
-%lang(zh_CN) %{_datadir}/locale/zh_CN/LC_MESSAGES/vega-gtk*.mo
 
 %changelog

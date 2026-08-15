@@ -110,7 +110,6 @@ fn normalize_locale(value: &str) -> &'static str {
         "en-us" => "en_US",
         "pt-br" => "pt_BR",
         "es-es" => "es_ES",
-        "zh-cn" => "zh_CN",
         _ => "en_US",
     }
 }
@@ -129,7 +128,7 @@ mod tests {
             ("en_US.UTF-8", "en_US"),
             ("pt_BR.UTF-8", "pt_BR"),
             ("es_ES.UTF-8@custom", "es_ES"),
-            ("zh_CN.UTF-8", "zh_CN"),
+            ("zh_CN.UTF-8", "en_US"),
             ("fr_FR.UTF-8", "en_US"),
             ("../../pt_BR", "en_US"),
         ] {
@@ -143,7 +142,7 @@ mod tests {
             resolve_locale(Some("es_ES.UTF-8"), ["pt_BR.UTF-8"]),
             "es_ES"
         );
-        assert_eq!(resolve_locale(None, ["zh_CN.UTF-8"]), "zh_CN");
+        assert_eq!(resolve_locale(None, ["zh_CN.UTF-8"]), "en_US");
         assert_eq!(resolve_locale(None, []), "en_US");
     }
 
@@ -179,7 +178,6 @@ mod tests {
             ("en_US", "Dashboard"),
             ("pt_BR", "Painel"),
             ("es_ES", "Panel de control"),
-            ("zh_CN", "仪表板"),
         ] {
             let status = std::process::Command::new(&executable)
                 .arg("--exact")

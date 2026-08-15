@@ -34,6 +34,11 @@
       <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QList&lt;PackageRef&gt;"/>
     </method>
 
+    <method name="SearchNative">
+      <arg name="query" type="s" direction="in"/>
+      <arg name="results" type="a(ssssbss)" direction="out"/>
+    </method>
+
     <method name="Install">
       <!-- polkit: org.lyraos.vega.software.install -->
       <arg name="origin" type="s" direction="in"/>
@@ -54,14 +59,30 @@
       <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QList&lt;PackageRef&gt;"/>
     </method>
 
+    <method name="ListNativeUpdates">
+      <arg name="results" type="a(ssssbss)" direction="out"/>
+    </method>
+
+    <method name="GetUpdateStatus">
+      <arg name="status" type="(ssuuus)" direction="out"/>
+    </method>
+
     <method name="ListInstalled">
       <!-- polkit: none (read-only) -->
       <arg name="results" type="a(ssssbss)" direction="out"/>
       <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QList&lt;PackageRef&gt;"/>
     </method>
 
+    <method name="ListNativeInstalled">
+      <arg name="results" type="a(ssssbss)" direction="out"/>
+    </method>
+
     <method name="UpdateAll">
       <!-- polkit: org.lyraos.vega.software.update -->
+      <arg name="transactionId" type="u" direction="out"/>
+    </method>
+
+    <method name="UpdateAllNative">
       <arg name="transactionId" type="u" direction="out"/>
     </method>
 
@@ -103,6 +124,10 @@
 
     <method name="ClearCache">
       <!-- polkit: org.lyraos.vega.software.clear-cache -->
+      <arg name="transactionId" type="u" direction="out"/>
+    </method>
+
+    <method name="ClearNativeCache">
       <arg name="transactionId" type="u" direction="out"/>
     </method>
 
@@ -174,7 +199,7 @@
 
     <signal name="UpdatesAvailable">
       <!-- emitted by vegad-update-check.timer (every 4h) when ListUpdates
-           would return at least one pending update -->
+           changes; count can be zero when the system becomes current -->
       <arg name="count" type="u"/>
     </signal>
   </interface>
