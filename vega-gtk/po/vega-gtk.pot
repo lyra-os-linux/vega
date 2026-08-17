@@ -3034,3 +3034,60 @@ msgstr ""
 #: vega-gtk/src/assistant.rs:957
 msgid "Falha de comunicação com o provedor: {detail}"
 msgstr ""
+msgid "Barra superior"
+msgstr ""
+
+msgid "Altura do painel"
+msgstr ""
+
+msgid "Painel flutuante"
+msgstr ""
+
+msgid "Margem do painel"
+msgstr ""
+
+msgid "Relógio"
+msgstr ""
+
+msgid "Indicadores do lado direito"
+msgstr ""
+
+msgid "Menu Rede"
+msgstr ""
+
+msgid "Item Sobre no menu Sistema"
+msgstr ""
+msgid "Perfil da área de trabalho"
+msgstr ""
+
+msgid "Lyra OS"
+msgstr ""
+
+msgid "Ativa o Sheliak e os recursos Menu e Dock."
+msgstr ""
+
+msgid "GNOME Vanilla"
+msgstr ""
+
+msgid "Usa a experiência padrão do GNOME sem o Sheliak."
+msgstr ""
+
+msgid "As configurações de extensões do GNOME não estão disponíveis."
+msgstr ""
+
+msgid "Não foi possível alterar o perfil da área de trabalho."
+msgstr ""
+msgid "Lyra-OS"
+msgstr ""
+
+msgid "Gnome Vanila"
+msgstr ""
+msgid "Perfil"
+msgstr ""
+msgid "Lyra"
+msgstr ""
+msgid "GNOME mais Dock e Menu do Lyra."
+msgstr ""
+
+msgid "Usa a experiência padrão do GNOME."
+msgstr ""

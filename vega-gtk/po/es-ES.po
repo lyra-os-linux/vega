@@ -2996,3 +2996,60 @@ msgstr "Firmware no libre"
 
 msgid "O Vega instalará somente pacotes do repositório non-oss associados de forma inequívoca ao hardware detectado. Um snapshot somente leitura será criado antes da alteração."
 msgstr "Vega instalará únicamente paquetes del repositorio non-oss asociados inequívocamente con el hardware detectado. Se creará una instantánea de solo lectura antes del cambio."
+msgid "Barra superior"
+msgstr "Barra superior"
+
+msgid "Altura do painel"
+msgstr "Altura del panel"
+
+msgid "Painel flutuante"
+msgstr "Panel flotante"
+
+msgid "Margem do painel"
+msgstr "Margen del panel"
+
+msgid "Relógio"
+msgstr "Reloj"
+
+msgid "Indicadores do lado direito"
+msgstr "Indicadores del lado derecho"
+
+msgid "Menu Rede"
+msgstr "Menú Red"
+
+msgid "Item Sobre no menu Sistema"
+msgstr "Elemento Acerca de en el menú Sistema"
+msgid "Perfil da área de trabalho"
+msgstr "Perfil del escritorio"
+
+msgid "Lyra OS"
+msgstr "Lyra OS"
+
+msgid "Ativa o Sheliak e os recursos Menu e Dock."
+msgstr "Activa Sheliak y las funciones Menú y Dock."
+
+msgid "GNOME Vanilla"
+msgstr "GNOME Vanilla"
+
+msgid "Usa a experiência padrão do GNOME sem o Sheliak."
+msgstr "Usa la experiencia estándar de GNOME sin Sheliak."
+
+msgid "As configurações de extensões do GNOME não estão disponíveis."
+msgstr "La configuración de extensiones de GNOME no está disponible."
+
+msgid "Não foi possível alterar o perfil da área de trabalho."
+msgstr "No se pudo cambiar el perfil del escritorio."
+msgid "Lyra-OS"
+msgstr "Lyra-OS"
+
+msgid "Gnome Vanila"
+msgstr "GNOME Vanilla"
+msgid "Perfil"
+msgstr "Perfil"
+msgid "Lyra"
+msgstr "Lyra"
+msgid "GNOME mais Dock e Menu do Lyra."
+msgstr "GNOME con el Dock y el Menú de Lyra."
+
+msgid "Usa a experiência padrão do GNOME."
+msgstr "Usa la experiencia estándar de GNOME."

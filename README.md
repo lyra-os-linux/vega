@@ -45,7 +45,8 @@ not require authentication; system-changing actions are protected by granular
 polkit rules. The graphical interface never needs to run as root.
 
 Vega CLI is aimed primarily at headless servers. Its `vega` entrypoint requires
-an interactive terminal and re-executes itself with `sudo` when necessary.
+an interactive terminal and runs as the session user; polkit requests
+authentication only when a privileged action is performed.
 
 ## Installing on openSUSE
 

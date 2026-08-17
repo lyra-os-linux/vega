@@ -6,6 +6,7 @@ use gtk::{gio, gio::prelude::*, glib};
 const EXTENSION_UUID: &str = "sheliak@lyraos.org";
 const SCHEMA_ID: &str = "org.gnome.shell.extensions.sheliak";
 const SCHEMA_PATH: &str = "/org/gnome/shell/extensions/sheliak/";
+const SHELL_SCHEMA_ID: &str = "org.gnome.shell";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DockSettings {
@@ -29,9 +30,16 @@ pub struct DockSettings {
 /// extensão Sheliak do dock, mas editados na aba "Menu" da Personalização.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MenuSettings {
+    pub panel_height: u32,
+    pub floating_panel: bool,
+    pub panel_margin: u32,
+    pub show_clock: bool,
+    pub show_panel_indicators: bool,
     pub show_applications_menu: bool,
     pub show_places_menu: bool,
+    pub show_network_menu: bool,
     pub show_system_menu: bool,
+    pub show_system_about: bool,
     pub show_search_menu: bool,
     pub hide_workspace_button: bool,
     pub panel_menu_position: String,
@@ -80,6 +88,51 @@ pub fn is_installed() -> bool {
     extension_dir().is_some()
 }
 
+fn shell_settings() -> Option<gio::Settings> {
+    gio::SettingsSchemaSource::default()
+        .and_then(|source| source.lookup(SHELL_SCHEMA_ID, true))
+        .map(|_| gio::Settings::new(SHELL_SCHEMA_ID))
+}
+
+pub fn is_enabled() -> bool {
+    shell_settings().is_some_and(|settings| {
+        settings
+            .strv("enabled-extensions")
+            .iter()
+            .any(|uuid| uuid.as_str() == EXTENSION_UUID)
+    })
+}
+
+pub fn set_enabled(enabled: bool) -> Result<(), DockError> {
+    if enabled && !is_installed() {
+        return Err(DockError(gettext(
+            "A extensão Sheliak não está instalada ou não pôde ser encontrada.",
+        )));
+    }
+    let settings = shell_settings().ok_or_else(|| {
+        DockError(gettext(
+            "As configurações de extensões do GNOME não estão disponíveis.",
+        ))
+    })?;
+    let mut extensions = settings
+        .strv("enabled-extensions")
+        .iter()
+        .map(ToString::to_string)
+        .collect::<Vec<_>>();
+    extensions.retain(|uuid| uuid != EXTENSION_UUID);
+    if enabled {
+        extensions.push(EXTENSION_UUID.to_string());
+    }
+    let extension_refs = extensions.iter().map(String::as_str).collect::<Vec<_>>();
+    settings
+        .set_strv("enabled-extensions", extension_refs)
+        .map_err(|_| {
+            DockError(gettext(
+                "Não foi possível alterar o perfil da área de trabalho.",
+            ))
+        })
+}
+
 fn open_settings() -> Option<gio::Settings> {
     let dir = extension_dir()?;
     let source = gio::SettingsSchemaSource::from_directory(
@@ -118,6 +171,14 @@ fn boolean_or(settings: &gio::Settings, key: &str, fallback: bool) -> bool {
     }
 }
 
+fn uint_or(settings: &gio::Settings, key: &str, fallback: u32) -> u32 {
+    if has_key(settings, key) {
+        settings.uint(key)
+    } else {
+        fallback
+    }
+}
+
 fn set_string_if_present(settings: &gio::Settings, key: &str, value: &str) {
     if has_key(settings, key) {
         let _ = settings.set_string(key, value);
@@ -127,6 +188,12 @@ fn set_string_if_present(settings: &gio::Settings, key: &str, value: &str) {
 fn set_boolean_if_present(settings: &gio::Settings, key: &str, value: bool) {
     if has_key(settings, key) {
         let _ = settings.set_boolean(key, value);
+    }
+}
+
+fn set_uint_if_present(settings: &gio::Settings, key: &str, value: u32) {
+    if has_key(settings, key) {
+        let _ = settings.set_uint(key, value);
     }
 }
 
@@ -153,9 +220,16 @@ pub fn current() -> Option<DockSettings> {
 pub fn current_menu() -> Option<MenuSettings> {
     let settings = open_settings()?;
     Some(MenuSettings {
+        panel_height: uint_or(&settings, "panel-height", 32),
+        floating_panel: boolean_or(&settings, "floating-panel", true),
+        panel_margin: uint_or(&settings, "panel-margin", 8),
+        show_clock: boolean_or(&settings, "show-clock", true),
+        show_panel_indicators: boolean_or(&settings, "show-panel-indicators", true),
         show_applications_menu: boolean_or(&settings, "show-applications-menu", true),
         show_places_menu: boolean_or(&settings, "show-places-menu", true),
+        show_network_menu: boolean_or(&settings, "show-network-menu", true),
         show_system_menu: boolean_or(&settings, "show-system-menu", true),
+        show_system_about: boolean_or(&settings, "show-system-about", true),
         show_search_menu: boolean_or(&settings, "show-search-menu", true),
         hide_workspace_button: boolean_or(&settings, "hide-workspace-button", true),
         panel_menu_position: string_or(&settings, "panel-menu-position", "left"),
@@ -204,13 +278,24 @@ pub fn apply_menu(settings: &MenuSettings) -> Result<(), DockError> {
             "A extensão Sheliak não está instalada ou não pôde ser encontrada.",
         ))
     })?;
+    set_uint_if_present(&gsettings, "panel-height", settings.panel_height);
+    set_boolean_if_present(&gsettings, "floating-panel", settings.floating_panel);
+    set_uint_if_present(&gsettings, "panel-margin", settings.panel_margin);
+    set_boolean_if_present(&gsettings, "show-clock", settings.show_clock);
+    set_boolean_if_present(
+        &gsettings,
+        "show-panel-indicators",
+        settings.show_panel_indicators,
+    );
     set_boolean_if_present(
         &gsettings,
         "show-applications-menu",
         settings.show_applications_menu,
     );
     set_boolean_if_present(&gsettings, "show-places-menu", settings.show_places_menu);
+    set_boolean_if_present(&gsettings, "show-network-menu", settings.show_network_menu);
     set_boolean_if_present(&gsettings, "show-system-menu", settings.show_system_menu);
+    set_boolean_if_present(&gsettings, "show-system-about", settings.show_system_about);
     set_boolean_if_present(&gsettings, "show-search-menu", settings.show_search_menu);
     set_boolean_if_present(
         &gsettings,

@@ -13,7 +13,6 @@ const CATALOG_DIRS: &[&str] = &[
     "/usr/share/gnome-background-properties",
     "/usr/local/share/gnome-background-properties",
 ];
-const IMAGE_DIRS: &[&str] = &["/usr/share/backgrounds"];
 const IMAGE_EXTENSIONS: &[&str] = &["jpg", "jpeg", "png", "svg", "webp", "jxl", "bmp", "avif"];
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -68,21 +67,23 @@ pub fn list_wallpapers() -> Vec<WallpaperEntry> {
             .or_insert(entry);
     }
 
-    let mut image_dirs = IMAGE_DIRS.iter().map(PathBuf::from).collect::<Vec<_>>();
-    image_dirs.push(user_wallpaper_dir());
-    for dir in image_dirs {
-        for path in scan_image_files(&dir) {
-            if known_dark_paths.contains(&path) || by_light_path.contains_key(&path) {
-                continue;
-            }
-            by_light_path
-                .entry(path.clone())
-                .or_insert_with(|| WallpaperEntry {
-                    name: display_name_from_path(&path),
-                    light_path: path,
-                    dark_path: None,
-                });
+    // Papéis instalados pelo sistema são somente os registrados nos catálogos
+    // GNOME acima. Não varremos /usr/share/backgrounds: pacotes podem manter
+    // ali formatos auxiliares (por exemplo PNG + JXL do mesmo papel), imagens
+    // internas e variantes claro/escuro que não são escolhas independentes.
+    // A única pasta sem catálogo aceita é a gerenciada pelo próprio Vega para
+    // os papéis importados pelo usuário.
+    for path in scan_image_files(&user_wallpaper_dir()) {
+        if known_dark_paths.contains(&path) || by_light_path.contains_key(&path) {
+            continue;
         }
+        by_light_path
+            .entry(path.clone())
+            .or_insert_with(|| WallpaperEntry {
+                name: display_name_from_path(&path),
+                light_path: path,
+                dark_path: None,
+            });
     }
 
     let mut wallpapers = by_light_path.into_values().collect::<Vec<_>>();
@@ -211,11 +212,22 @@ pub struct ThumbnailData {
 /// pensada para rodar numa thread de fundo (`gio::spawn_blocking`):
 /// decodificar ~30 imagens grandes de uma vez na thread principal trava a UI
 /// tempo suficiente pro compositor achar que o app não está respondendo.
-pub fn load_thumbnails(entries: &[WallpaperEntry]) -> Vec<Option<ThumbnailData>> {
+pub fn load_thumbnails(
+    entries: &[WallpaperEntry],
+    prefer_dark: bool,
+) -> Vec<Option<ThumbnailData>> {
     entries
         .iter()
-        .map(|entry| load_cover_thumbnail(&entry.light_path))
+        .map(|entry| load_cover_thumbnail(thumbnail_path(entry, prefer_dark)))
         .collect()
+}
+
+fn thumbnail_path(entry: &WallpaperEntry, prefer_dark: bool) -> &Path {
+    if prefer_dark {
+        entry.dark_path.as_deref().unwrap_or(&entry.light_path)
+    } else {
+        &entry.light_path
+    }
 }
 
 fn load_cover_thumbnail(path: &Path) -> Option<ThumbnailData> {
@@ -476,6 +488,32 @@ mod tests {
         assert_eq!(
             display_name_from_path(Path::new("/tmp/futurecity_dark.webp")),
             "Futurecity Dark"
+        );
+    }
+
+    #[test]
+    fn thumbnail_follows_the_active_color_scheme_with_light_fallback() {
+        let entry = WallpaperEntry {
+            name: "Lyra".into(),
+            light_path: PathBuf::from("/wallpapers/light.png"),
+            dark_path: Some(PathBuf::from("/wallpapers/dark.png")),
+        };
+        assert_eq!(
+            thumbnail_path(&entry, false),
+            Path::new("/wallpapers/light.png")
+        );
+        assert_eq!(
+            thumbnail_path(&entry, true),
+            Path::new("/wallpapers/dark.png")
+        );
+
+        let light_only = WallpaperEntry {
+            dark_path: None,
+            ..entry
+        };
+        assert_eq!(
+            thumbnail_path(&light_only, true),
+            Path::new("/wallpapers/light.png")
         );
     }
 

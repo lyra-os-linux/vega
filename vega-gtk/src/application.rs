@@ -781,14 +781,30 @@ fn tool_u32(value: &serde_json::Value, key: &str, default: u32) -> u32 {
 
 fn configure_logs(shell: &VegaShell, dbus: VegaDbus) {
     let page = shell.logs.clone();
+    // O journal administrativo exige polkit. Não consulte na inicialização do
+    // Vega: isso faria o agente pedir senha antes de qualquer ação do usuário.
+    // O primeiro carregamento acontece somente quando o módulo de logs fica
+    // visível; consultas seguintes são acionadas pelos controles da página.
+    let loaded = Rc::new(Cell::new(false));
     let load_page = page.clone();
     let load_dbus = dbus.clone();
-    glib::MainContext::default().spawn_local(async move {
-        match load_dbus.logs().list_units().await {
-            Ok(units) => load_page.show_units(&units),
-            Err(error) => load_page.status.set_label(&error.to_string()),
+    let load_once = loaded.clone();
+    page.root.connect_map(move |_| {
+        if load_once.replace(true) {
+            return;
         }
-        refresh_logs_page(&load_page, &load_dbus).await;
+        let page = load_page.clone();
+        let dbus = load_dbus.clone();
+        glib::MainContext::default().spawn_local(async move {
+            match dbus.logs().list_units().await {
+                Ok(units) => page.show_units(&units),
+                Err(error) => {
+                    page.status.set_label(&error.to_string());
+                    return;
+                }
+            }
+            refresh_logs_page(&page, &dbus).await;
+        });
     });
 
     let query_page = page.clone();
@@ -2163,9 +2179,12 @@ fn configure_wallpaper_tab(page: &crate::ui::WallpaperPage, window: &adw::Applic
 }
 
 async fn refresh_wallpaper_page(page: &crate::ui::WallpaperPage) {
-    let result = gio::spawn_blocking(|| {
+    // Usa a aparência efetiva da sessão (inclusive quando o esquema está em
+    // "seguir o sistema") para que o card não mostre sempre a variante clara.
+    let prefer_dark = adw::StyleManager::default().is_dark();
+    let result = gio::spawn_blocking(move || {
         let wallpapers = crate::wallpaper::list_wallpapers();
-        let thumbnails = crate::wallpaper::load_thumbnails(&wallpapers);
+        let thumbnails = crate::wallpaper::load_thumbnails(&wallpapers, prefer_dark);
         (wallpapers, thumbnails)
     })
     .await;

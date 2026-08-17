@@ -3016,3 +3016,60 @@ msgstr "O provedor recusou a solicitação ({status}): {detail}"
 #: vega-gtk/src/assistant.rs:957
 msgid "Falha de comunicação com o provedor: {detail}"
 msgstr "Falha de comunicação com o provedor: {detail}"
+msgid "Barra superior"
+msgstr "Barra superior"
+
+msgid "Altura do painel"
+msgstr "Altura do painel"
+
+msgid "Painel flutuante"
+msgstr "Painel flutuante"
+
+msgid "Margem do painel"
+msgstr "Margem do painel"
+
+msgid "Relógio"
+msgstr "Relógio"
+
+msgid "Indicadores do lado direito"
+msgstr "Indicadores do lado direito"
+
+msgid "Menu Rede"
+msgstr "Menu Rede"
+
+msgid "Item Sobre no menu Sistema"
+msgstr "Item Sobre no menu Sistema"
+msgid "Perfil da área de trabalho"
+msgstr "Perfil da área de trabalho"
+
+msgid "Lyra OS"
+msgstr "Lyra OS"
+
+msgid "Ativa o Sheliak e os recursos Menu e Dock."
+msgstr "Ativa o Sheliak e os recursos Menu e Dock."
+
+msgid "GNOME Vanilla"
+msgstr "GNOME Vanilla"
+
+msgid "Usa a experiência padrão do GNOME sem o Sheliak."
+msgstr "Usa a experiência padrão do GNOME sem o Sheliak."
+
+msgid "As configurações de extensões do GNOME não estão disponíveis."
+msgstr "As configurações de extensões do GNOME não estão disponíveis."
+
+msgid "Não foi possível alterar o perfil da área de trabalho."
+msgstr "Não foi possível alterar o perfil da área de trabalho."
+msgid "Lyra-OS"
+msgstr "Lyra-OS"
+
+msgid "Gnome Vanila"
+msgstr "Gnome Vanila"
+msgid "Perfil"
+msgstr "Perfil"
+msgid "Lyra"
+msgstr "Lyra"
+msgid "GNOME mais Dock e Menu do Lyra."
+msgstr "GNOME mais Dock e Menu do Lyra."
+
+msgid "Usa a experiência padrão do GNOME."
+msgstr "Usa a experiência padrão do GNOME."

@@ -46,8 +46,8 @@ regras polkit específicas. A interface gráfica nunca precisa ser executada com
 root.
 
 O Vega CLI é voltado principalmente a servidores sem ambiente gráfico. Seu
-entrypoint `vega` requer um terminal interativo e se reexecuta com `sudo` quando
-necessário.
+entrypoint `vega` requer um terminal interativo e roda como o usuário da sessão;
+o polkit solicita autenticação apenas ao executar uma ação privilegiada.
 
 ## Instalação no openSUSE
 
