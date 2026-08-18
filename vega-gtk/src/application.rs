@@ -4136,6 +4136,9 @@ async fn monitor_software_transaction(
             {
                 page.show_package_progress(&progress.package, &progress.phase, progress.percent);
             }
+            Ok(SoftwareEvent::ConsoleLine(line)) if line.transaction_id == transaction_id => {
+                page.append_transaction_console(&line.source, &line.line);
+            }
             Ok(SoftwareEvent::Finished(finished)) if finished.transaction_id == transaction_id => {
                 page.finish_transaction(finished.success, &finished.message);
                 if finished.success {

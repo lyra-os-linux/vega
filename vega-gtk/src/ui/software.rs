@@ -53,6 +53,7 @@ pub struct SoftwarePage {
     pub transaction_panel: gtk::Box,
     pub transaction_label: gtk::Label,
     pub transaction_progress: gtk::ProgressBar,
+    pub transaction_console: gtk::TextView,
     package_groups: Rc<RefCell<Vec<PackageGroup>>>,
     package_progress_bars: Rc<RefCell<HashMap<String, gtk::ProgressBar>>>,
     selected_group: Rc<Cell<Option<usize>>>,
@@ -134,6 +135,26 @@ impl SoftwarePage {
         transaction_panel.set_visible(false);
         transaction_panel.append(&transaction_label);
         transaction_panel.append(&transaction_progress);
+        let transaction_console = gtk::TextView::builder()
+            .editable(false)
+            .cursor_visible(false)
+            .monospace(true)
+            .wrap_mode(gtk::WrapMode::None)
+            .top_margin(8)
+            .bottom_margin(8)
+            .left_margin(8)
+            .right_margin(8)
+            .build();
+        let console_scroll = gtk::ScrolledWindow::builder()
+            .child(&transaction_console)
+            .min_content_height(180)
+            .vexpand(true)
+            .build();
+        let console_expander = gtk::Expander::builder()
+            .label(gettext("Console do Zypper"))
+            .child(&console_scroll)
+            .build();
+        transaction_panel.append(&console_expander);
 
         let status = gtk::Label::builder()
             .label(gettext("Digite ao menos dois caracteres para buscar"))
@@ -390,6 +411,7 @@ impl SoftwarePage {
             transaction_panel,
             transaction_label,
             transaction_progress,
+            transaction_console,
             package_groups: Rc::new(RefCell::new(Vec::new())),
             package_progress_bars: Rc::new(RefCell::new(HashMap::new())),
             selected_group,
@@ -662,6 +684,34 @@ impl SoftwarePage {
         self.transaction_label.set_label(label);
         self.transaction_progress.set_fraction(0.0);
         self.transaction_progress.set_text(Some("0%"));
+        self.transaction_console.buffer().set_text("");
+    }
+
+    pub fn append_transaction_console(&self, source: &str, line: &str) {
+        let buffer = self.transaction_console.buffer();
+        let mut text = buffer
+            .text(&buffer.start_iter(), &buffer.end_iter(), false)
+            .to_string();
+        text.push_str(&format!("[{source}] {line}\n"));
+        let mut lines: Vec<&str> = text.lines().collect();
+        if lines.len() > 10_000 {
+            lines.drain(..lines.len() - 10_000);
+        }
+        let mut bounded = lines.join("\n");
+        if bounded.len() > 4 * 1024 * 1024 {
+            let start = bounded.len() - 4 * 1024 * 1024;
+            let start = bounded
+                .char_indices()
+                .find(|(index, _)| *index >= start)
+                .map(|(index, _)| index)
+                .unwrap_or(0);
+            bounded = bounded[start..].to_string();
+        }
+        bounded.push('\n');
+        buffer.set_text(&bounded);
+        let mut end = buffer.end_iter();
+        self.transaction_console
+            .scroll_to_iter(&mut end, 0.0, false, 0.0, 1.0);
     }
 
     pub fn update_transaction(&self, percent: u32, message: &str) {

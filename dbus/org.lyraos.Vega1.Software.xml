@@ -201,6 +201,11 @@
       <arg name="phase" type="s"/>
       <arg name="percent" type="u"/>
     </signal>
+    <signal name="TransactionConsoleLine">
+      <arg name="transaction_id" type="u"/>
+      <arg name="source" type="s"/>
+      <arg name="line" type="s"/>
+    </signal>
 
     <signal name="UpdatesAvailable">
       <!-- emitted by vegad-update-check.timer (every 4h) when ListUpdates

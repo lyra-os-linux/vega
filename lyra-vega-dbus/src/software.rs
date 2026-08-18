@@ -130,6 +130,13 @@ pub struct SoftwarePackageProgress {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SoftwareConsoleLine {
+    pub transaction_id: u32,
+    pub source: String,
+    pub line: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct NvidiaStatus {
     pub supported: bool,
     pub installed: bool,
@@ -229,6 +236,7 @@ pub enum SoftwareEvent {
     UpdatesAvailable(u32),
     KeyPending(RepositoryKeyInfo),
     PackageProgress(SoftwarePackageProgress),
+    ConsoleLine(SoftwareConsoleLine),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -348,6 +356,14 @@ trait Software {
     ) -> zbus::Result<()>;
 
     #[zbus(signal)]
+    async fn transaction_console_line(
+        &self,
+        transaction_id: u32,
+        source: &str,
+        line: &str,
+    ) -> zbus::Result<()>;
+
+    #[zbus(signal)]
     async fn updates_available(&self, count: u32) -> zbus::Result<()>;
 
     #[zbus(signal)]
@@ -401,6 +417,10 @@ impl ZbusSoftwareClient {
                 .receive_package_progress()
                 .await
                 .map_err(SoftwareClientError::unavailable)?,
+            console: proxy
+                .receive_transaction_console_line()
+                .await
+                .map_err(SoftwareClientError::unavailable)?,
             updates: proxy
                 .receive_updates_available()
                 .await
@@ -417,6 +437,7 @@ pub struct SoftwareEventStream {
     progress: TransactionProgressStream,
     finished: TransactionFinishedStream,
     package_progress: PackageProgressStream,
+    console: TransactionConsoleLineStream,
     updates: UpdatesAvailableStream,
     key_pending: RepoKeyPendingStream,
 }
@@ -450,6 +471,15 @@ impl SoftwareEventStream {
                     package: args.package.to_owned(),
                     phase: args.phase.to_owned(),
                     percent: args.percent,
+                }))
+            },
+            signal = self.console.next().fuse() => {
+                let signal = signal.ok_or_else(SoftwareClientError::stream_ended)?;
+                let args = signal.args().map_err(SoftwareClientError::unavailable)?;
+                Ok(SoftwareEvent::ConsoleLine(SoftwareConsoleLine {
+                    transaction_id: args.transaction_id,
+                    source: args.source.to_owned(),
+                    line: args.line.to_owned(),
                 }))
             },
             signal = self.updates.next().fuse() => {
@@ -729,6 +759,10 @@ mod tests {
             (
                 "TransactionProgress".into(),
                 args(&[("out", "u"), ("out", "u"), ("out", "s")]),
+            ),
+            (
+                "TransactionConsoleLine".into(),
+                args(&[("out", "u"), ("out", "s"), ("out", "s")]),
             ),
             ("UpdatesAvailable".into(), args(&[("out", "u")])),
             ("UpdateStateChanged".into(), args(&[("out", "(ssuuuubs)")])),
