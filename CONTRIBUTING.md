@@ -41,7 +41,7 @@ Quando a mudanca tocar empacotamento, D-Bus, polkit ou integracao com ferramenta
 ## Backend e permissoes
 
 - Metodos somente leitura nao devem exigir polkit.
-- Acoes que alteram o sistema devem passar por `requirePolkit`.
+- Acoes que alteram o sistema devem passar por `requirePolkit`, exceto Install/Remove com `origin == "flathub"`: `vegad` roda como root e chama o `flatpak` diretamente, entao a fila de instalacao processa Flathub antes dos pacotes zypper/oficiais para so pedir senha quando (e se) alcancar a parte zypper.
 - Prefira comandos padrao do sistema e trate ausencia deles com erro legivel.
 - Operacoes de alto risco, como kernel, bootloader, pacotes e rollback, devem criar snapshot quando possivel.
 - A UI acessa apenas os métodos tipados publicados nos XMLs em `dbus/`.

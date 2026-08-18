@@ -1008,13 +1008,13 @@ mod tests {
     }
 
     #[test]
-    fn mutating_tools_are_explicit_and_aur_is_not_installable() {
+    fn mutating_tools_are_explicit_and_unknown_origins_are_not_installable() {
         assert!(is_mutating_tool("install_package"));
         assert!(is_mutating_tool("remove_package"));
         assert!(is_mutating_tool("clear_package_cache"));
         assert!(!is_mutating_tool("search_packages"));
         assert!(install_origin_allowed("official"));
         assert!(install_origin_allowed("FLATHUB"));
-        assert!(!install_origin_allowed("aur"));
+        assert!(!install_origin_allowed("unknown"));
     }
 }

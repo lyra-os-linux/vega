@@ -3383,26 +3383,7 @@ fn configure_software(shell: &VegaShell, window: &adw::ApplicationWindow, dbus: 
                 gettext("Instalar")
             };
             page.action.set_sensitive(false);
-            let pkgbuild = if requires_pkgbuild_review(&package.origin, package.installed) {
-                page.action.set_label(&gettext("Carregando PKGBUILD…"));
-                match client.aur_pkgbuild(&package.id).await {
-                    Ok(pkgbuild) => Some(pkgbuild),
-                    Err(error) => {
-                        page.show_detail_error(
-                            &gettext("Não foi possível revisar o PKGBUILD: {error}")
-                                .replace("{error}", &error.to_string()),
-                        );
-                        return;
-                    }
-                }
-            } else {
-                None
-            };
-            let confirmed = if let Some(pkgbuild) = pkgbuild {
-                confirm_aur_install(&package.name, &pkgbuild).await
-            } else {
-                confirm_package_action(&package.name, &verb, package.installed).await
-            };
+            let confirmed = confirm_package_action(&package.name, &verb, package.installed).await;
             if !confirmed {
                 page.action.set_label(&verb);
                 page.action.set_sensitive(true);
@@ -3844,16 +3825,20 @@ fn connect_install_queue(
         let client = dbus.software();
         let dashboard_updates = dashboard_updates.clone();
         glib::MainContext::default().spawn_local(async move {
-            let queue = page.install_queue();
+            let mut queue = page.install_queue();
             if queue.is_empty() {
                 return;
             }
+            // Flathub installs don't need polkit; running them first means the
+            // one auth prompt for the zypper installs after them is the only
+            // one the user sees for the whole batch.
+            queue.sort_by_key(|package| package.origin != "flathub");
             let heading =
                 gettext("Instalar {count} pacote(s)?").replace("{count}", &queue.len().to_string());
             let dialog = adw::AlertDialog::new(
                 Some(&heading),
                 Some(&gettext(
-                    "Cada pacote será instalado em sua própria transação, autorizada pelo polkit.",
+                    "Cada pacote será instalado em sua própria transação; pacotes do sistema pedem autorização do polkit.",
                 )),
             );
             dialog.add_responses(&[
@@ -3960,6 +3945,10 @@ async fn monitor_add_repo_transaction(
         match events.next().await {
             Ok(SoftwareEvent::Progress(progress)) if progress.transaction_id == transaction_id => {
                 page.update_transaction(progress.percent, &progress.message);
+                page.append_transaction_console(
+                    "status",
+                    &format!("{}% {}", progress.percent, progress.message),
+                );
             }
             Ok(SoftwareEvent::KeyPending(info)) if info.transaction_id == transaction_id => {
                 pending_key = Some(info);
@@ -4075,50 +4064,6 @@ async fn confirm_package_action(name: &str, verb: &str, destructive: bool) -> bo
     dialog.choose_future(gtk::Widget::NONE).await == "confirm"
 }
 
-async fn confirm_aur_install(name: &str, pkgbuild: &str) -> bool {
-    let source = gtk::TextView::builder()
-        .editable(false)
-        .cursor_visible(false)
-        .monospace(true)
-        .wrap_mode(gtk::WrapMode::None)
-        .top_margin(10)
-        .bottom_margin(10)
-        .left_margin(10)
-        .right_margin(10)
-        .build();
-    source.buffer().set_text(pkgbuild);
-    source.add_css_class("pkgbuild-source");
-    let scroll = gtk::ScrolledWindow::builder()
-        .child(&source)
-        .min_content_width(620)
-        .min_content_height(360)
-        .max_content_height(480)
-        .hscrollbar_policy(gtk::PolicyType::Automatic)
-        .vscrollbar_policy(gtk::PolicyType::Automatic)
-        .build();
-    scroll.add_css_class("pkgbuild-review");
-
-    let dialog = adw::AlertDialog::new(
-        Some(&gettext("Revisar PKGBUILD de {name}").replace("{name}", name)),
-        Some(&gettext(
-            "Pacotes da comunidade executam instruções de compilação. Revise o conteúdo antes de continuar.",
-        )),
-    );
-    dialog.set_extra_child(Some(&scroll));
-    dialog.add_responses(&[
-        ("cancel", &gettext("Cancelar")),
-        ("confirm", &gettext("Revisei e instalar")),
-    ]);
-    dialog.set_response_appearance("confirm", adw::ResponseAppearance::Suggested);
-    dialog.set_default_response(Some("cancel"));
-    dialog.set_close_response("cancel");
-    dialog.choose_future(gtk::Widget::NONE).await == "confirm"
-}
-
-fn requires_pkgbuild_review(origin: &str, installed: bool) -> bool {
-    origin.eq_ignore_ascii_case("aur") && !installed
-}
-
 async fn monitor_software_transaction(
     page: &crate::ui::SoftwarePage,
     client: &impl SoftwareClient,
@@ -4135,6 +4080,22 @@ async fn monitor_software_transaction(
                 if progress.transaction_id == transaction_id =>
             {
                 page.show_package_progress(&progress.package, &progress.phase, progress.percent);
+                page.append_transaction_console(
+                    "zypper",
+                    &format!(
+                        "{} {} {}%",
+                        progress.phase, progress.package, progress.percent
+                    ),
+                );
+            }
+            // `event` and `stdout` are synthesized by vegad from the two
+            // progress signals handled above. Ignore those duplicates, but
+            // retain any future raw diagnostic channel (notably stderr).
+            Ok(SoftwareEvent::ConsoleLine(line))
+                if line.transaction_id == transaction_id
+                    && !matches!(line.source.as_str(), "event" | "stdout") =>
+            {
+                page.append_transaction_console(&line.source, &line.line);
             }
             Ok(SoftwareEvent::ConsoleLine(line)) if line.transaction_id == transaction_id => {
                 page.append_transaction_console(&line.source, &line.line);
@@ -4265,24 +4226,11 @@ async fn confirm_dialog(dialog: &adw::AlertDialog, response: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::{APPLICATION_ID, requires_pkgbuild_review, valid_ipv4_cidr};
+    use super::{APPLICATION_ID, valid_ipv4_cidr};
 
     #[test]
     fn production_id_is_stable() {
         assert_eq!(APPLICATION_ID, "org.lyraos.Vega");
-    }
-
-    #[test]
-    fn aur_install_requires_source_review() {
-        assert!(requires_pkgbuild_review("aur", false));
-        assert!(requires_pkgbuild_review("AUR", false));
-        assert!(!requires_pkgbuild_review("official", false));
-        assert!(!requires_pkgbuild_review("flathub", false));
-    }
-
-    #[test]
-    fn removing_an_aur_package_does_not_request_a_build_script() {
-        assert!(!requires_pkgbuild_review("aur", true));
     }
 
     #[test]

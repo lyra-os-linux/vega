@@ -3,15 +3,11 @@
 <node name="/org/lyraos/Vega1">
   <interface name="org.lyraos.Vega1.Software">
     <!-- PackageRef struct: (origin, id, name, description, installed, icon, repository)
-         origin -> "official" | "flathub" | "aur"
+         origin -> "official" | "flathub"
          repository -> source repo's display name, populated for ListUpdates
          (grouping key for the Updates tab), empty where it doesn't apply -->
 
     <method name="PackageManagerName">
-      <arg name="name" type="s" direction="out"/>
-    </method>
-
-    <method name="CommunityLayerName">
       <arg name="name" type="s" direction="out"/>
     </method>
 
@@ -20,11 +16,6 @@
       <arg name="id" type="s" direction="in"/>
       <arg name="details" type="(ssssbssssasasss)" direction="out"/>
       <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="PackageDetails"/>
-    </method>
-
-    <method name="GetAurPkgbuild">
-      <arg name="id" type="s" direction="in"/>
-      <arg name="pkgbuild" type="s" direction="out"/>
     </method>
 
     <method name="Search">
@@ -193,7 +184,7 @@
       <!-- Emitido durante uma transação Install/Remove/UpdateAll conduzida
            via zypper (modo XML), a cada avanço de download ou instalação de
            um pacote. phase -> "download" | "install". Origens sem essa
-           granularidade (Flathub, AUR) nunca emitem este sinal — a UI deve
+           granularidade (Flathub) nunca emitem este sinal — a UI deve
            tratar a ausência como "sem detalhe fino disponível" e usar só
            o TransactionProgress geral. -->
       <arg name="transactionId" type="u"/>

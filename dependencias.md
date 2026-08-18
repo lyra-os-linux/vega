@@ -23,7 +23,6 @@ ponto de partida, não garantia.
 - `systemd`
 - `dbus-1`
 - `polkit`
-- Não há camada de comunidade equivalente à AUR em Leap — `distro.Provider.Community()` retorna `nil`, então o módulo Software não tem origem "Comunidade" nessa distro.
 
 ### Pacotes opcionais (um por módulo — sem eles o módulo correspondente reporta "indisponível", o resto do app funciona normalmente; o script `install.sh` já avisa quais binários estão faltando)
 

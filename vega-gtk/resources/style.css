@@ -216,6 +216,20 @@ button.view-switch:checked {
   margin: 0;
 }
 
+/* TextView has its own `text` node, which does not reliably inherit the
+ * surrounding card colors across light/dark third-party GTK themes. */
+textview.transaction-console,
+textview.transaction-console text {
+  background-color: @view_bg_color;
+  color: @view_fg_color;
+}
+
+textview.transaction-console selection,
+textview.transaction-console text selection {
+  background-color: @accent_bg_color;
+  color: @accent_fg_color;
+}
+
 .software-card button.origin-pill {
   min-height: 20px;
   padding: 0 4px;
@@ -331,17 +345,6 @@ button.dashboard-card label:not(.card-title) {
   background-color: @lyra_surface;
   border: 1px solid @lyra_border;
   border-radius: 12px;
-}
-
-.pkgbuild-review {
-  background-color: @lyra_night;
-  border: 1px solid @lyra_border;
-  border-radius: 8px;
-}
-
-.pkgbuild-source {
-  background-color: @lyra_night;
-  color: @lyra_text;
 }
 
 .dim-label {

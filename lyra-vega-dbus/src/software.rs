@@ -262,7 +262,6 @@ impl std::error::Error for SoftwareClientError {}
 #[async_trait]
 pub trait SoftwareClient: Send + Sync {
     async fn package_manager_name(&self) -> Result<String, SoftwareClientError>;
-    async fn community_layer_name(&self) -> Result<String, SoftwareClientError>;
     async fn search(&self, query: &str) -> Result<Vec<PackageRef>, SoftwareClientError>;
     async fn search_native(&self, query: &str) -> Result<Vec<PackageRef>, SoftwareClientError>;
     async fn package_details(
@@ -270,7 +269,6 @@ pub trait SoftwareClient: Send + Sync {
         origin: &str,
         id: &str,
     ) -> Result<PackageDetails, SoftwareClientError>;
-    async fn aur_pkgbuild(&self, id: &str) -> Result<String, SoftwareClientError>;
     async fn list_updates(&self) -> Result<Vec<PackageRef>, SoftwareClientError>;
     async fn list_native_updates(&self) -> Result<Vec<PackageRef>, SoftwareClientError>;
     async fn update_status(&self) -> Result<UpdateStatus, SoftwareClientError>;
@@ -302,11 +300,9 @@ pub trait SoftwareClient: Send + Sync {
 )]
 trait Software {
     async fn package_manager_name(&self) -> zbus::Result<String>;
-    async fn community_layer_name(&self) -> zbus::Result<String>;
     async fn search(&self, query: &str) -> zbus::Result<Vec<PackageRefRow>>;
     async fn search_native(&self, query: &str) -> zbus::Result<Vec<PackageRefRow>>;
     async fn get_package_details(&self, origin: &str, id: &str) -> zbus::Result<PackageDetailsRow>;
-    async fn get_aur_pkgbuild(&self, id: &str) -> zbus::Result<String>;
     async fn list_updates(&self) -> zbus::Result<Vec<PackageRefRow>>;
     async fn list_native_updates(&self) -> zbus::Result<Vec<PackageRefRow>>;
     async fn get_update_status(&self) -> zbus::Result<UpdateStatusRow>;
@@ -524,10 +520,6 @@ impl SoftwareClient for ZbusSoftwareClient {
         proxy_call!(self, package_manager_name())
     }
 
-    async fn community_layer_name(&self) -> Result<String, SoftwareClientError> {
-        proxy_call!(self, community_layer_name())
-    }
-
     async fn search(&self, query: &str) -> Result<Vec<PackageRef>, SoftwareClientError> {
         proxy_call!(self, search(query)).map(|rows| rows.into_iter().map(Into::into).collect())
     }
@@ -543,10 +535,6 @@ impl SoftwareClient for ZbusSoftwareClient {
         id: &str,
     ) -> Result<PackageDetails, SoftwareClientError> {
         proxy_call!(self, get_package_details(origin, id)).map(Into::into)
-    }
-
-    async fn aur_pkgbuild(&self, id: &str) -> Result<String, SoftwareClientError> {
-        proxy_call!(self, get_aur_pkgbuild(id))
     }
 
     async fn list_updates(&self) -> Result<Vec<PackageRef>, SoftwareClientError> {
@@ -704,8 +692,6 @@ mod tests {
             ("ClearCache".into(), args(&[("out", "u")])),
             ("ClearNativeCache".into(), args(&[("out", "u")])),
             ("CheckNvidia".into(), args(&[("out", "b"), ("out", "s")])),
-            ("CommunityLayerName".into(), args(&[("out", "s")])),
-            ("GetAurPkgbuild".into(), args(&[("in", "s"), ("out", "s")])),
             (
                 "GetPackageDetails".into(),
                 args(&[("in", "s"), ("in", "s"), ("out", "(ssssbssssasasss)")]),
@@ -806,7 +792,6 @@ mod tests {
         futures_lite::future::block_on(async {
             let client = super::ZbusSoftwareClient::connect().await.unwrap();
             assert!(!client.package_manager_name().await.unwrap().is_empty());
-            client.community_layer_name().await.unwrap();
             client.list_repos().await.unwrap();
             let subscriptions = client.subscribe().await.unwrap();
             drop(subscriptions);

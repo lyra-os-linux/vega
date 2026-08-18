@@ -144,6 +144,7 @@ impl SoftwarePage {
             .bottom_margin(8)
             .left_margin(8)
             .right_margin(8)
+            .css_classes(["transaction-console"])
             .build();
         let console_scroll = gtk::ScrolledWindow::builder()
             .child(&transaction_console)
@@ -151,8 +152,9 @@ impl SoftwarePage {
             .vexpand(true)
             .build();
         let console_expander = gtk::Expander::builder()
-            .label(gettext("Console do Zypper"))
+            .label(gettext("Console"))
             .child(&console_scroll)
+            .expanded(true)
             .build();
         transaction_panel.append(&console_expander);
 
@@ -684,7 +686,9 @@ impl SoftwarePage {
         self.transaction_label.set_label(label);
         self.transaction_progress.set_fraction(0.0);
         self.transaction_progress.set_text(Some("0%"));
-        self.transaction_console.buffer().set_text("");
+        self.transaction_console
+            .buffer()
+            .set_text(&format!("[vega] {label}\n"));
     }
 
     pub fn append_transaction_console(&self, source: &str, line: &str) {
@@ -724,7 +728,21 @@ impl SoftwarePage {
     }
 
     pub fn finish_transaction(&self, success: bool, message: &str) {
-        self.transaction_panel.set_visible(false);
+        // Keep the transaction panel visible so fast zypper operations do
+        // not make their console disappear before the user can inspect it.
+        self.transaction_panel.set_visible(true);
+        self.transaction_label.set_label(message);
+        if success {
+            self.transaction_progress.set_fraction(1.0);
+            self.transaction_progress.set_text(Some("100%"));
+        }
+        self.append_transaction_console(
+            "vega",
+            &format!(
+                "{}: {message}",
+                if success { "concluído" } else { "falhou" }
+            ),
+        );
         let status = if success {
             message.to_owned()
         } else {
@@ -1120,8 +1138,7 @@ fn origin_rank(origin: &str) -> u8 {
     match origin {
         "official" => 0,
         "flathub" => 1,
-        "aur" => 2,
-        _ => 3,
+        _ => 2,
     }
 }
 
@@ -1129,7 +1146,6 @@ fn origin_label(origin: &str) -> String {
     match origin {
         "official" => gettext("Oficial"),
         "flathub" => "Flathub".to_string(),
-        "aur" => gettext("Comunidade"),
         value => value.to_string(),
     }
 }
@@ -1224,15 +1240,13 @@ mod tests {
     #[test]
     fn grouping_preserves_origins_and_prefers_official() {
         let result = group_packages(vec![
-            package("aur", "aur-example"),
             package("flathub", "org.example.App"),
             package("official", "example"),
         ]);
         assert_eq!(result.len(), 1);
-        assert_eq!(result[0].packages.len(), 3);
+        assert_eq!(result[0].packages.len(), 2);
         assert_eq!(result[0].selected().unwrap().origin, "official");
         assert_eq!(result[0].packages[1].origin, "flathub");
-        assert_eq!(result[0].packages[2].origin, "aur");
     }
 
     #[test]
