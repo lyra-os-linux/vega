@@ -66,6 +66,8 @@ done
 %{_datadir}/applications/vega.desktop
 %{_sysconfdir}/xdg/autostart/vega-update-notifier.desktop
 %{_datadir}/icons/hicolor/scalable/apps/vega.svg
+%dir %{_datadir}/gnome-shell
+%dir %{_datadir}/gnome-shell/extensions
 %{_datadir}/gnome-shell/extensions/updates-indicator@lyraos.org/
 %lang(en) %{_datadir}/locale/en_US/LC_MESSAGES/vega-gtk*.mo
 %lang(pt_BR) %{_datadir}/locale/pt_BR/LC_MESSAGES/vega-gtk*.mo
