@@ -2692,6 +2692,90 @@ fn configure_snapshots(shell: &VegaShell, dbus: VegaDbus) {
         });
     });
 
+    let clear_page = shell.snapshots.clone();
+    let clear_dbus = dbus.clone();
+    shell.snapshots.clear.connect_clicked(move |button| {
+        let page = clear_page.clone();
+        let client = clear_dbus.snapshots();
+        let button = button.clone();
+        glib::MainContext::default().spawn_local(async move {
+            let snapshots = match client.list().await {
+                Ok(snapshots) => snapshots,
+                Err(error) => {
+                    page.status.set_label(&error.to_string());
+                    return;
+                }
+            };
+            let deletable = snapshots
+                .into_iter()
+                .filter(|snapshot| snapshot.id != 0)
+                .collect::<Vec<_>>();
+            if deletable.is_empty() {
+                page.status
+                    .set_label(&gettext("Não há pontos de restauração que possam ser excluídos."));
+                button.set_sensitive(false);
+                return;
+            }
+
+            let dialog = adw::AlertDialog::new(
+                Some(&gettext("Limpar pontos de restauração criados?")),
+                Some(
+                    &gettext(
+                        "Os {count} pontos que podem ser removidos serão excluídos permanentemente. O snapshot #0, quando presente, será preservado.",
+                    )
+                    .replace("{count}", &deletable.len().to_string()),
+                ),
+            );
+            dialog.add_responses(&[
+                ("cancel", &gettext("Cancelar")),
+                ("clear", &gettext("Limpar pontos")),
+            ]);
+            dialog.set_response_appearance("clear", adw::ResponseAppearance::Destructive);
+            dialog.set_default_response(Some("cancel"));
+            dialog.set_close_response("cancel");
+            if !confirm_dialog(&dialog, "clear").await {
+                return;
+            }
+
+            button.set_sensitive(false);
+            page.status
+                .set_label(&gettext("Limpando pontos de restauração…"));
+            page.clear_progress.set_visible(true);
+            let progress = page.clear_progress.clone();
+            progress.set_fraction(0.0);
+            progress.set_text(Some(
+                &gettext("Excluindo 0 de {total} pontos…")
+                    .replace("{total}", &deletable.len().to_string()),
+            ));
+            let result = client
+                .clear_with_progress(move |deleted, total| {
+                    progress.set_fraction(deleted as f64 / total.max(1) as f64);
+                    progress.set_text(Some(
+                        &gettext("Excluindo {deleted} de {total} pontos…")
+                            .replace("{deleted}", &deleted.to_string())
+                            .replace("{total}", &total.to_string()),
+                    ));
+                })
+                .await;
+            page.clear_progress.set_visible(false);
+
+            match client.list().await {
+                Ok(snapshots) => page.show_snapshots(snapshots),
+                Err(error) => {
+                    page.status.set_label(&error.to_string());
+                    return;
+                }
+            }
+            match result {
+                Ok(deleted) => page.status.set_label(
+                    &gettext("{count} pontos de restauração foram excluídos.")
+                        .replace("{count}", &deleted.to_string()),
+                ),
+                Err(error) => page.status.set_label(&error.to_string()),
+            }
+        });
+    });
+
     let rollback_page = shell.snapshots.clone();
     let rollback_dbus = dbus.clone();
     shell.snapshots.connect_apply(move |snapshot, button| {

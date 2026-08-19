@@ -41,6 +41,16 @@
       <arg name="snapshotId" type="u" direction="in"/>
     </method>
 
+    <method name="ClearSnapshots">
+      <!-- polkit: org.lyraos.vega.snapshots.delete (uma autorização para toda a operação) -->
+      <arg name="deletedCount" type="u" direction="out"/>
+    </method>
+
+    <signal name="ClearProgress">
+      <arg name="deletedCount" type="u"/>
+      <arg name="totalCount" type="u"/>
+    </signal>
+
     <method name="SetRetentionPolicy">
       <!-- polkit: org.lyraos.vega.snapshots.configure -->
       <arg name="keepCount" type="u" direction="in"/>

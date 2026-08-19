@@ -51,6 +51,7 @@ pub struct SoftwarePage {
     pub add_repo_button: gtk::Button,
     pub global_action: gtk::Button,
     pub transaction_panel: gtk::Box,
+    pub transaction_close: gtk::Button,
     pub transaction_label: gtk::Label,
     pub transaction_progress: gtk::ProgressBar,
     pub transaction_console: gtk::TextView,
@@ -125,7 +126,18 @@ impl SoftwarePage {
             .label(gettext("Preparando transação…"))
             .xalign(0.0)
             .wrap(true)
+            .hexpand(true)
             .build();
+        let transaction_close = gtk::Button::builder()
+            .icon_name("window-close-symbolic")
+            .tooltip_text(gettext("Fechar console"))
+            .css_classes(["flat", "circular"])
+            .valign(gtk::Align::Center)
+            .visible(false)
+            .build();
+        let transaction_header = gtk::Box::new(gtk::Orientation::Horizontal, 8);
+        transaction_header.append(&transaction_label);
+        transaction_header.append(&transaction_close);
         let transaction_progress = gtk::ProgressBar::builder()
             .show_text(true)
             .fraction(0.0)
@@ -133,8 +145,10 @@ impl SoftwarePage {
         let transaction_panel = gtk::Box::new(gtk::Orientation::Vertical, 8);
         transaction_panel.add_css_class("card");
         transaction_panel.set_visible(false);
-        transaction_panel.append(&transaction_label);
+        transaction_panel.append(&transaction_header);
         transaction_panel.append(&transaction_progress);
+        let panel = transaction_panel.clone();
+        transaction_close.connect_clicked(move |_| panel.set_visible(false));
         let transaction_console = gtk::TextView::builder()
             .editable(false)
             .cursor_visible(false)
@@ -149,13 +163,19 @@ impl SoftwarePage {
         let console_scroll = gtk::ScrolledWindow::builder()
             .child(&transaction_console)
             .min_content_height(180)
-            .vexpand(true)
+            .vexpand(false)
             .build();
         let console_expander = gtk::Expander::builder()
             .label(gettext("Console"))
             .child(&console_scroll)
             .expanded(true)
             .build();
+        console_expander.connect_expanded_notify(|expander| {
+            // The console lives inside a card in a vertically scrolling page.
+            // Recompute the card immediately so collapsing it releases the
+            // console's full height instead of retaining an empty allocation.
+            expander.queue_resize();
+        });
         transaction_panel.append(&console_expander);
 
         let status = gtk::Label::builder()
@@ -411,6 +431,7 @@ impl SoftwarePage {
             add_repo_button,
             global_action,
             transaction_panel,
+            transaction_close,
             transaction_label,
             transaction_progress,
             transaction_console,
@@ -683,6 +704,7 @@ impl SoftwarePage {
 
     pub fn begin_transaction(&self, label: &str) {
         self.transaction_panel.set_visible(true);
+        self.transaction_close.set_visible(false);
         self.transaction_label.set_label(label);
         self.transaction_progress.set_fraction(0.0);
         self.transaction_progress.set_text(Some("0%"));
@@ -731,6 +753,7 @@ impl SoftwarePage {
         // Keep the transaction panel visible so fast zypper operations do
         // not make their console disappear before the user can inspect it.
         self.transaction_panel.set_visible(true);
+        self.transaction_close.set_visible(true);
         self.transaction_label.set_label(message);
         if success {
             self.transaction_progress.set_fraction(1.0);

@@ -3064,3 +3064,35 @@ msgstr "System up to date"
 
 msgid "Aguardando verificação de atualizações"
 msgstr "Waiting for update check"
+msgid "Não há pontos de restauração que possam ser excluídos."
+msgstr "There are no restore points that can be deleted."
+
+msgid "Limpar pontos de restauração criados?"
+msgstr "Clear created restore points?"
+
+msgid "Os {count} pontos que podem ser removidos serão excluídos permanentemente. O snapshot #0, quando presente, será preservado."
+msgstr "The {count} removable points will be permanently deleted. Snapshot #0, when present, will be preserved."
+
+msgid "Limpar pontos"
+msgstr "Clear points"
+
+msgid "Limpando pontos de restauração…"
+msgstr "Clearing restore points…"
+
+msgid "Excluindo 0 de {total} pontos…"
+msgstr "Deleting 0 of {total} points…"
+
+msgid "Excluindo {deleted} de {total} pontos…"
+msgstr "Deleting {deleted} of {total} points…"
+
+msgid "{count} pontos de restauração foram excluídos."
+msgstr "{count} restore points were deleted."
+
+msgid "Limpar pontos criados"
+msgstr "Clear created points"
+
+msgid "Excluindo pontos de restauração…"
+msgstr "Deleting restore points…"
+
+msgid "Fechar console"
+msgstr "Close console"

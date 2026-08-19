@@ -13,6 +13,8 @@ pub struct SnapshotsPage {
     pub status: gtk::Label,
     pub list: gtk::ListBox,
     pub create: gtk::Button,
+    pub clear: gtk::Button,
+    pub clear_progress: gtk::ProgressBar,
     pub retention: gtk::SpinButton,
     pub apply_retention: gtk::Button,
     pub comparison: gtk::Label,
@@ -38,8 +40,19 @@ impl SnapshotsPage {
             .label(gettext("Criar ponto"))
             .css_classes(["suggested-action"])
             .build();
+        let clear = gtk::Button::builder()
+            .label(gettext("Limpar pontos criados"))
+            .css_classes(["destructive-action"])
+            .sensitive(false)
+            .build();
         let actions = gtk::Box::new(gtk::Orientation::Horizontal, 8);
         actions.append(&create);
+        actions.append(&clear);
+        let clear_progress = gtk::ProgressBar::builder()
+            .text(gettext("Excluindo pontos de restauração…"))
+            .show_text(true)
+            .visible(false)
+            .build();
         let comparison = gtk::Label::builder()
             .label(gettext(
                 "Selecione um ponto para comparar os pacotes com o estado atual.",
@@ -68,6 +81,7 @@ impl SnapshotsPage {
         content.add_css_class("content-page");
         content.append(&status);
         content.append(&actions);
+        content.append(&clear_progress);
         content.append(&list);
         content.append(&comparison);
         content.append(&retention_row);
@@ -81,6 +95,8 @@ impl SnapshotsPage {
             status,
             list,
             create,
+            clear,
+            clear_progress,
             retention,
             apply_retention,
             comparison,
@@ -105,12 +121,19 @@ impl SnapshotsPage {
     pub fn set_available(&self, available: bool) {
         self.create.set_sensitive(available);
         if !available {
+            self.clear.set_sensitive(false);
+        }
+        if !available {
             self.status
                 .set_label(&gettext("Snapshots não são suportados neste sistema."));
         }
     }
 
     pub fn show_snapshots(&self, snapshots: Vec<Snapshot>) {
+        let snapshots = snapshots
+            .into_iter()
+            .filter(|snapshot| snapshot.id != 0)
+            .collect::<Vec<_>>();
         while let Some(child) = self.list.first_child() {
             self.list.remove(&child);
         }
@@ -119,6 +142,7 @@ impl SnapshotsPage {
         } else {
             gettext("Selecione um ponto para comparar, aplicar ou excluir")
         });
+        self.clear.set_sensitive(!snapshots.is_empty());
         for snapshot in &snapshots {
             let date = format_timestamp(snapshot.timestamp);
             let title = if snapshot.description.is_empty() {

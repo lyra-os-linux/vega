@@ -3102,3 +3102,35 @@ msgstr ""
 
 msgid "Aguardando verificação de atualizações"
 msgstr ""
+msgid "Não há pontos de restauração que possam ser excluídos."
+msgstr ""
+
+msgid "Limpar pontos de restauração criados?"
+msgstr ""
+
+msgid "Os {count} pontos que podem ser removidos serão excluídos permanentemente. O snapshot #0, quando presente, será preservado."
+msgstr ""
+
+msgid "Limpar pontos"
+msgstr ""
+
+msgid "Limpando pontos de restauração…"
+msgstr ""
+
+msgid "Excluindo 0 de {total} pontos…"
+msgstr ""
+
+msgid "Excluindo {deleted} de {total} pontos…"
+msgstr ""
+
+msgid "{count} pontos de restauração foram excluídos."
+msgstr ""
+
+msgid "Limpar pontos criados"
+msgstr ""
+
+msgid "Excluindo pontos de restauração…"
+msgstr ""
+
+msgid "Fechar console"
+msgstr ""

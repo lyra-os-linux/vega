@@ -3064,3 +3064,35 @@ msgstr "Sistema actualizado"
 
 msgid "Aguardando verificação de atualizações"
 msgstr "Esperando la comprobación de actualizaciones"
+msgid "Não há pontos de restauração que possam ser excluídos."
+msgstr "No hay puntos de restauración que se puedan eliminar."
+
+msgid "Limpar pontos de restauração criados?"
+msgstr "¿Limpiar los puntos de restauración creados?"
+
+msgid "Os {count} pontos que podem ser removidos serão excluídos permanentemente. O snapshot #0, quando presente, será preservado."
+msgstr "Los {count} puntos que se pueden eliminar se borrarán permanentemente. La instantánea #0, cuando esté presente, se conservará."
+
+msgid "Limpar pontos"
+msgstr "Limpiar puntos"
+
+msgid "Limpando pontos de restauração…"
+msgstr "Limpiando puntos de restauración…"
+
+msgid "Excluindo 0 de {total} pontos…"
+msgstr "Eliminando 0 de {total} puntos…"
+
+msgid "Excluindo {deleted} de {total} pontos…"
+msgstr "Eliminando {deleted} de {total} puntos…"
+
+msgid "{count} pontos de restauração foram excluídos."
+msgstr "Se eliminaron {count} puntos de restauración."
+
+msgid "Limpar pontos criados"
+msgstr "Limpiar puntos creados"
+
+msgid "Excluindo pontos de restauração…"
+msgstr "Eliminando puntos de restauración…"
+
+msgid "Fechar console"
+msgstr "Cerrar consola"

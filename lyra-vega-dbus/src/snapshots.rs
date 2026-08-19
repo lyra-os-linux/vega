@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use futures_util::{FutureExt, StreamExt};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Snapshot {
@@ -49,6 +50,7 @@ pub trait SnapshotsClient: Send + Sync {
     async fn diff_packages(&self, id: u32) -> Result<Vec<String>, SnapshotsClientError>;
     async fn rollback(&self, id: u32) -> Result<(), SnapshotsClientError>;
     async fn delete(&self, id: u32) -> Result<(), SnapshotsClientError>;
+    async fn clear(&self) -> Result<u32, SnapshotsClientError>;
     async fn set_retention(&self, keep: u32) -> Result<(), SnapshotsClientError>;
 }
 
@@ -69,7 +71,11 @@ trait Snapshots {
     ) -> zbus::Result<Vec<String>>;
     async fn rollback(&self, snapshot_id: u32) -> zbus::Result<()>;
     async fn delete_snapshot(&self, snapshot_id: u32) -> zbus::Result<()>;
+    async fn clear_snapshots(&self) -> zbus::Result<u32>;
     async fn set_retention_policy(&self, keep_count: u32) -> zbus::Result<()>;
+
+    #[zbus(signal)]
+    async fn clear_progress(&self, deleted_count: u32, total_count: u32) -> zbus::Result<()>;
 }
 
 pub struct ZbusSnapshotsClient {
@@ -85,6 +91,32 @@ impl ZbusSnapshotsClient {
         SnapshotsProxy::new(&self.connection)
             .await
             .map_err(SnapshotsClientError::from_error)
+    }
+
+    pub async fn clear_with_progress<F>(
+        &self,
+        mut on_progress: F,
+    ) -> Result<u32, SnapshotsClientError>
+    where
+        F: FnMut(u32, u32),
+    {
+        let proxy = self.proxy().await?;
+        let mut progress = proxy
+            .receive_clear_progress()
+            .await
+            .map_err(SnapshotsClientError::from_error)?;
+        let clear = proxy.clear_snapshots().fuse();
+        futures_util::pin_mut!(clear);
+        loop {
+            futures_util::select! {
+                result = clear => return result.map_err(SnapshotsClientError::from_error),
+                signal = progress.next().fuse() => {
+                    let signal = signal.ok_or_else(|| SnapshotsClientError::from_error("fluxo de progresso encerrado"))?;
+                    let args = signal.args().map_err(SnapshotsClientError::from_error)?;
+                    on_progress(args.deleted_count, args.total_count);
+                }
+            }
+        }
     }
 }
 
@@ -114,6 +146,9 @@ impl SnapshotsClient for ZbusSnapshotsClient {
     async fn delete(&self, id: u32) -> Result<(), SnapshotsClientError> {
         call!(self, delete_snapshot(id))
     }
+    async fn clear(&self) -> Result<u32, SnapshotsClientError> {
+        call!(self, clear_snapshots())
+    }
     async fn set_retention(&self, keep: u32) -> Result<(), SnapshotsClientError> {
         call!(self, set_retention_policy(keep))
     }
@@ -136,6 +171,7 @@ mod tests {
             methods,
             [
                 "Available",
+                "ClearSnapshots",
                 "CreateSnapshot",
                 "DeleteSnapshot",
                 "DiffPackages",
