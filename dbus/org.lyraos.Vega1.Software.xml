@@ -199,7 +199,7 @@
     </signal>
 
     <signal name="UpdatesAvailable">
-      <!-- emitted by vegad-update-check.timer (every 4h) when ListUpdates
+      <!-- emitted by vegad-update-check.timer (every 24h) when ListUpdates
            changes; count can be zero when the system becomes current -->
       <arg name="count" type="u"/>
     </signal>

@@ -3053,3 +3053,14 @@ msgstr "GNOME con el Dock y el Menú de Lyra."
 
 msgid "Usa a experiência padrão do GNOME."
 msgstr "Usa la experiencia estándar de GNOME."
+msgid "Atualizações do sistema"
+msgstr "Actualizaciones del sistema"
+
+msgid "{count} atualização(ões) disponível(is)"
+msgstr "{count} actualización(es) disponible(s)"
+
+msgid "Sistema atualizado"
+msgstr "Sistema actualizado"
+
+msgid "Aguardando verificação de atualizações"
+msgstr "Esperando la comprobación de actualizaciones"

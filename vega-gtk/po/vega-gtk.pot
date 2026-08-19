@@ -3091,3 +3091,14 @@ msgstr ""
 
 msgid "Usa a experiência padrão do GNOME."
 msgstr ""
+msgid "Atualizações do sistema"
+msgstr ""
+
+msgid "{count} atualização(ões) disponível(is)"
+msgstr ""
+
+msgid "Sistema atualizado"
+msgstr ""
+
+msgid "Aguardando verificação de atualizações"
+msgstr ""

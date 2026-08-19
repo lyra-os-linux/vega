@@ -5,7 +5,7 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
-for command in xmllint rpmspec systemd-analyze; do
+for command in desktop-file-validate xmllint rpmspec systemd-analyze; do
   command -v "$command" >/dev/null || {
     echo "dependência ausente: $command" >&2
     exit 1
@@ -14,6 +14,11 @@ done
 
 xmllint --noout dbus/*.xml packaging/vegad/org.lyraos.Vega1.conf \
   packaging/vegad/org.lyraos.vega.policy
+desktop-file-validate packaging/vega/vega-update-notifier.desktop
+python3 -m json.tool \
+  packaging/vega/updates-indicator@lyraos.org/metadata.json >/dev/null
+rg -q 'updates-indicator@lyraos.org' packaging/opensuse/vega.spec
+rg -q 'updates-indicator@lyraos.org' packaging/obs/vega-gtk.spec
 
 rpmspec -P packaging/opensuse/vegad.spec >/dev/null
 rpmspec -P packaging/obs/vegad.spec >/dev/null
@@ -24,6 +29,7 @@ verify_output="$(systemd-analyze verify \
   packaging/vegad/vegad.service \
   packaging/vegad/vegad-update-check.service \
   packaging/vegad/vegad-update-check.timer \
+  packaging/vegad/vegad-update-check-retry.timer \
   packaging/vegad/vegad-log-export.service \
   packaging/vegad/vegad-log-export.timer \
   packaging/vega-web/vega-web.service 2>&1 || true)"
@@ -36,6 +42,16 @@ if [ -n "$unexpected" ]; then
 fi
 systemd-analyze security --offline=yes --no-pager \
   packaging/vegad/vegad.service packaging/vega-web/vega-web.service >/dev/null
+
+rg -qx 'OnBootSec=1h' packaging/vegad/vegad-update-check.timer
+rg -qx 'OnUnitActiveSec=24h' packaging/vegad/vegad-update-check.timer
+rg -qx 'RandomizedDelaySec=30min' packaging/vegad/vegad-update-check.timer
+rg -qx 'OnActiveSec=2h' packaging/vegad/vegad-update-check-retry.timer
+rg -qx 'OnFailure=vegad-update-check-retry.timer' \
+  packaging/vegad/vegad-update-check.service
+for spec in packaging/opensuse/vegad.spec packaging/obs/vegad.spec; do
+  rg -q 'vegad-update-check-retry.timer' "$spec"
+done
 
 for action in \
   org.lyraos.vega.logs.read-admin \

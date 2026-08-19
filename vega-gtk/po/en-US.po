@@ -3053,3 +3053,14 @@ msgstr "GNOME with Lyra Dock and Menu."
 
 msgid "Usa a experiência padrão do GNOME."
 msgstr "Uses the standard GNOME experience."
+msgid "Atualizações do sistema"
+msgstr "System Updates"
+
+msgid "{count} atualização(ões) disponível(is)"
+msgstr "{count} update(s) available"
+
+msgid "Sistema atualizado"
+msgstr "System up to date"
+
+msgid "Aguardando verificação de atualizações"
+msgstr "Waiting for update check"

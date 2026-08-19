@@ -49,6 +49,7 @@ install -Dm755 "$REPO_ROOT/vegad/vegad" /usr/lib/vega/vegad
 install -Dm644 "$REPO_ROOT/packaging/vegad/vegad.service" /usr/lib/systemd/system/vegad.service
 install -Dm644 "$REPO_ROOT/packaging/vegad/vegad-update-check.service" /usr/lib/systemd/system/vegad-update-check.service
 install -Dm644 "$REPO_ROOT/packaging/vegad/vegad-update-check.timer" /usr/lib/systemd/system/vegad-update-check.timer
+install -Dm644 "$REPO_ROOT/packaging/vegad/vegad-update-check-retry.timer" /usr/lib/systemd/system/vegad-update-check-retry.timer
 install -Dm644 "$REPO_ROOT/packaging/vegad/vegad.conf" /etc/vega/vegad.conf
 install -Dm644 "$REPO_ROOT/packaging/vegad/profiles/desktop.conf" /usr/share/vega/profiles/desktop.conf
 install -Dm644 "$REPO_ROOT/packaging/vegad/profiles/server.conf" /usr/share/vega/profiles/server.conf
@@ -58,10 +59,15 @@ install -Dm644 "$REPO_ROOT/packaging/vegad/org.lyraos.vega.policy" /usr/share/po
 
 echo "==> Instalando vega-gtk (app)"
 install -Dm755 "$REPO_ROOT/target/release/vega-gtk" /usr/bin/vega-gtk
+install -Dm755 "$REPO_ROOT/target/release/vega-update-notifier" /usr/bin/vega-update-notifier
 ln -sfn vega-gtk /usr/bin/lyra-vega-gtk
 
 install -Dm644 "$REPO_ROOT/packaging/vega/vega.desktop" /usr/share/applications/vega.desktop
+install -Dm644 "$REPO_ROOT/packaging/vega/vega-update-notifier.desktop" /etc/xdg/autostart/vega-update-notifier.desktop
 install -Dm644 "$REPO_ROOT/packaging/vega/vega.svg" /usr/share/icons/hicolor/scalable/apps/vega.svg
+install -d /usr/share/gnome-shell/extensions/updates-indicator@lyraos.org
+install -m644 "$REPO_ROOT"/packaging/vega/updates-indicator@lyraos.org/{extension.js,metadata.json,stylesheet.css} \
+  /usr/share/gnome-shell/extensions/updates-indicator@lyraos.org/
 
 echo "==> Recarregando systemd/D-Bus e habilitando o timer de atualização"
 systemctl daemon-reload

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Vega Update Notifier
+Comment=Notify the user when system updates are available
+Exec=/usr/bin/vega-update-notifier
+Icon=software-update-available
+Terminal=false
+NoDisplay=true
+X-GNOME-Autostart-enabled=true
+X-GNOME-Autostart-Delay=15
+OnlyShowIn=GNOME;

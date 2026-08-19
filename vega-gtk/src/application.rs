@@ -26,11 +26,37 @@ pub fn run() -> glib::ExitCode {
     let app = adw::Application::builder()
         .application_id(APPLICATION_ID)
         .build();
+    let current_window: Rc<RefCell<Option<(VegaShell, adw::ApplicationWindow)>>> =
+        Rc::new(RefCell::new(None));
+    let open_updates = Rc::new(Cell::new(false));
+
+    let action = gio::SimpleAction::new("open-updates", None);
+    let action_app = app.clone();
+    let action_request = open_updates.clone();
+    action.connect_activate(move |_, _| {
+        action_request.set(true);
+        action_app.activate();
+    });
+    app.add_action(&action);
 
     app.connect_startup(|_| install_style());
     let started = Instant::now();
+    let activate_window = current_window.clone();
+    let activate_request = open_updates.clone();
     app.connect_activate(move |app| {
-        build_window(app);
+        if let Some((shell, window)) = activate_window.borrow().as_ref() {
+            if activate_request.replace(false) {
+                shell.stack.set_visible_child_name("software");
+                shell.software.select_updates();
+            }
+            window.present();
+            return;
+        }
+        let show_updates = activate_request.replace(false)
+            || std::env::var_os("VEGA_START_PAGE").as_deref()
+                == Some(std::ffi::OsStr::new("software"));
+        let window = build_window(app, show_updates);
+        *activate_window.borrow_mut() = Some(window);
         if std::env::var_os("VEGA_BENCHMARK_MARKER").is_some() {
             eprintln!("VEGA_WINDOW_READY_MS={}", started.elapsed().as_millis());
         }
@@ -50,9 +76,14 @@ fn install_style() {
     );
 }
 
-fn build_window(app: &adw::Application) {
+fn build_window(app: &adw::Application, show_updates: bool) -> (VegaShell, adw::ApplicationWindow) {
     let identity = AppIdentity::default();
     let shell = VegaShell::new();
+
+    if show_updates {
+        shell.stack.set_visible_child_name("software");
+        shell.software.select_updates();
+    }
 
     let window = adw::ApplicationWindow::builder()
         .application(app)
@@ -63,8 +94,9 @@ fn build_window(app: &adw::Application) {
         .build();
     window.set_icon_name(Some("vega"));
 
-    update_content(shell, window.clone());
+    update_content(shell.clone(), window.clone());
     window.present();
+    (shell, window)
 }
 
 fn update_content(shell: VegaShell, window: adw::ApplicationWindow) {
@@ -4177,16 +4209,8 @@ fn watch_dashboard_updates(dashboard_updates: gtk::Label, dbus: VegaDbus) {
         };
         loop {
             match events.next().await {
-                Ok(SoftwareEvent::UpdatesAvailable(count)) => {
+                Ok(SoftwareEvent::UpdatesAvailable(_count)) => {
                     refresh_dashboard_updates(&dashboard_updates, &client).await;
-                    if count > 0 && crate::preferences::notifications().0 {
-                        send_notification(
-                            &gettext("Atualizações disponíveis"),
-                            &gettext("{count} pacote(s) pendente(s)")
-                                .replace("{count}", &count.to_string()),
-                            "updates-available",
-                        );
-                    }
                 }
                 Ok(_) => {}
                 Err(_) => break,

@@ -11,6 +11,7 @@ use super::{
 #[derive(Clone)]
 pub struct VegaShell {
     pub root: gtk::Box,
+    pub stack: gtk::Stack,
     pub backend_status: gtk::Label,
     pub dashboard_system: gtk::Label,
     pub dashboard_updates: gtk::Label,
@@ -303,6 +304,7 @@ impl VegaShell {
 
         Self {
             root,
+            stack,
             backend_status,
             dashboard_system,
             dashboard_updates,
