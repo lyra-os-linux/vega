@@ -22,6 +22,7 @@ fn main() -> glib::ExitCode {
     app.add_action(&open);
 
     app.connect_activate(|app| {
+        enable_updates_indicator();
         let hold = app.hold();
         let app = app.clone();
         glib::MainContext::default().spawn_local(async move {
@@ -36,6 +37,18 @@ fn main() -> glib::ExitCode {
             if let Ok(status) = client.update_status().await {
                 notify_if_needed(&app, status.total_count);
             }
+            let polling_app = app.clone();
+            glib::MainContext::default().spawn_local(async move {
+                loop {
+                    glib::timeout_future_seconds(60).await;
+                    let Ok(dbus) = VegaDbus::connect().await else {
+                        continue;
+                    };
+                    if let Ok(status) = dbus.software().update_status().await {
+                        notify_if_needed(&polling_app, status.total_count);
+                    }
+                }
+            });
             loop {
                 match events.next().await {
                     Ok(SoftwareEvent::UpdatesAvailable(count)) => notify_if_needed(&app, count),
@@ -47,6 +60,26 @@ fn main() -> glib::ExitCode {
         });
     });
     app.run()
+}
+
+fn enable_updates_indicator() {
+    // Installing a system extension does not enable it for existing GNOME
+    // profiles. Attempt this migration once, so a later manual disable remains
+    // the user's choice.
+    let marker = glib::user_data_dir().join("vega-gtk/update-indicator-enabled-v1");
+    if marker.exists() {
+        return;
+    }
+    let enabled = Command::new("gnome-extensions")
+        .args(["enable", "updates-indicator@lyraos.org"])
+        .status()
+        .is_ok_and(|status| status.success());
+    if enabled {
+        if let Some(parent) = marker.parent() {
+            let _ = fs::create_dir_all(parent);
+        }
+        let _ = fs::write(marker, b"enabled\n");
+    }
 }
 
 fn notify_if_needed(app: &gio::Application, count: u32) {

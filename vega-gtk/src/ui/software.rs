@@ -804,6 +804,10 @@ impl SoftwarePage {
     }
 
     pub fn select_updates(&self) {
+        // Keep the tab selection in sync when navigation comes from an
+        // external action (tray icon/notification), not only from a click on
+        // the tab button itself.
+        self.updates_tab.set_active(true);
         self.clear_results();
         self.search_controls.set_visible(false);
         self.results_area.set_visible(true);

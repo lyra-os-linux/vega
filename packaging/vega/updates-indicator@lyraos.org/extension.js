@@ -10,18 +10,18 @@ import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 const STATE_DIR = '/var/lib/vega';
 const STATE_FILE = `${STATE_DIR}/update-status.json`;
 
-class UpdatesIndicator extends PanelMenu.Button {
+class UpdatesIndicator {
     constructor(gettext) {
-        super(0.0, gettext('Atualizações do sistema'), true);
+        this.button = new PanelMenu.Button(0.0, gettext('Atualizações do sistema'), true);
         this._gettext = gettext;
         this._count = null;
-        this.visible = false;
+        this.button.visible = false;
         this._icon = new St.Icon({
-            icon_name: 'dialog-warning-symbolic',
-            style_class: 'system-status-icon lyra-update-pending',
+            icon_name: 'software-update-available-symbolic',
+            style_class: 'system-status-icon',
         });
-        this.add_child(this._icon);
-        this.connect('button-press-event', (_actor, event) => {
+        this.button.add_child(this._icon);
+        this.button.connect('button-press-event', (_actor, event) => {
             if (event.get_button() === Clutter.BUTTON_PRIMARY && this._count > 0) {
                 GLib.spawn_command_line_async(
                     "/bin/sh -c 'gapplication action org.lyraos.Vega open-updates || env VEGA_START_PAGE=software /usr/bin/vega-gtk'"
@@ -53,26 +53,26 @@ class UpdatesIndicator extends PanelMenu.Button {
         if (this._count === null) {
             this._setUnknown();
         } else if (this._count > 0) {
-            this.accessible_name = this._gettext('{count} atualização(ões) disponível(is)')
+            this.button.accessible_name = this._gettext('{count} atualização(ões) disponível(is)')
                 .replace('{count}', this._count.toString());
-            this.visible = true;
+            this.button.visible = true;
         } else {
-            this.accessible_name = this._gettext('Sistema atualizado');
-            this.visible = false;
+            this.button.accessible_name = this._gettext('Sistema atualizado');
+            this.button.visible = false;
         }
     }
 
     _setUnknown() {
         this._count = null;
-        this.accessible_name = this._gettext('Aguardando verificação de atualizações');
-        this.visible = false;
+        this.button.accessible_name = this._gettext('Aguardando verificação de atualizações');
+        this.button.visible = false;
     }
 }
 
 export default class UpdatesIndicatorExtension extends Extension {
     enable() {
         this._indicator = new UpdatesIndicator(message => this.gettext(message));
-        Main.panel.addToStatusArea(this.uuid, this._indicator, 0, 'right');
+        Main.panel.addToStatusArea(this.uuid, this._indicator.button, 0, 'right');
 
         const directory = Gio.File.new_for_path(STATE_DIR);
         try {
@@ -97,7 +97,7 @@ export default class UpdatesIndicatorExtension extends Extension {
         }
         this._monitor?.cancel();
         this._monitor = null;
-        this._indicator?.destroy();
+        this._indicator?.button.destroy();
         this._indicator = null;
     }
 }
