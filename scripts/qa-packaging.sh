@@ -25,6 +25,14 @@ rpmspec -P packaging/obs/vegad.spec >/dev/null
 rpmspec -P packaging/opensuse/vega.spec >/dev/null
 rpmspec -P packaging/obs/vega-gtk.spec >/dev/null
 
+# O Sobre deve receber a mesma versão declarada pelo RPM em qualquer build.
+for spec in packaging/opensuse/vega.spec packaging/obs/vega-gtk.spec; do
+  rg -q 'VEGA_VERSION=%\{version\} cargo build' "$spec"
+done
+rg -q 'VEGA_VERSION="\$VERSION" cargo build' packaging/opensuse/install.sh
+rg -q 'option_env!\("VEGA_VERSION"\)' vega-gtk/src/model.rs
+rg -q '\.version\(crate::model::APPLICATION_VERSION\)' vega-gtk/src/ui/shell.rs
+
 verify_output="$(systemd-analyze verify \
   packaging/vegad/vegad.service \
   packaging/vegad/vegad-update-check.service \

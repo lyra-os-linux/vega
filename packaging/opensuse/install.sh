@@ -41,7 +41,7 @@ echo "==> Compilando vegad"
 echo "==> Compilando vega-gtk"
 (
   cd "$REPO_ROOT/vega-gtk"
-  cargo build --release --locked
+  VEGA_VERSION="$VERSION" cargo build --release --locked
 )
 
 echo "==> Instalando vegad e integração systemd/D-Bus/polkit"

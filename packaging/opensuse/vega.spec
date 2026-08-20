@@ -36,7 +36,7 @@ Interface nativa do Vega, construída com Rust, GTK4 e libadwaita.
 
 %build
 cd vega-gtk
-cargo build --release --locked
+VEGA_VERSION=%{version} cargo build --release --locked
 
 %install
 install -Dm755 target/release/vega-gtk \

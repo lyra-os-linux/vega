@@ -53,7 +53,7 @@ tar --anchored --exclude=Cargo.lock -xzf %{SOURCE1}
 
 %build
 cd vega-gtk
-cargo build --release --locked --offline
+VEGA_VERSION=%{version} cargo build --release --locked --offline
 
 %install
 install -Dm755 target/release/vega-gtk \

@@ -374,7 +374,7 @@ fn app_menu(
             .application_name("Vega")
             .application_icon("vega")
             .developer_name("Lyra OS")
-            .version(env!("CARGO_PKG_VERSION"))
+            .version(crate::model::APPLICATION_VERSION)
             .website("https://github.com/britors/Vega")
             .issue_url("https://github.com/britors/Vega/issues")
             .license_type(gtk::License::Gpl30)
