@@ -105,7 +105,7 @@ fn notify_if_needed(app: &gio::Application, count: u32) {
     notification.set_body(Some(
         &gettext("{count} pacote(s) pendente(s)").replace("{count}", &count.to_string()),
     ));
-    notification.set_icon(&gio::ThemedIcon::new("software-update-available-symbolic"));
+    notification.set_icon(&gio::ThemedIcon::new("lyra-updates-symbolic"));
     notification.set_default_action("app.open-updates");
     app.send_notification(Some("updates-available"), &notification);
 }

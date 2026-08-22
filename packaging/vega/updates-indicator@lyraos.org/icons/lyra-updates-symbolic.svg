@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Indicador de atualizações do Lyra: seta de download dentro de um anel.
+     O sufixo -symbolic no nome faz St e GTK recolorirem conforme o tema. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+    <path d="m 8 0.5 a 7.5 7.5 0 1 0 0 15 a 7.5 7.5 0 1 0 0 -15 z m 0 1.5 a 6 6 0 1 1 0 12 a 6 6 0 1 1 0 -12 z" fill="#2e3436" fill-rule="evenodd"/>
+    <path d="m 7 4 h 2 v 4.5 h 2.25 l -3.25 3.5 l -3.25 -3.5 h 2.25 z" fill="#2e3436"/>
+</svg>

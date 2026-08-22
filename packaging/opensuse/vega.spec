@@ -51,9 +51,13 @@ install -Dm644 packaging/vega/vega-update-notifier.desktop \
   %{buildroot}%{_sysconfdir}/xdg/autostart/vega-update-notifier.desktop
 install -Dm644 packaging/vega/vega.svg \
   %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/vega.svg
-install -d %{buildroot}%{_datadir}/gnome-shell/extensions/updates-indicator@lyraos.org
+install -Dm644 packaging/vega/updates-indicator@lyraos.org/icons/lyra-updates-symbolic.svg \
+  %{buildroot}%{_datadir}/icons/hicolor/symbolic/apps/lyra-updates-symbolic.svg
+install -d %{buildroot}%{_datadir}/gnome-shell/extensions/updates-indicator@lyraos.org/icons
 install -m644 packaging/vega/updates-indicator@lyraos.org/{extension.js,metadata.json,stylesheet.css} \
   %{buildroot}%{_datadir}/gnome-shell/extensions/updates-indicator@lyraos.org/
+install -m644 packaging/vega/updates-indicator@lyraos.org/icons/lyra-updates-symbolic.svg \
+  %{buildroot}%{_datadir}/gnome-shell/extensions/updates-indicator@lyraos.org/icons/
 for locale in en_US pt_BR es_ES; do
   install -Dm644 "vega-gtk/po/locale/${locale}/LC_MESSAGES/vega-gtk.mo" \
     "%{buildroot}%{_datadir}/locale/${locale}/LC_MESSAGES/vega-gtk.mo"
@@ -66,6 +70,7 @@ done
 %{_datadir}/applications/vega.desktop
 %{_sysconfdir}/xdg/autostart/vega-update-notifier.desktop
 %{_datadir}/icons/hicolor/scalable/apps/vega.svg
+%{_datadir}/icons/hicolor/symbolic/apps/lyra-updates-symbolic.svg
 %dir %{_datadir}/gnome-shell
 %dir %{_datadir}/gnome-shell/extensions
 %{_datadir}/gnome-shell/extensions/updates-indicator@lyraos.org/

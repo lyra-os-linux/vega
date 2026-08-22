@@ -11,13 +11,14 @@ const STATE_DIR = '/var/lib/vega';
 const STATE_FILE = `${STATE_DIR}/update-status.json`;
 
 class UpdatesIndicator {
-    constructor(gettext) {
+    constructor(gettext, extensionPath) {
         this.button = new PanelMenu.Button(0.0, gettext('Atualizações do sistema'), true);
         this._gettext = gettext;
         this._count = null;
         this.button.visible = false;
         this._icon = new St.Icon({
-            icon_name: 'software-update-available-symbolic',
+            gicon: Gio.FileIcon.new(Gio.File.new_for_path(
+                `${extensionPath}/icons/lyra-updates-symbolic.svg`)),
             style_class: 'system-status-icon',
         });
         this.button.add_child(this._icon);
@@ -71,7 +72,7 @@ class UpdatesIndicator {
 
 export default class UpdatesIndicatorExtension extends Extension {
     enable() {
-        this._indicator = new UpdatesIndicator(message => this.gettext(message));
+        this._indicator = new UpdatesIndicator(message => this.gettext(message), this.path);
         Main.panel.addToStatusArea(this.uuid, this._indicator.button, 0, 'right');
 
         const directory = Gio.File.new_for_path(STATE_DIR);
