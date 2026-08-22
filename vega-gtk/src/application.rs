@@ -11,9 +11,9 @@ use crate::model::AppIdentity;
 use crate::ui::VegaShell;
 use lyra_vega_dbus::{
     BackupClient, BackupConfig, BackupEvent, BluetoothClient, DateTimeClient, FirewallClient,
-    HardwareClient, KernelClient, LogsClient, MonitorClient, NetworkClient, RepositoryKeyInfo,
-    ServicesClient, SnapshotsClient, SoftwareClient, SoftwareEvent, StorageClient, SystemClient,
-    UsersClient, VegaDbus,
+    HardwareClient, KernelClient, LogsClient, MonitorClient, NetworkClient, PackageRef,
+    RepositoryKeyInfo, ServicesClient, SnapshotsClient, SoftwareClient, SoftwareEvent,
+    StorageClient, SystemClient, UsersClient, VegaDbus,
 };
 
 pub const APPLICATION_ID: &str = "org.lyraos.Vega";
@@ -3337,7 +3337,7 @@ fn configure_software(shell: &VegaShell, window: &adw::ApplicationWindow, dbus: 
         let client = updates_dbus.software();
         glib::MainContext::default().spawn_local(async move {
             match client.list_updates().await {
-                Ok(packages) => page.show_results(packages, true),
+                Ok(packages) => page.show_results(label_update_rows(packages), true),
                 Err(error) => page.show_error(&error.to_string()),
             }
             page.set_busy(false);
@@ -4248,7 +4248,7 @@ async fn refresh_current_software_page(
         }
     } else if page.updates_tab.is_active() {
         match client.list_updates().await {
-            Ok(packages) => page.show_results(packages, true),
+            Ok(packages) => page.show_results(label_update_rows(packages), true),
             Err(error) => page.show_error(&error.to_string()),
         }
     } else if page.repositories_tab.is_active() {
@@ -4271,6 +4271,19 @@ async fn refresh_current_software_page(
 
 /// Limpa a contagem de pacotes pendentes e busca novamente junto ao vegad,
 /// exibindo o resultado apenas se houver atualizações disponíveis.
+/// Rotula as linhas de atualização do Flathub. O vegad não carrega texto de
+/// interface — um app Flatpak pendente não tem descrição própria a mostrar
+/// aqui, e a cópia precisa sair do catálogo traduzido do próprio app em vez
+/// de vir fixa em português do daemon.
+fn label_update_rows(mut packages: Vec<PackageRef>) -> Vec<PackageRef> {
+    for package in &mut packages {
+        if package.origin == "flathub" && package.description.is_empty() {
+            package.description = gettext("Atualização disponível");
+        }
+    }
+    packages
+}
+
 async fn refresh_dashboard_updates(dashboard_updates: &gtk::Label, client: &impl SoftwareClient) {
     dashboard_updates.set_label(&gettext("Verificando atualizações…"));
     match client.list_updates().await {

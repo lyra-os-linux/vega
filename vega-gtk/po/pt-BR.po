@@ -1254,6 +1254,9 @@ msgstr "{count} pacote(s) pendente(s)"
 msgid "Atualizações disponíveis"
 msgstr "Atualizações disponíveis"
 
+msgid "Atualização disponível"
+msgstr "Atualização disponível"
+
 #: vega-gtk/src/application.rs:4301
 msgid "Backend indisponível"
 msgstr "Backend indisponível"

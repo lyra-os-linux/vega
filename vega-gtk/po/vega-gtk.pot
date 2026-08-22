@@ -1266,6 +1266,9 @@ msgstr ""
 msgid "Atualizações disponíveis"
 msgstr ""
 
+msgid "Atualização disponível"
+msgstr ""
+
 #: vega-gtk/src/application.rs:4301
 msgid "Backend indisponível"
 msgstr ""

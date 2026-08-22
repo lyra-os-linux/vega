@@ -1202,6 +1202,9 @@ msgstr "{count} pending package(s)"
 msgid "Atualizações disponíveis"
 msgstr "Updates available"
 
+msgid "Atualização disponível"
+msgstr "Update available"
+
 #: /home/rbrito/Git/Vega/vega-gtk/src/application.rs:4099
 msgid "Backend indisponível"
 msgstr "Backend unavailable"
