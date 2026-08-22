@@ -27,6 +27,7 @@ rm -f /usr/bin/vega-gtk
 rm -f /usr/bin/vega-update-notifier
 rm -rf /usr/lib/lyra-vega
 rm -f /usr/share/applications/vega.desktop
+rm -f /usr/share/applications/org.lyraos.Vega.UpdateNotifier.desktop
 rm -f /etc/xdg/autostart/vega-update-notifier.desktop
 rm -f /usr/share/icons/hicolor/scalable/apps/vega.svg
 rm -f /usr/share/icons/hicolor/symbolic/apps/lyra-updates-symbolic.svg

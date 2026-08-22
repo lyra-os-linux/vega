@@ -63,6 +63,9 @@ install -Dm755 "$REPO_ROOT/target/release/vega-update-notifier" /usr/bin/vega-up
 ln -sfn vega-gtk /usr/bin/lyra-vega-gtk
 
 install -Dm644 "$REPO_ROOT/packaging/vega/vega.desktop" /usr/share/applications/vega.desktop
+# O GNOME resolve o app-id da notificação em /usr/share/applications; sem este
+# arquivo o GtkNotificationDaemon descarta a notificação em silêncio.
+install -Dm644 "$REPO_ROOT/packaging/vega/org.lyraos.Vega.UpdateNotifier.desktop" /usr/share/applications/org.lyraos.Vega.UpdateNotifier.desktop
 install -Dm644 "$REPO_ROOT/packaging/vega/vega-update-notifier.desktop" /etc/xdg/autostart/vega-update-notifier.desktop
 install -Dm644 "$REPO_ROOT/packaging/vega/vega.svg" /usr/share/icons/hicolor/scalable/apps/vega.svg
 install -Dm644 "$REPO_ROOT/packaging/vega/updates-indicator@lyraos.org/icons/lyra-updates-symbolic.svg" /usr/share/icons/hicolor/symbolic/apps/lyra-updates-symbolic.svg

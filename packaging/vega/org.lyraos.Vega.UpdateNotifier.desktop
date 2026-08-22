@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Vega Update Notifier
+Comment=Notify the user when system updates are available
+Exec=/usr/bin/vega-update-notifier
+Icon=lyra-updates-symbolic
+Terminal=false
+NoDisplay=true

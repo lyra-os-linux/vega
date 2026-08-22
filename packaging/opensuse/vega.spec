@@ -47,6 +47,8 @@ ln -s vega-gtk %{buildroot}%{_bindir}/lyra-vega-gtk
 
 install -Dm644 packaging/vega/vega.desktop \
   %{buildroot}%{_datadir}/applications/vega.desktop
+install -Dm644 packaging/vega/org.lyraos.Vega.UpdateNotifier.desktop \
+  %{buildroot}%{_datadir}/applications/org.lyraos.Vega.UpdateNotifier.desktop
 install -Dm644 packaging/vega/vega-update-notifier.desktop \
   %{buildroot}%{_sysconfdir}/xdg/autostart/vega-update-notifier.desktop
 install -Dm644 packaging/vega/vega.svg \
@@ -68,6 +70,7 @@ done
 %{_bindir}/vega-update-notifier
 %{_bindir}/lyra-vega-gtk
 %{_datadir}/applications/vega.desktop
+%{_datadir}/applications/org.lyraos.Vega.UpdateNotifier.desktop
 %{_sysconfdir}/xdg/autostart/vega-update-notifier.desktop
 %{_datadir}/icons/hicolor/scalable/apps/vega.svg
 %{_datadir}/icons/hicolor/symbolic/apps/lyra-updates-symbolic.svg
