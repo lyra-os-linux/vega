@@ -4,5 +4,5 @@
   "description": "Shows the update status reported by Vega in the GNOME top bar",
   "gettext-domain": "vega-gtk",
   "shell-version": ["48"],
-  "version": 1
+  "version": 2
 }
