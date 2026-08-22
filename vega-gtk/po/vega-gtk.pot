@@ -2681,6 +2681,9 @@ msgid "Detalhes do pacote"
 msgstr ""
 
 #: vega-gtk/src/ui/software.rs:426
+msgid "Nenhuma atualização disponível"
+msgstr ""
+
 msgid "Nenhum resultado encontrado"
 msgstr ""
 

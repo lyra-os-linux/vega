@@ -13,6 +13,7 @@ type SelectionHandlers = Rc<RefCell<Vec<Rc<dyn Fn()>>>>;
 type RepositoryToggleHandlers = Rc<RefCell<Vec<Rc<dyn Fn(RepositoryRef)>>>>;
 type AddRepoHandlers = Rc<RefCell<Vec<Rc<dyn Fn(String, String)>>>>;
 type UpdatePackageHandlers = Rc<RefCell<Vec<Rc<dyn Fn(PackageRef)>>>>;
+type UpdatesReloader = Rc<RefCell<Option<Rc<dyn Fn()>>>>;
 
 #[derive(Clone, Debug)]
 struct PackageGroup {
@@ -66,6 +67,13 @@ pub struct SoftwarePage {
     install_queue: Rc<RefCell<Vec<PackageRef>>>,
     install_queue_toggles: Rc<RefCell<Vec<gtk::ToggleButton>>>,
     pub install_queue_button: gtk::Button,
+    /// Recarrega a aba de atualizações. Registrado por `configure_software`
+    /// assim que o cliente D-Bus existe, porque a página é construída antes
+    /// dele. Guardar o recarregamento aqui é o que permite a navegação
+    /// externa (ícone da bandeja, notificação) buscar a lista de verdade em
+    /// vez de depender do sinal `clicked` da aba, que só um clique real
+    /// emite.
+    reload_updates: UpdatesReloader,
 }
 
 impl SoftwarePage {
@@ -446,6 +454,25 @@ impl SoftwarePage {
             install_queue: Rc::new(RefCell::new(Vec::new())),
             install_queue_toggles: Rc::new(RefCell::new(Vec::new())),
             install_queue_button,
+            reload_updates: Rc::new(RefCell::new(None)),
+        }
+    }
+
+    /// Define quem sabe buscar as atualizações e dispara a busca de imediato
+    /// se a aba já estiver selecionada — é o caso de quem abriu o Vega pela
+    /// bandeja ou pela notificação, cuja seleção acontece antes desta
+    /// configuração.
+    pub fn set_updates_reloader(&self, reload: Rc<dyn Fn()>) {
+        *self.reload_updates.borrow_mut() = Some(reload.clone());
+        if self.updates_tab.is_active() {
+            reload();
+        }
+    }
+
+    fn reload_updates(&self) {
+        let reload = self.reload_updates.borrow().clone();
+        if let Some(reload) = reload {
+            reload();
         }
     }
 
@@ -472,8 +499,15 @@ impl SoftwarePage {
             group_packages(packages)
         };
         *self.package_groups.borrow_mut() = groups.clone();
+        // group_by_repository só é verdadeiro na aba de atualizações, onde
+        // "nenhum resultado" não descreve o que aconteceu: não houve busca
+        // que falhasse, o sistema é que está em dia.
         self.status.set_label(&if groups.is_empty() {
-            gettext("Nenhum resultado encontrado")
+            if group_by_repository {
+                gettext("Nenhuma atualização disponível")
+            } else {
+                gettext("Nenhum resultado encontrado")
+            }
         } else {
             gettext("Escolha a origem antes de instalar")
         });
@@ -816,6 +850,7 @@ impl SoftwarePage {
         self.global_action.set_label(&gettext("Atualizar tudo"));
         self.install_queue_button.set_visible(false);
         self.status.set_label(&gettext("Verificando atualizações…"));
+        self.reload_updates();
     }
 
     pub fn select_repositories(&self) {

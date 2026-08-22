@@ -2589,6 +2589,9 @@ msgid "Detalhes do pacote"
 msgstr "Package Details"
 
 #: /home/rbrito/Git/Vega/vega-gtk/src/ui/software.rs:426
+msgid "Nenhuma atualização disponível"
+msgstr "No updates available"
+
 msgid "Nenhum resultado encontrado"
 msgstr "No results found"
 

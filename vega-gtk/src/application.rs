@@ -3325,16 +3325,16 @@ fn configure_software(shell: &VegaShell, window: &adw::ApplicationWindow, dbus: 
         });
     });
 
-    let updates_page = page.clone();
-    let updates_dbus = dbus.clone();
-    page.updates_tab.connect_clicked(move |button| {
-        if !button.is_active() {
-            return;
-        }
-        updates_page.select_updates();
-        updates_page.set_busy(true);
-        let page = updates_page.clone();
-        let client = updates_dbus.software();
+    // A busca da lista fica registrada na própria página em vez de morar só
+    // no handler de `clicked`: abrir o Vega pela bandeja ou pela notificação
+    // seleciona a aba por código, e `set_active` não emite `clicked` — sem
+    // isto a aba ficava parada em "Verificando atualizações…" para sempre.
+    let reload_page = page.clone();
+    let reload_dbus = dbus.clone();
+    page.set_updates_reloader(std::rc::Rc::new(move || {
+        reload_page.set_busy(true);
+        let page = reload_page.clone();
+        let client = reload_dbus.software();
         glib::MainContext::default().spawn_local(async move {
             match client.list_updates().await {
                 Ok(packages) => page.show_results(label_update_rows(packages), true),
@@ -3342,6 +3342,15 @@ fn configure_software(shell: &VegaShell, window: &adw::ApplicationWindow, dbus: 
             }
             page.set_busy(false);
         });
+    }));
+
+    let updates_page = page.clone();
+    page.updates_tab.connect_clicked(move |button| {
+        if !button.is_active() {
+            return;
+        }
+        // select_updates dispara o recarregamento acima.
+        updates_page.select_updates();
     });
 
     let repositories_page = page.clone();
