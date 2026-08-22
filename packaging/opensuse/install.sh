@@ -34,7 +34,14 @@ done
 echo "==> Compilando vegad"
 (
   cd "$REPO_ROOT/vegad"
-  go build -trimpath -ldflags "-X github.com/lyraos/vegad/internal/version.Version=${VERSION}" \
+  # This script runs as root (see the check above) against a checkout that
+  # normally belongs to the user. Go stamps VCS metadata by shelling out to
+  # git, which refuses a repository it does not own ("dubious ownership") and
+  # fails the build — so the documented 'sudo install.sh' never got past this
+  # step. The stamp is not used anywhere; VERSION above is what the About
+  # screen reads.
+  go build -trimpath -buildvcs=false \
+    -ldflags "-X github.com/lyraos/vegad/internal/version.Version=${VERSION}" \
     -o vegad ./cmd/vegad
 )
 
