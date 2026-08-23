@@ -9,7 +9,7 @@
        fontes após cada tag. A cadeia usa diretamente o .tar do tar_scm. -->
   <service name="tar_scm">
     <param name="scm">git</param>
-    <param name="url">https://github.com/britors/Vega.git</param>
+    <param name="url">https://github.com/lyra-os-linux/vega.git</param>
     <!-- master não existe neste repo (o branch padrão é main) — sem
          "revision" o tar_scm tenta master por default e falha com
          "master: No such revision". match-tag procura a tag mais nova
