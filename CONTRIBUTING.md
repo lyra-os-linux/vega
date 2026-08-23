@@ -1,16 +1,25 @@
 # Contribuindo com o Vega
 
-Obrigado por contribuir com o Vega. Este projeto combina uma interface nativa
-Rust/GTK4 com o daemon `vegad`, que executa operações de sistema via D-Bus e
-polkit. Mudanças devem ser pequenas, revisáveis e cuidadosas com a segurança do
-sistema.
+Obrigado por contribuir com o Vega. Este repositório hospeda a interface
+nativa Rust/GTK4 (`vega-gtk/`). O produto combina essa interface com o
+daemon [`vegad`](https://github.com/lyra-os-linux/vegad), que executa
+operações de sistema via D-Bus e polkit — e com
+[`vega-cli`](https://github.com/lyra-os-linux/vega-cli),
+[`vega-web`](https://github.com/lyra-os-linux/vega-web) e
+[`lyra-vega-dbus`](https://github.com/lyra-os-linux/lyra-vega-dbus) (cliente
+D-Bus tipado + contrato XML), cada um em seu próprio repositório. Mudanças
+devem ser pequenas, revisáveis e cuidadosas com a segurança do sistema.
 
 ## Ambiente
 
 - Rust 1.92 ou mais recente, GTK4 e libadwaita para a interface em `vega-gtk/`.
-- Go para o daemon em `vegad/`.
-- Linux com systemd, D-Bus e polkit para testar integracoes reais (openSUSE Leap).
-- Use `packaging/opensuse/install.sh` (e `uninstall.sh`) para validar instalacao local.
+- Para trabalhar em mudanças que atravessam o contrato D-Bus (UI + daemon),
+  clone `vegad` e `lyra-vega-dbus` como irmãos deste repositório (mesmo
+  diretório pai) — é o que os scripts cross-repo em `scripts/` esperam.
+- Linux com systemd, D-Bus e polkit para testar integracoes reais (openSUSE
+  Leap), com `vegad` instalado (ver o repositório dele para instruções).
+- Use `packaging/opensuse/install.sh` (e `uninstall.sh`) para validar a
+  instalação local do `vega-gtk`.
 
 ## Fluxo de trabalho
 
@@ -22,12 +31,7 @@ sistema.
 
 ## Validacao
 
-Antes de enviar uma alteracao, rode pelo menos:
-
-```bash
-cd vegad
-GOCACHE=/tmp/vega-gocache go test ./...
-```
+Antes de enviar uma alteracao neste repositório, rode pelo menos:
 
 ```bash
 cd vega-gtk
@@ -35,6 +39,9 @@ cargo fmt --check
 cargo test --locked
 cargo clippy --locked --all-targets -- -D warnings
 ```
+
+Mudanças no daemon (`vegad`) são validadas no repositório dele
+(`GOCACHE=/tmp/vega-gocache go test ./...` a partir da raiz de lá).
 
 Quando a mudanca tocar empacotamento, D-Bus, polkit ou integracao com ferramentas do sistema, rode tambem o smoke test aplicavel em `scripts/` e documente o ambiente usado.
 
@@ -44,7 +51,8 @@ Quando a mudanca tocar empacotamento, D-Bus, polkit ou integracao com ferramenta
 - Acoes que alteram o sistema devem passar por `requirePolkit`, exceto Install/Remove com `origin == "flathub"`: `vegad` roda como root e chama o `flatpak` diretamente, entao a fila de instalacao processa Flathub antes dos pacotes zypper/oficiais para so pedir senha quando (e se) alcancar a parte zypper.
 - Prefira comandos padrao do sistema e trate ausencia deles com erro legivel.
 - Operacoes de alto risco, como kernel, bootloader, pacotes e rollback, devem criar snapshot quando possivel.
-- A UI acessa apenas os métodos tipados publicados nos XMLs em `dbus/`.
+- A UI acessa apenas os métodos tipados publicados nos XMLs de
+  [`lyra-vega-dbus`](https://github.com/lyra-os-linux/lyra-vega-dbus) (`dbus/`).
 - Nunca mova autorização para a UI: toda mutação privilegiada deve continuar
   protegida no `vegad` por polkit.
 

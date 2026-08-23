@@ -13,7 +13,7 @@ Version:        0
 Release:        1%{?dist}
 Summary:        Centro de controle para Linux
 License:        GPL-3.0-only
-URL:            https://github.com/britors/Vega
+URL:            https://github.com/lyra-os-linux/vega
 Source0:        vega-src-%{version}.tar
 # vendor.tar.gz gerado pelo _service cargo_vendor (rede exigida, que a VM
 # de build do OBS não tem — sem isso, "cargo build" trava tentando baixar

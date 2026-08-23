@@ -12,8 +12,9 @@ The project provides a graphical interface built with Rust and
 GTK4/libadwaita, plus a terminal interface built with Bash and `dialog`. Both
 use the same privileged daemon and D-Bus contract.
 
-Licensed under GPL-3.0. Source code at
-[github.com/britors/Vega](https://github.com/britors/Vega).
+Licensed under GPL-3.0. This repository hosts `vega-gtk` and the
+product-wide docs/scripts; the other components each have their own
+repository — see [Architecture](#architecture) below.
 
 ## Features
 
@@ -31,13 +32,22 @@ dependency is missing without preventing the other pages from working.
 
 ## Architecture
 
-| Component | Technology | Role |
-| --- | --- | --- |
-| `vega-gtk` | Rust, GTK4, and libadwaita | Unprivileged graphical interface |
-| `vega-cli` | Bash and `dialog` | Terminal interface for local or SSH use |
-| `lyra-vega-dbus` | Rust and zbus | Typed D-Bus client shared by the GTK interface |
-| `vegad` | Go | Daemon that performs authorized system operations |
-| `dbus/` | Introspection XML | Public `org.lyraos.Vega1.*` contract between clients and daemon |
+Vega is split across several repositories under
+[lyra-os-linux](https://github.com/lyra-os-linux). This repository
+(`vega`) hosts `vega-gtk` plus the docs/scripts that span the whole
+product; each other component has its own repository and release cycle:
+
+| Component | Technology | Role | Repository |
+| --- | --- | --- | --- |
+| `vega-gtk` | Rust, GTK4, and libadwaita | Unprivileged graphical interface | this repo |
+| `vega-cli` | Bash and `dialog` | Terminal interface for local or SSH use | [lyra-os-linux/vega-cli](https://github.com/lyra-os-linux/vega-cli) |
+| `vega-web` | Rust, axum | HTTPS panel for LAN-only administration | [lyra-os-linux/vega-web](https://github.com/lyra-os-linux/vega-web) |
+| `vegad` | Go | Daemon that performs authorized system operations | [lyra-os-linux/vegad](https://github.com/lyra-os-linux/vegad) |
+| `lyra-vega-dbus` + `dbus/` | Rust/zbus + introspection XML | Typed D-Bus client and the public `org.lyraos.Vega1.*` contract, shared by the Rust frontends | [lyra-os-linux/lyra-vega-dbus](https://github.com/lyra-os-linux/lyra-vega-dbus) |
+
+Building the full product locally means cloning the repos above as
+siblings (e.g. under the same parent directory) — see
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
 `vegad` uses the system bus and is activated on demand by D-Bus. It releases
 the bus name and exits after two minutes without activity. Read-only queries do
@@ -58,7 +68,7 @@ repository on the openSUSE Build Service:
 ### Automatic installation
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/britors/Vega/main/scripts/install-obs.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/lyra-os-linux/vega/main/scripts/install-obs.sh | sudo bash
 ```
 
 This installs `vega-gtk`, `vegad`, and `vega-cli`, and leaves the repository
@@ -101,7 +111,7 @@ sudo zypper update
 To install only the daemon and terminal interface on a headless machine:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/britors/Vega/main/scripts/install-obs.sh \
+curl -fsSL https://raw.githubusercontent.com/lyra-os-linux/vega/main/scripts/install-obs.sh \
   | sudo env VEGA_CLI_ONLY=1 bash
 ```
 
@@ -117,9 +127,11 @@ run `vega-gtk`. Run `vega` to start the terminal interface.
 ### Release RPMs
 
 Alternatively, `scripts/install.sh` downloads RPMs from the latest GitHub
-release without configuring the OBS repository. A specific tag can be selected
-with `VEGA_VERSION=vX.Y.Z`; these standalone RPMs are still installed as
-unsigned packages.
+release of each component's repository (`vega`, `vegad`, `vega-cli`)
+without configuring the OBS repository. A specific tag can be selected with
+`VEGA_VERSION=vX.Y.Z` (used against all three repos, so it only works if
+their releases share that tag); these standalone RPMs are still installed
+as unsigned packages.
 
 ## Uninstalling
 
@@ -139,8 +151,8 @@ Per-user assistant preferences in
 Prerequisites:
 
 - Rust 1.92 or newer, GTK4, and libadwaita;
-- Go;
-- openSUSE with systemd, D-Bus, and polkit for integration testing.
+- openSUSE with systemd, D-Bus, and polkit for integration testing
+  (needs `vegad` installed/running — see its own repository).
 
 Validate the Rust interface and client from the repository root:
 
@@ -150,12 +162,8 @@ cargo test --locked
 cargo clippy --locked --all-targets -- -D warnings
 ```
 
-Validate the daemon:
-
-```sh
-cd vegad
-GOCACHE=/tmp/vega-gocache go test ./...
-```
+The daemon (`vegad`) has its own repository, tests, and validation —
+see [lyra-os-linux/vegad](https://github.com/lyra-os-linux/vegad).
 
 Run the graphical interface during development:
 
@@ -165,7 +173,8 @@ cargo run --manifest-path vega-gtk/Cargo.toml
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines,
 [vega-gtk/README.md](vega-gtk/README.md) for interface details, and
-[dbus/README.md](dbus/README.md) for the D-Bus contract.
+[lyra-vega-dbus](https://github.com/lyra-os-linux/lyra-vega-dbus) for the
+D-Bus contract.
 
 ## Tested openSUSE versions
 

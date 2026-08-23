@@ -1,26 +1,22 @@
 #!/usr/bin/env bash
+# Smoke test local do vega-gtk. Desde a quebra do monorepo, vegad tem seu
+# próprio smoke test (Go) no repositório dele; este cobre só o que ainda
+# mora aqui.
 set -euo pipefail
 
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 
-echo "[1/7] Go tests"
-(cd "$repo_root/vegad" && GOCACHE=/tmp/vega-gocache GOMODCACHE=/tmp/vega-go-mod go test ./...)
-
-echo "[2/7] Rust formatting, tests and lints"
+echo "[1/5] Rust formatting, tests and lints"
 (cd "$repo_root/vega-gtk" && cargo fmt --check && cargo test --locked && cargo clippy --locked -- -D warnings)
 
-echo "[3/7] Optimized GTK build"
+echo "[2/5] Optimized GTK build"
 (cd "$repo_root/vega-gtk" && cargo build --release --locked)
 
-echo "[4/7] Packaging metadata"
+echo "[3/5] Packaging metadata"
 bash -n "$repo_root/scripts/install.sh"
+bash -n "$repo_root/packaging/opensuse/install.sh"
 
-echo "[5/7] D-Bus contract files"
-for file in "$repo_root"/dbus/org.lyraos.Vega1.*.xml; do
-  [[ -f "$file" ]]
-done
-
-echo "[6/7] Native-package guard"
+echo "[4/5] Native-package guard"
 package_files=(
   "$repo_root/packaging/opensuse/vega.spec"
   "$repo_root/packaging/obs"/*.spec
@@ -31,7 +27,7 @@ if grep -Ei '(electron|node_modules|npm (ci|install|run)|nodejs)' "${package_fil
 fi
 # O empacotamento openSUSE usa o rust/cargo fornecido pelo próprio zypper.
 
-echo "[7/7] Identidade GTK"
+echo "[5/5] Identidade GTK"
 grep -q 'vega-gtk' "$repo_root/vega-gtk/Cargo.toml"
 
 echo "Smoke local concluído"

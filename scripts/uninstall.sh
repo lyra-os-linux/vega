@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Desinstalador de conveniência: reverte scripts/install.sh removendo os
-# pacotes do Vega (vega-gtk, vegad, vega-cli, ver packaging/opensuse/*)
-# via zypper. Os %preun/%postun dos .spec já cuidam de parar/desabilitar
-# units systemd e recarregar D-Bus — este script só decide quais pacotes
-# remover.
+# pacotes do Vega (vega-gtk, vegad, vega-cli — cada um com seu próprio
+# repositório e .spec desde a quebra do monorepo) via zypper. Os
+# %preun/%postun dos .spec já cuidam de parar/desabilitar units systemd e
+# recarregar D-Bus — este script só decide quais pacotes remover.
 #
 # Uso:
 #   sudo bash scripts/uninstall.sh

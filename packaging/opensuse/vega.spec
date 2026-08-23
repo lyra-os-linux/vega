@@ -1,13 +1,13 @@
-# Empacotamento Linux. Ver vegad.spec neste
-# mesmo diretório para as notas gerais (versionamento via --define version,
-# status do empacotamento).
+# Empacotamento Linux do vega-gtk. Versionamento via --define version
+# (ver Version abaixo); ver packaging/obs/vega-gtk.spec para a variante
+# consumida pelo OBS via tar_scm.
 %{!?version: %define version 0.0.0}
 Name:           vega-gtk
 Version:        %{version}
 Release:        1%{?dist}
 Summary:        Centro de controle para Linux
 License:        GPL-3.0-only
-URL:            https://github.com/britors/Vega
+URL:            https://github.com/lyra-os-linux/vega
 Source0:        vega-src.tar.gz
 
 BuildRequires:  cargo
