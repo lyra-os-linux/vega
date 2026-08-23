@@ -17,9 +17,7 @@ xmllint --noout dbus/*.xml packaging/vegad/org.lyraos.Vega1.conf \
 desktop-file-validate packaging/vega/vega-update-notifier.desktop
 desktop-file-validate packaging/vega/org.lyraos.Vega.UpdateNotifier.desktop
 desktop-file-validate packaging/vega/vega.desktop
-python3 -m json.tool \
-  packaging/vega/updates-indicator@lyraos.org/metadata.json >/dev/null
-xmllint --noout packaging/vega/updates-indicator@lyraos.org/icons/lyra-updates-symbolic.svg
+xmllint --noout packaging/vega/icons/lyra-updates-symbolic.svg
 
 # O GNOME so entrega GNotification quando existe um .desktop com o mesmo nome do
 # application_id; os dois precisam continuar casados.
@@ -33,8 +31,6 @@ for spec in packaging/opensuse/vega.spec packaging/obs/vega-gtk.spec; do
   rg -q "applications/${notifier_id}.desktop" "$spec"
 done
 rg -q "applications/${notifier_id}.desktop" packaging/opensuse/install.sh
-rg -q 'updates-indicator@lyraos.org' packaging/opensuse/vega.spec
-rg -q 'updates-indicator@lyraos.org' packaging/obs/vega-gtk.spec
 
 rpmspec -P packaging/opensuse/vegad.spec >/dev/null
 rpmspec -P packaging/obs/vegad.spec >/dev/null

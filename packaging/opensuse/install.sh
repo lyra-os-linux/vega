@@ -75,12 +75,7 @@ install -Dm644 "$REPO_ROOT/packaging/vega/vega.desktop" /usr/share/applications/
 install -Dm644 "$REPO_ROOT/packaging/vega/org.lyraos.Vega.UpdateNotifier.desktop" /usr/share/applications/org.lyraos.Vega.UpdateNotifier.desktop
 install -Dm644 "$REPO_ROOT/packaging/vega/vega-update-notifier.desktop" /etc/xdg/autostart/vega-update-notifier.desktop
 install -Dm644 "$REPO_ROOT/packaging/vega/vega.svg" /usr/share/icons/hicolor/scalable/apps/vega.svg
-install -Dm644 "$REPO_ROOT/packaging/vega/updates-indicator@lyraos.org/icons/lyra-updates-symbolic.svg" /usr/share/icons/hicolor/symbolic/apps/lyra-updates-symbolic.svg
-install -d /usr/share/gnome-shell/extensions/updates-indicator@lyraos.org/icons
-install -m644 "$REPO_ROOT"/packaging/vega/updates-indicator@lyraos.org/{extension.js,metadata.json,stylesheet.css} \
-  /usr/share/gnome-shell/extensions/updates-indicator@lyraos.org/
-install -m644 "$REPO_ROOT/packaging/vega/updates-indicator@lyraos.org/icons/lyra-updates-symbolic.svg" \
-  /usr/share/gnome-shell/extensions/updates-indicator@lyraos.org/icons/
+install -Dm644 "$REPO_ROOT/packaging/vega/icons/lyra-updates-symbolic.svg" /usr/share/icons/hicolor/symbolic/apps/lyra-updates-symbolic.svg
 
 echo "==> Recarregando systemd/D-Bus e habilitando o timer de atualização"
 systemctl daemon-reload
