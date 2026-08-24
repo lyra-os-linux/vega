@@ -375,8 +375,8 @@ fn app_menu(
             .application_icon("vega")
             .developer_name("Lyra OS")
             .version(crate::model::APPLICATION_VERSION)
-            .website("https://github.com/britors/Vega")
-            .issue_url("https://github.com/britors/Vega/issues")
+            .website("https://github.com/lyra-os-linux/vega")
+            .issue_url("https://github.com/lyra-os-linux/vega/issues")
             .license_type(gtk::License::Gpl30)
             .build();
         dialog.set_developers(&["Rodrigo Brito"]);

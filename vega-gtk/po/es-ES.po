@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: vega-gtk 4.0.3\n"
-"Report-Msgid-Bugs-To: https://github.com/britors/Vega/issues\n"
+"Report-Msgid-Bugs-To: https://github.com/lyra-os-linux/vega/issues\n"
 "Language: es-ES\n"
 "PO-Revision-Date: 2026-08-12 00:00+0000\n"
 "Last-Translator: Vega contributors\n"

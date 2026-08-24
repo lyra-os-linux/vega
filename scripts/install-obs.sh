@@ -5,7 +5,7 @@
 # direto da release do GitHub, sem precisar de repositório nenhum.
 #
 # Uso:
-#   curl -fsSL https://raw.githubusercontent.com/britors/Vega/main/scripts/install-obs.sh | sudo bash
+#   curl -fsSL https://raw.githubusercontent.com/lyra-os-linux/vega/main/scripts/install-obs.sh | sudo bash
 #
 # VEGA_CLI_ONLY=1 sudo -E bash install-obs.sh   # só vegad + vega-cli, sem
 #                                                # a interface GTK (e sem

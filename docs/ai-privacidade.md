@@ -1,6 +1,6 @@
 # Privacidade do Assistente de IA
 
-Este documento descreve exatamente o que o assistente de IA do Vega envia para provedores externos, e o que ele nunca envia. Cobre a issue [#34](https://github.com/britors/Vega/issues/34).
+Este documento descreve exatamente o que o assistente de IA do Vega envia para provedores externos, e o que ele nunca envia. Cobre a issue [#34](https://github.com/lyra-os-linux/vega/issues/34).
 
 ## Resumo
 
