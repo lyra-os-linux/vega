@@ -4227,12 +4227,14 @@ async fn monitor_software_transaction(
             }
             Ok(SoftwareEvent::Finished(finished)) if finished.transaction_id == transaction_id => {
                 page.finish_transaction(finished.success, &finished.message);
-                if finished.success {
-                    if page.updates_tab.is_active() {
-                        page.clear_results();
-                    }
-                    refresh_current_software_page(page, client, dashboard_updates).await;
+                // Refresh even on failure: a multi-step transaction (e.g.
+                // UpdateAll running Zypper then Flatpak) can partially
+                // succeed, and the Updates tab must not keep showing
+                // packages that were, in fact, already installed.
+                if page.updates_tab.is_active() {
+                    page.clear_results();
                 }
+                refresh_current_software_page(page, client, dashboard_updates).await;
                 break;
             }
             Ok(_) => {}
