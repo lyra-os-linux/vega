@@ -4,8 +4,8 @@
 # Leap 16.0. Alternativa: scripts/install.sh, que baixa RPM pré-compilado
 # direto da release do GitHub, sem precisar de repositório nenhum.
 #
-# Uso:
-#   curl -fsSL https://raw.githubusercontent.com/lyra-os-linux/vega/main/scripts/install-obs.sh | sudo bash
+# Uso a partir de um checkout revisado:
+#   sudo bash scripts/install-obs.sh
 #
 # VEGA_CLI_ONLY=1 sudo -E bash install-obs.sh   # só vegad + vega-cli, sem
 #                                                # a interface GTK (e sem
@@ -21,7 +21,7 @@ VEGA_OBS_ALIAS="vega-obs"
 VEGA_CLI_ONLY="${VEGA_CLI_ONLY:-0}"
 
 if [ "$(id -u)" -ne 0 ]; then
-  echo "Rode como root (sudo bash install-obs.sh, ou via curl ... | sudo bash)." >&2
+  echo "Rode como root a partir de um checkout revisado (sudo bash scripts/install-obs.sh)." >&2
   exit 1
 fi
 

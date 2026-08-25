@@ -65,15 +65,6 @@ method uses the
 [`home:rodrigosbrito:vega`](https://build.opensuse.org/project/show/home:rodrigosbrito:vega)
 repository on the openSUSE Build Service:
 
-### Automatic installation
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/lyra-os-linux/vega/main/scripts/install-obs.sh | sudo bash
-```
-
-This installs `vega-gtk`, `vegad`, and `vega-cli`, and leaves the repository
-configured for future updates through `zypper`.
-
 ### Add the OBS repository and install with Zypper
 
 Add the Vega repository:

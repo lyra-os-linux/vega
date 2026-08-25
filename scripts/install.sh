@@ -8,8 +8,8 @@
 # então trava todos na mesma tag (VEGA_VERSION) só funciona se as releases
 # dos três repos usarem o mesmo esquema de versão.
 #
-# Uso:
-#   curl -fsSL https://raw.githubusercontent.com/lyra-os-linux/vega/main/scripts/install.sh | sudo bash
+# Uso a partir de um checkout revisado:
+#   sudo bash scripts/install.sh
 #
 # VEGA_VERSION=v5.1.22 sudo -E bash install.sh   # trava numa tag específica
 #                                                 # (mesma tag nos 3 repos)
@@ -24,7 +24,7 @@ set -euo pipefail
 VEGA_CLI_ONLY="${VEGA_CLI_ONLY:-0}"
 
 if [ "$(id -u)" -ne 0 ]; then
-  echo "Rode como root (sudo bash install.sh, ou via curl ... | sudo bash)." >&2
+  echo "Rode como root a partir de um checkout revisado (sudo bash scripts/install.sh)." >&2
   exit 1
 fi
 

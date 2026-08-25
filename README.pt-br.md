@@ -68,15 +68,6 @@ instalação recomendada usa o repositório
 [`home:rodrigosbrito:vega`](https://build.opensuse.org/project/show/home:rodrigosbrito:vega)
 no openSUSE Build Service:
 
-### Instalação automática
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/lyra-os-linux/vega/main/scripts/install-obs.sh | sudo bash
-```
-
-O comando instala `vega-gtk`, `vegad` e `vega-cli` e mantém o repositório
-configurado para atualizações futuras pelo `zypper`.
-
 ### Adicionar o repositório OBS e instalar com Zypper
 
 Adicione o repositório do Vega:
