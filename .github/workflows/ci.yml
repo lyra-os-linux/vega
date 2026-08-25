@@ -22,9 +22,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             libgtk-4-dev libadwaita-1-dev pkg-config build-essential gettext locales
-          # Os testes de i18n exercitam setlocale() nos três idiomas
-          # suportados; a imagem padrão do runner só tem C.UTF-8 gerado.
-          sudo locale-gen en_US.UTF-8 pt_BR.UTF-8 es_ES.UTF-8
+          # O código chama setlocale() com o nome nu (ex.: "en_US", sem
+          # sufixo .UTF-8), que é a convenção do glibc-locale usado na
+          # distro-alvo (openSUSE Leap). locale-gen, no Ubuntu do runner,
+          # só produziria "en_US.utf8" (com sufixo) e o setlocale() não
+          # acharia — localedef com o próprio nome nu como saída replica
+          # exatamente o nome que o app espera.
+          for locale in en_US pt_BR es_ES; do
+            sudo localedef -i "$locale" -f UTF-8 -c "$locale"
+          done
 
       - uses: dtolnay/rust-toolchain@stable
         with:
