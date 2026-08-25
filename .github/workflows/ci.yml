@@ -21,7 +21,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            libgtk-4-dev libadwaita-1-dev pkg-config build-essential
+            libgtk-4-dev libadwaita-1-dev pkg-config build-essential gettext
 
       - uses: dtolnay/rust-toolchain@stable
         with:
