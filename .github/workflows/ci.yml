@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  vega-gtk:
+    name: vega-gtk (fmt, clippy, test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies (GTK4, libadwaita)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libgtk-4-dev libadwaita-1-dev pkg-config build-essential gettext locales
+          # O código chama setlocale() com o nome nu (ex.: "en_US", sem
+          # sufixo .UTF-8), que é a convenção do glibc-locale usado na
+          # distro-alvo (openSUSE Leap). locale-gen, no Ubuntu do runner,
+          # só produziria "en_US.utf8" (com sufixo) e o setlocale() não
+          # acharia — localedef com o próprio nome nu como saída replica
+          # exatamente o nome que o app espera.
+          for locale in en_US pt_BR es_ES; do
+            sudo localedef -i "$locale" -f UTF-8 -c "$locale"
+          done
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: cargo fmt --check
+        run: cargo fmt --all --check
+
+      - name: Compatibilidade com a versão fixada de lyra-vega-dbus
+        run: scripts/ci/check-lyra-vega-dbus-pin.sh
+
+      - name: cargo clippy
+        run: cargo clippy --workspace --locked --all-targets -- -D warnings
+
+      - name: cargo test --workspace --locked
+        run: cargo test --workspace --locked
+
+  translations:
+    name: Inventário de traduções
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Testes de inventário de i18n
+        run: python3 tests/test_vega_gtk_i18n.py -v
