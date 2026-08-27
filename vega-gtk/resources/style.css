@@ -86,9 +86,14 @@ button.sidebar-item:hover {
 }
 
 button.sidebar-item:checked {
-  background-color: @lyra_surface_raised;
-  color: @lyra_text;
+  background-color: alpha(@lyra_blue, 0.16);
+  color: @lyra_blue;
   font-weight: 600;
+  box-shadow: inset 3px 0 0 0 @lyra_blue;
+}
+
+button.sidebar-item:checked:hover {
+  background-color: alpha(@lyra_blue, 0.22);
 }
 
 .content-page {
@@ -154,9 +159,14 @@ button.module-tab {
 }
 
 button.module-tab:checked {
-  background-color: @lyra_surface_raised;
-  color: @lyra_text;
+  background-color: alpha(@lyra_blue, 0.16);
+  color: @lyra_blue;
   font-weight: 600;
+  box-shadow: inset 0 -2px 0 0 @lyra_blue;
+}
+
+button.module-tab:checked:hover {
+  background-color: alpha(@lyra_blue, 0.22);
 }
 
 button.view-switch {
