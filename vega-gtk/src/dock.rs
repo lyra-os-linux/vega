@@ -61,7 +61,7 @@ impl std::fmt::Display for DockError {
 
 impl std::error::Error for DockError {}
 
-/// Ao contrário de wallpaper/screensaver, o schema do Sheliak não fica no
+/// Ao contrário do screensaver, o schema do Sheliak não fica no
 /// diretório global do glib-2.0: como toda extensão GNOME Shell, ele é
 /// empacotado dentro do próprio diretório da extensão. Por isso precisamos
 /// achar essa pasta e carregar o schema explicitamente dali, em vez de usar

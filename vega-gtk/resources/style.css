@@ -5,7 +5,7 @@
 @define-color lyra_border alpha(@window_fg_color, 0.14);
 @define-color lyra_text @window_fg_color;
 @define-color lyra_muted alpha(@window_fg_color, 0.72);
-@define-color lyra_blue #5b8cff;
+@define-color lyra_blue @accent_color;
 @define-color lyra_violet #9b6bff;
 @define-color lyra_danger #ff5b6e;
 @define-color lyra_warning #ffb84d;
@@ -142,6 +142,36 @@ button.dashboard-card:hover {
 
 .card-title {
   font-size: 12px;
+}
+
+.personalization-grid > flowboxchild {
+  padding: 0;
+}
+
+button.personalization-card {
+  min-width: 300px;
+  min-height: 102px;
+  padding: 18px;
+  border-radius: 9px;
+  border: 1px solid @lyra_border;
+  background-color: @lyra_surface;
+}
+
+button.personalization-card:hover {
+  background-color: @lyra_surface_raised;
+}
+
+.personalization-icon {
+  min-width: 48px;
+  min-height: 48px;
+  border-radius: 9px;
+  background-color: alpha(@lyra_blue, 0.13);
+  color: @lyra_blue;
+}
+
+.personalization-value {
+  color: @lyra_blue;
+  font-weight: bold;
 }
 
 .module-tabs {

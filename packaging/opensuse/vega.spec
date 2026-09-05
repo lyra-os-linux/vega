@@ -17,6 +17,8 @@ BuildRequires:  pkgconfig(libadwaita-1)
 BuildRequires:  gettext-tools
 Requires:       vegad
 Requires:       secret-tool
+Requires:       python3-gobject
+Requires:       typelib-1_0-Atspi-2_0
 Provides:       vega = %{version}-%{release}
 Obsoletes:      vega < %{version}-%{release}
 # vega-gtk se chamava lyra-vega-gtk antes do projeto deixar de ser

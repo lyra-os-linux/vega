@@ -16,6 +16,5 @@ reqwest = { version = "0.12.24", default-features = false, features = ["blocking
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.145"
 gettext-rs = { version = "0.7.7", features = ["gettext-system"] }
-roxmltree = "0.21.1"
 futures-util = "0.3.32"
 lyra-vega-dbus = { git = "https://github.com/lyra-os-linux/lyra-vega-dbus", tag = "v5.1.22" }

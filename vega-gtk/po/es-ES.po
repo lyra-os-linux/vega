@@ -2943,65 +2943,6 @@ msgstr "El proveedor rechazó la solicitud ({status}): {detail}"
 msgid "Falha de comunicação com o provedor: {detail}"
 msgstr "Fallo de comunicación con el proveedor: {detail}"
 
-msgid "A instalação G06 é opcional e usa o repositório oficial da NVIDIA."
-msgstr "La instalación de G06 es opcional y utiliza el repositorio oficial de NVIDIA."
-
-msgid "Secure Boot ativado; será usado o módulo aberto assinado."
-msgstr "Secure Boot está activado; se utilizará el módulo abierto firmado."
-
-msgid "Verificar driver"
-msgstr "Verificar controlador"
-
-msgid "Driver NVIDIA requer atenção"
-msgstr "El controlador NVIDIA requiere atención"
-
-msgid "Driver NVIDIA opcional"
-msgstr "Controlador NVIDIA opcional"
-
-msgid "Secure Boot desativado."
-msgstr "Secure Boot está desactivado."
-
-msgid "NVIDIA G06 — {gpu}"
-msgstr "NVIDIA G06 — {gpu}"
-
-msgid "{detail}\n{secure_boot}"
-msgstr "{detail}\n{secure_boot}"
-
-msgid "O Vega criará um snapshot somente leitura, adicionará o repositório oficial da NVIDIA, instalará módulo assinado, userspace e firmware em conjunto e regenerará o initramfs. Será necessário reiniciar. Não desligue o computador durante a transação."
-msgstr "Vega creará una instantánea de solo lectura, añadirá el repositorio oficial de NVIDIA, instalará juntos el módulo firmado, el espacio de usuario y el firmware, y regenerará el initramfs. Será necesario reiniciar. No apague el equipo durante la transacción."
-
-msgid "Instalar o driver NVIDIA G06?"
-msgstr "¿Instalar el controlador NVIDIA G06?"
-
-msgid "Preparando instalação NVIDIA G06…"
-msgstr "Preparando la instalación de NVIDIA G06…"
-
-msgid "Driver NVIDIA ativo"
-msgstr "Controlador NVIDIA activo"
-
-msgid "Não foi possível determinar o estado do Secure Boot."
-msgstr "No se pudo determinar el estado de Secure Boot."
-
-msgid "Instalar driver NVIDIA G06"
-msgstr "Instalar controlador NVIDIA G06"
-
-msgid "Verificando hardware NVIDIA…"
-msgstr "Comprobando el hardware NVIDIA…"
-
-msgid "Instalar firmware compatível"
-msgstr "Instalar firmware compatible"
-
-msgid "Instalar firmware não livre?"
-msgstr "¿Instalar firmware no libre?"
-
-msgid "Verificando firmware compatível…"
-msgstr "Comprobando firmware compatible…"
-
-msgid "Firmware não livre"
-msgstr "Firmware no libre"
-
-msgid "O Vega instalará somente pacotes do repositório non-oss associados de forma inequívoca ao hardware detectado. Um snapshot somente leitura será criado antes da alteração."
-msgstr "Vega instalará únicamente paquetes del repositorio non-oss asociados inequívocamente con el hardware detectado. Se creará una instantánea de solo lectura antes del cambio."
 msgid "Barra superior"
 msgstr "Barra superior"
 
@@ -3102,3 +3043,147 @@ msgstr "Eliminando puntos de restauración…"
 
 msgid "Fechar console"
 msgstr "Cerrar consola"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Ajuste a aparência e o comportamento do GNOME"
+msgstr "Ajusta la apariencia y el comportamiento de GNOME"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Aparência clara ou escura para a área de trabalho e os aplicativos"
+msgstr "Apariencia clara u oscura para el escritorio y las aplicaciones"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Cores"
+msgstr "Colores"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Cor de destaque dos botões, seleções e elementos da interface"
+msgstr "Color de acento de los botones, selecciones y elementos de la interfaz"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Ícones"
+msgstr "Iconos"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Conjunto de ícones dos aplicativos e do sistema"
+msgstr "Tema de iconos de las aplicaciones y del sistema"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Fontes"
+msgstr "Tipografías"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Família, tamanho e renderização dos textos"
+msgstr "Familia, tamaño y renderizado del texto"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Cursores"
+msgstr "Cursores"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Tema e tamanho do ponteiro do mouse"
+msgstr "Tema y tamaño del puntero del ratón"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Janelas"
+msgstr "Ventanas"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Botões da barra de título, foco e comportamento das janelas"
+msgstr "Botones de la barra de título, foco y comportamiento de las ventanas"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Imagem e comportamento do plano de fundo"
+msgstr "Imagen y comportamiento del fondo de pantalla"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Tela de bloqueio"
+msgstr "Pantalla de bloqueo"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Bloqueio automático e tempo de inatividade da tela"
+msgstr "Bloqueo automático y tiempo de inactividad de la pantalla"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Escolha entre o ambiente Lyra e a experiência padrão do GNOME"
+msgstr "Elige entre el escritorio Lyra y la experiencia estándar de GNOME"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Painel, relógio e menu de aplicativos do Lyra"
+msgstr "Panel, reloj y menú de aplicaciones de Lyra"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Posição, ícones e comportamento do dock do Lyra"
+msgstr "Posición, iconos y comportamiento del dock de Lyra"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Configurações do GNOME"
+msgstr "Configuración de GNOME"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Preferências de tela, teclado, mouse e outros ajustes da sessão"
+msgstr "Preferencias de pantalla, teclado, ratón y otros ajustes de la sesión"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Ajustes do GNOME"
+msgstr "Retoques de GNOME"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Opções adicionais de aparência, fontes e janelas"
+msgstr "Opciones adicionales de apariencia, tipografías y ventanas"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Extensões do GNOME"
+msgstr "Extensiones de GNOME"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Gerencie as extensões e suas preferências"
+msgstr "Gestiona las extensiones y sus preferencias"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Ambiente Lyra"
+msgstr "Escritorio Lyra"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Aplicativos do GNOME"
+msgstr "Aplicaciones de GNOME"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Aplicativo não instalado"
+msgstr "Aplicación no instalada"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Não foi possível abrir {name}: {error}"
+msgstr "No se pudo abrir {name}: {error}"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Abrir {name}"
+msgstr "Abrir {name}"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Configurar"
+msgstr "Configurar"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Requer o perfil Lyra com Sheliak ativo"
+msgstr "Requiere el perfil Lyra con Sheliak activado"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Padrão do sistema"
+msgstr "Predeterminado del sistema"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "GNOME padrão"
+msgstr "GNOME estándar"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Cinza"
+msgstr "Gris"
+
+#: src/ui/personalization.rs src/ui/screen.rs
+msgid "Voltar à personalização"
+msgstr "Volver a la personalización"
+
+#: src/tweaks.rs
+msgid "O Ajustes foi aberto, mas não foi possível selecionar a aba {page}."
+msgstr "Se abrió Retoques, pero no se pudo seleccionar la sección {page}."

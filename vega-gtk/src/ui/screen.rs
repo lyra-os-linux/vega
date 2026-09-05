@@ -1,17 +1,15 @@
 use crate::i18n::gettext;
 use adw::prelude::*;
 
-use super::{DockPage, MenuPage, ScreensaverPage, WallpaperPage};
+use super::{DockPage, MenuPage, ScreensaverPage};
 use crate::appearance::Theme;
 
-/// Reúne tudo relacionado a "tela": aparência, bloqueio de tela, papel de
-/// parede, o menu e o dock do Sheliak (quando instalado) —
-/// uma única entrada de navegação com abas internas, como o módulo Software.
+/// Visão geral em cartões, com atalhos para os aplicativos do GNOME e
+/// páginas internas para as preferências de aparência e do ambiente Lyra.
 #[derive(Clone)]
 pub struct ScreenPage {
     pub root: gtk::Widget,
     pub screensaver: ScreensaverPage,
-    pub wallpaper: WallpaperPage,
     pub menu: MenuPage,
     pub dock: DockPage,
 }
@@ -19,114 +17,36 @@ pub struct ScreenPage {
 impl ScreenPage {
     pub fn new() -> Self {
         let screensaver = ScreensaverPage::new();
-        let wallpaper = WallpaperPage::new();
         let menu = MenuPage::new();
         let dock = DockPage::new();
-
-        let appearance_tab = tab_button(&gettext("Tema"));
-        let profile_tab = tab_button(&gettext("Perfil"));
-        let wallpaper_tab = tab_button(&gettext("Papel de Parede"));
-        let screensaver_tab = tab_button(&gettext("Proteção de Tela"));
-        let menu_tab = tab_button(&gettext("Menu"));
-        let dock_tab = tab_button(&gettext("Dock"));
-        appearance_tab.set_active(true);
-        profile_tab.set_group(Some(&appearance_tab));
-        wallpaper_tab.set_group(Some(&appearance_tab));
-        screensaver_tab.set_group(Some(&appearance_tab));
-        menu_tab.set_group(Some(&appearance_tab));
-        dock_tab.set_group(Some(&appearance_tab));
-        // As abas permanecem visíveis para deixar clara a diferença entre os
-        // perfis, mas só podem ser abertas quando o Sheliak está ativo.
-        let sheliak_available = crate::dock::is_installed();
-        let sheliak_enabled = sheliak_available && crate::dock::is_enabled();
-        menu_tab.set_sensitive(sheliak_enabled);
-        dock_tab.set_sensitive(sheliak_enabled);
-        let (appearance, profile) = appearance_pages(&menu_tab, &dock_tab, sheliak_available);
-
-        let tabs = gtk::Box::new(gtk::Orientation::Horizontal, 4);
-        tabs.add_css_class("module-tabs");
-        tabs.append(&appearance_tab);
-        tabs.append(&profile_tab);
-        tabs.append(&wallpaper_tab);
-        tabs.append(&screensaver_tab);
-        tabs.append(&menu_tab);
-        tabs.append(&dock_tab);
 
         let stack = gtk::Stack::builder()
             .transition_type(gtk::StackTransitionType::Crossfade)
             .vexpand(true)
             .build();
-        stack.add_named(&appearance, Some("appearance"));
-        stack.add_named(&profile, Some("profile"));
-        stack.add_named(&wallpaper.root, Some("wallpaper"));
-        stack.add_named(&screensaver.root, Some("screensaver"));
-        stack.add_named(&menu.root, Some("menu"));
-        stack.add_named(&dock.root, Some("dock"));
-        stack.set_visible_child_name("appearance");
-
-        let appearance_stack = stack.clone();
-        appearance_tab.connect_clicked(move |button| {
-            if button.is_active() {
-                appearance_stack.set_visible_child_name("appearance");
-            }
-        });
-        let profile_stack = stack.clone();
-        profile_tab.connect_clicked(move |button| {
-            if button.is_active() {
-                profile_stack.set_visible_child_name("profile");
-            }
-        });
-        let screensaver_stack = stack.clone();
-        screensaver_tab.connect_clicked(move |button| {
-            if button.is_active() {
-                screensaver_stack.set_visible_child_name("screensaver");
-            }
-        });
-        let wallpaper_stack = stack.clone();
-        wallpaper_tab.connect_clicked(move |button| {
-            if button.is_active() {
-                wallpaper_stack.set_visible_child_name("wallpaper");
-            }
-        });
-        let menu_stack = stack.clone();
-        menu_tab.connect_clicked(move |button| {
-            if button.is_active() {
-                menu_stack.set_visible_child_name("menu");
-            }
-        });
-        let dock_stack = stack.clone();
-        dock_tab.connect_clicked(move |button| {
-            if button.is_active() {
-                dock_stack.set_visible_child_name("dock");
-            }
-        });
-
-        let heading = gtk::Box::new(gtk::Orientation::Vertical, 4);
-        heading.append(
-            &gtk::Label::builder()
-                .label(gettext("Personalização"))
-                .xalign(0.0)
-                .css_classes(["title-1"])
-                .build(),
-        );
-        heading.append(
-            &gtk::Label::builder()
-                .label(gettext("Aparência, bloqueio de tela e papel de parede"))
-                .xalign(0.0)
-                .css_classes(["dim-label"])
-                .build(),
-        );
-
-        let content = gtk::Box::new(gtk::Orientation::Vertical, 10);
-        content.add_css_class("content-page");
-        content.append(&heading);
-        content.append(&tabs);
-        content.append(&stack);
+        stack.add_css_class("content-page");
+        let overview = super::personalization::PersonalizationOverview::new(&stack);
+        let (appearance, profile) =
+            appearance_pages(&overview.menu, &overview.dock, crate::dock::is_installed());
+        stack.add_named(&overview.root, Some("overview"));
+        for (name, title, page) in [
+            ("appearance", gettext("Tema"), &appearance),
+            ("profile", gettext("Perfil da área de trabalho"), &profile),
+            (
+                "screensaver",
+                gettext("Tela de bloqueio"),
+                &screensaver.root,
+            ),
+            ("menu", gettext("Menu"), &menu.root),
+            ("dock", gettext("Dock"), &dock.root),
+        ] {
+            stack.add_named(&detail_page(&stack, &title, page), Some(name));
+        }
+        stack.set_visible_child_name("overview");
 
         Self {
-            root: content.upcast(),
+            root: stack.upcast(),
             screensaver,
-            wallpaper,
             menu,
             dock,
         }
@@ -139,11 +59,35 @@ impl Default for ScreenPage {
     }
 }
 
-fn tab_button(label: &str) -> gtk::ToggleButton {
-    gtk::ToggleButton::builder()
-        .label(label)
-        .css_classes(["flat", "module-tab"])
-        .build()
+fn detail_page(stack: &gtk::Stack, title: &str, page: &gtk::Widget) -> gtk::Widget {
+    let back = gtk::Button::builder()
+        .icon_name("go-previous-symbolic")
+        .tooltip_text(gettext("Voltar à personalização"))
+        .valign(gtk::Align::Center)
+        .build();
+    back.update_property(&[gtk::accessible::Property::Label(&gettext(
+        "Voltar à personalização",
+    ))]);
+    let stack = stack.downgrade();
+    back.connect_clicked(move |_| {
+        if let Some(stack) = stack.upgrade() {
+            stack.set_visible_child_name("overview");
+        }
+    });
+    let header = gtk::Box::new(gtk::Orientation::Horizontal, 12);
+    header.append(&back);
+    header.append(
+        &gtk::Label::builder()
+            .label(title)
+            .xalign(0.0)
+            .css_classes(["title-1"])
+            .build(),
+    );
+    let content = gtk::Box::new(gtk::Orientation::Vertical, 16);
+    content.append(&header);
+    page.set_vexpand(true);
+    content.append(page);
+    content.upcast()
 }
 
 /// O tema escreve direto em `org.gnome.desktop.interface` (veja
@@ -151,8 +95,8 @@ fn tab_button(label: &str) -> gtk::ToggleButton {
 /// configuração do painel Aparência do GNOME — muda o Shell, o Nautilus e
 /// qualquer app libadwaita em execução, não só a janela do Vega.
 fn appearance_pages(
-    menu_tab: &gtk::ToggleButton,
-    dock_tab: &gtk::ToggleButton,
+    menu_tab: &gtk::Button,
+    dock_tab: &gtk::Button,
     sheliak_available: bool,
 ) -> (gtk::Widget, gtk::Widget) {
     let unavailable = !crate::appearance::schema_available();
@@ -187,15 +131,11 @@ fn appearance_pages(
     light_card.connect_toggled(|button| {
         if button.is_active() {
             crate::appearance::apply_theme(Theme::Light);
-            apply_enterprise_wallpaper();
-            crate::appearance::apply_icon_theme();
         }
     });
     dark_card.connect_toggled(|button| {
         if button.is_active() {
             crate::appearance::apply_theme(Theme::Dark);
-            apply_enterprise_wallpaper();
-            crate::appearance::apply_icon_theme();
         }
     });
 
@@ -371,25 +311,6 @@ fn profile_preview(lyra: bool) -> gtk::Widget {
     }
     overlay.add_overlay(&dock);
     overlay.upcast()
-}
-
-/// Ao trocar o card de tema, também força o papel de parede padrão do
-/// Lyra OS (par `os.png`/`os-light.png`, entrada "Lyra OS" no XML de
-/// gnome-background-properties) — o GNOME já troca sozinho entre eles depois
-/// disso, via `picture-uri-dark`, então basta garantir que as duas URIs
-/// estejam apontando pra esse par.
-///
-/// O nome mudou de "Lyra Enterprise" pra "Lyra OS" quando o Lyra-Theme foi
-/// renomeado (Lyra-Theme@47d0ff4); a busca exata evita casar com as
-/// variantes de humor adicionais ("Lyra OS — Nebula" etc.) que o Lyra-Theme
-/// também registra.
-fn apply_enterprise_wallpaper() {
-    if let Some(entry) = crate::wallpaper::list_wallpapers()
-        .into_iter()
-        .find(|entry| entry.name.eq_ignore_ascii_case("Lyra OS"))
-    {
-        let _ = crate::wallpaper::apply(&entry);
-    }
 }
 
 /// Card grande de seleção de tema: janela em miniatura (clara ou escura) com

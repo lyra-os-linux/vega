@@ -14,7 +14,7 @@ pub enum Theme {
 }
 
 /// `org.gnome.desktop.interface` é do GNOME, não do vegad — mesma lógica de
-/// schema_available() do wallpaper/screensaver, sem depender do backend.
+/// schema_available() do screensaver, sem depender do backend.
 pub fn schema_available() -> bool {
     gio::SettingsSchemaSource::default()
         .and_then(|source| source.lookup(SCHEMA, true))
@@ -42,20 +42,4 @@ pub fn apply_theme(theme: Theme) {
         Theme::Dark => "prefer-dark",
     };
     let _ = gio::Settings::new(SCHEMA).set_string("color-scheme", value);
-}
-
-/// Tema de ícones padrão da Vega — reaplicado sempre que o usuário troca o
-/// card de tema, pra não ficar com um tema de ícones genérico depois de
-/// mexer só na claridade da interface.
-///
-/// O pacote de ícones se chamava "Lyra-Enterprise-Icons" antes do rename pra
-/// "Lyra OS" (Lyra-Theme@47d0ff4). Mantenha este nome em sincronia com
-/// `Name=` em `Lyra-OS-Icons/index.theme` nesse repositório.
-const ICON_THEME_NAME: &str = "Lyra-OS-Icons";
-
-pub fn apply_icon_theme() {
-    if !schema_available() {
-        return;
-    }
-    let _ = gio::Settings::new(SCHEMA).set_string("icon-theme", ICON_THEME_NAME);
 }
