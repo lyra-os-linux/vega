@@ -2020,7 +2020,7 @@ dependencies = [
 
 [[package]]
 name = "vega-gtk"
-version = "5.1.28"
+version = "5.1.29"
 dependencies = [
  "base64",
  "futures-util",

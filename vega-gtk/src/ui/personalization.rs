@@ -242,6 +242,26 @@ impl PersonalizationOverview {
             status.set_visible(false);
             refresh_update();
         });
+        // GNOME Settings changes the accent while this overview stays mapped.
+        // Keep a live subscription instead of waiting for the next map event.
+        if let Some(schema) = gio::SettingsSchemaSource::default()
+            .and_then(|source| source.lookup("org.gnome.desktop.interface", true))
+            .filter(|schema| schema.has_key("accent-color"))
+        {
+            let settings = gio::Settings::new_full(&schema, gio::SettingsBackend::NONE, None);
+            let changed_update = update.clone();
+            let signal = settings.connect_changed(Some("accent-color"), move |_, _| {
+                changed_update();
+            });
+            // GSettings emits changed only for keys read after connecting.
+            let _ = settings.string("accent-color");
+            let signal = std::cell::RefCell::new(Some(signal));
+            root.connect_destroy(move |_| {
+                if let Some(signal) = signal.borrow_mut().take() {
+                    settings.disconnect(signal);
+                }
+            });
+        }
         // Refresh when reopening the overview, including after a profile change.
         root.connect_map(move |_| update());
 
