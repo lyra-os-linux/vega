@@ -50,15 +50,6 @@ impl PersonalizationOverview {
             .visible(false)
             .css_classes(["error"])
             .build();
-        let refresh = gtk::Button::builder()
-            .child(
-                &adw::ButtonContent::builder()
-                    .icon_name("view-refresh-symbolic")
-                    .label(gettext("Atualizar"))
-                    .build(),
-            )
-            .valign(gtk::Align::Center)
-            .build();
         let heading = gtk::Box::new(gtk::Orientation::Vertical, 4);
         heading.set_hexpand(true);
         heading.append(&label(&gettext("Personalização"), "title-1"));
@@ -66,9 +57,6 @@ impl PersonalizationOverview {
             &gettext("Ajuste a aparência e o comportamento do GNOME"),
             "dim-label",
         ));
-        let header = gtk::Box::new(gtk::Orientation::Horizontal, 12);
-        header.append(&heading);
-        header.append(&refresh);
 
         let grid = card_grid();
         let mut cards = Vec::new();
@@ -76,7 +64,7 @@ impl PersonalizationOverview {
             (
                 gettext("Tema"),
                 gettext("Aparência clara ou escura para a área de trabalho e os aplicativos"),
-                "preferences-desktop-theme-symbolic",
+                "preferences-desktop-appearance-symbolic",
                 Destination::Page("appearance"),
                 Summary::Theme,
             ),
@@ -217,18 +205,20 @@ impl PersonalizationOverview {
         }
 
         let content = gtk::Box::new(gtk::Orientation::Vertical, 16);
-        content.append(&header);
-        content.append(&status);
         content.append(&grid);
         content.append(&label(&gettext("Ambiente Lyra"), "title-2"));
         content.append(&lyra_grid);
         content.append(&label(&gettext("Aplicativos do GNOME"), "title-2"));
         content.append(&apps_grid);
-        let root = gtk::ScrolledWindow::builder()
+        let scroll = gtk::ScrolledWindow::builder()
             .child(&content)
             .hscrollbar_policy(gtk::PolicyType::Never)
             .vexpand(true)
             .build();
+        let root = gtk::Box::new(gtk::Orientation::Vertical, 16);
+        root.append(&heading);
+        root.append(&status);
+        root.append(&scroll);
 
         let update = std::rc::Rc::new(move || {
             let apps = gio::AppInfo::all();
@@ -237,11 +227,6 @@ impl PersonalizationOverview {
             }
         });
         update();
-        let refresh_update = update.clone();
-        refresh.connect_clicked(move |_| {
-            status.set_visible(false);
-            refresh_update();
-        });
         // GNOME Settings changes the accent while this overview stays mapped.
         // Keep a live subscription instead of waiting for the next map event.
         if let Some(schema) = gio::SettingsSchemaSource::default()
