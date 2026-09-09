@@ -243,8 +243,24 @@ impl DockPage {
         self.minimize_animation
             .connect_selected_notify(move |_| page.emit_changed());
         let page = self.clone();
-        self.extend_to_edges
-            .connect_active_notify(move |_| page.emit_changed());
+        self.extend_to_edges.connect_active_notify(move |switch| {
+            if page.suppress.get() {
+                return;
+            }
+            // Switching layout selects that layout's saved alignment before
+            // emitting the new snapshot of controls to the settings backend.
+            if let Some(alignment) = crate::dock::alignment_for_mode(switch.is_active()) {
+                page.suppress.set(true);
+                page.content_alignment.set_selected(
+                    CONTENT_ALIGNMENTS
+                        .iter()
+                        .position(|value| *value == alignment)
+                        .unwrap_or(0) as u32,
+                );
+                page.suppress.set(false);
+            }
+            page.emit_changed();
+        });
         let page = self.clone();
         self.content_alignment
             .connect_selected_notify(move |_| page.emit_changed());

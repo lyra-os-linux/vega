@@ -135,7 +135,7 @@ impl PersonalizationOverview {
         for (title, description, icon, page, summary) in [
             (
                 gettext("Perfil da área de trabalho"),
-                gettext("Escolha entre o ambiente Lyra e a experiência padrão do GNOME"),
+                gettext("Escolha entre Lyra, Ubuntu e a experiência padrão do GNOME"),
                 "preferences-desktop-display-symbolic",
                 "profile",
                 Summary::Profile,
@@ -384,13 +384,11 @@ impl Card {
                 },
                 Summary::Accent => accent_color().unwrap_or_else(|| fallback.clone()),
                 Summary::Setting(key) => interface_setting(key).unwrap_or_else(|| fallback.clone()),
-                Summary::Profile => {
-                    if crate::dock::is_installed() && crate::dock::is_enabled() {
-                        gettext("Lyra")
-                    } else {
-                        gettext("GNOME padrão")
-                    }
-                }
+                Summary::Profile => match crate::dock::current_profile() {
+                    crate::dock::DesktopProfile::Lyra => gettext("Lyra"),
+                    crate::dock::DesktopProfile::Ubuntu => gettext("Ubuntu"),
+                    crate::dock::DesktopProfile::GnomeVanilla => gettext("GNOME padrão"),
+                },
                 Summary::Default => fallback.clone(),
             }
         } else {

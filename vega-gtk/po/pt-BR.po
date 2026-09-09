@@ -3186,3 +3186,18 @@ msgstr "Voltar à personalização"
 #: src/tweaks.rs
 msgid "O Ajustes foi aberto, mas não foi possível selecionar a aba {page}."
 msgstr "O Ajustes foi aberto, mas não foi possível selecionar a aba {page}."
+
+msgid "Ubuntu"
+msgstr "Ubuntu"
+
+msgid "Dock lateral estendido, aplicativos no topo e barra superior sem menus nem busca."
+msgstr "Dock lateral estendido, aplicativos no topo e barra superior sem menus nem busca."
+
+msgid "Atualize o Sheliak para usar o perfil Ubuntu."
+msgstr "Atualize o Sheliak para usar o perfil Ubuntu."
+
+msgid "Não foi possível restaurar as preferências do perfil Lyra."
+msgstr "Não foi possível restaurar as preferências do perfil Lyra."
+
+msgid "Escolha entre Lyra, Ubuntu e a experiência padrão do GNOME"
+msgstr "Escolha entre Lyra, Ubuntu e a experiência padrão do GNOME"

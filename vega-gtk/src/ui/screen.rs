@@ -3,6 +3,8 @@ use adw::prelude::*;
 
 use super::{DockPage, MenuPage, ScreensaverPage};
 use crate::appearance::Theme;
+use crate::dock::DesktopProfile;
+use std::{cell::Cell, rc::Rc};
 
 /// Visão geral em cartões, com atalhos para os aplicativos do GNOME e
 /// páginas internas para as preferências de aparência e do ambiente Lyra.
@@ -26,8 +28,13 @@ impl ScreenPage {
             .build();
         stack.add_css_class("content-page");
         let overview = super::personalization::PersonalizationOverview::new(&stack);
-        let (appearance, profile) =
-            appearance_pages(&overview.menu, &overview.dock, crate::dock::is_installed());
+        let (appearance, profile) = appearance_pages(
+            &overview.menu,
+            &overview.dock,
+            crate::dock::is_installed(),
+            &dock,
+            &menu,
+        );
         stack.add_named(&overview.root, Some("overview"));
         for (name, title, page) in [
             ("appearance", gettext("Tema"), &appearance),
@@ -98,6 +105,8 @@ fn appearance_pages(
     menu_tab: &gtk::Button,
     dock_tab: &gtk::Button,
     sheliak_available: bool,
+    dock_page: &DockPage,
+    menu_page: &MenuPage,
 ) -> (gtk::Widget, gtk::Widget) {
     let unavailable = !crate::appearance::schema_available();
 
@@ -146,40 +155,86 @@ fn appearance_pages(
     let lyra_profile = profile_card(
         &gettext("Lyra"),
         &gettext("GNOME mais Dock e Menu do Lyra."),
-        true,
+        DesktopProfile::Lyra,
         None,
+    );
+    let ubuntu_profile = profile_card(
+        &gettext("Ubuntu"),
+        &gettext(
+            "Dock lateral estendido, aplicativos no topo e barra superior sem menus nem busca.",
+        ),
+        DesktopProfile::Ubuntu,
+        Some(&lyra_profile),
     );
     let vanilla_profile = profile_card(
         &gettext("Gnome Vanila"),
         &gettext("Usa a experiência padrão do GNOME."),
-        false,
+        DesktopProfile::GnomeVanilla,
         Some(&lyra_profile),
     );
     lyra_profile.set_sensitive(sheliak_available);
-    lyra_profile.set_active(sheliak_available && crate::dock::is_enabled());
-    vanilla_profile.set_active(!lyra_profile.is_active());
-
-    let lyra_menu_tab = menu_tab.clone();
-    let lyra_dock_tab = dock_tab.clone();
-    lyra_profile.connect_toggled(move |button| {
-        if button.is_active() && crate::dock::set_enabled(true).is_ok() {
-            lyra_menu_tab.set_sensitive(true);
-            lyra_dock_tab.set_sensitive(true);
-        }
-    });
-    let vanilla_menu_tab = menu_tab.clone();
-    let vanilla_dock_tab = dock_tab.clone();
-    vanilla_profile.connect_toggled(move |button| {
-        if button.is_active() && crate::dock::set_enabled(false).is_ok() {
-            vanilla_menu_tab.set_sensitive(false);
-            vanilla_dock_tab.set_sensitive(false);
-        }
-    });
+    ubuntu_profile.set_sensitive(sheliak_available);
+    let choices = [
+        (DesktopProfile::Lyra, lyra_profile.clone()),
+        (DesktopProfile::Ubuntu, ubuntu_profile.clone()),
+        (DesktopProfile::GnomeVanilla, vanilla_profile.clone()),
+    ];
+    let active = crate::dock::current_profile();
+    for (profile, button) in &choices {
+        button.set_active(*profile == active);
+    }
+    let status = gtk::Label::builder().wrap(true).xalign(0.0).build();
+    status.add_css_class("error");
+    let suppress = Rc::new(Cell::new(false));
+    for (profile, button) in &choices {
+        let profile = *profile;
+        let menu_tab = menu_tab.clone();
+        let dock_tab = dock_tab.clone();
+        let dock_page = dock_page.clone();
+        let menu_page = menu_page.clone();
+        let status = status.clone();
+        let suppress = suppress.clone();
+        let peers = choices
+            .iter()
+            .map(|(profile, button)| (*profile, button.downgrade()))
+            .collect::<Vec<_>>();
+        button.connect_toggled(move |button| {
+            if !button.is_active() || suppress.get() {
+                return;
+            }
+            match crate::dock::apply_profile(profile) {
+                Ok(()) => {
+                    status.set_label("");
+                    let enabled = profile != DesktopProfile::GnomeVanilla;
+                    menu_tab.set_sensitive(enabled);
+                    dock_tab.set_sensitive(enabled);
+                    if let Some(settings) = crate::dock::current() {
+                        dock_page.show(&settings);
+                    }
+                    if let Some(settings) = crate::dock::current_menu() {
+                        menu_page.show(&settings);
+                    }
+                }
+                Err(error) => {
+                    status.set_label(&error.to_string());
+                    suppress.set(true);
+                    let active = crate::dock::current_profile();
+                    for (profile, peer) in &peers {
+                        if let Some(peer) = peer.upgrade() {
+                            peer.set_active(*profile == active);
+                        }
+                    }
+                    suppress.set(false);
+                }
+            }
+        });
+    }
 
     let profiles = gtk::Box::new(gtk::Orientation::Horizontal, 16);
     profiles.set_homogeneous(true);
     profiles.set_valign(gtk::Align::Start);
     profiles.append(&lyra_profile);
+    profiles.append(&ubuntu_profile);
     profiles.append(&vanilla_profile);
 
     let profile_group = adw::PreferencesGroup::builder()
@@ -187,6 +242,22 @@ fn appearance_pages(
         .valign(gtk::Align::Start)
         .build();
     profile_group.add(&profiles);
+    profile_group.add(&status);
+    // Refresh the selected card after editing the dock or returning to this page.
+    let peers = choices
+        .iter()
+        .map(|(profile, button)| (*profile, button.downgrade()))
+        .collect::<Vec<_>>();
+    profile_group.connect_map(move |_| {
+        suppress.set(true);
+        let active = crate::dock::current_profile();
+        for (profile, peer) in &peers {
+            if let Some(peer) = peer.upgrade() {
+                peer.set_active(*profile == active);
+            }
+        }
+        suppress.set(false);
+    });
 
     let theme_content = gtk::Box::new(gtk::Orientation::Vertical, 10);
     theme_content.set_valign(gtk::Align::Start);
@@ -224,7 +295,7 @@ fn appearance_pages(
 fn profile_card(
     title: &str,
     description: &str,
-    lyra: bool,
+    profile: DesktopProfile,
     group: Option<&gtk::ToggleButton>,
 ) -> gtk::ToggleButton {
     let title = gtk::Label::builder()
@@ -239,13 +310,17 @@ fn profile_card(
         .css_classes(["dim-label"])
         .build();
     let content = gtk::Box::new(gtk::Orientation::Vertical, 6);
-    content.append(&profile_preview(lyra));
+    content.append(&profile_preview(profile));
     content.append(&title);
     content.append(&description);
     let button = gtk::ToggleButton::builder()
         .child(&content)
         .css_classes(["flat", "vega-profile-card"])
         .build();
+    button.update_property(&[
+        gtk::accessible::Property::Label(&title.text()),
+        gtk::accessible::Property::Description(&description.text()),
+    ]);
     if let Some(group) = group {
         button.set_group(Some(group));
     }
@@ -255,7 +330,9 @@ fn profile_card(
 /// Ilustração compacta do desktop de cada perfil. É construída com widgets e
 /// CSS (sem imagem externa): Lyra tem painel flutuante e dock lateral; GNOME
 /// Vanilla tem painel colado ao topo e dash central inferior.
-fn profile_preview(lyra: bool) -> gtk::Widget {
+fn profile_preview(profile: DesktopProfile) -> gtk::Widget {
+    let lyra = profile == DesktopProfile::Lyra;
+    let ubuntu = profile == DesktopProfile::Ubuntu;
     let desktop = gtk::Box::new(gtk::Orientation::Vertical, 0);
     desktop.add_css_class("vega-profile-preview");
 
@@ -282,7 +359,7 @@ fn profile_preview(lyra: bool) -> gtk::Widget {
     overlay.add_overlay(&panel);
 
     let dock = gtk::Box::new(
-        if lyra {
+        if lyra || ubuntu {
             gtk::Orientation::Vertical
         } else {
             gtk::Orientation::Horizontal
@@ -292,6 +369,8 @@ fn profile_preview(lyra: bool) -> gtk::Widget {
     dock.add_css_class("vega-profile-preview-dock");
     dock.add_css_class(if lyra {
         "vega-profile-preview-dock-lyra"
+    } else if ubuntu {
+        "vega-profile-preview-dock-ubuntu"
     } else {
         "vega-profile-preview-dock-gnome"
     });
@@ -304,6 +383,15 @@ fn profile_preview(lyra: bool) -> gtk::Widget {
         dock.set_halign(gtk::Align::Start);
         dock.set_valign(gtk::Align::Center);
         dock.set_margin_start(7);
+    } else if ubuntu {
+        dock.set_halign(gtk::Align::Start);
+        dock.set_valign(gtk::Align::Fill);
+        dock.set_margin_top(9);
+        let spacer = gtk::Box::new(gtk::Orientation::Vertical, 0);
+        spacer.set_vexpand(true);
+        dock.append(&spacer);
+        let launcher = gtk::Label::new(Some("L"));
+        dock.append(&launcher);
     } else {
         dock.set_halign(gtk::Align::Center);
         dock.set_valign(gtk::Align::End);
