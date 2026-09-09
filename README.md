@@ -40,6 +40,15 @@ the previous dock and menu preferences, including through GNOME Vanilla.
 Extending the dock manually in Lyra keeps its menus and search visible.
 Compact and extended docks keep separate alignment preferences.
 
+Windows 10 and Windows 11 profiles require Sheliak 1.13.0. Both use a fixed
+bottom taskbar with the native clock, calendar, notifications and system
+controls. Windows 10 aligns applications left and opens an application list
+with pinned tiles; Windows 11 centers applications and opens a search field
+with a pinned grid. The L button and Super key open the corresponding menu.
+Each profile's previous preferences are restored when switching back, including
+the Lyra snapshot created by earlier Ubuntu-profile versions. All components
+continue to be packaged as RPMs.
+
 ## Architecture
 
 Vega is split across several repositories under
