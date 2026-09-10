@@ -84,6 +84,161 @@ fn extension_dir() -> Option<PathBuf> {
         .find(|dir| dir.join("metadata.json").is_file())
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DesktopProfile {
+    Lyra,
+    Ubuntu,
+    GnomeVanilla,
+}
+
+pub fn current_profile() -> DesktopProfile {
+    if !is_enabled() {
+        return DesktopProfile::GnomeVanilla;
+    }
+    open_settings().map_or(DesktopProfile::Lyra, |settings| {
+        if string_or(&settings, "desktop-profile", "lyra") == "ubuntu" {
+            DesktopProfile::Ubuntu
+        } else {
+            DesktopProfile::Lyra
+        }
+    })
+}
+
+const PROFILE_MENUS: [&str; 4] = [
+    "show-applications-menu",
+    "show-places-menu",
+    "show-system-menu",
+    "show-search-menu",
+];
+
+#[derive(Debug, serde::Serialize, serde::Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+struct SavedLyraProfile {
+    position: String,
+    extended: bool,
+    floating: bool,
+    extended_alignment: String,
+    menus: [bool; 4],
+}
+
+impl SavedLyraProfile {
+    fn capture(settings: &gio::Settings) -> Self {
+        Self {
+            position: settings.string("position").into(),
+            extended: settings.boolean("extend-to-edges"),
+            floating: settings.boolean("floating-panel"),
+            extended_alignment: settings.string("extended-content-alignment").into(),
+            menus: PROFILE_MENUS.map(|key| settings.boolean(key)),
+        }
+    }
+    fn restore(&self, settings: &gio::Settings) -> Result<(), glib::BoolError> {
+        settings.set_string("position", &self.position)?;
+        settings.set_boolean("extend-to-edges", self.extended)?;
+        settings.set_boolean("floating-panel", self.floating)?;
+        settings.set_string("extended-content-alignment", &self.extended_alignment)?;
+        for (key, visible) in PROFILE_MENUS.iter().zip(self.menus) {
+            settings.set_boolean(key, visible)?;
+        }
+        Ok(())
+    }
+}
+
+pub fn apply_profile(profile: DesktopProfile) -> Result<(), DockError> {
+    if profile == DesktopProfile::GnomeVanilla {
+        return set_enabled(false);
+    }
+    let settings = open_settings().ok_or_else(|| {
+        DockError(gettext(
+            "A extensão Sheliak não está instalada ou não pôde ser encontrada.",
+        ))
+    })?;
+    apply_profile_settings(&settings, profile)?;
+    set_enabled(true)
+}
+
+fn apply_profile_settings(
+    settings: &gio::Settings,
+    profile: DesktopProfile,
+) -> Result<(), DockError> {
+    if ![
+        "extended-content-alignment",
+        "desktop-profile",
+        "lyra-profile-settings",
+    ]
+    .iter()
+    .all(|key| has_key(settings, key))
+    {
+        if profile == DesktopProfile::Lyra {
+            return Ok(());
+        }
+        return Err(DockError(gettext(
+            "Atualize o Sheliak para usar o perfil Ubuntu.",
+        )));
+    }
+    let was_ubuntu = settings.string("desktop-profile") == "ubuntu";
+    let saved = if was_ubuntu && profile == DesktopProfile::Lyra {
+        Some(
+            serde_json::from_str::<SavedLyraProfile>(&settings.string("lyra-profile-settings"))
+                .map_err(|_| {
+                    DockError(gettext(
+                        "Não foi possível restaurar as preferências do perfil Lyra.",
+                    ))
+                })?,
+        )
+    } else {
+        None
+    };
+    let snapshot = if !was_ubuntu && profile == DesktopProfile::Ubuntu {
+        Some(
+            serde_json::to_string(&SavedLyraProfile::capture(settings)).map_err(|_| {
+                DockError(gettext(
+                    "Não foi possível alterar o perfil da área de trabalho.",
+                ))
+            })?,
+        )
+    } else {
+        None
+    };
+    settings.delay();
+    let result = (|| {
+        if let Some(snapshot) = snapshot {
+            settings.set_string("lyra-profile-settings", &snapshot)?;
+        }
+        if profile == DesktopProfile::Ubuntu {
+            settings.set_string("position", "left")?;
+            settings.set_boolean("extend-to-edges", true)?;
+            settings.set_boolean("floating-panel", true)?;
+            settings.set_string("extended-content-alignment", "start")?;
+            for key in PROFILE_MENUS {
+                settings.set_boolean(key, false)?;
+            }
+            settings.set_string("desktop-profile", "ubuntu")?;
+        } else {
+            if let Some(saved) = saved {
+                saved.restore(settings)?;
+            }
+            settings.set_string("desktop-profile", "lyra")?;
+        }
+        Ok::<_, glib::BoolError>(())
+    })();
+    if result.is_err() {
+        settings.revert();
+        return Err(DockError(gettext(
+            "Não foi possível alterar o perfil da área de trabalho.",
+        )));
+    }
+    settings.apply();
+    Ok(())
+}
+
+fn alignment_key(settings: &gio::Settings, extended: bool) -> &'static str {
+    if extended && has_key(settings, "extended-content-alignment") {
+        "extended-content-alignment"
+    } else {
+        "content-alignment"
+    }
+}
+
 pub fn is_installed() -> bool {
     extension_dir().is_some()
 }
@@ -197,6 +352,15 @@ fn set_uint_if_present(settings: &gio::Settings, key: &str, value: u32) {
     }
 }
 
+pub fn alignment_for_mode(extended: bool) -> Option<String> {
+    let settings = open_settings()?;
+    Some(
+        settings
+            .string(alignment_key(&settings, extended))
+            .to_string(),
+    )
+}
+
 pub fn current() -> Option<DockSettings> {
     let settings = open_settings()?;
     Some(DockSettings {
@@ -208,7 +372,12 @@ pub fn current() -> Option<DockSettings> {
         animation: settings.boolean("animation"),
         minimize_animation: string_or(&settings, "minimize-animation", "zoom"),
         extend_to_edges: settings.boolean("extend-to-edges"),
-        content_alignment: settings.string("content-alignment").to_string(),
+        content_alignment: settings
+            .string(alignment_key(
+                &settings,
+                settings.boolean("extend-to-edges"),
+            ))
+            .to_string(),
         show_running: settings.boolean("show-running"),
         running_apps_position: settings.string("running-apps-position").to_string(),
         show_trash: settings.boolean("show-trash"),
@@ -263,7 +432,10 @@ pub fn apply(settings: &DockSettings) -> Result<(), DockError> {
         &settings.minimize_animation,
     );
     let _ = gsettings.set_boolean("extend-to-edges", settings.extend_to_edges);
-    let _ = gsettings.set_string("content-alignment", &settings.content_alignment);
+    let _ = gsettings.set_string(
+        alignment_key(&gsettings, settings.extend_to_edges),
+        &settings.content_alignment,
+    );
     let _ = gsettings.set_boolean("show-running", settings.show_running);
     let _ = gsettings.set_string("running-apps-position", &settings.running_apps_position);
     let _ = gsettings.set_boolean("show-trash", settings.show_trash);
@@ -333,4 +505,99 @@ pub fn apply_menu(settings: &MenuSettings) -> Result<(), DockError> {
         settings.show_place_volumes,
     );
     Ok(())
+}
+
+#[cfg(test)]
+mod profile_tests {
+    use super::*;
+
+    fn settings() -> gio::Settings {
+        let path = std::env::temp_dir().join(format!(
+            "vega-profile-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir(&path).unwrap();
+        let mut xml = format!("<schemalist><schema id='{SCHEMA_ID}' path='{SCHEMA_PATH}'>");
+        for (key, default) in [
+            ("position", "right"),
+            ("content-alignment", "center"),
+            ("extended-content-alignment", "end"),
+            ("desktop-profile", "lyra"),
+            ("lyra-profile-settings", ""),
+        ] {
+            xml.push_str(&format!(
+                "<key name='{key}' type='s'><default>'{default}'</default></key>"
+            ));
+        }
+        for key in [
+            "extend-to-edges",
+            "floating-panel",
+            "show-applications-menu",
+            "show-places-menu",
+            "show-system-menu",
+            "show-search-menu",
+        ] {
+            xml.push_str(&format!(
+                "<key name='{key}' type='b'><default>true</default></key>"
+            ));
+        }
+        xml.push_str("</schema></schemalist>");
+        std::fs::write(path.join("test.gschema.xml"), xml).unwrap();
+        assert!(
+            std::process::Command::new("glib-compile-schemas")
+                .arg(&path)
+                .status()
+                .unwrap()
+                .success()
+        );
+        let source = gio::SettingsSchemaSource::from_directory(&path, None, false).unwrap();
+        let schema = source.lookup(SCHEMA_ID, false).unwrap();
+        let settings = gio::Settings::new_full(
+            &schema,
+            Some(&gio::memory_settings_backend_new()),
+            Some(SCHEMA_PATH),
+        );
+        std::fs::remove_dir_all(path).unwrap();
+        settings
+    }
+
+    #[test]
+    fn only_explicit_ubuntu_hides_menus_and_lyra_restores_custom_preferences() {
+        let settings = settings();
+        settings.set_boolean("show-places-menu", false).unwrap();
+        let original = SavedLyraProfile::capture(&settings);
+        // A full-length dock is still Lyra and must keep its menus/search.
+        assert!(settings.boolean("extend-to-edges"));
+        assert_eq!(settings.string("desktop-profile"), "lyra");
+        assert!(settings.boolean("show-search-menu"));
+        apply_profile_settings(&settings, DesktopProfile::Ubuntu).unwrap();
+        assert_eq!(settings.string("desktop-profile"), "ubuntu");
+        assert_eq!(settings.string("position"), "left");
+        assert_eq!(settings.string("extended-content-alignment"), "start");
+        assert_eq!(settings.string("content-alignment"), "center");
+        assert!(PROFILE_MENUS.iter().all(|key| !settings.boolean(key)));
+        // Re-selecting Ubuntu must not replace the saved Lyra profile.
+        apply_profile_settings(&settings, DesktopProfile::Ubuntu).unwrap();
+        apply_profile_settings(&settings, DesktopProfile::Lyra).unwrap();
+        assert_eq!(settings.string("desktop-profile"), "lyra");
+        assert_eq!(SavedLyraProfile::capture(&settings), original);
+    }
+
+    #[test]
+    fn corrupt_saved_profile_is_reported_without_partial_changes() {
+        let settings = settings();
+        apply_profile_settings(&settings, DesktopProfile::Ubuntu).unwrap();
+        settings
+            .set_string("lyra-profile-settings", "broken")
+            .unwrap();
+        settings.apply();
+        let before = SavedLyraProfile::capture(&settings);
+        assert!(apply_profile_settings(&settings, DesktopProfile::Lyra).is_err());
+        assert_eq!(settings.string("desktop-profile"), "ubuntu");
+        assert_eq!(SavedLyraProfile::capture(&settings), before);
+    }
 }

@@ -31,6 +31,14 @@ componentes têm cada um seu próprio repositório — ver
 Recursos que dependem de programas opcionais aparecem como indisponíveis quando
 a dependência não está instalada, sem impedir o uso das outras telas.
 
+A Personalização oferece os perfis Lyra, Ubuntu e GNOME Vanilla.
+O Ubuntu exige Sheliak 1.12.10 ou mais recente: estende o dock à esquerda,
+alinha os aplicativos ao topo e esconde os menus e a busca da barra superior.
+Voltar para Lyra restaura as preferências anteriores do dock e dos menus,
+mesmo passando pelo GNOME Vanilla. Estender o dock manualmente no Lyra mantém
+seus menus e busca visíveis. O dock compacto e o estendido guardam alinhamentos
+independentes.
+
 A instalação e a troca de drivers, incluindo NVIDIA e firmware opcional, foram
 removidas do Vega. O inventário de hardware e a monitoração da GPU continuam disponíveis.
 

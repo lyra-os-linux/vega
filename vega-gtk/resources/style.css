@@ -552,3 +552,8 @@ button.vega-profile-card:checked {
 .vega-window-preview-dark .vega-window-preview-line {
   background-color: #484848;
 }
+
+.vega-profile-preview-dock-ubuntu {
+  background-color: #242424;
+  border-radius: 0;
+}

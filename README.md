@@ -33,6 +33,13 @@ are no longer offered by Vega. Hardware inventory and GPU monitoring remain avai
 Features backed by optional programs are shown as unavailable when their
 dependency is missing without preventing the other pages from working.
 
+Personalization offers Lyra, Ubuntu, and GNOME Vanilla desktop profiles.
+Ubuntu requires Sheliak 1.12.10 or newer: it extends the left dock, aligns apps
+at the top, and hides the topbar menus and search. Returning to Lyra restores
+the previous dock and menu preferences, including through GNOME Vanilla.
+Extending the dock manually in Lyra keeps its menus and search visible.
+Compact and extended docks keep separate alignment preferences.
+
 ## Architecture
 
 Vega is split across several repositories under
