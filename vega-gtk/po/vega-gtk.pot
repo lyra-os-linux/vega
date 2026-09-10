@@ -3239,3 +3239,12 @@ msgstr ""
 
 msgid "Não foi possível restaurar as preferências dos perfis."
 msgstr ""
+
+msgid "O serviço de software foi interrompido ou reiniciado. O resultado da operação não foi confirmado; verifique o estado do sistema antes de tentar novamente."
+msgstr ""
+
+msgid "O prazo de acompanhamento terminou. A operação pode continuar em execução; verifique o estado do sistema antes de tentar novamente."
+msgstr ""
+
+msgid "Não iniciado: a fila foi interrompida após perder a confirmação da operação anterior."
+msgstr ""

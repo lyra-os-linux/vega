@@ -1,22 +1,31 @@
 #!/usr/bin/env bash
-# Garante que o Cargo.lock reflete a tag de lyra-vega-dbus fixada em
-# vega-gtk/Cargo.toml. Protege contra um pin atualizado sem `cargo update`
-# (ou vice-versa), que faria o CI compilar contra um contrato D-Bus
-# diferente do declarado.
+# Validate the explicit Git pin against Cargo.lock without network access.
 set -euo pipefail
-
 repo_root="$(cd "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
+python3 - "$repo_root/vega-gtk/Cargo.toml" "$repo_root/Cargo.lock" <<'CHECK'
+import re
+import sys
+import tomllib
+from pathlib import Path
 
-tag="$(grep -oP 'lyra-vega-dbus = \{ git = "[^"]+", tag = "\K[^"]+' "$repo_root/vega-gtk/Cargo.toml")"
-if [ -z "$tag" ]; then
-  echo "não foi possível localizar a tag fixada de lyra-vega-dbus em vega-gtk/Cargo.toml" >&2
-  exit 1
-fi
-
-if ! grep -q "lyra-vega-dbus?tag=${tag}#" "$repo_root/Cargo.lock"; then
-  echo "Cargo.lock não reflete a tag fixada de lyra-vega-dbus (${tag})." >&2
-  echo "Rode 'cargo update -p lyra-vega-dbus --precise <rev>' ou ajuste o pin em vega-gtk/Cargo.toml e recomite o Cargo.lock." >&2
-  exit 1
-fi
-
-echo "lyra-vega-dbus fixado em ${tag} e refletido no Cargo.lock."
+manifest, lockfile = sys.argv[1:]
+dep = tomllib.loads(Path(manifest).read_text())["dependencies"]["lyra-vega-dbus"]
+packages = [p for p in tomllib.loads(Path(lockfile).read_text())["package"] if p["name"] == "lyra-vega-dbus"]
+if len(packages) != 1:
+    raise SystemExit("expected one locked lyra-vega-dbus package")
+package = packages[0]
+expected_version = package["version"]
+url = "https://github.com/lyra-os-linux/lyra-vega-dbus"
+if dep.get("git") != url or package["version"] != expected_version:
+    raise SystemExit("contract repository/version mismatch")
+if set(dep) == {"git", "tag"} and dep["tag"] == "v" + expected_version:
+    expected = "git+" + url + "?tag=" + dep["tag"] + "#"
+    valid = package.get("source", "").startswith(expected) and re.fullmatch(r"[0-9a-f]{40}", package["source"][len(expected):])
+elif set(dep) == {"git", "rev"} and re.fullmatch(r"[0-9a-f]{40}", dep["rev"]):
+    valid = package.get("source") == "git+" + url + "?rev=" + dep["rev"] + "#" + dep["rev"]
+else:
+    valid = False
+if not valid:
+    raise SystemExit("contract must use a matching release tag or full immutable revision in manifest and lockfile")
+print("consumer pins lyra-vega-dbus " + expected_version + " at an explicit matching Git reference")
+CHECK
