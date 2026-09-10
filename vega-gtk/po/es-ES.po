@@ -3223,3 +3223,12 @@ msgstr "Actualiza Sheliak para usar los perfiles Windows."
 
 msgid "Não foi possível restaurar as preferências dos perfis."
 msgstr "No se pudieron restaurar las preferencias de los perfiles."
+
+msgid "O serviço de software foi interrompido ou reiniciado. O resultado da operação não foi confirmado; verifique o estado do sistema antes de tentar novamente."
+msgstr "El servicio de software se detuvo o se reinició. No se confirmó el resultado de la operación; compruebe el estado del sistema antes de volver a intentarlo."
+
+msgid "O prazo de acompanhamento terminou. A operação pode continuar em execução; verifique o estado do sistema antes de tentar novamente."
+msgstr "Se agotó el plazo de seguimiento. La operación puede seguir en curso; compruebe el estado del sistema antes de volver a intentarlo."
+
+msgid "Não iniciado: a fila foi interrompida após perder a confirmação da operação anterior."
+msgstr "No iniciado: la cola se detuvo al perderse la confirmación de la operación anterior."

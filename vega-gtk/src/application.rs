@@ -3196,7 +3196,7 @@ async fn monitor_backup_transaction(
 
 fn configure_software(shell: &VegaShell, window: &adw::ApplicationWindow, dbus: VegaDbus) {
     let dashboard_updates = shell.dashboard_updates.clone();
-    watch_dashboard_updates(dashboard_updates.clone(), dbus.clone());
+    watch_dashboard_updates(dashboard_updates.clone());
 
     let page = shell.software.clone();
     let button = page.search.clone();
@@ -3426,7 +3426,7 @@ fn configure_software(shell: &VegaShell, window: &adw::ApplicationWindow, dbus: 
             let mut events = match client.subscribe().await {
                 Ok(events) => events,
                 Err(error) => {
-                    page.show_detail_error(&error.to_string());
+                    page.finish_detail_transaction_error(&error.to_string());
                     return;
                 }
             };
@@ -3438,13 +3438,13 @@ fn configure_software(shell: &VegaShell, window: &adw::ApplicationWindow, dbus: 
             let transaction_id = match transaction_id {
                 Ok(id) => id,
                 Err(error) => {
-                    page.show_detail_error(&error.to_string());
+                    page.finish_detail_transaction_error(&error.to_string());
                     return;
                 }
             };
 
             loop {
-                match events.next().await {
+                match events.next_transaction(transaction_id).await {
                     Ok(SoftwareEvent::Progress(progress))
                         if progress.transaction_id == transaction_id =>
                     {
@@ -3477,7 +3477,7 @@ fn configure_software(shell: &VegaShell, window: &adw::ApplicationWindow, dbus: 
                     }
                     Ok(_) => {}
                     Err(error) => {
-                        page.show_detail_error(&error.to_string());
+                        page.finish_detail_transaction_error(&error.to_string());
                         break;
                     }
                 }
@@ -3634,9 +3634,9 @@ fn connect_update_package(
 /// to install every package queued via the per-row "add to install queue"
 /// toggle, one at a time — each queued package still runs through Install
 /// as its own transaction (same as a single manual install), so mixed
-/// origins in the same queue just work. A failure partway through doesn't
-/// stop the rest, mirroring UpdateAll's per-repo failure tolerance; every
-/// failure is collected into one final status message.
+/// origins in the same queue just work. A confirmed failure permits the next
+/// package; an unconfirmed method/stream result stops the queue immediately.
+/// Not-started packages are included in the final report, with no automatic retry.
 fn connect_install_queue(
     page: &crate::ui::SoftwarePage,
     dbus: &VegaDbus,
@@ -3689,7 +3689,7 @@ fn connect_install_queue(
 
             let total = queue.len();
             let mut failures = Vec::new();
-            for (index, package) in queue.iter().enumerate() {
+            'install_queue: for (index, package) in queue.iter().enumerate() {
                 page.begin_transaction(
                     &gettext("Instalando {name} ({current}/{total})…")
                         .replace("{name}", &package.name)
@@ -3700,11 +3700,14 @@ fn connect_install_queue(
                     Ok(id) => id,
                     Err(error) => {
                         failures.push(format!("{}: {}", package.name, error));
-                        continue;
+                        for pending in &queue[index + 1..] {
+                            failures.push(format!("{}: {}", pending.name, gettext("Não iniciado: a fila foi interrompida após perder a confirmação da operação anterior.")));
+                        }
+                        break 'install_queue;
                     }
                 };
                 loop {
-                    match events.next().await {
+                    match events.next_transaction(transaction_id).await {
                         Ok(SoftwareEvent::Progress(progress))
                             if progress.transaction_id == transaction_id =>
                         {
@@ -3730,7 +3733,10 @@ fn connect_install_queue(
                         Ok(_) => {}
                         Err(error) => {
                             failures.push(format!("{}: {}", package.name, error));
-                            break;
+                            for pending in &queue[index + 1..] {
+                                failures.push(format!("{}: {}", pending.name, gettext("Não iniciado: a fila foi interrompida após perder a confirmação da operação anterior.")));
+                            }
+                            break 'install_queue;
                         }
                     }
                 }
@@ -3767,7 +3773,7 @@ async fn monitor_add_repo_transaction(
 ) {
     let mut pending_key: Option<RepositoryKeyInfo> = None;
     loop {
-        match events.next().await {
+        match events.next_transaction(transaction_id).await {
             Ok(SoftwareEvent::Progress(progress)) if progress.transaction_id == transaction_id => {
                 page.update_transaction(progress.percent, &progress.message);
                 page.append_transaction_console(
@@ -3897,7 +3903,7 @@ async fn monitor_software_transaction(
     dashboard_updates: &gtk::Label,
 ) {
     loop {
-        match events.next().await {
+        match events.next_transaction(transaction_id).await {
             Ok(SoftwareEvent::Progress(progress)) if progress.transaction_id == transaction_id => {
                 page.update_transaction(progress.percent, &progress.message);
             }
@@ -4009,20 +4015,28 @@ async fn refresh_dashboard_updates(dashboard_updates: &gtk::Label, client: &impl
 
 /// Escuta o sinal `UpdatesAvailable` emitido pela checagem periódica em segundo
 /// plano do vegad e atualiza o resumo do painel quando novos pacotes surgirem.
-fn watch_dashboard_updates(dashboard_updates: gtk::Label, dbus: VegaDbus) {
+fn watch_dashboard_updates(dashboard_updates: gtk::Label) {
     glib::MainContext::default().spawn_local(async move {
-        let client = dbus.software();
-        let Ok(mut events) = client.subscribe().await else {
-            return;
-        };
         loop {
-            match events.next().await {
-                Ok(SoftwareEvent::UpdatesAvailable(_count)) => {
+            if let Ok(dbus) = VegaDbus::connect().await {
+                let client = dbus.software();
+                if let Ok(mut events) = client.subscribe().await {
                     refresh_dashboard_updates(&dashboard_updates, &client).await;
+                    loop {
+                        match events.next().await {
+                            Ok(SoftwareEvent::UpdatesAvailable(_)) => {
+                                refresh_dashboard_updates(&dashboard_updates, &client).await;
+                            }
+                            Ok(_) => {}
+                            Err(error) => {
+                                dashboard_updates.set_label(&error.to_string());
+                                break;
+                            }
+                        }
+                    }
                 }
-                Ok(_) => {}
-                Err(_) => break,
             }
+            glib::timeout_future_seconds(5).await;
         }
     });
 }

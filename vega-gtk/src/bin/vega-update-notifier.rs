@@ -25,37 +25,39 @@ fn main() -> glib::ExitCode {
         let hold = app.hold();
         let app = app.clone();
         glib::MainContext::default().spawn_local(async move {
-            let Ok(dbus) = VegaDbus::connect().await else {
-                return;
-            };
-            let client = dbus.software();
-            let Ok(mut events) = client.subscribe().await else {
-                return;
-            };
-
-            if let Ok(status) = client.update_status().await {
-                notify_if_needed(&app, status.total_count);
-            }
+            let _hold = hold;
             let polling_app = app.clone();
             glib::MainContext::default().spawn_local(async move {
                 loop {
                     glib::timeout_future_seconds(60).await;
-                    let Ok(dbus) = VegaDbus::connect().await else {
-                        continue;
-                    };
-                    if let Ok(status) = dbus.software().update_status().await {
+                    if let Ok(dbus) = VegaDbus::connect().await
+                        && let Ok(status) = dbus.software().update_status().await
+                    {
                         notify_if_needed(&polling_app, status.total_count);
                     }
                 }
             });
             loop {
-                match events.next().await {
-                    Ok(SoftwareEvent::UpdatesAvailable(count)) => notify_if_needed(&app, count),
-                    Ok(_) => {}
-                    Err(_) => break,
+                if let Ok(dbus) = VegaDbus::connect().await {
+                    let client = dbus.software();
+                    if let Ok(mut events) = client.subscribe().await {
+                        if let Ok(status) = client.update_status().await {
+                            notify_if_needed(&app, status.total_count);
+                        }
+                        loop {
+                            match events.next().await {
+                                Ok(SoftwareEvent::UpdatesAvailable(count)) => {
+                                    notify_if_needed(&app, count)
+                                }
+                                Ok(_) => {}
+                                Err(_) => break,
+                            }
+                        }
+                    }
                 }
+                // Reconnect passive notifications without replaying a transaction.
+                glib::timeout_future_seconds(60).await;
             }
-            drop(hold);
         });
     });
     app.run()

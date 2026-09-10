@@ -713,6 +713,13 @@ impl SoftwarePage {
         present_error_alert(&self.detail_dialog, message);
     }
 
+    pub fn finish_detail_transaction_error(&self, message: &str) {
+        self.detail_body.set_label(message);
+        self.action.set_label(&gettext("Falhou"));
+        self.action.set_sensitive(false);
+        self.finish_transaction(false, message);
+    }
+
     /// Updates the per-row progress bar for `package` (matched by name —
     /// see PackageRef.repository/Id conventions for the "official" origin),
     /// revealing it on first use. Rows for packages the current transaction

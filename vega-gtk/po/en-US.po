@@ -3223,3 +3223,12 @@ msgstr "Update Sheliak to use the Windows profiles."
 
 msgid "Não foi possível restaurar as preferências dos perfis."
 msgstr "Could not restore the desktop profile preferences."
+
+msgid "O serviço de software foi interrompido ou reiniciado. O resultado da operação não foi confirmado; verifique o estado do sistema antes de tentar novamente."
+msgstr "The software service stopped or restarted. The operation result was not confirmed; check the system state before trying again."
+
+msgid "O prazo de acompanhamento terminou. A operação pode continuar em execução; verifique o estado do sistema antes de tentar novamente."
+msgstr "The monitoring deadline expired. The operation may still be running; check the system state before trying again."
+
+msgid "Não iniciado: a fila foi interrompida após perder a confirmação da operação anterior."
+msgstr "Not started: the queue stopped after confirmation of the previous operation was lost."

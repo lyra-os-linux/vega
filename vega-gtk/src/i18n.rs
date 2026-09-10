@@ -169,6 +169,31 @@ mod tests {
         let expected = std::env::var("VEGA_GTK_TEST_EXPECTED").unwrap();
         init_locale(&locale);
         assert_eq!(gettext("Painel"), expected);
+        let (owner, timeout) = match locale.as_str() {
+            "en_US" => (
+                "The software service stopped or restarted.",
+                "The monitoring deadline expired.",
+            ),
+            "es_ES" => (
+                "El servicio de software se detuvo o se reinició.",
+                "Se agotó el plazo de seguimiento.",
+            ),
+            "pt_BR" => (
+                "O serviço de software foi interrompido ou reiniciado.",
+                "O prazo de acompanhamento terminou.",
+            ),
+            other => panic!("unexpected test locale: {other}"),
+        };
+        assert!(
+            lyra_vega_dbus::SoftwareClientError::ServiceOwnerChanged
+                .to_string()
+                .starts_with(owner)
+        );
+        assert!(
+            lyra_vega_dbus::SoftwareClientError::TransactionTimedOut
+                .to_string()
+                .starts_with(timeout)
+        );
     }
 
     #[test]
