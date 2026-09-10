@@ -88,6 +88,8 @@ fn extension_dir() -> Option<PathBuf> {
 pub enum DesktopProfile {
     Lyra,
     Ubuntu,
+    Windows10,
+    Windows11,
     GnomeVanilla,
 }
 
@@ -96,10 +98,11 @@ pub fn current_profile() -> DesktopProfile {
         return DesktopProfile::GnomeVanilla;
     }
     open_settings().map_or(DesktopProfile::Lyra, |settings| {
-        if string_or(&settings, "desktop-profile", "lyra") == "ubuntu" {
-            DesktopProfile::Ubuntu
-        } else {
-            DesktopProfile::Lyra
+        match string_or(&settings, "desktop-profile", "lyra").as_str() {
+            "ubuntu" => DesktopProfile::Ubuntu,
+            "windows10" => DesktopProfile::Windows10,
+            "windows11" => DesktopProfile::Windows11,
+            _ => DesktopProfile::Lyra,
         }
     })
 }
@@ -111,7 +114,7 @@ const PROFILE_MENUS: [&str; 4] = [
     "show-search-menu",
 ];
 
-#[derive(Debug, serde::Serialize, serde::Deserialize, PartialEq)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
 #[serde(deny_unknown_fields)]
 struct SavedLyraProfile {
     position: String,
@@ -119,6 +122,152 @@ struct SavedLyraProfile {
     floating: bool,
     extended_alignment: String,
     menus: [bool; 4],
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+struct SavedDesktopProfile {
+    layout: SavedLyraProfile,
+    hide_mode: String,
+    icon_size: u32,
+    show_trash: bool,
+    show_apps: bool,
+    show_clock: bool,
+    show_indicators: bool,
+    fullscreen_hide: bool,
+}
+
+impl SavedDesktopProfile {
+    fn capture(settings: &gio::Settings) -> Self {
+        Self {
+            layout: SavedLyraProfile::capture(settings),
+            hide_mode: settings.string("hide-mode").into(),
+            icon_size: settings.uint("icon-size"),
+            show_trash: settings.boolean("show-trash"),
+            show_apps: settings.boolean("show-apps-button"),
+            show_clock: settings.boolean("show-clock"),
+            show_indicators: settings.boolean("show-panel-indicators"),
+            fullscreen_hide: settings.boolean("fullscreen-hide"),
+        }
+    }
+
+    fn restore(&self, settings: &gio::Settings) -> Result<(), glib::BoolError> {
+        self.layout.restore(settings)?;
+        settings.set_string("hide-mode", &self.hide_mode)?;
+        settings.set_uint("icon-size", self.icon_size)?;
+        for (key, value) in [
+            ("show-trash", self.show_trash),
+            ("show-apps-button", self.show_apps),
+            ("show-clock", self.show_clock),
+            ("show-panel-indicators", self.show_indicators),
+            ("fullscreen-hide", self.fullscreen_hide),
+        ] {
+            settings.set_boolean(key, value)?;
+        }
+        Ok(())
+    }
+}
+
+fn apply_saved_desktop_profile(
+    settings: &gio::Settings,
+    profile: DesktopProfile,
+) -> Result<(), DockError> {
+    use std::collections::BTreeMap;
+    let key = match profile {
+        DesktopProfile::Lyra => "lyra",
+        DesktopProfile::Ubuntu => "ubuntu",
+        DesktopProfile::Windows10 => "windows10",
+        DesktopProfile::Windows11 => "windows11",
+        DesktopProfile::GnomeVanilla => return Ok(()),
+    };
+    let current = settings.string("desktop-profile");
+    if current == key {
+        return Ok(());
+    }
+    let error = || {
+        DockError(gettext(
+            "Não foi possível restaurar as preferências dos perfis.",
+        ))
+    };
+    if !["lyra", "ubuntu", "windows10", "windows11"].contains(&current.as_str()) {
+        return Err(error());
+    }
+    let json = settings.string("desktop-profile-settings");
+    let mut saved: BTreeMap<String, SavedDesktopProfile> = if json.is_empty() {
+        BTreeMap::new()
+    } else {
+        serde_json::from_str(&json).map_err(|_| error())?
+    };
+    if saved
+        .keys()
+        .any(|name| !["lyra", "ubuntu", "windows10", "windows11"].contains(&name.as_str()))
+    {
+        return Err(error());
+    }
+    let before = SavedDesktopProfile::capture(settings);
+    // Migrate the Lyra snapshot created by the Ubuntu-only Vega version.
+    if current == "ubuntu" && !saved.contains_key("lyra") {
+        let layout: SavedLyraProfile =
+            serde_json::from_str(&settings.string("lyra-profile-settings")).map_err(|_| error())?;
+        let mut lyra = before.clone();
+        lyra.layout = layout;
+        saved.insert("lyra".into(), lyra);
+    }
+    saved.insert(current.to_string(), before.clone());
+    let target = saved.get(key).cloned().unwrap_or_else(|| {
+        let mut preset = saved.get("lyra").cloned().unwrap_or_else(|| before.clone());
+        preset.layout.menus = [false; 4];
+        preset.layout.extended = true;
+        preset.layout.extended_alignment = if profile == DesktopProfile::Windows11 {
+            "center"
+        } else {
+            "start"
+        }
+        .into();
+        preset.layout.position = if profile == DesktopProfile::Ubuntu {
+            "left"
+        } else {
+            "bottom"
+        }
+        .into();
+        preset.layout.floating = profile == DesktopProfile::Ubuntu;
+        if matches!(
+            profile,
+            DesktopProfile::Windows10 | DesktopProfile::Windows11
+        ) {
+            preset.hide_mode = "always".into();
+            preset.icon_size = if profile == DesktopProfile::Windows10 {
+                32
+            } else {
+                28
+            };
+            preset.show_trash = false;
+            preset.show_apps = true;
+            preset.show_clock = true;
+            preset.show_indicators = true;
+            preset.fullscreen_hide = false;
+        }
+        preset
+    });
+    let json = serde_json::to_string(&saved).map_err(|_| error())?;
+    settings.delay();
+    let result = (|| {
+        target.restore(settings)?;
+        settings.set_string("desktop-profile-settings", &json)?;
+        if current == "lyra" {
+            let legacy =
+                serde_json::to_string(&before.layout).expect("typed layout is serializable");
+            settings.set_string("lyra-profile-settings", &legacy)?;
+        }
+        settings.set_string("desktop-profile", key)?;
+        Ok::<_, glib::BoolError>(())
+    })();
+    if result.is_err() {
+        settings.revert();
+        return Err(error());
+    }
+    settings.apply();
+    Ok(())
 }
 
 impl SavedLyraProfile {
@@ -160,6 +309,17 @@ fn apply_profile_settings(
     settings: &gio::Settings,
     profile: DesktopProfile,
 ) -> Result<(), DockError> {
+    if has_key(settings, "desktop-profile-settings") {
+        return apply_saved_desktop_profile(settings, profile);
+    }
+    if matches!(
+        profile,
+        DesktopProfile::Windows10 | DesktopProfile::Windows11
+    ) {
+        return Err(DockError(gettext(
+            "Atualize o Sheliak para usar os perfis Windows.",
+        )));
+    }
     if ![
         "extended-content-alignment",
         "desktop-profile",
@@ -512,6 +672,10 @@ mod profile_tests {
     use super::*;
 
     fn settings() -> gio::Settings {
+        settings_with_cache(false)
+    }
+
+    fn settings_with_cache(cache: bool) -> gio::Settings {
         let path = std::env::temp_dir().join(format!(
             "vega-profile-{}-{}",
             std::process::id(),
@@ -522,12 +686,19 @@ mod profile_tests {
         ));
         std::fs::create_dir(&path).unwrap();
         let mut xml = format!("<schemalist><schema id='{SCHEMA_ID}' path='{SCHEMA_PATH}'>");
+        if cache {
+            xml.push_str(
+                "<key name='desktop-profile-settings' type='s'><default>''</default></key>",
+            );
+        }
+        xml.push_str("<key name='icon-size' type='u'><default>40</default></key>");
         for (key, default) in [
             ("position", "right"),
             ("content-alignment", "center"),
             ("extended-content-alignment", "end"),
             ("desktop-profile", "lyra"),
             ("lyra-profile-settings", ""),
+            ("hide-mode", "intelligent"),
         ] {
             xml.push_str(&format!(
                 "<key name='{key}' type='s'><default>'{default}'</default></key>"
@@ -540,6 +711,11 @@ mod profile_tests {
             "show-places-menu",
             "show-system-menu",
             "show-search-menu",
+            "show-trash",
+            "show-apps-button",
+            "show-clock",
+            "show-panel-indicators",
+            "fullscreen-hide",
         ] {
             xml.push_str(&format!(
                 "<key name='{key}' type='b'><default>true</default></key>"
@@ -599,5 +775,61 @@ mod profile_tests {
         assert!(apply_profile_settings(&settings, DesktopProfile::Lyra).is_err());
         assert_eq!(settings.string("desktop-profile"), "ubuntu");
         assert_eq!(SavedLyraProfile::capture(&settings), before);
+    }
+
+    #[test]
+    fn windows_profiles_restore_all_previous_layout_and_visibility_preferences() {
+        let settings = settings_with_cache(true);
+        settings.set_boolean("show-clock", false).unwrap();
+        settings.set_boolean("show-places-menu", false).unwrap();
+        let lyra = SavedDesktopProfile::capture(&settings);
+        apply_profile_settings(&settings, DesktopProfile::Ubuntu).unwrap();
+        settings.set_uint("icon-size", 44).unwrap();
+        settings.apply();
+        let ubuntu = SavedDesktopProfile::capture(&settings);
+        apply_profile_settings(&settings, DesktopProfile::Windows10).unwrap();
+        assert_eq!(settings.string("position"), "bottom");
+        assert_eq!(settings.string("hide-mode"), "always");
+        assert_eq!(settings.string("extended-content-alignment"), "start");
+        assert!(settings.boolean("show-clock"));
+        assert!(!settings.boolean("show-trash"));
+        assert_eq!(settings.uint("icon-size"), 32);
+        apply_profile_settings(&settings, DesktopProfile::Windows11).unwrap();
+        assert_eq!(settings.string("extended-content-alignment"), "center");
+        assert_eq!(settings.uint("icon-size"), 28);
+        apply_profile_settings(&settings, DesktopProfile::Ubuntu).unwrap();
+        assert_eq!(SavedDesktopProfile::capture(&settings), ubuntu);
+        apply_profile_settings(&settings, DesktopProfile::Lyra).unwrap();
+        assert_eq!(SavedDesktopProfile::capture(&settings), lyra);
+        apply_profile_settings(&settings, DesktopProfile::Windows10).unwrap();
+        assert_eq!(settings.string("desktop-profile"), "windows10");
+        apply_profile_settings(&settings, DesktopProfile::Lyra).unwrap();
+        assert_eq!(SavedDesktopProfile::capture(&settings), lyra);
+    }
+
+    #[test]
+    fn windows_migrate_existing_ubuntu_backup_and_reject_corrupt_cache() {
+        let settings = settings_with_cache(true);
+        let lyra = SavedDesktopProfile::capture(&settings);
+        settings
+            .set_string(
+                "lyra-profile-settings",
+                &serde_json::to_string(&lyra.layout).unwrap(),
+            )
+            .unwrap();
+        settings.set_string("desktop-profile", "ubuntu").unwrap();
+        for key in PROFILE_MENUS {
+            settings.set_boolean(key, false).unwrap();
+        }
+        apply_profile_settings(&settings, DesktopProfile::Windows11).unwrap();
+        apply_profile_settings(&settings, DesktopProfile::Lyra).unwrap();
+        assert_eq!(SavedDesktopProfile::capture(&settings), lyra);
+        settings
+            .set_string("desktop-profile-settings", "broken")
+            .unwrap();
+        settings.apply();
+        assert!(apply_profile_settings(&settings, DesktopProfile::Windows10).is_err());
+        assert_eq!(settings.string("desktop-profile"), "lyra");
+        assert_eq!(SavedDesktopProfile::capture(&settings), lyra);
     }
 }

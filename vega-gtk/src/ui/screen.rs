@@ -172,12 +172,30 @@ fn appearance_pages(
         DesktopProfile::GnomeVanilla,
         Some(&lyra_profile),
     );
+    let windows10_profile = profile_card(
+        &gettext("Windows 10"),
+        &gettext("Painel inferior à esquerda e menu L com lista de aplicativos e blocos fixados."),
+        DesktopProfile::Windows10,
+        Some(&lyra_profile),
+    );
+    let windows11_profile = profile_card(
+        &gettext("Windows 11"),
+        &gettext(
+            "Painel inferior centralizado e menu L com pesquisa e grade de aplicativos fixados.",
+        ),
+        DesktopProfile::Windows11,
+        Some(&lyra_profile),
+    );
     lyra_profile.set_sensitive(sheliak_available);
     ubuntu_profile.set_sensitive(sheliak_available);
+    windows10_profile.set_sensitive(sheliak_available);
+    windows11_profile.set_sensitive(sheliak_available);
     let choices = [
         (DesktopProfile::Lyra, lyra_profile.clone()),
         (DesktopProfile::Ubuntu, ubuntu_profile.clone()),
         (DesktopProfile::GnomeVanilla, vanilla_profile.clone()),
+        (DesktopProfile::Windows10, windows10_profile.clone()),
+        (DesktopProfile::Windows11, windows11_profile.clone()),
     ];
     let active = crate::dock::current_profile();
     for (profile, button) in &choices {
@@ -230,12 +248,19 @@ fn appearance_pages(
         });
     }
 
-    let profiles = gtk::Box::new(gtk::Orientation::Horizontal, 16);
-    profiles.set_homogeneous(true);
-    profiles.set_valign(gtk::Align::Start);
-    profiles.append(&lyra_profile);
-    profiles.append(&ubuntu_profile);
-    profiles.append(&vanilla_profile);
+    let profiles = gtk::FlowBox::builder()
+        .homogeneous(true)
+        .selection_mode(gtk::SelectionMode::None)
+        .min_children_per_line(1)
+        .max_children_per_line(3)
+        .row_spacing(16)
+        .column_spacing(16)
+        .valign(gtk::Align::Start)
+        .build();
+    for (_, button) in &choices {
+        button.set_size_request(240, -1);
+        profiles.insert(button, -1);
+    }
 
     let profile_group = adw::PreferencesGroup::builder()
         .title(gettext("Perfil da área de trabalho"))
@@ -307,6 +332,7 @@ fn profile_card(
         .label(description)
         .xalign(0.0)
         .wrap(true)
+        .max_width_chars(30)
         .css_classes(["dim-label"])
         .build();
     let content = gtk::Box::new(gtk::Orientation::Vertical, 6);
@@ -331,6 +357,12 @@ fn profile_card(
 /// CSS (sem imagem externa): Lyra tem painel flutuante e dock lateral; GNOME
 /// Vanilla tem painel colado ao topo e dash central inferior.
 fn profile_preview(profile: DesktopProfile) -> gtk::Widget {
+    if matches!(
+        profile,
+        DesktopProfile::Windows10 | DesktopProfile::Windows11
+    ) {
+        return windows_profile_preview(profile);
+    }
     let lyra = profile == DesktopProfile::Lyra;
     let ubuntu = profile == DesktopProfile::Ubuntu;
     let desktop = gtk::Box::new(gtk::Orientation::Vertical, 0);
@@ -398,6 +430,76 @@ fn profile_preview(profile: DesktopProfile) -> gtk::Widget {
         dock.set_margin_bottom(7);
     }
     overlay.add_overlay(&dock);
+    overlay.upcast()
+}
+
+fn windows_profile_preview(profile: DesktopProfile) -> gtk::Widget {
+    let centered = profile == DesktopProfile::Windows11;
+    let desktop = gtk::Box::new(gtk::Orientation::Vertical, 0);
+    desktop.add_css_class("vega-profile-preview");
+    let overlay = gtk::Overlay::new();
+    overlay.set_child(Some(&desktop));
+    let panel = gtk::Box::new(gtk::Orientation::Horizontal, 3);
+    panel.add_css_class("vega-profile-preview-panel-gnome");
+    panel.set_valign(gtk::Align::End);
+    panel.set_halign(gtk::Align::Fill);
+    panel.set_height_request(18);
+    let icons = gtk::Box::new(gtk::Orientation::Horizontal, 4);
+    icons.set_halign(if centered {
+        gtk::Align::Center
+    } else {
+        gtk::Align::Start
+    });
+    icons.set_hexpand(true);
+    icons.set_margin_start(4);
+    icons.append(&gtk::Label::new(Some("L")));
+    for _ in 0..4 {
+        let icon = gtk::Box::new(gtk::Orientation::Horizontal, 0);
+        icon.add_css_class("vega-profile-preview-icon");
+        icons.append(&icon);
+    }
+    panel.append(&icons);
+    overlay.add_overlay(&panel);
+    let menu = gtk::Box::new(gtk::Orientation::Vertical, 6);
+    menu.add_css_class("vega-profile-preview-start-menu");
+    if centered {
+        menu.add_css_class("windows11");
+    }
+    menu.set_size_request(110, 82);
+    menu.set_halign(if centered {
+        gtk::Align::Center
+    } else {
+        gtk::Align::Start
+    });
+    menu.set_valign(gtk::Align::End);
+    menu.set_margin_bottom(20);
+    menu.set_margin_start(if centered { 0 } else { 4 });
+    let search = gtk::Box::new(gtk::Orientation::Horizontal, 0);
+    search.add_css_class("vega-profile-preview-search");
+    menu.append(&search);
+    let body = gtk::Box::new(gtk::Orientation::Horizontal, 6);
+    if !centered {
+        let list = gtk::Box::new(gtk::Orientation::Vertical, 4);
+        for _ in 0..4 {
+            let row = gtk::Box::new(gtk::Orientation::Horizontal, 0);
+            row.add_css_class("vega-profile-preview-item");
+            row.set_size_request(38, 4);
+            list.append(&row);
+        }
+        body.append(&list);
+    }
+    let grid = gtk::Grid::builder()
+        .row_spacing(4)
+        .column_spacing(4)
+        .build();
+    for index in 0..6 {
+        let icon = gtk::Box::new(gtk::Orientation::Horizontal, 0);
+        icon.add_css_class("vega-profile-preview-icon");
+        grid.attach(&icon, index % 3, index / 3, 1, 1);
+    }
+    body.append(&grid);
+    menu.append(&body);
+    overlay.add_overlay(&menu);
     overlay.upcast()
 }
 

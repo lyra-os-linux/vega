@@ -557,3 +557,7 @@ button.vega-profile-card:checked {
   background-color: #242424;
   border-radius: 0;
 }
+
+.vega-profile-preview-start-menu { background-color: #30343d; padding: 7px; border-radius: 0; }
+.vega-profile-preview-start-menu.windows11 { border-radius: 6px; }
+.vega-profile-preview-search { background-color: #666a73; min-height: 6px; border-radius: 3px; }

@@ -3202,3 +3202,24 @@ msgstr "No se pudieron restaurar las preferencias del perfil Lyra."
 
 msgid "Escolha entre Lyra, Ubuntu e a experiência padrão do GNOME"
 msgstr "Elige entre Lyra, Ubuntu y la experiencia estándar de GNOME"
+
+msgid "Windows 10"
+msgstr "Windows 10"
+
+msgid "Windows 11"
+msgstr "Windows 11"
+
+msgid "Painel inferior à esquerda e menu L com lista de aplicativos e blocos fixados."
+msgstr "Panel inferior a la izquierda y menú L con lista de aplicaciones y mosaicos anclados."
+
+msgid "Painel inferior centralizado e menu L com pesquisa e grade de aplicativos fixados."
+msgstr "Panel inferior centrado y menú L con búsqueda y cuadrícula de aplicaciones ancladas."
+
+msgid "Escolha entre Lyra, Ubuntu, Windows 10, Windows 11 e GNOME"
+msgstr "Elige Lyra, Ubuntu, Windows 10, Windows 11 o GNOME"
+
+msgid "Atualize o Sheliak para usar os perfis Windows."
+msgstr "Actualiza Sheliak para usar los perfiles Windows."
+
+msgid "Não foi possível restaurar as preferências dos perfis."
+msgstr "No se pudieron restaurar las preferencias de los perfiles."
