@@ -3231,3 +3231,18 @@ msgstr "O prazo de acompanhamento terminou. A operação pode continuar em execu
 
 msgid "Não iniciado: a fila foi interrompida após perder a confirmação da operação anterior."
 msgstr "Não iniciado: a fila foi interrompida após perder a confirmação da operação anterior."
+
+msgid "Aguarde a operação em andamento antes de limpar a conversa."
+msgstr "Aguarde a operação em andamento antes de limpar a conversa."
+
+msgid "Conversa e anexos locais apagados. O registro de ações do sistema foi mantido."
+msgstr "Conversa e anexos locais apagados. O registro de ações do sistema foi mantido."
+
+msgid "Não foi possível limpar as cópias da conversa no registro de ações: {detail}"
+msgstr "Não foi possível limpar as cópias da conversa no registro de ações: {detail}"
+
+msgid "Falha interna ao limpar a conversa."
+msgstr "Falha interna ao limpar a conversa."
+
+msgid "Limpando conversa…"
+msgstr "Limpando conversa…"

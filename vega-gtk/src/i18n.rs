@@ -169,6 +169,13 @@ mod tests {
         let expected = std::env::var("VEGA_GTK_TEST_EXPECTED").unwrap();
         init_locale(&locale);
         assert_eq!(gettext("Painel"), expected);
+        let clearing = match locale.as_str() {
+            "en_US" => "Clearing conversation…",
+            "es_ES" => "Borrando conversación…",
+            "pt_BR" => "Limpando conversa…",
+            other => panic!("unexpected test locale: {other}"),
+        };
+        assert_eq!(gettext("Limpando conversa…"), clearing);
         let (owner, timeout) = match locale.as_str() {
             "en_US" => (
                 "The software service stopped or restarted.",
