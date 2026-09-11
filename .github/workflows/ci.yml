@@ -50,6 +50,18 @@ jobs:
       - name: cargo test --workspace --locked
         run: cargo test --workspace --locked
 
+      - name: Load the released Sheliak profile schemas
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: lyra-os-linux/lyraos-desktop-sheliak
+          ref: 5d071a805e046224bde33f0a8f5d2cb0ce947dd4
+          path: fixtures/sheliak
+      - name: Verify public profile command with isolated persistent settings
+        run: |
+          glib-compile-schemas fixtures/sheliak/schemas
+          cargo build --workspace --locked
+          python3 tests/profile-command.py --binary target/debug/vega-gtk --schemas fixtures/sheliak/schemas
+
       - name: Verify history deletion in real GTK with isolated user data
         run: xvfb-run -a dbus-run-session -- cargo test --workspace --locked native_history_ui -- --ignored --test-threads=1
 
