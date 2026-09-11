@@ -1,4 +1,7 @@
-use std::{cell::RefCell, rc::Rc};
+use std::{
+    cell::{Cell, RefCell},
+    rc::Rc,
+};
 
 use crate::i18n::gettext;
 use adw::prelude::*;
@@ -32,6 +35,7 @@ pub struct NetworkPage {
     pub firewall_protocol: gtk::DropDown,
     pub firewall_port_add: gtk::Button,
     interface_items: Rc<RefCell<Vec<NetworkInterface>>>,
+    interface_busy: Rc<Cell<bool>>,
     wifi_action_handlers: Rc<RefCell<Vec<WifiActionHandler>>>,
     firewall_items: Rc<RefCell<Vec<FirewallService>>>,
     firewall_port_items: Rc<RefCell<Vec<FirewallPort>>>,
@@ -255,6 +259,7 @@ impl NetworkPage {
             firewall_protocol,
             firewall_port_add,
             interface_items: Rc::new(RefCell::new(Vec::new())),
+            interface_busy: Rc::new(Cell::new(false)),
             wifi_action_handlers: Rc::new(RefCell::new(Vec::new())),
             firewall_items: Rc::new(RefCell::new(Vec::new())),
             firewall_port_items: Rc::new(RefCell::new(Vec::new())),
@@ -474,9 +479,18 @@ impl NetworkPage {
         self.interface_items.borrow().get(index).cloned()
     }
 
+    pub fn interface_is_busy(&self) -> bool {
+        self.interface_busy.get()
+    }
+
+    pub fn set_interface_busy(&self, busy: bool) {
+        self.interface_busy.set(busy);
+        self.update_interface_action();
+    }
+
     fn update_interface_action(&self) {
         self.interface_action
-            .set_sensitive(self.selected_interface().is_some());
+            .set_sensitive(!self.interface_is_busy() && self.selected_interface().is_some());
     }
 
     fn update_firewall_action(&self) {
