@@ -13,7 +13,7 @@ impl Drop for PrivateBus {
     }
 }
 
-fn isolated_child() {
+fn isolated_child(test: &str) {
     let home = std::env::temp_dir().join(format!("vega-dialogs-{}", std::process::id()));
     std::fs::create_dir(&home).unwrap();
     let config = home.join("bus.conf");
@@ -35,7 +35,7 @@ fn isolated_child() {
     let result = Command::new(std::env::current_exe().unwrap())
         .args([
             "--exact",
-            "application::dialog_tests::native_dialog_flows",
+            test,
             "--ignored",
             "--nocapture",
             "--test-threads=1",
@@ -55,6 +55,20 @@ fn isolated_child() {
 }
 
 fn fixture(address: &str, calls: &Calls) -> gio::DBusConnection {
+    fixture_with_network(address, calls, None)
+}
+
+#[derive(Clone, Default)]
+struct NetworkFixture {
+    pending: Rc<RefCell<Vec<gio::DBusMethodInvocation>>>,
+    list_reply: Rc<RefCell<Option<glib::Variant>>>,
+}
+
+fn fixture_with_network(
+    address: &str,
+    calls: &Calls,
+    network: Option<NetworkFixture>,
+) -> gio::DBusConnection {
     assert_eq!(std::env::var("DBUS_SYSTEM_BUS_ADDRESS").unwrap(), address);
     let connection = gio::DBusConnection::for_address_sync(
         address,
@@ -128,6 +142,7 @@ fn fixture(address: &str, calls: &Calls) -> gio::DBusConnection {
         xml.push_str("</interface></node>");
         let info = gio::DBusNodeInfo::for_xml(&xml).unwrap();
         let calls = calls.clone();
+        let network = network.clone();
         connection
             .register_object("/org/lyraos/Vega1", &info.interfaces()[0])
             .method_call(move |_, _, _, _, method, parameters, invocation| {
@@ -138,7 +153,19 @@ fn fixture(address: &str, calls: &Calls) -> gio::DBusConnection {
                     "DiffPackagesLocalized" => {
                         Some((vec!["fixture-package: 2 -> 1"],).to_variant())
                     }
-                    "ListInterfaces" => None,
+                    "ListInterfaces" => network
+                        .as_ref()
+                        .and_then(|network| network.list_reply.borrow().clone()),
+                    "SetStaticIpv4" if network.is_some() => {
+                        calls.borrow_mut().push((method.into(), parameters));
+                        network
+                            .as_ref()
+                            .unwrap()
+                            .pending
+                            .borrow_mut()
+                            .push(invocation);
+                        return;
+                    }
                     _ => {
                         calls.borrow_mut().push((method.into(), parameters));
                         None
@@ -222,7 +249,7 @@ async fn request(calls: &Calls, before: usize, method: &str) -> glib::Variant {
 #[ignore = "requires a graphical display and dbus-daemon; uses isolated settings and a fake daemon"]
 fn native_dialog_flows() {
     let Ok(address) = std::env::var("VEGA_DIALOG_TEST_BUS") else {
-        isolated_child();
+        isolated_child("application::dialog_tests::native_dialog_flows");
         return;
     };
     adw::init().unwrap();
@@ -413,6 +440,244 @@ fn native_dialog_flows() {
                 assert!(task.await.unwrap());
                 assert!(!d.is_mapped());
             }
+        }
+        window.destroy();
+    });
+}
+
+fn ipv4_interface(name: &str) -> lyra_vega_dbus::NetworkInterface {
+    lyra_vega_dbus::NetworkInterface {
+        name: name.into(),
+        kind: "ethernet".into(),
+        state: "connected".into(),
+        ipv4: String::new(),
+        ipv6: String::new(),
+        gateway: String::new(),
+        dns: String::new(),
+        mac: String::new(),
+        speed: String::new(),
+        ssid: String::new(),
+        signal: 0,
+        device: "test0".into(),
+        autoconf: true,
+    }
+}
+
+async fn submit_ipv4(
+    page: &crate::ui::NetworkPage,
+    calls: &Calls,
+    connection: &str,
+    address: &str,
+) {
+    assert!(
+        page.interface_action.is_sensitive(),
+        "IPv4 action must allow retry"
+    );
+    let before = calls.borrow().len();
+    page.interface_action.emit_clicked();
+    let d = dialog(calls, before).await;
+    let fields = entries(&d);
+    assert_eq!(fields[0].text(), connection);
+    fields[1].set_text(address);
+    fields[2].set_text("192.0.2.1");
+    fields[3].set_text("192.0.2.53");
+    respond(&d, "apply").await;
+    assert_eq!(
+        request(calls, before, "SetStaticIpv4").await,
+        (connection, address, "192.0.2.1", "192.0.2.53").to_variant()
+    );
+    assert!(
+        !page.interface_action.is_sensitive(),
+        "pending request must disable action"
+    );
+}
+
+#[test]
+#[ignore = "requires a graphical display and dbus-daemon; uses a private bus without host network changes"]
+fn native_ipv4_retry() {
+    let Ok(address) = std::env::var("VEGA_DIALOG_TEST_BUS") else {
+        isolated_child("application::dialog_tests::native_ipv4_retry");
+        return;
+    };
+    adw::init().unwrap();
+    let context = glib::MainContext::default();
+    context.block_on(async {
+        let calls: Calls = Rc::new(RefCell::new(Vec::new()));
+        let network = NetworkFixture::default();
+        let _service = fixture_with_network(&address, &calls, Some(network.clone()));
+        let dbus = VegaDbus::connect().await.unwrap();
+        let shell = VegaShell::new();
+        let window = adw::ApplicationWindow::builder()
+            .content(&shell.root)
+            .build();
+        configure_network(&shell, &window, dbus);
+        let page = &shell.network;
+        until("initial fixture read rejected", || {
+            page.status.text().contains("fixture rejected")
+        })
+        .await;
+        let items = [
+            ipv4_interface("test-connection"),
+            ipv4_interface("other-connection"),
+        ];
+        for enabled in [true, false] {
+            println!("Testing IPv4 retry and completion, confirm_actions={enabled}");
+            crate::preferences::save(&crate::preferences::Settings {
+                confirm_actions: enabled,
+                ..Default::default()
+            });
+            page.show_interfaces(&items);
+            assert!(!page.interface_action.is_sensitive());
+            page.interfaces
+                .select_row(page.interfaces.row_at_index(0).as_ref());
+
+            // Rejection must permit a corrected request on the same selection.
+            submit_ipv4(page, &calls, "test-connection", "192.0.2.2/24").await;
+            network
+                .pending
+                .borrow_mut()
+                .pop()
+                .unwrap()
+                .return_dbus_error(
+                    "org.freedesktop.DBus.Error.AccessDenied",
+                    "IPv4 request denied by fixture",
+                );
+            until("backend denial displayed", || {
+                page.status
+                    .text()
+                    .contains("IPv4 request denied by fixture")
+            })
+            .await;
+            assert!(
+                page.interface_action.is_sensitive(),
+                "denial left IPv4 action disabled"
+            );
+            assert_eq!(page.selected_interface().unwrap().name, "test-connection");
+
+            // Success followed by a failed refresh also releases the button.
+            *network.list_reply.borrow_mut() = None;
+            submit_ipv4(page, &calls, "test-connection", "192.0.2.3/24").await;
+            network
+                .pending
+                .borrow_mut()
+                .pop()
+                .unwrap()
+                .return_value(None);
+            until("refresh failure displayed", || {
+                page.status.text().contains("fixture rejected")
+            })
+            .await;
+            assert!(
+                page.interface_action.is_sensitive(),
+                "refresh failure blocked retry"
+            );
+
+            // A successful refresh replaces rows: availability follows the new selection.
+            *network.list_reply.borrow_mut() = Some(
+                (vec![(
+                    "refreshed-connection",
+                    "ethernet",
+                    "connected",
+                    "192.0.2.4/24",
+                    "",
+                    "192.0.2.1",
+                    "192.0.2.53",
+                    "",
+                    "",
+                    "",
+                    0u32,
+                    "test0",
+                    false,
+                )],)
+                    .to_variant(),
+            );
+            submit_ipv4(page, &calls, "test-connection", "192.0.2.4/24").await;
+            network
+                .pending
+                .borrow_mut()
+                .pop()
+                .unwrap()
+                .return_value(None);
+            until("interfaces refreshed", || {
+                page.status.text() == "Interfaces de rede atualizadas"
+            })
+            .await;
+            assert!(page.selected_interface().is_none());
+            assert!(!page.interface_action.is_sensitive());
+            page.interfaces
+                .select_row(page.interfaces.row_at_index(0).as_ref());
+            assert_eq!(
+                page.selected_interface().unwrap().name,
+                "refreshed-connection"
+            );
+            assert!(page.interface_action.is_sensitive());
+
+            // Changing selection while applying cannot reopen a form or overlap requests.
+            page.show_interfaces(&items);
+            page.interfaces
+                .select_row(page.interfaces.row_at_index(0).as_ref());
+            submit_ipv4(page, &calls, "test-connection", "192.0.2.5/24").await;
+            page.interfaces
+                .select_row(page.interfaces.row_at_index(1).as_ref());
+            assert!(!page.interface_action.is_sensitive());
+            let before = calls.borrow().len();
+            page.interface_action.emit_clicked();
+            glib::timeout_future(Duration::from_millis(30)).await;
+            assert!(active_dialog().is_none());
+            assert_eq!(calls.borrow().len(), before);
+            network
+                .pending
+                .borrow_mut()
+                .pop()
+                .unwrap()
+                .return_dbus_error(
+                    "org.lyraos.Test.Rejected",
+                    "selection changed during request",
+                );
+            until("changed selection error displayed", || {
+                page.status
+                    .text()
+                    .contains("selection changed during request")
+            })
+            .await;
+            assert!(page.interface_action.is_sensitive());
+            assert_eq!(page.selected_interface().unwrap().name, "other-connection");
+
+            // Clearing selection while the backend runs must keep the button disabled.
+            submit_ipv4(page, &calls, "other-connection", "192.0.2.6/24").await;
+            page.interfaces.unselect_all();
+            network
+                .pending
+                .borrow_mut()
+                .pop()
+                .unwrap()
+                .return_dbus_error("org.lyraos.Test.Rejected", "no current selection");
+            until("unselected error displayed", || {
+                page.status.text().contains("no current selection")
+            })
+            .await;
+            assert!(!page.interface_action.is_sensitive());
+            page.interfaces
+                .select_row(page.interfaces.row_at_index(1).as_ref());
+            assert!(page.interface_action.is_sensitive());
+
+            // A connection removed by a successful refresh cannot be configured again.
+            *network.list_reply.borrow_mut() =
+                Some(glib::Variant::parse(None, "(@a(ssssssssssusb) [],)").unwrap());
+            submit_ipv4(page, &calls, "other-connection", "192.0.2.7/24").await;
+            network
+                .pending
+                .borrow_mut()
+                .pop()
+                .unwrap()
+                .return_value(None);
+            until("empty interfaces refreshed", || {
+                page.status.text() == "Interfaces de rede atualizadas"
+            })
+            .await;
+            assert!(page.selected_interface().is_none());
+            assert!(!page.interface_action.is_sensitive());
+            assert!(network.pending.borrow().is_empty());
         }
         window.destroy();
     });

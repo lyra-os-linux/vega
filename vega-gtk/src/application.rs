@@ -1559,6 +1559,9 @@ fn configure_network(shell: &VegaShell, window: &adw::ApplicationWindow, dbus: V
     let interface_dbus = dbus.clone();
     let interface_action = page.interface_action.clone();
     interface_action.connect_clicked(move |_| {
+        if interface_page.interface_is_busy() {
+            return;
+        }
         let Some(interface) = interface_page.selected_interface() else {
             return;
         };
@@ -1636,7 +1639,12 @@ fn configure_network(shell: &VegaShell, window: &adw::ApplicationWindow, dbus: V
                     .set_label(&gettext("O gateway IPv4 informado é inválido."));
                 return;
             }
-            page.interface_action.set_sensitive(false);
+            // Another already-open form may have started a request while this
+            // dialog awaited input. Do not issue concurrent IPv4 changes.
+            if page.interface_is_busy() {
+                return;
+            }
+            page.set_interface_busy(true);
             page.status.set_label(&gettext("Aplicando IPv4 estático…"));
             match dbus
                 .network()
@@ -1646,6 +1654,9 @@ fn configure_network(shell: &VegaShell, window: &adw::ApplicationWindow, dbus: V
                 Ok(()) => refresh_interfaces_page(&page, &dbus).await,
                 Err(error) => page.status.set_label(&error.to_string()),
             }
+            // Recompute from the current selection even if applying or
+            // refreshing failed, or the selected connection disappeared.
+            page.set_interface_busy(false);
         });
     });
 
