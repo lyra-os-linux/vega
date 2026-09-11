@@ -3247,3 +3247,27 @@ msgstr "Internal error while clearing the conversation."
 
 msgid "Limpando conversa…"
 msgstr "Clearing conversation…"
+
+msgid "MacOS X"
+msgstr "MacOS X"
+
+msgid "Dock inferior flutuante e centralizado, com ampliação dos ícones e menu L na barra superior."
+msgstr "Floating centered bottom dock, magnified icons and the L menu in the top bar."
+
+msgid "Atualize o Sheliak para usar o perfil MacOS X."
+msgstr "Update Sheliak to use the MacOS X profile."
+
+msgid "Área de trabalho"
+msgstr "Desktop"
+
+msgid "Área de trabalho ativa"
+msgstr "Active desktop"
+
+msgid "Mostrar arquivos, pastas, discos e lixeira. Desativar preserva seus arquivos."
+msgstr "Show files, folders, drives and Trash. Turning this off preserves your files."
+
+msgid "Ícones na área de trabalho indisponíveis."
+msgstr "Desktop icons are unavailable."
+
+msgid "Não foi possível alterar a área de trabalho ativa."
+msgstr "The active desktop could not be changed."

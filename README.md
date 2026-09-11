@@ -33,7 +33,8 @@ are no longer offered by Vega. Hardware inventory and GPU monitoring remain avai
 Features backed by optional programs are shown as unavailable when their
 dependency is missing without preventing the other pages from working.
 
-Personalization offers Lyra, Ubuntu, and GNOME Vanilla desktop profiles.
+Personalization offers Lyra, Ubuntu, GNOME Vanilla, Windows 10, Windows 11,
+and MacOS X desktop profiles.
 Ubuntu requires Sheliak 1.12.10 or newer: it extends the left dock, aligns apps
 at the top, and hides the topbar menus and search. Returning to Lyra restores
 the previous dock and menu preferences, including through GNOME Vanilla.
@@ -217,7 +218,8 @@ vega-gtk --desktop-profile get
 vega-gtk --desktop-profile set windows10
 ```
 
-IDs: `lyra`, `vanilla`, `ubuntu`, `windows10`, `windows11`. On success stdout
+IDs: `lyra`, `vanilla`, `ubuntu`, `windows10`, `windows11`, `macos`.
+MacOS X requires Vega GTK 5.1.34 and Sheliak 1.16.0. On success stdout
 contains exactly the stored profile ID. Exit 1 means unavailable settings or
 an application/readback error; exit 2 means invalid arguments. This command
 uses the same save/restore implementation as Vega's profile cards, flushes
@@ -232,3 +234,24 @@ private persistent keyfile backend. `tests/native-profiles/extension.js` can als
 run through Sheliak's `tests/native-pins/run.py --probe` with
 `VEGA_PROFILE_TEST_BINARY` pointing to the built binary, validating live Shell
 switches in its private compositor.
+
+### Desktop icons and MacOS X
+
+The MacOS X preset uses a centered floating bottom dock with icon magnification,
+a flush top bar and the Lyra application logo at the left. Each profile restores
+its own alignment, animation, margin and menu position, including snapshots saved
+before these fields existed.
+
+In Personalization → Desktop profile, **Active desktop** enables or disables
+Desktop Icons NG (`ding@rastersoft.com`). Disabling hides desktop icons without
+moving or deleting files. This preference is independent of all six profiles.
+The switch is unavailable when DING is not installed; a failed write restores the
+actual state and shows an error. Vega never enables all user extensions implicitly.
+Readback confirms the stored preference; Shell applies the extension asynchronously.
+
+Native regression tests use Sheliak's private compositor runner with
+`--desktop-icons` pointing to the extracted DING RPM and
+`--probe tests/native-desktop-icons/extension.js` from Sheliak. Set
+`VEGA_DESKTOP_TEST_BINARY` to the Cargo test executable. The fixture creates a
+private HOME/Desktop, checks real enable/disable and GTK callbacks, preserves
+files and other extensions, and switches every profile in both icon states.

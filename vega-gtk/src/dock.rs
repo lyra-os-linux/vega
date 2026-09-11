@@ -67,16 +67,20 @@ impl std::error::Error for DockError {}
 /// achar essa pasta e carregar o schema explicitamente dali, em vez de usar
 /// `SettingsSchemaSource::default()`.
 fn extension_dir() -> Option<PathBuf> {
+    extension_dir_for(EXTENSION_UUID)
+}
+
+fn extension_dir_for(uuid: &str) -> Option<PathBuf> {
     let mut candidates = vec![
         glib::user_data_dir()
             .join("gnome-shell/extensions")
-            .join(EXTENSION_UUID),
+            .join(uuid),
     ];
     for base in ["/usr/share", "/usr/local/share"] {
         candidates.push(
             PathBuf::from(base)
                 .join("gnome-shell/extensions")
-                .join(EXTENSION_UUID),
+                .join(uuid),
         );
     }
     candidates
@@ -90,6 +94,7 @@ pub enum DesktopProfile {
     Ubuntu,
     Windows10,
     Windows11,
+    Macos,
     GnomeVanilla,
 }
 
@@ -101,6 +106,7 @@ impl DesktopProfile {
             "ubuntu" => Some(Self::Ubuntu),
             "windows10" => Some(Self::Windows10),
             "windows11" => Some(Self::Windows11),
+            "macos" => Some(Self::Macos),
             _ => None,
         }
     }
@@ -112,6 +118,7 @@ impl DesktopProfile {
             Self::Ubuntu => "ubuntu",
             Self::Windows10 => "windows10",
             Self::Windows11 => "windows11",
+            Self::Macos => "macos",
         }
     }
 }
@@ -154,6 +161,7 @@ pub fn current_profile() -> DesktopProfile {
             "ubuntu" => DesktopProfile::Ubuntu,
             "windows10" => DesktopProfile::Windows10,
             "windows11" => DesktopProfile::Windows11,
+            "macos" => DesktopProfile::Macos,
             _ => DesktopProfile::Lyra,
         }
     })
@@ -187,6 +195,17 @@ struct SavedDesktopProfile {
     show_clock: bool,
     show_indicators: bool,
     fullscreen_hide: bool,
+    #[serde(default)]
+    presentation: Option<SavedProfilePresentation>,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+struct SavedProfilePresentation {
+    alignment: String,
+    animation: bool,
+    margin: u32,
+    menu_position: String,
 }
 
 impl SavedDesktopProfile {
@@ -200,11 +219,33 @@ impl SavedDesktopProfile {
             show_clock: settings.boolean("show-clock"),
             show_indicators: settings.boolean("show-panel-indicators"),
             fullscreen_hide: settings.boolean("fullscreen-hide"),
+            presentation: Some(SavedProfilePresentation {
+                alignment: string_or(settings, "content-alignment", "center"),
+                animation: boolean_or(settings, "animation", true),
+                margin: uint_or(settings, "edge-margin", 8),
+                menu_position: string_or(settings, "panel-menu-position", "left"),
+            }),
         }
     }
 
     fn restore(&self, settings: &gio::Settings) -> Result<(), glib::BoolError> {
         self.layout.restore(settings)?;
+        if let Some(extra) = &self.presentation {
+            for (key, value) in [
+                ("content-alignment", extra.alignment.as_str()),
+                ("panel-menu-position", extra.menu_position.as_str()),
+            ] {
+                if has_key(settings, key) {
+                    settings.set_string(key, value)?;
+                }
+            }
+            if has_key(settings, "animation") {
+                settings.set_boolean("animation", extra.animation)?;
+            }
+            if has_key(settings, "edge-margin") {
+                settings.set_uint("edge-margin", extra.margin)?;
+            }
+        }
         settings.set_string("hide-mode", &self.hide_mode)?;
         settings.set_uint("icon-size", self.icon_size)?;
         for (key, value) in [
@@ -230,6 +271,7 @@ fn apply_saved_desktop_profile(
         DesktopProfile::Ubuntu => "ubuntu",
         DesktopProfile::Windows10 => "windows10",
         DesktopProfile::Windows11 => "windows11",
+        DesktopProfile::Macos => "macos",
         DesktopProfile::GnomeVanilla => return Ok(()),
     };
     let current = settings.string("desktop-profile");
@@ -241,7 +283,7 @@ fn apply_saved_desktop_profile(
             "Não foi possível restaurar as preferências dos perfis.",
         ))
     };
-    if !["lyra", "ubuntu", "windows10", "windows11"].contains(&current.as_str()) {
+    if !["lyra", "ubuntu", "windows10", "windows11", "macos"].contains(&current.as_str()) {
         return Err(error());
     }
     let json = settings.string("desktop-profile-settings");
@@ -252,11 +294,18 @@ fn apply_saved_desktop_profile(
     };
     if saved
         .keys()
-        .any(|name| !["lyra", "ubuntu", "windows10", "windows11"].contains(&name.as_str()))
+        .any(|name| !["lyra", "ubuntu", "windows10", "windows11", "macos"].contains(&name.as_str()))
     {
         return Err(error());
     }
     let before = SavedDesktopProfile::capture(settings);
+    // Older snapshots shared these settings globally. Seed them once from
+    // that shared state before MacOS X changes them, preserving the migration.
+    for value in saved.values_mut() {
+        if value.presentation.is_none() {
+            value.presentation = before.presentation.clone();
+        }
+    }
     // Migrate the Lyra snapshot created by the Ubuntu-only Vega version.
     if current == "ubuntu" && !saved.contains_key("lyra") {
         let layout: SavedLyraProfile =
@@ -298,6 +347,25 @@ fn apply_saved_desktop_profile(
             preset.show_clock = true;
             preset.show_indicators = true;
             preset.fullscreen_hide = false;
+        }
+        if profile == DesktopProfile::Macos {
+            preset.layout.position = "bottom".into();
+            preset.layout.extended = false;
+            preset.layout.floating = false;
+            preset.layout.menus = [true, false, false, false];
+            preset.hide_mode = "always".into();
+            preset.icon_size = 48;
+            preset.show_trash = true;
+            preset.show_apps = true;
+            preset.show_clock = true;
+            preset.show_indicators = true;
+            preset.fullscreen_hide = true;
+            preset.presentation = Some(SavedProfilePresentation {
+                alignment: "center".into(),
+                animation: true,
+                margin: 10,
+                menu_position: "left".into(),
+            });
         }
         preset
     });
@@ -344,7 +412,16 @@ impl SavedLyraProfile {
     }
 }
 
+pub fn supports_macos_profile() -> bool {
+    open_settings().is_some_and(|s| has_key(&s, "macos-profile-supported"))
+}
+
 pub fn apply_profile(profile: DesktopProfile) -> Result<(), DockError> {
+    if profile == DesktopProfile::Macos && !supports_macos_profile() {
+        return Err(DockError(gettext(
+            "Atualize o Sheliak para usar o perfil MacOS X.",
+        )));
+    }
     if profile == DesktopProfile::GnomeVanilla {
         return set_enabled(false);
     }
@@ -449,6 +526,90 @@ fn alignment_key(settings: &gio::Settings, extended: bool) -> &'static str {
     } else {
         "content-alignment"
     }
+}
+
+const DESKTOP_ICONS_UUID: &str = "ding@rastersoft.com";
+
+pub fn desktop_icons_state() -> Option<bool> {
+    extension_dir_for(DESKTOP_ICONS_UUID)?;
+    let shell = shell_settings()?;
+    Some(
+        !shell.boolean("disable-user-extensions")
+            && shell
+                .strv("enabled-extensions")
+                .iter()
+                .any(|id| id == DESKTOP_ICONS_UUID)
+            && !shell
+                .strv("disabled-extensions")
+                .iter()
+                .any(|id| id == DESKTOP_ICONS_UUID),
+    )
+}
+
+pub fn set_desktop_icons_enabled(enabled: bool) -> Result<(), DockError> {
+    let error = || {
+        DockError(gettext(
+            "Não foi possível alterar a área de trabalho ativa.",
+        ))
+    };
+    if extension_dir_for(DESKTOP_ICONS_UUID).is_none() {
+        return Err(error());
+    }
+    let settings = shell_settings().ok_or_else(error)?;
+    if enabled && settings.boolean("disable-user-extensions") {
+        return Err(error());
+    }
+    update_desktop_icons_setting(&settings, enabled).map_err(|_| error())?;
+    gio::Settings::sync();
+    if desktop_icons_state() != Some(enabled) {
+        return Err(error());
+    }
+    Ok(())
+}
+
+fn update_desktop_icons_setting(
+    settings: &gio::Settings,
+    enabled: bool,
+) -> Result<(), glib::BoolError> {
+    let before = settings.strv("enabled-extensions");
+    let mut active = before
+        .iter()
+        .filter(|id| id.as_str() != DESKTOP_ICONS_UUID)
+        .map(ToString::to_string)
+        .collect::<Vec<_>>();
+    if enabled {
+        active.push(DESKTOP_ICONS_UUID.into());
+    }
+    let disabled = settings.strv("disabled-extensions");
+    let allowed = disabled
+        .iter()
+        .filter(|id| id.as_str() != DESKTOP_ICONS_UUID)
+        .map(ToString::to_string)
+        .collect::<Vec<_>>();
+    settings.delay();
+    let result = (|| {
+        if before.iter().map(|s| s.as_str()).collect::<Vec<_>>()
+            != active.iter().map(String::as_str).collect::<Vec<_>>()
+        {
+            settings.set_strv(
+                "enabled-extensions",
+                active.iter().map(String::as_str).collect::<Vec<_>>(),
+            )?;
+        }
+        if enabled && allowed.len() != disabled.len() {
+            settings.set_strv(
+                "disabled-extensions",
+                allowed.iter().map(String::as_str).collect::<Vec<_>>(),
+            )?;
+        }
+        Ok(())
+    })();
+    if result.is_err() {
+        settings.revert();
+    } else {
+        settings.apply();
+    }
+    result
 }
 
 pub fn is_installed() -> bool {
@@ -723,6 +884,95 @@ pub fn apply_menu(settings: &MenuSettings) -> Result<(), DockError> {
 mod profile_tests {
     use super::*;
 
+    #[test]
+    fn desktop_toggle_preserves_other_extensions_and_global_preference() {
+        let source = gio::SettingsSchemaSource::default().unwrap();
+        let schema = source.lookup("org.gnome.shell", true).unwrap();
+        let shell =
+            gio::Settings::new_full(&schema, Some(&gio::memory_settings_backend_new()), None);
+        shell
+            .set_strv(
+                "enabled-extensions",
+                [EXTENSION_UUID, DESKTOP_ICONS_UUID, "other@example.org"],
+            )
+            .unwrap();
+        shell
+            .set_strv(
+                "disabled-extensions",
+                ["blocked@example.org", DESKTOP_ICONS_UUID],
+            )
+            .unwrap();
+        shell.set_boolean("disable-user-extensions", true).unwrap();
+        update_desktop_icons_setting(&shell, false).unwrap();
+        assert_eq!(
+            shell.strv("enabled-extensions").as_slice(),
+            [EXTENSION_UUID, "other@example.org"]
+        );
+        assert_eq!(
+            shell.strv("disabled-extensions").as_slice(),
+            ["blocked@example.org", DESKTOP_ICONS_UUID]
+        );
+        update_desktop_icons_setting(&shell, true).unwrap();
+        update_desktop_icons_setting(&shell, true).unwrap();
+        assert_eq!(
+            shell.strv("enabled-extensions").as_slice(),
+            [EXTENSION_UUID, "other@example.org", DESKTOP_ICONS_UUID]
+        );
+        assert_eq!(
+            shell.strv("disabled-extensions").as_slice(),
+            ["blocked@example.org"]
+        );
+        assert!(shell.boolean("disable-user-extensions"));
+    }
+
+    #[test]
+    #[ignore = "requires disposable GNOME compositor and packaged DING"]
+    fn desktop_icons_native_toggle() {
+        assert_eq!(
+            std::env::var("DING_PRIVATE_NATIVE_TEST").as_deref(),
+            Ok("1")
+        );
+        let home = std::env::var("HOME").unwrap();
+        assert!(home.starts_with("/tmp/sheliak-pins-"));
+        let fixture = std::path::Path::new(&home).join("Desktop/Fixture.txt");
+        let before = std::fs::read(&fixture).unwrap();
+        let enabled = match std::env::var("VEGA_DESKTOP_ICONS_TEST_ACTION").as_deref() {
+            Ok("enable") => true,
+            Ok("disable") => false,
+            _ => panic!("explicit action required"),
+        };
+        let shell = shell_settings().unwrap();
+        let others = shell
+            .strv("enabled-extensions")
+            .iter()
+            .filter(|id| id.as_str() != DESKTOP_ICONS_UUID)
+            .map(ToString::to_string)
+            .collect::<Vec<_>>();
+        set_desktop_icons_enabled(enabled).unwrap();
+        assert_eq!(desktop_icons_state(), Some(enabled));
+        assert_eq!(
+            shell
+                .strv("enabled-extensions")
+                .iter()
+                .filter(|id| id.as_str() != DESKTOP_ICONS_UUID)
+                .map(ToString::to_string)
+                .collect::<Vec<_>>(),
+            others
+        );
+        for profile in [
+            DesktopProfile::Macos,
+            DesktopProfile::Windows10,
+            DesktopProfile::Windows11,
+            DesktopProfile::Ubuntu,
+            DesktopProfile::GnomeVanilla,
+            DesktopProfile::Lyra,
+        ] {
+            apply_profile(profile).unwrap();
+            assert_eq!(desktop_icons_state(), Some(enabled));
+        }
+        assert_eq!(std::fs::read(fixture).unwrap(), before);
+    }
+
     fn settings() -> gio::Settings {
         settings_with_cache(false)
     }
@@ -857,6 +1107,41 @@ mod profile_tests {
         assert_eq!(settings.string("desktop-profile"), "windows10");
         apply_profile_settings(&settings, DesktopProfile::Lyra).unwrap();
         assert_eq!(SavedDesktopProfile::capture(&settings), lyra);
+    }
+
+    #[test]
+    fn macos_profile_migrates_old_snapshots_and_restores_other_layouts() {
+        let settings = settings_with_cache(true);
+        let lyra = SavedDesktopProfile::capture(&settings);
+        apply_profile_settings(&settings, DesktopProfile::Windows10).unwrap();
+        let windows = SavedDesktopProfile::capture(&settings);
+        // Simulate the snapshot format shipped before MacOS X.
+        let mut old: serde_json::Value =
+            serde_json::from_str(&settings.string("desktop-profile-settings")).unwrap();
+        for value in old.as_object_mut().unwrap().values_mut() {
+            value.as_object_mut().unwrap().remove("presentation");
+        }
+        settings
+            .set_string(
+                "desktop-profile-settings",
+                &serde_json::to_string(&old).unwrap(),
+            )
+            .unwrap();
+        settings.apply();
+        apply_profile_settings(&settings, DesktopProfile::Macos).unwrap();
+        assert_eq!(settings.string("position"), "bottom");
+        assert!(!settings.boolean("extend-to-edges"));
+        assert!(!settings.boolean("floating-panel"));
+        assert!(settings.boolean("show-applications-menu"));
+        assert!(!settings.boolean("show-search-menu"));
+        settings.set_uint("icon-size", 52).unwrap();
+        settings.apply();
+        apply_profile_settings(&settings, DesktopProfile::Windows10).unwrap();
+        assert_eq!(SavedDesktopProfile::capture(&settings), windows);
+        apply_profile_settings(&settings, DesktopProfile::Lyra).unwrap();
+        assert_eq!(SavedDesktopProfile::capture(&settings), lyra);
+        apply_profile_settings(&settings, DesktopProfile::Macos).unwrap();
+        assert_eq!(settings.uint("icon-size"), 52);
     }
 
     #[test]

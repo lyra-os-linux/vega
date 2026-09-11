@@ -3247,3 +3247,27 @@ msgstr "Error interno al borrar la conversación."
 
 msgid "Limpando conversa…"
 msgstr "Borrando conversación…"
+
+msgid "MacOS X"
+msgstr "MacOS X"
+
+msgid "Dock inferior flutuante e centralizado, com ampliação dos ícones e menu L na barra superior."
+msgstr "Dock inferior flotante y centrado, iconos ampliados y menú L en la barra superior."
+
+msgid "Atualize o Sheliak para usar o perfil MacOS X."
+msgstr "Actualiza Sheliak para usar el perfil MacOS X."
+
+msgid "Área de trabalho"
+msgstr "Escritorio"
+
+msgid "Área de trabalho ativa"
+msgstr "Escritorio activo"
+
+msgid "Mostrar arquivos, pastas, discos e lixeira. Desativar preserva seus arquivos."
+msgstr "Mostrar archivos, carpetas, discos y papelera. Desactivar conserva tus archivos."
+
+msgid "Ícones na área de trabalho indisponíveis."
+msgstr "Los iconos del escritorio no están disponibles."
+
+msgid "Não foi possível alterar a área de trabalho ativa."
+msgstr "No se pudo cambiar el escritorio activo."

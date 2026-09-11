@@ -186,6 +186,15 @@ fn appearance_pages(
         DesktopProfile::Windows11,
         Some(&lyra_profile),
     );
+    let macos_profile = profile_card(
+        &gettext("MacOS X"),
+        &gettext(
+            "Dock inferior flutuante e centralizado, com ampliação dos ícones e menu L na barra superior.",
+        ),
+        DesktopProfile::Macos,
+        Some(&lyra_profile),
+    );
+    macos_profile.set_sensitive(sheliak_available && crate::dock::supports_macos_profile());
     lyra_profile.set_sensitive(sheliak_available);
     ubuntu_profile.set_sensitive(sheliak_available);
     windows10_profile.set_sensitive(sheliak_available);
@@ -196,6 +205,7 @@ fn appearance_pages(
         (DesktopProfile::GnomeVanilla, vanilla_profile.clone()),
         (DesktopProfile::Windows10, windows10_profile.clone()),
         (DesktopProfile::Windows11, windows11_profile.clone()),
+        (DesktopProfile::Macos, macos_profile.clone()),
     ];
     let active = crate::dock::current_profile();
     for (profile, button) in &choices {
@@ -303,6 +313,40 @@ fn appearance_pages(
     let profile_content = gtk::Box::new(gtk::Orientation::Vertical, 10);
     profile_content.set_valign(gtk::Align::Start);
     profile_content.append(&profile_group);
+    let desktop_group = adw::PreferencesGroup::builder()
+        .title(gettext("Área de trabalho"))
+        .build();
+    let desktop_state = crate::dock::desktop_icons_state();
+    let desktop_switch = adw::SwitchRow::builder()
+        .title(gettext("Área de trabalho ativa"))
+        .subtitle(if desktop_state.is_some() {
+            gettext("Mostrar arquivos, pastas, discos e lixeira. Desativar preserva seus arquivos.")
+        } else {
+            gettext("Ícones na área de trabalho indisponíveis.")
+        })
+        .active(desktop_state.unwrap_or(false))
+        .sensitive(desktop_state.is_some())
+        .build();
+    let desktop_status = gtk::Label::builder().wrap(true).xalign(0.0).build();
+    desktop_status.add_css_class("error");
+    let updating = Rc::new(Cell::new(false));
+    let status = desktop_status.clone();
+    desktop_switch.connect_active_notify(move |row| {
+        if updating.replace(true) {
+            return;
+        }
+        match crate::dock::set_desktop_icons_enabled(row.is_active()) {
+            Ok(()) => status.set_label(""),
+            Err(error) => status.set_label(&error.to_string()),
+        }
+        let actual = crate::dock::desktop_icons_state();
+        row.set_active(actual.unwrap_or(false));
+        row.set_sensitive(actual.is_some());
+        updating.set(false);
+    });
+    desktop_group.add(&desktop_switch);
+    desktop_group.add(&desktop_status);
+    profile_content.append(&desktop_group);
 
     let theme_page = gtk::ScrolledWindow::builder()
         .child(&theme_content)
@@ -365,6 +409,7 @@ fn profile_preview(profile: DesktopProfile) -> gtk::Widget {
     }
     let lyra = profile == DesktopProfile::Lyra;
     let ubuntu = profile == DesktopProfile::Ubuntu;
+    let macos = profile == DesktopProfile::Macos;
     let desktop = gtk::Box::new(gtk::Orientation::Vertical, 0);
     desktop.add_css_class("vega-profile-preview");
 
@@ -388,6 +433,9 @@ fn profile_preview(profile: DesktopProfile) -> gtk::Widget {
     } else {
         panel.add_css_class("vega-profile-preview-panel-gnome");
     }
+    if macos {
+        panel.prepend(&gtk::Label::new(Some("L")));
+    }
     overlay.add_overlay(&panel);
 
     let dock = gtk::Box::new(
@@ -403,6 +451,8 @@ fn profile_preview(profile: DesktopProfile) -> gtk::Widget {
         "vega-profile-preview-dock-lyra"
     } else if ubuntu {
         "vega-profile-preview-dock-ubuntu"
+    } else if macos {
+        "vega-profile-preview-dock-lyra"
     } else {
         "vega-profile-preview-dock-gnome"
     });
@@ -579,4 +629,61 @@ fn theme_preview(dark: bool) -> gtk::Widget {
     window.append(&header);
     window.append(&body);
     window.upcast()
+}
+
+#[cfg(test)]
+mod desktop_tests {
+    use super::*;
+    use gtk::gio;
+
+    #[test]
+    #[ignore = "requires disposable GNOME compositor and packaged DING"]
+    fn native_desktop_switch() {
+        assert_eq!(
+            std::env::var("DING_PRIVATE_NATIVE_TEST").as_deref(),
+            Ok("1")
+        );
+        let home = std::env::var("HOME").unwrap();
+        assert!(home.starts_with("/tmp/sheliak-pins-"));
+        crate::i18n::init();
+        adw::init().unwrap();
+        let page = ScreenPage::new();
+        fn find(widget: &gtk::Widget) -> Option<adw::SwitchRow> {
+            if let Some(row) = widget.downcast_ref::<adw::SwitchRow>()
+                && row.title() == gettext("Área de trabalho ativa")
+            {
+                return Some(row.clone());
+            }
+            let mut child = widget.first_child();
+            while let Some(widget) = child {
+                if let Some(row) = find(&widget) {
+                    return Some(row);
+                }
+                child = widget.next_sibling();
+            }
+            None
+        }
+        let row = find(&page.root).expect("desktop switch visible in profile page");
+        assert!(row.is_sensitive());
+        assert_eq!(Some(row.is_active()), crate::dock::desktop_icons_state());
+        let fixture = std::path::Path::new(&home).join("Desktop/Fixture.txt");
+        let before = std::fs::read(&fixture).unwrap();
+        for enabled in [false, true] {
+            row.set_active(enabled);
+            assert_eq!(crate::dock::desktop_icons_state(), Some(enabled));
+            assert_eq!(row.is_active(), enabled);
+            assert_eq!(std::fs::read(&fixture).unwrap(), before);
+        }
+        // A global Shell switch must not be changed implicitly. The failed
+        // enable must revert the row and expose the backend's actual state.
+        let shell = gio::Settings::new("org.gnome.shell");
+        shell.set_boolean("disable-user-extensions", true).unwrap();
+        row.set_active(false);
+        row.set_active(true);
+        assert!(!row.is_active());
+        assert!(shell.boolean("disable-user-extensions"));
+        shell.set_boolean("disable-user-extensions", false).unwrap();
+        row.set_active(true);
+        assert!(row.is_active());
+    }
 }

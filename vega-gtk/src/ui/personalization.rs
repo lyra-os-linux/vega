@@ -389,6 +389,7 @@ impl Card {
                     crate::dock::DesktopProfile::Ubuntu => gettext("Ubuntu"),
                     crate::dock::DesktopProfile::Windows10 => gettext("Windows 10"),
                     crate::dock::DesktopProfile::Windows11 => gettext("Windows 11"),
+                    crate::dock::DesktopProfile::Macos => gettext("MacOS X"),
                     crate::dock::DesktopProfile::GnomeVanilla => gettext("GNOME padrão"),
                 },
                 Summary::Default => fallback.clone(),

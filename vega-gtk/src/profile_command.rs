@@ -20,7 +20,7 @@ fn parse(args: &[String]) -> Result<Action, &'static str> {
             .map(Action::Set)
             .ok_or("unknown desktop profile"),
         _ => Err(
-            "usage: vega-gtk --desktop-profile get | set <lyra|vanilla|ubuntu|windows10|windows11>",
+            "usage: vega-gtk --desktop-profile get | set <lyra|vanilla|ubuntu|windows10|windows11|macos>",
         ),
     }
 }
@@ -73,7 +73,14 @@ mod tests {
     #[test]
     fn contract_accepts_only_exact_actions_and_known_profiles() {
         assert_eq!(parse(&args(&["--desktop-profile", "get"])), Ok(Action::Get));
-        for id in ["lyra", "vanilla", "ubuntu", "windows10", "windows11"] {
+        for id in [
+            "lyra",
+            "vanilla",
+            "ubuntu",
+            "windows10",
+            "windows11",
+            "macos",
+        ] {
             let profile = DesktopProfile::from_id(id).unwrap();
             assert_eq!(profile.id(), id);
             assert_eq!(

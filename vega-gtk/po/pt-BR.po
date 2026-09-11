@@ -3246,3 +3246,27 @@ msgstr "Falha interna ao limpar a conversa."
 
 msgid "Limpando conversa…"
 msgstr "Limpando conversa…"
+
+msgid "MacOS X"
+msgstr "MacOS X"
+
+msgid "Dock inferior flutuante e centralizado, com ampliação dos ícones e menu L na barra superior."
+msgstr "Dock inferior flutuante e centralizado, com ampliação dos ícones e menu L na barra superior."
+
+msgid "Atualize o Sheliak para usar o perfil MacOS X."
+msgstr "Atualize o Sheliak para usar o perfil MacOS X."
+
+msgid "Área de trabalho"
+msgstr "Área de trabalho"
+
+msgid "Área de trabalho ativa"
+msgstr "Área de trabalho ativa"
+
+msgid "Mostrar arquivos, pastas, discos e lixeira. Desativar preserva seus arquivos."
+msgstr "Mostrar arquivos, pastas, discos e lixeira. Desativar preserva seus arquivos."
+
+msgid "Ícones na área de trabalho indisponíveis."
+msgstr "Ícones na área de trabalho indisponíveis."
+
+msgid "Não foi possível alterar a área de trabalho ativa."
+msgstr "Não foi possível alterar a área de trabalho ativa."
