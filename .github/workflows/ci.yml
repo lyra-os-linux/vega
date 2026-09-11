@@ -21,7 +21,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            libgtk-4-dev libadwaita-1-dev pkg-config build-essential gettext locales xvfb xauth dbus-x11
+            libgtk-4-dev libadwaita-1-dev pkg-config build-essential gettext locales xvfb xauth dbus-x11 \
+            gnome-shell-common gsettings-desktop-schemas
           # O código chama setlocale() com o nome nu (ex.: "en_US", sem
           # sufixo .UTF-8), que é a convenção do glibc-locale usado na
           # distro-alvo (openSUSE Leap). locale-gen, no Ubuntu do runner,
