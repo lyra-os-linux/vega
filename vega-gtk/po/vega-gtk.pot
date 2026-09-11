@@ -3284,3 +3284,6 @@ msgstr ""
 
 msgid "Não foi possível alterar a área de trabalho ativa."
 msgstr ""
+
+msgid "Área de trabalho"
+msgstr ""
