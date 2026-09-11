@@ -206,3 +206,29 @@ D-Bus contract.
 The assistant is optional. Keys are stored in the session Secret Service, and
 system-changing actions are presented as proposals before anything is executed.
 See [docs/ai-privacidade.md](docs/ai-privacidade.md) for details.
+
+### Desktop profile command
+
+Vega GTK 5.1.33 exposes a local command for setup applications such as Lyra
+Welcome, without opening a GTK window or contacting vegad:
+
+```sh
+vega-gtk --desktop-profile get
+vega-gtk --desktop-profile set windows10
+```
+
+IDs: `lyra`, `vanilla`, `ubuntu`, `windows10`, `windows11`. On success stdout
+contains exactly the stored profile ID. Exit 1 means unavailable settings or
+an application/readback error; exit 2 means invalid arguments. This command
+uses the same save/restore implementation as Vega's profile cards, flushes
+settings before exiting and confirms the stored profile. It requires a current
+Sheliak installation with per-profile preference storage. A disabled extension
+backend or missing schema is an error, not an inferred Lyra/Vanilla selection.
+Readback confirms settings, not completion of Shell rendering. Concurrent
+external changes after that read are outside this command's confirmation.
+
+`tests/profile-command.py` checks the built command against real GSettings in a
+private persistent keyfile backend. `tests/native-profiles/extension.js` can also
+run through Sheliak's `tests/native-pins/run.py --probe` with
+`VEGA_PROFILE_TEST_BINARY` pointing to the built binary, validating live Shell
+switches in its private compositor.

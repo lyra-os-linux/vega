@@ -93,6 +93,58 @@ pub enum DesktopProfile {
     GnomeVanilla,
 }
 
+impl DesktopProfile {
+    pub fn from_id(id: &str) -> Option<Self> {
+        match id {
+            "lyra" => Some(Self::Lyra),
+            "vanilla" => Some(Self::GnomeVanilla),
+            "ubuntu" => Some(Self::Ubuntu),
+            "windows10" => Some(Self::Windows10),
+            "windows11" => Some(Self::Windows11),
+            _ => None,
+        }
+    }
+
+    pub fn id(self) -> &'static str {
+        match self {
+            Self::Lyra => "lyra",
+            Self::GnomeVanilla => "vanilla",
+            Self::Ubuntu => "ubuntu",
+            Self::Windows10 => "windows10",
+            Self::Windows11 => "windows11",
+        }
+    }
+}
+
+/// Strict read for setup clients: an unavailable/old backend must never be
+/// mistaken for a successfully applied default. Values describe stored settings.
+pub fn confirmed_profile() -> Result<DesktopProfile, DockError> {
+    let unavailable = || DockError("desktop profile settings are unavailable".into());
+    let shell = shell_settings().ok_or_else(unavailable)?;
+    let settings = open_settings().ok_or_else(unavailable)?;
+    if !has_key(&settings, "desktop-profile-settings") {
+        return Err(unavailable());
+    }
+    let enabled = shell
+        .strv("enabled-extensions")
+        .iter()
+        .any(|id| id == EXTENSION_UUID);
+    if !enabled {
+        return Ok(DesktopProfile::GnomeVanilla);
+    }
+    if shell.boolean("disable-user-extensions")
+        || shell
+            .strv("disabled-extensions")
+            .iter()
+            .any(|id| id == EXTENSION_UUID)
+    {
+        return Err(unavailable());
+    }
+    DesktopProfile::from_id(settings.string("desktop-profile").as_str())
+        .filter(|profile| *profile != DesktopProfile::GnomeVanilla)
+        .ok_or_else(unavailable)
+}
+
 pub fn current_profile() -> DesktopProfile {
     if !is_enabled() {
         return DesktopProfile::GnomeVanilla;
