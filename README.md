@@ -33,18 +33,18 @@ are no longer offered by Vega. Hardware inventory and GPU monitoring remain avai
 Features backed by optional programs are shown as unavailable when their
 dependency is missing without preventing the other pages from working.
 
-Personalization offers Lyra, Ubuntu, GNOME Vanilla, Windows 10, Windows 11,
-and MacOS X desktop profiles.
-Ubuntu requires Sheliak 1.12.10 or newer: it extends the left dock, aligns apps
+Personalization offers Lyra, Ubuntu, GNOME Vanilla, Lyra Classic, Lyra Central,
+and Lyra Floating desktop profiles.
+Vega 5.1.35 requires Sheliak 2.0.0 or newer. Ubuntu it extends the left dock, aligns apps
 at the top, and hides the topbar menus and search. Returning to Lyra restores
 the previous dock and menu preferences, including through GNOME Vanilla.
 Extending the dock manually in Lyra keeps its menus and search visible.
 Compact and extended docks keep separate alignment preferences.
 
-Windows 10 and Windows 11 profiles require Sheliak 1.13.0. Both use a fixed
+Lyra Classic and Lyra Central use a fixed
 bottom taskbar with the native clock, calendar, notifications and system
-controls. Windows 10 aligns applications left and opens an application list
-with pinned tiles; Windows 11 centers applications and opens a search field
+controls. Lyra Classic aligns applications left and opens an application list
+with pinned tiles; Lyra Central centers applications and opens a search field
 with a pinned grid. The L button and Super key open the corresponding menu.
 Each profile's previous preferences are restored when switching back, including
 the Lyra snapshot created by earlier Ubuntu-profile versions. All components
@@ -219,7 +219,7 @@ vega-gtk --desktop-profile set windows10
 ```
 
 IDs: `lyra`, `vanilla`, `ubuntu`, `windows10`, `windows11`, `macos`.
-MacOS X requires Vega GTK 5.1.34 and Sheliak 1.16.0. On success stdout
+The current suite requires Vega GTK 5.1.35 and Sheliak 2.0.0. On success stdout
 contains exactly the stored profile ID. Exit 1 means unavailable settings or
 an application/readback error; exit 2 means invalid arguments. This command
 uses the same save/restore implementation as Vega's profile cards, flushes
@@ -235,23 +235,31 @@ run through Sheliak's `tests/native-pins/run.py --probe` with
 `VEGA_PROFILE_TEST_BINARY` pointing to the built binary, validating live Shell
 switches in its private compositor.
 
-### Desktop icons and MacOS X
+### Desktop icons and Lyra Floating
 
-The MacOS X preset uses a centered floating bottom dock with icon magnification,
+The Lyra Floating preset uses a centered floating bottom dock with icon magnification,
 a flush top bar and the Lyra application logo at the left. Each profile restores
 its own alignment, animation, margin and menu position, including snapshots saved
 before these fields existed.
 
 In Personalization → Desktop profile, **Active desktop** enables or disables
-Desktop Icons NG (`ding@rastersoft.com`). Disabling hides desktop icons without
-moving or deleting files. This preference is independent of all six profiles.
-The switch is unavailable when DING is not installed; a failed write restores the
-actual state and shows an error. Vega never enables all user extensions implicitly.
-Readback confirms the stored preference; Shell applies the extension asynchronously.
+Lyra Desktop Icons (`desktop-icons@lyraos.com.br`), included in the Sheliak RPM.
+Disabling hides desktop icons without moving or deleting files. This preference
+is independent of all six profiles. Separate switches control Lyra Dock, Panel,
+Menus, Search and Animations; selections are saved per layout. GNOME Vanilla
+keeps the five shell components off while preserving the desktop icon choice.
+The UI respects global extension disable and reports persistence failures.
 
-Native regression tests use Sheliak's private compositor runner with
-`--desktop-icons` pointing to the extracted DING RPM and
-`--probe tests/native-desktop-icons/extension.js` from Sheliak. Set
-`VEGA_DESKTOP_TEST_BINARY` to the Cargo test executable. The fixture creates a
-private HOME/Desktop, checks real enable/disable and GTK callbacks, preserves
-files and other extensions, and switches every profile in both icon states.
+The unprivileged `/usr/libexec/lyra/shell-suite` helper migrates old UUIDs and
+journals a profile change before Vega writes its layout. Commit finalizes the
+component selection; abort or recovery after process interruption restores the
+owned preferences. A concurrent profile transaction is rejected. Third-party
+extensions and Desktop files are preserved. Welcome delegates to the same Vega
+command; vegad needs no new privileged operations.
+
+Native regression tests use Sheliak's `tests/native-pins/run.py` with
+`--probe tests/native-suite/extension.js`. Point `LYRA_NATIVE_SUITE_HELPER` at
+its helper, `LYRA_NATIVE_VEGA_BINARY` at the built Vega and
+`VEGA_DESKTOP_TEST_BINARY` at the Cargo test executable. The runner uses a
+private HOME and compositor, including real GTK switch callbacks. The legacy
+command fixture remains to cover compatibility with previous schema versions.

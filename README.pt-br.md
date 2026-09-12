@@ -39,10 +39,10 @@ mesmo passando pelo GNOME Vanilla. Estender o dock manualmente no Lyra mantém
 seus menus e busca visíveis. O dock compacto e o estendido guardam alinhamentos
 independentes.
 
-Os perfis Windows 10 e Windows 11 exigem Sheliak 1.13.0. Ambos usam painel
+Os perfis Lyra Clássico e Lyra Central exigem Sheliak 1.13.0. Ambos usam painel
 inferior fixo com relógio, calendário, notificações e controles nativos do
-GNOME. No Windows 10, os aplicativos ficam à esquerda e o menu L traz lista
-e blocos fixados. No Windows 11, ficam centralizados e o menu traz pesquisa
+GNOME. No Lyra Clássico, os aplicativos ficam à esquerda e o menu L traz lista
+e blocos fixados. No Lyra Central, ficam centralizados e o menu traz pesquisa
 e grade de fixados. O botão L e a tecla Super abrem o menu correspondente.
 As preferências anteriores de cada perfil são restauradas ao voltar, incluindo
 a migração do backup Lyra criado pelas versões com perfil Ubuntu. Todos os

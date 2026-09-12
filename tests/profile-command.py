@@ -16,16 +16,17 @@ import tempfile
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--binary', type=Path, required=True)
 parser.add_argument('--schemas', type=Path, required=True)
+parser.add_argument('--suite-helper', type=Path)
 args = parser.parse_args()
 binary = str(args.binary.resolve())
 checks = []
-with tempfile.TemporaryDirectory(prefix='vega-profile-contract-') as tmp:
+with tempfile.TemporaryDirectory(prefix='sheliak-pins-profile-contract-' if args.suite_helper else 'vega-profile-contract-') as tmp:
     root = Path(tmp)
     env = os.environ.copy()
     for key in ['DISPLAY', 'WAYLAND_DISPLAY', 'DBUS_SESSION_BUS_ADDRESS', 'DBUS_SYSTEM_BUS_ADDRESS']:
         env.pop(key, None)
     for key, directory in [('XDG_CONFIG_HOME', 'config'), ('XDG_DATA_HOME', 'data'),
-                           ('XDG_CACHE_HOME', 'cache'), ('XDG_RUNTIME_DIR', 'run')]:
+                           ('XDG_CACHE_HOME', 'cache'), ('XDG_RUNTIME_DIR', 'run'), ('XDG_STATE_HOME', 'state'), ('HOME', 'home')]:
         (root/directory).mkdir(mode=0o700)
         env[key] = str(root/directory)
     env['GSETTINGS_BACKEND'] = 'keyfile'
@@ -33,6 +34,23 @@ with tempfile.TemporaryDirectory(prefix='vega-profile-contract-') as tmp:
     extension.mkdir(parents=True)
     (extension/'metadata.json').write_text('{}')
     shutil.copytree(args.schemas.resolve(), extension/'schemas')
+    production_ids = ['sheliak@lyraos.com.br']
+    if args.suite_helper:
+        helper = args.suite_helper.resolve()
+        env.update(SHELIAK_PRIVATE_NATIVE_TEST='1', LYRA_NATIVE_SUITE_HELPER=str(helper))
+        production_ids = [f'{role}@lyraos.com.br' for role in
+            ['dock', 'panel', 'menus', 'search', 'animations', 'desktop-icons']]
+        for uuid in production_ids:
+            directory = extension.parent / uuid
+            directory.mkdir()
+            (directory / 'metadata.json').write_text(json.dumps({'uuid': uuid, 'lyra-suite-api': 1}))
+            shutil.copytree(args.schemas.resolve(), directory / 'schemas')
+        extension = extension.parent / 'dock@lyraos.com.br'
+        desktop = extension.parent / 'desktop-icons@lyraos.com.br'
+        shutil.copy2(helper.parent.parent / 'extensions/desktop-icons/schemas/org.gnome.shell.extensions.lyra-desktop-icons.gschema.xml', desktop / 'schemas')
+        shutil.copytree(helper.parent / 'legacy-schemas', desktop / 'legacy-schemas')
+        for directory in [desktop / 'schemas', desktop / 'legacy-schemas']:
+            subprocess.run(['glib-compile-schemas', '--strict', str(directory)], check=True)
     schema = 'org.gnome.shell.extensions.sheliak'
     def run(command, *, ok=True, overrides=None):
         result = subprocess.run(command, env=env | (overrides or {}), text=True,
@@ -54,7 +72,7 @@ with tempfile.TemporaryDirectory(prefix='vega-profile-contract-') as tmp:
     def choose(id):
         check('apply '+id, run([binary, '--desktop-profile', 'set', id]) == id)
         check('read '+id, run([binary, '--desktop-profile', 'get']) == id)
-    settings('set', 'enabled-extensions', "['sheliak@lyraos.com.br', 'unrelated@fixture']", shell=True)
+    settings('set', 'enabled-extensions', str(production_ids + ['unrelated@fixture']), shell=True)
     settings('set', 'disabled-extensions', "['disabled@fixture']", shell=True)
     settings('set', 'disable-user-extensions', 'false', shell=True)
     settings('set', 'favorite-apps', "['original.desktop']", shell=True)
@@ -80,7 +98,7 @@ with tempfile.TemporaryDirectory(prefix='vega-profile-contract-') as tmp:
     check('MacOS X top bar and L menu', not read('floating-panel') and read('show-applications-menu') and read('panel-menu-position') == 'left')
     settings('set', 'icon-size', '52')
     choose('vanilla')
-    check('Vanilla preserves unrelated extensions', read('enabled-extensions', True) == ['unrelated@fixture'])
+    check('Vanilla preserves unrelated extensions', set(read('enabled-extensions', True)) == set(['unrelated@fixture'] + (['desktop-icons@lyraos.com.br'] if args.suite_helper else [])))
     choose('windows11')
     check('Windows 11 customized size restored', read('icon-size') == 40)
     choose('macos')

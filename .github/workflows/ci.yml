@@ -22,7 +22,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             libgtk-4-dev libadwaita-1-dev pkg-config build-essential gettext locales xvfb xauth dbus-x11 \
-            gnome-shell-common gsettings-desktop-schemas
+            gnome-shell-common gsettings-desktop-schemas python3-gi
           # O código chama setlocale() com o nome nu (ex.: "en_US", sem
           # sufixo .UTF-8), que é a convenção do glibc-locale usado na
           # distro-alvo (openSUSE Leap). locale-gen, no Ubuntu do runner,
@@ -55,13 +55,14 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: lyra-os-linux/lyraos-desktop-sheliak
-          ref: 4edafb618134a0f51533f7fed75d2d2f1c8c2621
+          ref: f3a740e7edbb2606d0c33201d422cb0b38406199
           path: fixtures/sheliak
       - name: Verify public profile command with isolated persistent settings
         run: |
           glib-compile-schemas fixtures/sheliak/schemas
           cargo build --workspace --locked
           python3 tests/profile-command.py --binary target/debug/vega-gtk --schemas fixtures/sheliak/schemas
+          python3 tests/profile-command.py --binary target/debug/vega-gtk --schemas fixtures/sheliak/schemas --suite-helper fixtures/sheliak/packaging/lyra-shell-suite.py
 
       - name: Verify history deletion in real GTK with isolated user data
         run: xvfb-run -a dbus-run-session -- cargo test --workspace --locked native_history_ui -- --ignored --test-threads=1

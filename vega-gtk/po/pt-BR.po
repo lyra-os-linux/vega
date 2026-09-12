@@ -3270,3 +3270,18 @@ msgstr "Ícones na área de trabalho indisponíveis."
 
 msgid "Não foi possível alterar a área de trabalho ativa."
 msgstr "Não foi possível alterar a área de trabalho ativa."
+
+msgid "Lyra Dock"
+msgstr "Lyra Dock"
+
+msgid "Lyra Painel"
+msgstr "Lyra Painel"
+
+msgid "Lyra Menus"
+msgstr "Lyra Menus"
+
+msgid "Lyra Busca"
+msgstr "Lyra Busca"
+
+msgid "Lyra Animações"
+msgstr "Lyra Animações"

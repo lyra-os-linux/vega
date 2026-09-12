@@ -3271,3 +3271,18 @@ msgstr "Los iconos del escritorio no están disponibles."
 
 msgid "Não foi possível alterar a área de trabalho ativa."
 msgstr "No se pudo cambiar el escritorio activo."
+
+msgid "Lyra Dock"
+msgstr "Lyra Dock"
+
+msgid "Lyra Painel"
+msgstr "Lyra Panel"
+
+msgid "Lyra Menus"
+msgstr "Lyra Menús"
+
+msgid "Lyra Busca"
+msgstr "Lyra Búsqueda"
+
+msgid "Lyra Animações"
+msgstr "Lyra Animaciones"

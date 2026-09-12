@@ -3271,3 +3271,18 @@ msgstr "Desktop icons are unavailable."
 
 msgid "Não foi possível alterar a área de trabalho ativa."
 msgstr "The active desktop could not be changed."
+
+msgid "Lyra Dock"
+msgstr "Lyra Dock"
+
+msgid "Lyra Painel"
+msgstr "Lyra Panel"
+
+msgid "Lyra Menus"
+msgstr "Lyra Menus"
+
+msgid "Lyra Busca"
+msgstr "Lyra Search"
+
+msgid "Lyra Animações"
+msgstr "Lyra Animations"

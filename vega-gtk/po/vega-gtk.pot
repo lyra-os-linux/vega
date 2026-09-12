@@ -3287,3 +3287,18 @@ msgstr ""
 
 msgid "Área de trabalho"
 msgstr ""
+
+msgid "Lyra Dock"
+msgstr ""
+
+msgid "Lyra Painel"
+msgstr ""
+
+msgid "Lyra Menus"
+msgstr ""
+
+msgid "Lyra Busca"
+msgstr ""
+
+msgid "Lyra Animações"
+msgstr ""
