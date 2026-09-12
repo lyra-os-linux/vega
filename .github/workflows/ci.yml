@@ -55,7 +55,7 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: lyra-os-linux/lyraos-desktop-sheliak
-          ref: f3a740e7edbb2606d0c33201d422cb0b38406199
+          ref: 7503cdbbe93a5703182593580087ef34db5fb807
           path: fixtures/sheliak
       - name: Verify public profile command with isolated persistent settings
         run: |
