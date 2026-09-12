@@ -3263,3 +3263,27 @@ msgstr ""
 
 msgid "Limpando conversa…"
 msgstr ""
+
+msgid "MacOS X"
+msgstr ""
+
+msgid "Dock inferior flutuante e centralizado, com ampliação dos ícones e menu L na barra superior."
+msgstr ""
+
+msgid "Atualize o Sheliak para usar o perfil MacOS X."
+msgstr ""
+
+msgid "Área de trabalho ativa"
+msgstr ""
+
+msgid "Mostrar arquivos, pastas, discos e lixeira. Desativar preserva seus arquivos."
+msgstr ""
+
+msgid "Ícones na área de trabalho indisponíveis."
+msgstr ""
+
+msgid "Não foi possível alterar a área de trabalho ativa."
+msgstr ""
+
+msgid "Área de trabalho"
+msgstr ""
