@@ -135,7 +135,9 @@ impl PersonalizationOverview {
         for (title, description, icon, page, summary) in [
             (
                 gettext("Perfil da área de trabalho"),
-                gettext("Escolha entre Lyra, Ubuntu, Windows 10, Windows 11 e GNOME"),
+                gettext(
+                    "Escolha entre Lyra, Ubuntu, Lyra Clássico, Lyra Central, Lyra Flutuante e GNOME",
+                ),
                 "preferences-desktop-display-symbolic",
                 "profile",
                 Summary::Profile,
@@ -387,9 +389,9 @@ impl Card {
                 Summary::Profile => match crate::dock::current_profile() {
                     crate::dock::DesktopProfile::Lyra => gettext("Lyra"),
                     crate::dock::DesktopProfile::Ubuntu => gettext("Ubuntu"),
-                    crate::dock::DesktopProfile::Windows10 => gettext("Windows 10"),
-                    crate::dock::DesktopProfile::Windows11 => gettext("Windows 11"),
-                    crate::dock::DesktopProfile::Macos => gettext("MacOS X"),
+                    crate::dock::DesktopProfile::Windows10 => gettext("Lyra Clássico"),
+                    crate::dock::DesktopProfile::Windows11 => gettext("Lyra Central"),
+                    crate::dock::DesktopProfile::Macos => gettext("Lyra Flutuante"),
                     crate::dock::DesktopProfile::GnomeVanilla => gettext("GNOME padrão"),
                 },
                 Summary::Default => fallback.clone(),

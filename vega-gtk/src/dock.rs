@@ -67,7 +67,7 @@ impl std::error::Error for DockError {}
 /// achar essa pasta e carregar o schema explicitamente dali, em vez de usar
 /// `SettingsSchemaSource::default()`.
 fn extension_dir() -> Option<PathBuf> {
-    extension_dir_for(EXTENSION_UUID)
+    extension_dir_for("dock@lyraos.com.br").or_else(|| extension_dir_for(EXTENSION_UUID))
 }
 
 fn extension_dir_for(uuid: &str) -> Option<PathBuf> {
@@ -126,6 +126,14 @@ impl DesktopProfile {
 /// Strict read for setup clients: an unavailable/old backend must never be
 /// mistaken for a successfully applied default. Values describe stored settings.
 pub fn confirmed_profile() -> Result<DesktopProfile, DockError> {
+    if suite_available() {
+        let state = suite_command(&["status"])?;
+        if state.globally_disabled && state.profile != "vanilla" {
+            return Err(DockError("GNOME extensions are globally disabled".into()));
+        }
+        return DesktopProfile::from_id(&state.profile)
+            .ok_or_else(|| DockError("Unknown suite profile".into()));
+    }
     let unavailable = || DockError("desktop profile settings are unavailable".into());
     let shell = shell_settings().ok_or_else(unavailable)?;
     let settings = open_settings().ok_or_else(unavailable)?;
@@ -153,6 +161,9 @@ pub fn confirmed_profile() -> Result<DesktopProfile, DockError> {
 }
 
 pub fn current_profile() -> DesktopProfile {
+    if suite_available() {
+        return confirmed_profile().unwrap_or(DesktopProfile::GnomeVanilla);
+    }
     if !is_enabled() {
         return DesktopProfile::GnomeVanilla;
     }
@@ -300,7 +311,7 @@ fn apply_saved_desktop_profile(
     }
     let before = SavedDesktopProfile::capture(settings);
     // Older snapshots shared these settings globally. Seed them once from
-    // that shared state before MacOS X changes them, preserving the migration.
+    // that shared state before Lyra Flutuante changes them, preserving the migration.
     for value in saved.values_mut() {
         if value.presentation.is_none() {
             value.presentation = before.presentation.clone();
@@ -417,9 +428,28 @@ pub fn supports_macos_profile() -> bool {
 }
 
 pub fn apply_profile(profile: DesktopProfile) -> Result<(), DockError> {
+    if suite_available() {
+        suite_command(&["begin-profile", profile.id()])?;
+        let result = (|| {
+            let settings =
+                open_settings().ok_or_else(|| DockError("Suite settings unavailable".into()))?;
+            if profile != DesktopProfile::GnomeVanilla {
+                apply_profile_settings(&settings, profile)?;
+            }
+            suite_command(&["commit-profile", profile.id()])?;
+            Ok(())
+        })();
+        if let Err(error) = result {
+            if let Err(recovery) = suite_command(&["abort-profile", profile.id()]) {
+                return Err(DockError(format!("{error}; {recovery}")));
+            }
+            return Err(error);
+        }
+        return Ok(());
+    }
     if profile == DesktopProfile::Macos && !supports_macos_profile() {
         return Err(DockError(gettext(
-            "Atualize o Sheliak para usar o perfil MacOS X.",
+            "Atualize o Sheliak para usar o perfil Lyra Flutuante.",
         )));
     }
     if profile == DesktopProfile::GnomeVanilla {
@@ -531,6 +561,10 @@ fn alignment_key(settings: &gio::Settings, extended: bool) -> &'static str {
 const DESKTOP_ICONS_UUID: &str = "ding@rastersoft.com";
 
 pub fn desktop_icons_state() -> Option<bool> {
+    if suite_available() {
+        return suite_components()
+            .map(|items| items.get("desktop-icons").copied().unwrap_or(false));
+    }
     extension_dir_for(DESKTOP_ICONS_UUID)?;
     let shell = shell_settings()?;
     Some(
@@ -547,6 +581,9 @@ pub fn desktop_icons_state() -> Option<bool> {
 }
 
 pub fn set_desktop_icons_enabled(enabled: bool) -> Result<(), DockError> {
+    if suite_available() {
+        return set_suite_component("desktop-icons", enabled);
+    }
     let error = || {
         DockError(gettext(
             "Não foi possível alterar a área de trabalho ativa.",
@@ -623,6 +660,15 @@ fn shell_settings() -> Option<gio::Settings> {
 }
 
 pub fn is_enabled() -> bool {
+    if suite_available() {
+        return suite_command(&["status"]).is_ok_and(|state| {
+            !state.globally_disabled
+                && state
+                    .components
+                    .iter()
+                    .any(|(key, enabled)| key != "desktop-icons" && *enabled)
+        });
+    }
     shell_settings().is_some_and(|settings| {
         settings
             .strv("enabled-extensions")
@@ -632,6 +678,16 @@ pub fn is_enabled() -> bool {
 }
 
 pub fn set_enabled(enabled: bool) -> Result<(), DockError> {
+    if suite_available() {
+        let profile = if enabled {
+            open_settings()
+                .map(|s| s.string("desktop-profile").to_string())
+                .unwrap_or("lyra".into())
+        } else {
+            "vanilla".into()
+        };
+        return suite_command(&["apply", &profile]).map(|_| ());
+    }
     if enabled && !is_installed() {
         return Err(DockError(gettext(
             "A extensão Sheliak não está instalada ou não pôde ser encontrada.",
@@ -880,6 +936,89 @@ pub fn apply_menu(settings: &MenuSettings) -> Result<(), DockError> {
     Ok(())
 }
 
+#[derive(serde::Deserialize)]
+struct SuiteState {
+    version: u32,
+    profile: String,
+    globally_disabled: bool,
+    components: std::collections::BTreeMap<String, bool>,
+}
+
+pub fn suite_available() -> bool {
+    extension_dir_for("dock@lyraos.com.br").is_some()
+}
+
+fn suite_command(args: &[&str]) -> Result<SuiteState, DockError> {
+    let mut helper = PathBuf::from("/usr/libexec/lyra/shell-suite");
+    // The private compositor fixture can exercise the real helper without installing it.
+    if std::env::var("SHELIAK_PRIVATE_NATIVE_TEST").as_deref() == Ok("1")
+        && std::env::var("HOME").is_ok_and(|home| home.starts_with("/tmp/sheliak-pins-"))
+        && let Some(path) = std::env::var_os("LYRA_NATIVE_SUITE_HELPER")
+    {
+        helper = PathBuf::from(path);
+    }
+    let output = std::process::Command::new(helper)
+        .args(args)
+        .output()
+        .map_err(|error| {
+            DockError(format!(
+                "{}: {error}",
+                gettext("Não foi possível alterar o perfil da área de trabalho.")
+            ))
+        })?;
+    if !output.status.success() {
+        return Err(DockError(format!(
+            "{}: {}",
+            gettext("Não foi possível alterar o perfil da área de trabalho."),
+            String::from_utf8_lossy(&output.stderr).trim()
+        )));
+    }
+    let state: SuiteState = serde_json::from_slice(&output.stdout)
+        .map_err(|_| DockError("Invalid Lyra suite response".into()))?;
+    if state.version != 1
+        || DesktopProfile::from_id(&state.profile).is_none()
+        || state
+            .components
+            .keys()
+            .map(String::as_str)
+            .collect::<Vec<_>>()
+            != [
+                "animations",
+                "desktop-icons",
+                "dock",
+                "menus",
+                "panel",
+                "search",
+            ]
+    {
+        return Err(DockError("Unsupported Lyra suite response".into()));
+    }
+    Ok(state)
+}
+
+pub fn suite_components() -> Option<std::collections::BTreeMap<String, bool>> {
+    if !suite_available() {
+        return None;
+    }
+    suite_command(&["status"]).ok().map(|state| {
+        state
+            .components
+            .into_iter()
+            .map(|(role, active)| (role, active && !state.globally_disabled))
+            .collect()
+    })
+}
+
+pub fn set_suite_component(role: &str, active: bool) -> Result<(), DockError> {
+    let state = suite_command(&["toggle", role, if active { "on" } else { "off" }])?;
+    if state.components.get(role).copied() != Some(active) || active && state.globally_disabled {
+        return Err(DockError(
+            "Component preference could not be confirmed".into(),
+        ));
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod profile_tests {
     use super::*;
@@ -1115,7 +1254,7 @@ mod profile_tests {
         let lyra = SavedDesktopProfile::capture(&settings);
         apply_profile_settings(&settings, DesktopProfile::Windows10).unwrap();
         let windows = SavedDesktopProfile::capture(&settings);
-        // Simulate the snapshot format shipped before MacOS X.
+        // Simulate the snapshot format shipped before Lyra Flutuante.
         let mut old: serde_json::Value =
             serde_json::from_str(&settings.string("desktop-profile-settings")).unwrap();
         for value in old.as_object_mut().unwrap().values_mut() {

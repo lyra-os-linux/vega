@@ -3219,10 +3219,10 @@ msgstr ""
 msgid "Escolha entre Lyra, Ubuntu e a experiência padrão do GNOME"
 msgstr ""
 
-msgid "Windows 10"
+msgid "Lyra Clássico"
 msgstr ""
 
-msgid "Windows 11"
+msgid "Lyra Central"
 msgstr ""
 
 msgid "Painel inferior à esquerda e menu L com lista de aplicativos e blocos fixados."
@@ -3231,7 +3231,7 @@ msgstr ""
 msgid "Painel inferior centralizado e menu L com pesquisa e grade de aplicativos fixados."
 msgstr ""
 
-msgid "Escolha entre Lyra, Ubuntu, Windows 10, Windows 11 e GNOME"
+msgid "Escolha entre Lyra, Ubuntu, Lyra Clássico, Lyra Central, Lyra Flutuante e GNOME"
 msgstr ""
 
 msgid "Atualize o Sheliak para usar os perfis Windows."
@@ -3264,13 +3264,13 @@ msgstr ""
 msgid "Limpando conversa…"
 msgstr ""
 
-msgid "MacOS X"
+msgid "Lyra Flutuante"
 msgstr ""
 
 msgid "Dock inferior flutuante e centralizado, com ampliação dos ícones e menu L na barra superior."
 msgstr ""
 
-msgid "Atualize o Sheliak para usar o perfil MacOS X."
+msgid "Atualize o Sheliak para usar o perfil Lyra Flutuante."
 msgstr ""
 
 msgid "Área de trabalho ativa"
@@ -3286,4 +3286,19 @@ msgid "Não foi possível alterar a área de trabalho ativa."
 msgstr ""
 
 msgid "Área de trabalho"
+msgstr ""
+
+msgid "Lyra Dock"
+msgstr ""
+
+msgid "Lyra Painel"
+msgstr ""
+
+msgid "Lyra Menus"
+msgstr ""
+
+msgid "Lyra Busca"
+msgstr ""
+
+msgid "Lyra Animações"
 msgstr ""

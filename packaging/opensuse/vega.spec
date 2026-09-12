@@ -30,6 +30,8 @@ Obsoletes:      lyra-vega-gtk < %{version}-%{release}
 Recommends:     flatpak
 Recommends:     restic
 
+Requires:       sheliak >= 2.0.0
+
 %description
 Interface nativa do Vega, construída com Rust, GTK4 e libadwaita.
 

@@ -173,13 +173,13 @@ fn appearance_pages(
         Some(&lyra_profile),
     );
     let windows10_profile = profile_card(
-        &gettext("Windows 10"),
+        &gettext("Lyra Clássico"),
         &gettext("Painel inferior à esquerda e menu L com lista de aplicativos e blocos fixados."),
         DesktopProfile::Windows10,
         Some(&lyra_profile),
     );
     let windows11_profile = profile_card(
-        &gettext("Windows 11"),
+        &gettext("Lyra Central"),
         &gettext(
             "Painel inferior centralizado e menu L com pesquisa e grade de aplicativos fixados.",
         ),
@@ -187,7 +187,7 @@ fn appearance_pages(
         Some(&lyra_profile),
     );
     let macos_profile = profile_card(
-        &gettext("MacOS X"),
+        &gettext("Lyra Flutuante"),
         &gettext(
             "Dock inferior flutuante e centralizado, com ampliação dos ícones e menu L na barra superior.",
         ),
@@ -207,14 +207,48 @@ fn appearance_pages(
         (DesktopProfile::Windows11, windows11_profile.clone()),
         (DesktopProfile::Macos, macos_profile.clone()),
     ];
-    let active = crate::dock::current_profile();
+    let active = crate::dock::confirmed_profile().ok();
     for (profile, button) in &choices {
-        button.set_active(*profile == active);
+        button.set_active(Some(*profile) == active);
     }
     let status = gtk::Label::builder().wrap(true).xalign(0.0).build();
     status.add_css_class("error");
+    let component_guard = Rc::new(Cell::new(false));
+    let component_rows = Rc::new(if crate::dock::suite_available() {
+        [
+            ("dock", gettext("Lyra Dock")),
+            ("panel", gettext("Lyra Painel")),
+            ("menus", gettext("Lyra Menus")),
+            ("search", gettext("Lyra Busca")),
+            ("animations", gettext("Lyra Animações")),
+        ]
+        .into_iter()
+        .map(|(id, title)| (id, adw::SwitchRow::builder().title(title).build()))
+        .collect::<Vec<_>>()
+    } else {
+        Vec::new()
+    });
+    refresh_components(&component_rows, &component_guard);
+    for (id, row) in component_rows.iter() {
+        let id = *id;
+        let rows = component_rows.clone();
+        let guard = component_guard.clone();
+        let status = status.clone();
+        row.connect_active_notify(move |row| {
+            if guard.get() {
+                return;
+            }
+            match crate::dock::set_suite_component(id, row.is_active()) {
+                Ok(()) => status.set_label(""),
+                Err(error) => status.set_label(&error.to_string()),
+            }
+            refresh_components(&rows, &guard);
+        });
+    }
     let suppress = Rc::new(Cell::new(false));
     for (profile, button) in &choices {
+        let component_rows = component_rows.clone();
+        let component_guard = component_guard.clone();
         let profile = *profile;
         let menu_tab = menu_tab.clone();
         let dock_tab = dock_tab.clone();
@@ -232,6 +266,7 @@ fn appearance_pages(
             }
             match crate::dock::apply_profile(profile) {
                 Ok(()) => {
+                    refresh_components(&component_rows, &component_guard);
                     status.set_label("");
                     let enabled = profile != DesktopProfile::GnomeVanilla;
                     menu_tab.set_sensitive(enabled);
@@ -246,10 +281,10 @@ fn appearance_pages(
                 Err(error) => {
                     status.set_label(&error.to_string());
                     suppress.set(true);
-                    let active = crate::dock::current_profile();
+                    let active = crate::dock::confirmed_profile().ok();
                     for (profile, peer) in &peers {
                         if let Some(peer) = peer.upgrade() {
-                            peer.set_active(*profile == active);
+                            peer.set_active(Some(*profile) == active);
                         }
                     }
                     suppress.set(false);
@@ -278,6 +313,12 @@ fn appearance_pages(
         .build();
     profile_group.add(&profiles);
     profile_group.add(&status);
+    for (_, row) in component_rows.iter() {
+        profile_group.add(row);
+    }
+    let refresh_rows = component_rows.clone();
+    let refresh_guard = component_guard.clone();
+    profile_group.connect_map(move |_| refresh_components(&refresh_rows, &refresh_guard));
     // Refresh the selected card after editing the dock or returning to this page.
     let peers = choices
         .iter()
@@ -285,10 +326,10 @@ fn appearance_pages(
         .collect::<Vec<_>>();
     profile_group.connect_map(move |_| {
         suppress.set(true);
-        let active = crate::dock::current_profile();
+        let active = crate::dock::confirmed_profile().ok();
         for (profile, peer) in &peers {
             if let Some(peer) = peer.upgrade() {
-                peer.set_active(*profile == active);
+                peer.set_active(Some(*profile) == active);
             }
         }
         suppress.set(false);
@@ -631,6 +672,23 @@ fn theme_preview(dark: bool) -> gtk::Widget {
     window.upcast()
 }
 
+fn refresh_components(rows: &[(&str, adw::SwitchRow)], guard: &Cell<bool>) {
+    guard.set(true);
+    let state = crate::dock::suite_components();
+    let editable = crate::dock::current_profile() != DesktopProfile::GnomeVanilla;
+    for (role, row) in rows {
+        row.set_active(
+            state
+                .as_ref()
+                .and_then(|s| s.get(*role))
+                .copied()
+                .unwrap_or(false),
+        );
+        row.set_sensitive(state.is_some() && editable);
+    }
+    guard.set(false);
+}
+
 #[cfg(test)]
 mod desktop_tests {
     use super::*;
@@ -648,22 +706,23 @@ mod desktop_tests {
         crate::i18n::init();
         adw::init().unwrap();
         let page = ScreenPage::new();
-        fn find(widget: &gtk::Widget) -> Option<adw::SwitchRow> {
+        fn find(widget: &gtk::Widget, title: &str) -> Option<adw::SwitchRow> {
             if let Some(row) = widget.downcast_ref::<adw::SwitchRow>()
-                && row.title() == gettext("Área de trabalho ativa")
+                && row.title() == title
             {
                 return Some(row.clone());
             }
             let mut child = widget.first_child();
             while let Some(widget) = child {
-                if let Some(row) = find(&widget) {
+                if let Some(row) = find(&widget, title) {
                     return Some(row);
                 }
                 child = widget.next_sibling();
             }
             None
         }
-        let row = find(&page.root).expect("desktop switch visible in profile page");
+        let row = find(&page.root, &gettext("Área de trabalho ativa"))
+            .expect("desktop switch visible in profile page");
         assert!(row.is_sensitive());
         assert_eq!(Some(row.is_active()), crate::dock::desktop_icons_state());
         let fixture = std::path::Path::new(&home).join("Desktop/Fixture.txt");
@@ -673,6 +732,26 @@ mod desktop_tests {
             assert_eq!(crate::dock::desktop_icons_state(), Some(enabled));
             assert_eq!(row.is_active(), enabled);
             assert_eq!(std::fs::read(&fixture).unwrap(), before);
+        }
+        if crate::dock::suite_available() {
+            for (id, title) in [
+                ("dock", "Lyra Dock"),
+                ("panel", "Lyra Painel"),
+                ("menus", "Lyra Menus"),
+                ("search", "Lyra Busca"),
+                ("animations", "Lyra Animações"),
+            ] {
+                let component = find(&page.root, &gettext(title)).expect("component switch");
+                assert!(component.is_sensitive());
+                for active in [false, true] {
+                    component.set_active(active);
+                    assert_eq!(
+                        crate::dock::suite_components().unwrap().get(id),
+                        Some(&active)
+                    );
+                    assert_eq!(component.is_active(), active);
+                }
+            }
         }
         // A global Shell switch must not be changed implicitly. The failed
         // enable must revert the row and expose the backend's actual state.

@@ -3202,11 +3202,11 @@ msgstr "Não foi possível restaurar as preferências do perfil Lyra."
 msgid "Escolha entre Lyra, Ubuntu e a experiência padrão do GNOME"
 msgstr "Escolha entre Lyra, Ubuntu e a experiência padrão do GNOME"
 
-msgid "Windows 10"
-msgstr "Windows 10"
+msgid "Lyra Clássico"
+msgstr "Lyra Clássico"
 
-msgid "Windows 11"
-msgstr "Windows 11"
+msgid "Lyra Central"
+msgstr "Lyra Central"
 
 msgid "Painel inferior à esquerda e menu L com lista de aplicativos e blocos fixados."
 msgstr "Painel inferior à esquerda e menu L com lista de aplicativos e blocos fixados."
@@ -3214,8 +3214,8 @@ msgstr "Painel inferior à esquerda e menu L com lista de aplicativos e blocos f
 msgid "Painel inferior centralizado e menu L com pesquisa e grade de aplicativos fixados."
 msgstr "Painel inferior centralizado e menu L com pesquisa e grade de aplicativos fixados."
 
-msgid "Escolha entre Lyra, Ubuntu, Windows 10, Windows 11 e GNOME"
-msgstr "Escolha entre Lyra, Ubuntu, Windows 10, Windows 11 e GNOME"
+msgid "Escolha entre Lyra, Ubuntu, Lyra Clássico, Lyra Central, Lyra Flutuante e GNOME"
+msgstr "Escolha entre Lyra, Ubuntu, Lyra Clássico, Lyra Central, Lyra Flutuante e GNOME"
 
 msgid "Atualize o Sheliak para usar os perfis Windows."
 msgstr "Atualize o Sheliak para usar os perfis Windows."
@@ -3247,14 +3247,14 @@ msgstr "Falha interna ao limpar a conversa."
 msgid "Limpando conversa…"
 msgstr "Limpando conversa…"
 
-msgid "MacOS X"
-msgstr "MacOS X"
+msgid "Lyra Flutuante"
+msgstr "Lyra Flutuante"
 
 msgid "Dock inferior flutuante e centralizado, com ampliação dos ícones e menu L na barra superior."
 msgstr "Dock inferior flutuante e centralizado, com ampliação dos ícones e menu L na barra superior."
 
-msgid "Atualize o Sheliak para usar o perfil MacOS X."
-msgstr "Atualize o Sheliak para usar o perfil MacOS X."
+msgid "Atualize o Sheliak para usar o perfil Lyra Flutuante."
+msgstr "Atualize o Sheliak para usar o perfil Lyra Flutuante."
 
 msgid "Área de trabalho"
 msgstr "Área de trabalho"
@@ -3270,3 +3270,18 @@ msgstr "Ícones na área de trabalho indisponíveis."
 
 msgid "Não foi possível alterar a área de trabalho ativa."
 msgstr "Não foi possível alterar a área de trabalho ativa."
+
+msgid "Lyra Dock"
+msgstr "Lyra Dock"
+
+msgid "Lyra Painel"
+msgstr "Lyra Painel"
+
+msgid "Lyra Menus"
+msgstr "Lyra Menus"
+
+msgid "Lyra Busca"
+msgstr "Lyra Busca"
+
+msgid "Lyra Animações"
+msgstr "Lyra Animações"

@@ -3203,11 +3203,11 @@ msgstr "No se pudieron restaurar las preferencias del perfil Lyra."
 msgid "Escolha entre Lyra, Ubuntu e a experiência padrão do GNOME"
 msgstr "Elige entre Lyra, Ubuntu y la experiencia estándar de GNOME"
 
-msgid "Windows 10"
-msgstr "Windows 10"
+msgid "Lyra Clássico"
+msgstr "Lyra Clásico"
 
-msgid "Windows 11"
-msgstr "Windows 11"
+msgid "Lyra Central"
+msgstr "Lyra Central"
 
 msgid "Painel inferior à esquerda e menu L com lista de aplicativos e blocos fixados."
 msgstr "Panel inferior a la izquierda y menú L con lista de aplicaciones y mosaicos anclados."
@@ -3215,8 +3215,8 @@ msgstr "Panel inferior a la izquierda y menú L con lista de aplicaciones y mosa
 msgid "Painel inferior centralizado e menu L com pesquisa e grade de aplicativos fixados."
 msgstr "Panel inferior centrado y menú L con búsqueda y cuadrícula de aplicaciones ancladas."
 
-msgid "Escolha entre Lyra, Ubuntu, Windows 10, Windows 11 e GNOME"
-msgstr "Elige Lyra, Ubuntu, Windows 10, Windows 11 o GNOME"
+msgid "Escolha entre Lyra, Ubuntu, Lyra Clássico, Lyra Central, Lyra Flutuante e GNOME"
+msgstr "Elige Lyra, Ubuntu, Lyra Clásico, Lyra Central, Lyra Flotante o GNOME"
 
 msgid "Atualize o Sheliak para usar os perfis Windows."
 msgstr "Actualiza Sheliak para usar los perfiles Windows."
@@ -3248,14 +3248,14 @@ msgstr "Error interno al borrar la conversación."
 msgid "Limpando conversa…"
 msgstr "Borrando conversación…"
 
-msgid "MacOS X"
-msgstr "MacOS X"
+msgid "Lyra Flutuante"
+msgstr "Lyra Flotante"
 
 msgid "Dock inferior flutuante e centralizado, com ampliação dos ícones e menu L na barra superior."
 msgstr "Dock inferior flotante y centrado, iconos ampliados y menú L en la barra superior."
 
-msgid "Atualize o Sheliak para usar o perfil MacOS X."
-msgstr "Actualiza Sheliak para usar el perfil MacOS X."
+msgid "Atualize o Sheliak para usar o perfil Lyra Flutuante."
+msgstr "Actualiza Sheliak para usar el perfil Lyra Flotante."
 
 msgid "Área de trabalho"
 msgstr "Escritorio"
@@ -3271,3 +3271,18 @@ msgstr "Los iconos del escritorio no están disponibles."
 
 msgid "Não foi possível alterar a área de trabalho ativa."
 msgstr "No se pudo cambiar el escritorio activo."
+
+msgid "Lyra Dock"
+msgstr "Lyra Dock"
+
+msgid "Lyra Painel"
+msgstr "Lyra Panel"
+
+msgid "Lyra Menus"
+msgstr "Lyra Menús"
+
+msgid "Lyra Busca"
+msgstr "Lyra Búsqueda"
+
+msgid "Lyra Animações"
+msgstr "Lyra Animaciones"

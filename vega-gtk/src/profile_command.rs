@@ -38,7 +38,10 @@ pub fn run(args: Vec<String>) -> Option<u8> {
         }
     };
     let result = (|| {
-        dock::confirmed_profile()?;
+        // A suite Set may recover an interrupted transition; Get stays read-only.
+        if !dock::suite_available() || matches!(action, Action::Get) {
+            dock::confirmed_profile()?;
+        }
         if let Action::Set(profile) = action {
             dock::apply_profile(profile)?;
             // The process exits after the write; flush dconf before returning.
