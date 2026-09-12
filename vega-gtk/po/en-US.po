@@ -3203,11 +3203,11 @@ msgstr "Could not restore the Lyra profile preferences."
 msgid "Escolha entre Lyra, Ubuntu e a experiência padrão do GNOME"
 msgstr "Choose between Lyra, Ubuntu and the standard GNOME experience"
 
-msgid "Windows 10"
-msgstr "Windows 10"
+msgid "Lyra Clássico"
+msgstr "Lyra Classic"
 
-msgid "Windows 11"
-msgstr "Windows 11"
+msgid "Lyra Central"
+msgstr "Lyra Central"
 
 msgid "Painel inferior à esquerda e menu L com lista de aplicativos e blocos fixados."
 msgstr "Left-aligned bottom panel and L menu with an application list and pinned tiles."
@@ -3215,8 +3215,8 @@ msgstr "Left-aligned bottom panel and L menu with an application list and pinned
 msgid "Painel inferior centralizado e menu L com pesquisa e grade de aplicativos fixados."
 msgstr "Centered bottom panel and L menu with search and a grid of pinned applications."
 
-msgid "Escolha entre Lyra, Ubuntu, Windows 10, Windows 11 e GNOME"
-msgstr "Choose Lyra, Ubuntu, Windows 10, Windows 11 or GNOME"
+msgid "Escolha entre Lyra, Ubuntu, Lyra Clássico, Lyra Central, Lyra Flutuante e GNOME"
+msgstr "Choose Lyra, Ubuntu, Lyra Classic, Lyra Central, Lyra Floating or GNOME"
 
 msgid "Atualize o Sheliak para usar os perfis Windows."
 msgstr "Update Sheliak to use the Windows profiles."
@@ -3248,14 +3248,14 @@ msgstr "Internal error while clearing the conversation."
 msgid "Limpando conversa…"
 msgstr "Clearing conversation…"
 
-msgid "MacOS X"
-msgstr "MacOS X"
+msgid "Lyra Flutuante"
+msgstr "Lyra Floating"
 
 msgid "Dock inferior flutuante e centralizado, com ampliação dos ícones e menu L na barra superior."
 msgstr "Floating centered bottom dock, magnified icons and the L menu in the top bar."
 
-msgid "Atualize o Sheliak para usar o perfil MacOS X."
-msgstr "Update Sheliak to use the MacOS X profile."
+msgid "Atualize o Sheliak para usar o perfil Lyra Flutuante."
+msgstr "Update Sheliak to use the Lyra Floating profile."
 
 msgid "Área de trabalho"
 msgstr "Desktop"

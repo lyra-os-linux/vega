@@ -173,13 +173,13 @@ fn appearance_pages(
         Some(&lyra_profile),
     );
     let windows10_profile = profile_card(
-        &gettext("Windows 10"),
+        &gettext("Lyra Clássico"),
         &gettext("Painel inferior à esquerda e menu L com lista de aplicativos e blocos fixados."),
         DesktopProfile::Windows10,
         Some(&lyra_profile),
     );
     let windows11_profile = profile_card(
-        &gettext("Windows 11"),
+        &gettext("Lyra Central"),
         &gettext(
             "Painel inferior centralizado e menu L com pesquisa e grade de aplicativos fixados.",
         ),
@@ -187,7 +187,7 @@ fn appearance_pages(
         Some(&lyra_profile),
     );
     let macos_profile = profile_card(
-        &gettext("MacOS X"),
+        &gettext("Lyra Flutuante"),
         &gettext(
             "Dock inferior flutuante e centralizado, com ampliação dos ícones e menu L na barra superior.",
         ),

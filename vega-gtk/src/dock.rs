@@ -300,7 +300,7 @@ fn apply_saved_desktop_profile(
     }
     let before = SavedDesktopProfile::capture(settings);
     // Older snapshots shared these settings globally. Seed them once from
-    // that shared state before MacOS X changes them, preserving the migration.
+    // that shared state before Lyra Flutuante changes them, preserving the migration.
     for value in saved.values_mut() {
         if value.presentation.is_none() {
             value.presentation = before.presentation.clone();
@@ -419,7 +419,7 @@ pub fn supports_macos_profile() -> bool {
 pub fn apply_profile(profile: DesktopProfile) -> Result<(), DockError> {
     if profile == DesktopProfile::Macos && !supports_macos_profile() {
         return Err(DockError(gettext(
-            "Atualize o Sheliak para usar o perfil MacOS X.",
+            "Atualize o Sheliak para usar o perfil Lyra Flutuante.",
         )));
     }
     if profile == DesktopProfile::GnomeVanilla {
@@ -1115,7 +1115,7 @@ mod profile_tests {
         let lyra = SavedDesktopProfile::capture(&settings);
         apply_profile_settings(&settings, DesktopProfile::Windows10).unwrap();
         let windows = SavedDesktopProfile::capture(&settings);
-        // Simulate the snapshot format shipped before MacOS X.
+        // Simulate the snapshot format shipped before Lyra Flutuante.
         let mut old: serde_json::Value =
             serde_json::from_str(&settings.string("desktop-profile-settings")).unwrap();
         for value in old.as_object_mut().unwrap().values_mut() {
