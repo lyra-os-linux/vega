@@ -1638,8 +1638,8 @@ msgid "Margem da borda"
 msgstr "margen del borde"
 
 #: /home/rbrito/Git/Vega/vega-gtk/src/ui/dock.rs:129
-msgid "Animações"
-msgstr "animaciones"
+msgid "Efeitos do dock"
+msgstr "Efectos del dock"
 
 #: /home/rbrito/Git/Vega/vega-gtk/src/ui/dock.rs:131
 msgid "Animação ao minimizar"
@@ -2262,12 +2262,12 @@ msgid "Bloquear automaticamente"
 msgstr "bloquear automáticamente"
 
 #: /home/rbrito/Git/Vega/vega-gtk/src/ui/screensaver.rs:43
-msgid "Bloquear após ficar ocioso (segundos)"
-msgstr "Bloqueo después de inactividad (segundos)"
+msgid "Atraso para bloquear (segundos)"
+msgstr "Retraso para bloquear (segundos)"
 
 #: /home/rbrito/Git/Vega/vega-gtk/src/ui/screensaver.rs:47
-msgid "Suspender tela após inatividade (segundos)"
-msgstr "Pantalla de sueño después de inactividad (segundos)"
+msgid "Apagar a tela após (segundos)"
+msgstr "Apagar la pantalla después de (segundos)"
 
 #: /home/rbrito/Git/Vega/vega-gtk/src/ui/services.rs:40
 msgid "Principais"
@@ -2397,12 +2397,12 @@ msgid "Página inicial"
 msgstr "pagina de inicio"
 
 #: /home/rbrito/Git/Vega/vega-gtk/src/ui/shell.rs:405
-msgid "Atualização automática"
-msgstr "Actualización automática"
+msgid "Atualizar informações do painel"
+msgstr "Actualizar información del panel"
 
 #: /home/rbrito/Git/Vega/vega-gtk/src/ui/shell.rs:406
-msgid "Intervalo em minutos"
-msgstr "Intervalo en minutos"
+msgid "Intervalo em minutos para atualizar os dados exibidos no Vega."
+msgstr "Intervalo en minutos para actualizar los datos que muestra Vega."
 
 #: /home/rbrito/Git/Vega/vega-gtk/src/ui/shell.rs:418
 msgid "Confirmar ações administrativas"
@@ -2961,9 +2961,6 @@ msgstr "Reloj"
 msgid "Indicadores do lado direito"
 msgstr "Indicadores del lado derecho"
 
-msgid "Menu Rede"
-msgstr "Menú Red"
-
 msgid "Item Sobre no menu Sistema"
 msgstr "Elemento Acerca de en el menú Sistema"
 msgid "Perfil da área de trabalho"
@@ -3286,3 +3283,15 @@ msgstr "Lyra Búsqueda"
 
 msgid "Lyra Animações"
 msgstr "Lyra Animaciones"
+
+msgid "Ampliação dos ícones e transições do dock."
+msgstr "Ampliación de los iconos y transiciones del dock."
+
+msgid "Efeitos ao minimizar e restaurar janelas."
+msgstr "Efectos al minimizar y restaurar ventanas."
+
+msgid "Contado após a tela apagar. Zero bloqueia imediatamente."
+msgstr "Se cuenta desde que se apaga la pantalla. Cero bloquea inmediatamente."
+
+msgid "Tempo sem atividade. Zero mantém a tela ativa."
+msgstr "Tiempo sin actividad. Cero mantiene la pantalla encendida."

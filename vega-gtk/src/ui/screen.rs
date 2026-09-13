@@ -223,7 +223,13 @@ fn appearance_pages(
             ("animations", gettext("Lyra Animações")),
         ]
         .into_iter()
-        .map(|(id, title)| (id, adw::SwitchRow::builder().title(title).build()))
+        .map(|(id, title)| {
+            let row = adw::SwitchRow::builder().title(title).build();
+            if id == "animations" {
+                row.set_subtitle(&gettext("Efeitos ao minimizar e restaurar janelas."));
+            }
+            (id, row)
+        })
         .collect::<Vec<_>>()
     } else {
         Vec::new()

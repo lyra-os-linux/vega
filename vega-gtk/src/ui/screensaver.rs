@@ -39,14 +39,14 @@ impl ScreensaverPage {
             &gettext("Bloquear automaticamente"),
             &lock_enabled,
         ));
-        settings_group.add(&property_row(
-            &gettext("Bloquear após ficar ocioso (segundos)"),
-            &lock_delay,
+        let lock_row = property_row(&gettext("Atraso para bloquear (segundos)"), &lock_delay);
+        lock_row.set_subtitle(&gettext(
+            "Contado após a tela apagar. Zero bloqueia imediatamente.",
         ));
-        settings_group.add(&property_row(
-            &gettext("Suspender tela após inatividade (segundos)"),
-            &idle_delay,
-        ));
+        settings_group.add(&lock_row);
+        let idle_row = property_row(&gettext("Apagar a tela após (segundos)"), &idle_delay);
+        idle_row.set_subtitle(&gettext("Tempo sem atividade. Zero mantém a tela ativa."));
+        settings_group.add(&idle_row);
 
         let apply = gtk::Button::builder()
             .label(gettext("Aplicar"))

@@ -126,7 +126,9 @@ impl DockPage {
         appearance_group.add(&property_row(&gettext("Posição"), &position));
         appearance_group.add(&property_row(&gettext("Tamanho dos ícones"), &icon_size));
         appearance_group.add(&property_row(&gettext("Margem da borda"), &edge_margin));
-        appearance_group.add(&property_row(&gettext("Animações"), &animation));
+        let effects_row = property_row(&gettext("Efeitos do dock"), &animation);
+        effects_row.set_subtitle(&gettext("Ampliação dos ícones e transições do dock."));
+        appearance_group.add(&effects_row);
         appearance_group.add(&property_row(
             &gettext("Animação ao minimizar"),
             &minimize_animation,
