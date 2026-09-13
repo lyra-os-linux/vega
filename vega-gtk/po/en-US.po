@@ -1638,8 +1638,8 @@ msgid "Margem da borda"
 msgstr "edge margin"
 
 #: /home/rbrito/Git/Vega/vega-gtk/src/ui/dock.rs:129
-msgid "Animações"
-msgstr "Animations"
+msgid "Efeitos do dock"
+msgstr "Dock effects"
 
 #: /home/rbrito/Git/Vega/vega-gtk/src/ui/dock.rs:131
 msgid "Animação ao minimizar"
@@ -2262,12 +2262,12 @@ msgid "Bloquear automaticamente"
 msgstr "Automatically block"
 
 #: /home/rbrito/Git/Vega/vega-gtk/src/ui/screensaver.rs:43
-msgid "Bloquear após ficar ocioso (segundos)"
-msgstr "Block after idle (seconds)"
+msgid "Atraso para bloquear (segundos)"
+msgstr "Lock delay (seconds)"
 
 #: /home/rbrito/Git/Vega/vega-gtk/src/ui/screensaver.rs:47
-msgid "Suspender tela após inatividade (segundos)"
-msgstr "Sleep screen after inactivity (seconds)"
+msgid "Apagar a tela após (segundos)"
+msgstr "Turn off the screen after (seconds)"
 
 #: /home/rbrito/Git/Vega/vega-gtk/src/ui/services.rs:40
 msgid "Principais"
@@ -2397,12 +2397,12 @@ msgid "Página inicial"
 msgstr "Home page"
 
 #: /home/rbrito/Git/Vega/vega-gtk/src/ui/shell.rs:405
-msgid "Atualização automática"
-msgstr "Automatic update"
+msgid "Atualizar informações do painel"
+msgstr "Refresh dashboard information"
 
 #: /home/rbrito/Git/Vega/vega-gtk/src/ui/shell.rs:406
-msgid "Intervalo em minutos"
-msgstr "Interval in minutes"
+msgid "Intervalo em minutos para atualizar os dados exibidos no Vega."
+msgstr "Interval in minutes for refreshing the information shown in Vega."
 
 #: /home/rbrito/Git/Vega/vega-gtk/src/ui/shell.rs:418
 msgid "Confirmar ações administrativas"
@@ -2961,9 +2961,6 @@ msgstr "Clock"
 msgid "Indicadores do lado direito"
 msgstr "Right-side indicators"
 
-msgid "Menu Rede"
-msgstr "Network menu"
-
 msgid "Item Sobre no menu Sistema"
 msgstr "About item in System menu"
 msgid "Perfil da área de trabalho"
@@ -3286,3 +3283,15 @@ msgstr "Lyra Search"
 
 msgid "Lyra Animações"
 msgstr "Lyra Animations"
+
+msgid "Ampliação dos ícones e transições do dock."
+msgstr "Icon magnification and dock transitions."
+
+msgid "Efeitos ao minimizar e restaurar janelas."
+msgstr "Effects when minimizing and restoring windows."
+
+msgid "Contado após a tela apagar. Zero bloqueia imediatamente."
+msgstr "Starts when the screen turns off. Zero locks immediately."
+
+msgid "Tempo sem atividade. Zero mantém a tela ativa."
+msgstr "Time without activity. Zero keeps the screen on."

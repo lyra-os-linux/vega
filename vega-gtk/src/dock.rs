@@ -37,7 +37,6 @@ pub struct MenuSettings {
     pub show_panel_indicators: bool,
     pub show_applications_menu: bool,
     pub show_places_menu: bool,
-    pub show_network_menu: bool,
     pub show_system_menu: bool,
     pub show_system_about: bool,
     pub show_search_menu: bool,
@@ -825,7 +824,6 @@ pub fn current_menu() -> Option<MenuSettings> {
         show_panel_indicators: boolean_or(&settings, "show-panel-indicators", true),
         show_applications_menu: boolean_or(&settings, "show-applications-menu", true),
         show_places_menu: boolean_or(&settings, "show-places-menu", true),
-        show_network_menu: boolean_or(&settings, "show-network-menu", true),
         show_system_menu: boolean_or(&settings, "show-system-menu", true),
         show_system_about: boolean_or(&settings, "show-system-about", true),
         show_search_menu: boolean_or(&settings, "show-search-menu", true),
@@ -894,7 +892,6 @@ pub fn apply_menu(settings: &MenuSettings) -> Result<(), DockError> {
         settings.show_applications_menu,
     );
     set_boolean_if_present(&gsettings, "show-places-menu", settings.show_places_menu);
-    set_boolean_if_present(&gsettings, "show-network-menu", settings.show_network_menu);
     set_boolean_if_present(&gsettings, "show-system-menu", settings.show_system_menu);
     set_boolean_if_present(&gsettings, "show-system-about", settings.show_system_about);
     set_boolean_if_present(&gsettings, "show-search-menu", settings.show_search_menu);

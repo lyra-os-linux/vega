@@ -408,8 +408,10 @@ fn show_preferences(parent: &gtk::Window, preferences: Rc<RefCell<crate::prefere
     general.add(&start_page);
 
     let refresh = adw::SpinRow::builder()
-        .title(gettext("Atualização automática"))
-        .subtitle(gettext("Intervalo em minutos"))
+        .title(gettext("Atualizar informações do painel"))
+        .subtitle(gettext(
+            "Intervalo em minutos para atualizar os dados exibidos no Vega.",
+        ))
         .adjustment(&gtk::Adjustment::new(
             preferences.borrow().refresh_interval_minutes.into(),
             1.0,

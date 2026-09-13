@@ -1642,8 +1642,8 @@ msgid "Margem da borda"
 msgstr "Margem da borda"
 
 #: vega-gtk/src/ui/dock.rs:129
-msgid "Animações"
-msgstr "Animações"
+msgid "Efeitos do dock"
+msgstr "Efeitos do dock"
 
 #: vega-gtk/src/ui/dock.rs:131
 msgid "Animação ao minimizar"
@@ -2266,12 +2266,12 @@ msgid "Bloquear automaticamente"
 msgstr "Bloquear automaticamente"
 
 #: vega-gtk/src/ui/screensaver.rs:43
-msgid "Bloquear após ficar ocioso (segundos)"
-msgstr "Bloquear após ficar ocioso (segundos)"
+msgid "Atraso para bloquear (segundos)"
+msgstr "Atraso para bloquear (segundos)"
 
 #: vega-gtk/src/ui/screensaver.rs:47
-msgid "Suspender tela após inatividade (segundos)"
-msgstr "Suspender tela após inatividade (segundos)"
+msgid "Apagar a tela após (segundos)"
+msgstr "Apagar a tela após (segundos)"
 
 #: vega-gtk/src/ui/services.rs:40
 msgid "Principais"
@@ -2397,12 +2397,12 @@ msgid "Página inicial"
 msgstr "Página inicial"
 
 #: vega-gtk/src/ui/shell.rs:425
-msgid "Atualização automática"
-msgstr "Atualização automática"
+msgid "Atualizar informações do painel"
+msgstr "Atualizar informações do painel"
 
 #: vega-gtk/src/ui/shell.rs:426
-msgid "Intervalo em minutos"
-msgstr "Intervalo em minutos"
+msgid "Intervalo em minutos para atualizar os dados exibidos no Vega."
+msgstr "Intervalo em minutos para atualizar os dados exibidos no Vega."
 
 #: vega-gtk/src/ui/shell.rs:438
 msgid "Confirmar ações administrativas"
@@ -2960,9 +2960,6 @@ msgstr "Relógio"
 msgid "Indicadores do lado direito"
 msgstr "Indicadores do lado direito"
 
-msgid "Menu Rede"
-msgstr "Menu Rede"
-
 msgid "Item Sobre no menu Sistema"
 msgstr "Item Sobre no menu Sistema"
 msgid "Perfil da área de trabalho"
@@ -3285,3 +3282,15 @@ msgstr "Lyra Busca"
 
 msgid "Lyra Animações"
 msgstr "Lyra Animações"
+
+msgid "Ampliação dos ícones e transições do dock."
+msgstr "Ampliação dos ícones e transições do dock."
+
+msgid "Efeitos ao minimizar e restaurar janelas."
+msgstr "Efeitos ao minimizar e restaurar janelas."
+
+msgid "Contado após a tela apagar. Zero bloqueia imediatamente."
+msgstr "Contado após a tela apagar. Zero bloqueia imediatamente."
+
+msgid "Tempo sem atividade. Zero mantém a tela ativa."
+msgstr "Tempo sem atividade. Zero mantém a tela ativa."
