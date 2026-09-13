@@ -313,9 +313,6 @@ fn appearance_pages(
         .build();
     profile_group.add(&profiles);
     profile_group.add(&status);
-    for (_, row) in component_rows.iter() {
-        profile_group.add(row);
-    }
     let refresh_rows = component_rows.clone();
     let refresh_guard = component_guard.clone();
     profile_group.connect_map(move |_| refresh_components(&refresh_rows, &refresh_guard));
@@ -354,6 +351,17 @@ fn appearance_pages(
     let profile_content = gtk::Box::new(gtk::Orientation::Vertical, 10);
     profile_content.set_valign(gtk::Align::Start);
     profile_content.append(&profile_group);
+    if !component_rows.is_empty() {
+        // PreferencesGroup puts rows before custom children, so these controls
+        // need a separate group to stay below the profile cards.
+        let component_group = adw::PreferencesGroup::builder()
+            .title(gettext("Componentes"))
+            .build();
+        for (_, row) in component_rows.iter() {
+            component_group.add(row);
+        }
+        profile_content.append(&component_group);
+    }
     let desktop_group = adw::PreferencesGroup::builder()
         .title(gettext("Área de trabalho"))
         .build();
