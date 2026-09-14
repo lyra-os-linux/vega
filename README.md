@@ -35,8 +35,11 @@ dependency is missing without preventing the other pages from working.
 
 Personalization offers Lyra, Ubuntu, GNOME Vanilla, Lyra Classic, Lyra Central,
 and Lyra Floating desktop profiles.
-Vega 5.1.35 requires Sheliak 2.0.0 or newer. Ubuntu it extends the left dock, aligns apps
-at the top, and hides the topbar menus and search. Returning to Lyra restores
+Vega requires Sheliak 2.0.0 or newer. Ubuntu extends the left dock, aligns apps
+at the top, shows GNOME's workspace button, and hides the topbar menus and search.
+Workspace button visibility is saved per profile; older Ubuntu snapshots adopt
+the visible default once without resetting the other profiles or custom layouts.
+Returning to Lyra restores
 the previous dock and menu preferences, including through GNOME Vanilla.
 Extending the dock manually in Lyra keeps its menus and search visible.
 Compact and extended docks keep separate alignment preferences.
@@ -230,10 +233,16 @@ Readback confirms settings, not completion of Shell rendering. Concurrent
 external changes after that read are outside this command's confirmation.
 
 `tests/profile-command.py` checks the built command against real GSettings in a
-private persistent keyfile backend. `tests/native-profiles/extension.js` can also
-run through Sheliak's `tests/native-pins/run.py --probe` with
-`VEGA_PROFILE_TEST_BINARY` pointing to the built binary, validating live Shell
-switches in its private compositor.
+private persistent keyfile backend. Pass `--suite-helper` with the current
+Sheliak helper when testing the six-extension suite. The legacy test without
+that option requires an environment without system-wide suite extensions.
+`tests/native-ubuntu-workspaces/extension.js` runs through Sheliak's
+`tests/native-pins/run.py --probe` with `LYRA_NATIVE_VEGA_BINARY` pointing to the
+built Vega binary and `LYRA_NATIVE_SUITE_HELPER` to Sheliak's
+`packaging/lyra-shell-suite.py`. It validates profile switches, panel toggling
+and clicks opening and closing the GNOME workspace overview in a private
+compositor. `tests/native-profiles/extension.js` is the older monolithic
+extension probe, using `VEGA_PROFILE_TEST_BINARY`.
 
 ### Desktop icons and Lyra Floating
 
