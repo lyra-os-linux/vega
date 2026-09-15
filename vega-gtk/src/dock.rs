@@ -192,6 +192,9 @@ struct SavedLyraProfile {
     floating: bool,
     extended_alignment: String,
     menus: [bool; 4],
+    // Missing in snapshots created before the workspace button was per-profile.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    hide_workspace_button: Option<bool>,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
@@ -285,7 +288,7 @@ fn apply_saved_desktop_profile(
         DesktopProfile::GnomeVanilla => return Ok(()),
     };
     let current = settings.string("desktop-profile");
-    if current == key {
+    if current == key && profile != DesktopProfile::Ubuntu {
         return Ok(());
     }
     let error = || {
@@ -309,6 +312,16 @@ fn apply_saved_desktop_profile(
         return Err(error());
     }
     let before = SavedDesktopProfile::capture(settings);
+    let workspace_preference_saved = saved
+        .get(current.as_str())
+        .is_some_and(|value| value.layout.hide_workspace_button.is_some());
+    // Re-selecting an existing Ubuntu profile applies its new default once.
+    // Once migrated, re-selection must preserve explicit user customization.
+    if current == key
+        && (before.layout.hide_workspace_button.is_none() || workspace_preference_saved)
+    {
+        return Ok(());
+    }
     // Older snapshots shared these settings globally. Seed them once from
     // that shared state before Lyra Flutuante changes them, preserving the migration.
     for value in saved.values_mut() {
@@ -324,7 +337,22 @@ fn apply_saved_desktop_profile(
         lyra.layout = layout;
         saved.insert("lyra".into(), lyra);
     }
-    saved.insert(current.to_string(), before.clone());
+    // The old format shared this preference across profiles. Preserve that
+    // value for every other profile and make Ubuntu's first value visible.
+    for (name, value) in &mut saved {
+        if value.layout.hide_workspace_button.is_none() {
+            value.layout.hide_workspace_button = before
+                .layout
+                .hide_workspace_button
+                .map(|hidden| name != "ubuntu" && hidden);
+        }
+    }
+    let mut current_snapshot = before.clone();
+    if current == "ubuntu" && !workspace_preference_saved {
+        current_snapshot.layout.hide_workspace_button =
+            before.layout.hide_workspace_button.map(|_| false);
+    }
+    saved.insert(current.to_string(), current_snapshot);
     let target = saved.get(key).cloned().unwrap_or_else(|| {
         let mut preset = saved.get("lyra").cloned().unwrap_or_else(|| before.clone());
         preset.layout.menus = [false; 4];
@@ -342,6 +370,10 @@ fn apply_saved_desktop_profile(
         }
         .into();
         preset.layout.floating = profile == DesktopProfile::Ubuntu;
+        if profile == DesktopProfile::Ubuntu {
+            preset.layout.hide_workspace_button =
+                before.layout.hide_workspace_button.map(|_| false);
+        }
         if matches!(
             profile,
             DesktopProfile::Windows10 | DesktopProfile::Windows11
@@ -408,6 +440,8 @@ impl SavedLyraProfile {
             floating: settings.boolean("floating-panel"),
             extended_alignment: settings.string("extended-content-alignment").into(),
             menus: PROFILE_MENUS.map(|key| settings.boolean(key)),
+            hide_workspace_button: has_key(settings, "hide-workspace-button")
+                .then(|| settings.boolean("hide-workspace-button")),
         }
     }
     fn restore(&self, settings: &gio::Settings) -> Result<(), glib::BoolError> {
@@ -417,6 +451,11 @@ impl SavedLyraProfile {
         settings.set_string("extended-content-alignment", &self.extended_alignment)?;
         for (key, visible) in PROFILE_MENUS.iter().zip(self.menus) {
             settings.set_boolean(key, visible)?;
+        }
+        if let Some(hidden) = self.hide_workspace_button
+            && has_key(settings, "hide-workspace-button")
+        {
+            settings.set_boolean("hide-workspace-button", hidden)?;
         }
         Ok(())
     }
@@ -494,7 +533,7 @@ fn apply_profile_settings(
         )));
     }
     let was_ubuntu = settings.string("desktop-profile") == "ubuntu";
-    let saved = if was_ubuntu && profile == DesktopProfile::Lyra {
+    let mut saved = if was_ubuntu {
         Some(
             serde_json::from_str::<SavedLyraProfile>(&settings.string("lyra-profile-settings"))
                 .map_err(|_| {
@@ -506,9 +545,20 @@ fn apply_profile_settings(
     } else {
         None
     };
-    let snapshot = if !was_ubuntu && profile == DesktopProfile::Ubuntu {
+    if let Some(saved) = &mut saved
+        && saved.hide_workspace_button.is_none()
+        && has_key(settings, "hide-workspace-button")
+    {
+        saved.hide_workspace_button = Some(settings.boolean("hide-workspace-button"));
+    }
+    let snapshot = if profile == DesktopProfile::Ubuntu {
         Some(
-            serde_json::to_string(&SavedLyraProfile::capture(settings)).map_err(|_| {
+            serde_json::to_string(
+                &saved
+                    .clone()
+                    .unwrap_or_else(|| SavedLyraProfile::capture(settings)),
+            )
+            .map_err(|_| {
                 DockError(gettext(
                     "Não foi possível alterar o perfil da área de trabalho.",
                 ))
@@ -529,6 +579,9 @@ fn apply_profile_settings(
             settings.set_string("extended-content-alignment", "start")?;
             for key in PROFILE_MENUS {
                 settings.set_boolean(key, false)?;
+            }
+            if has_key(settings, "hide-workspace-button") {
+                settings.set_boolean("hide-workspace-button", false)?;
             }
             settings.set_string("desktop-profile", "ubuntu")?;
         } else {
@@ -1154,6 +1207,7 @@ mod profile_tests {
             "show-clock",
             "show-panel-indicators",
             "fullscreen-hide",
+            "hide-workspace-button",
         ] {
             xml.push_str(&format!(
                 "<key name='{key}' type='b'><default>true</default></key>"
@@ -1194,11 +1248,84 @@ mod profile_tests {
         assert_eq!(settings.string("extended-content-alignment"), "start");
         assert_eq!(settings.string("content-alignment"), "center");
         assert!(PROFILE_MENUS.iter().all(|key| !settings.boolean(key)));
+        assert!(!settings.boolean("hide-workspace-button"));
         // Re-selecting Ubuntu must not replace the saved Lyra profile.
         apply_profile_settings(&settings, DesktopProfile::Ubuntu).unwrap();
         apply_profile_settings(&settings, DesktopProfile::Lyra).unwrap();
         assert_eq!(settings.string("desktop-profile"), "lyra");
         assert_eq!(SavedLyraProfile::capture(&settings), original);
+        assert!(settings.boolean("hide-workspace-button"));
+    }
+
+    #[test]
+    fn ubuntu_workspace_button_is_visible_and_other_profiles_keep_their_preferences() {
+        let settings = settings_with_cache(true);
+        let lyra = SavedDesktopProfile::capture(&settings);
+        apply_profile_settings(&settings, DesktopProfile::Ubuntu).unwrap();
+        assert!(!settings.boolean("hide-workspace-button"));
+        assert!(PROFILE_MENUS.iter().all(|key| !settings.boolean(key)));
+        for profile in [
+            DesktopProfile::Windows10,
+            DesktopProfile::Windows11,
+            DesktopProfile::Macos,
+        ] {
+            apply_profile_settings(&settings, profile).unwrap();
+            assert!(settings.boolean("hide-workspace-button"));
+            apply_profile_settings(&settings, DesktopProfile::Ubuntu).unwrap();
+            assert!(!settings.boolean("hide-workspace-button"));
+        }
+        apply_profile_settings(&settings, DesktopProfile::Lyra).unwrap();
+        assert_eq!(SavedDesktopProfile::capture(&settings), lyra);
+
+        // Explicit customization remains a per-profile choice after migration.
+        apply_profile_settings(&settings, DesktopProfile::Ubuntu).unwrap();
+        settings.set_boolean("hide-workspace-button", true).unwrap();
+        settings.apply();
+        apply_profile_settings(&settings, DesktopProfile::Ubuntu).unwrap();
+        assert!(settings.boolean("hide-workspace-button"));
+        apply_profile_settings(&settings, DesktopProfile::Lyra).unwrap();
+        settings
+            .set_boolean("hide-workspace-button", false)
+            .unwrap();
+        settings.apply();
+        apply_profile_settings(&settings, DesktopProfile::Ubuntu).unwrap();
+        assert!(settings.boolean("hide-workspace-button"));
+        apply_profile_settings(&settings, DesktopProfile::Lyra).unwrap();
+        assert!(!settings.boolean("hide-workspace-button"));
+    }
+
+    #[test]
+    fn ubuntu_workspace_button_migrates_old_cache_without_resetting_layouts() {
+        for current in [DesktopProfile::Lyra, DesktopProfile::Ubuntu] {
+            let settings = settings_with_cache(true);
+            apply_profile_settings(&settings, DesktopProfile::Ubuntu).unwrap();
+            settings.set_uint("icon-size", 44).unwrap();
+            apply_profile_settings(&settings, DesktopProfile::Lyra).unwrap();
+            apply_profile_settings(&settings, current).unwrap();
+            let mut old: serde_json::Value =
+                serde_json::from_str(&settings.string("desktop-profile-settings")).unwrap();
+            for value in old.as_object_mut().unwrap().values_mut() {
+                value["layout"]
+                    .as_object_mut()
+                    .unwrap()
+                    .remove("hide_workspace_button");
+            }
+            settings
+                .set_string("desktop-profile-settings", &old.to_string())
+                .unwrap();
+            settings.set_boolean("hide-workspace-button", true).unwrap();
+            settings.apply();
+
+            apply_profile_settings(&settings, DesktopProfile::Ubuntu).unwrap();
+            assert!(!settings.boolean("hide-workspace-button"));
+            assert_eq!(settings.uint("icon-size"), 44);
+            assert!(PROFILE_MENUS.iter().all(|key| !settings.boolean(key)));
+            apply_profile_settings(&settings, DesktopProfile::Lyra).unwrap();
+            assert!(settings.boolean("hide-workspace-button"));
+            assert_eq!(settings.string("position"), "right");
+            apply_profile_settings(&settings, DesktopProfile::Ubuntu).unwrap();
+            assert!(!settings.boolean("hide-workspace-button"));
+        }
     }
 
     #[test]

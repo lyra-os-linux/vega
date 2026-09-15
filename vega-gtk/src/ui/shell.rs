@@ -407,6 +407,25 @@ fn show_preferences(parent: &gtk::Window, preferences: Rc<RefCell<crate::prefere
         .build();
     general.add(&start_page);
 
+    const LANGUAGES: [&str; 4] = ["system", "pt_BR", "en_US", "es_ES"];
+    let language = adw::ComboRow::builder()
+        .title(gettext("Idioma do Vega"))
+        .subtitle(gettext("A alteração será aplicada ao reabrir o Vega."))
+        .model(&gtk::StringList::new(&[
+            &gettext("Seguir o sistema"),
+            "Português (Brasil)",
+            "English",
+            "Español",
+        ]))
+        .selected(
+            LANGUAGES
+                .iter()
+                .position(|value| *value == preferences.borrow().language)
+                .unwrap_or(0) as u32,
+        )
+        .build();
+    general.add(&language);
+
     let refresh = adw::SpinRow::builder()
         .title(gettext("Atualizar informações do painel"))
         .subtitle(gettext(
@@ -490,6 +509,16 @@ fn show_preferences(parent: &gtk::Window, preferences: Rc<RefCell<crate::prefere
             settings.start_page = START_PAGES
                 .get(row.selected() as usize)
                 .unwrap_or(&"dashboard")
+                .to_string();
+        }
+    );
+    save_on_change!(
+        language,
+        connect_selected_notify,
+        |settings: &mut crate::preferences::Settings, row: &adw::ComboRow| {
+            settings.language = LANGUAGES
+                .get(row.selected() as usize)
+                .unwrap_or(&"system")
                 .to_string();
         }
     );
@@ -849,4 +878,58 @@ fn scrolled(content: gtk::Box) -> gtk::Widget {
         .propagate_natural_width(false)
         .build()
         .upcast()
+}
+
+#[cfg(test)]
+mod language_preferences_tests {
+    use super::*;
+
+    #[test]
+    #[ignore = "requires a GTK display and temporary XDG_CONFIG_HOME"]
+    fn native_language_selection_persists_without_changing_other_settings() {
+        let config = std::env::var("XDG_CONFIG_HOME").unwrap();
+        assert!(config.starts_with("/tmp/lyra-feedback-25-preferences-"));
+        crate::i18n::init("en_US");
+        adw::init().unwrap();
+        let settings = crate::preferences::Settings {
+            start_page: "monitor".into(),
+            notify_updates: false,
+            ..Default::default()
+        };
+        let shared = Rc::new(RefCell::new(settings));
+        let window = gtk::Window::new();
+        window.set_child(Some(&gtk::Box::new(gtk::Orientation::Vertical, 0)));
+        window.present();
+        show_preferences(&window, shared.clone());
+        while gtk::glib::MainContext::default().iteration(false) {}
+        fn find(widget: &gtk::Widget) -> Option<adw::ComboRow> {
+            if let Some(row) = widget.downcast_ref::<adw::ComboRow>()
+                && row.title() == "Vega language"
+            {
+                return Some(row.clone());
+            }
+            let mut child = widget.first_child();
+            while let Some(widget) = child {
+                if let Some(row) = find(&widget) {
+                    return Some(row);
+                }
+                child = widget.next_sibling();
+            }
+            None
+        }
+        let row = gtk::Window::list_toplevels()
+            .iter()
+            .find_map(find)
+            .expect("language selector must be in the dialog");
+        for (index, language) in [(1, "pt_BR"), (2, "en_US"), (3, "es_ES"), (0, "system")] {
+            row.set_selected(index);
+            let persisted = crate::preferences::load();
+            assert_eq!(persisted.language, language);
+            assert_eq!(shared.borrow().language, language);
+            assert_eq!(persisted.start_page, "monitor");
+            assert!(persisted.confirm_actions);
+            assert!(!persisted.notify_updates);
+        }
+        window.close();
+    }
 }

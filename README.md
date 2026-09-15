@@ -35,8 +35,11 @@ dependency is missing without preventing the other pages from working.
 
 Personalization offers Lyra, Ubuntu, GNOME Vanilla, Lyra Classic, Lyra Central,
 and Lyra Floating desktop profiles.
-Vega 5.1.35 requires Sheliak 2.0.0 or newer. Ubuntu it extends the left dock, aligns apps
-at the top, and hides the topbar menus and search. Returning to Lyra restores
+Vega requires Sheliak 2.0.0 or newer. Ubuntu extends the left dock, aligns apps
+at the top, shows GNOME's workspace button, and hides the topbar menus and search.
+Workspace button visibility is saved per profile; older Ubuntu snapshots adopt
+the visible default once without resetting the other profiles or custom layouts.
+Returning to Lyra restores
 the previous dock and menu preferences, including through GNOME Vanilla.
 Extending the dock manually in Lyra keeps its menus and search visible.
 Compact and extended docks keep separate alignment preferences.
@@ -80,25 +83,29 @@ authentication only when a privileged action is performed.
 
 ## Installing on openSUSE
 
-Vega supports openSUSE only. On openSUSE Leap 16.0, the recommended installation
+Vega GTK targets GNOME on openSUSE. On the Lyra base, openSUSE Leap 16.1, the recommended installation
 method uses the
 [`home:rodrigosbrito:vega`](https://build.opensuse.org/project/show/home:rodrigosbrito:vega)
 repository on the openSUSE Build Service:
 
 ### Add the OBS repository and install with Zypper
 
-Add the Vega repository:
+Add both repositories for the graphical interface. Sheliak supplies the Lyra
+GNOME extensions and schemas used by Vega:
 
 ```sh
 sudo zypper addrepo --refresh \
-  https://download.opensuse.org/repositories/home:/rodrigosbrito:/vega/openSUSE_Leap_16.0/ \
+  https://download.opensuse.org/repositories/home:/rodrigosbrito:/vega/openSUSE_Leap_16.1/ \
   vega-obs
+sudo zypper addrepo --refresh \
+  https://download.opensuse.org/repositories/home:/rodrigosbrito:/lyra/openSUSE_Leap_16.1/ \
+  lyra-obs
 ```
 
 Refresh its metadata and import the OBS signing key:
 
 ```sh
-sudo zypper --gpg-auto-import-keys refresh vega-obs
+sudo zypper --gpg-auto-import-keys refresh vega-obs lyra-obs
 ```
 
 Install the graphical interface, daemon, and terminal interface:
@@ -122,9 +129,13 @@ sudo zypper update
 To install only the daemon and terminal interface on a headless machine:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/lyra-os-linux/vega/main/scripts/install-obs.sh \
-  | sudo env VEGA_CLI_ONLY=1 bash
+sudo env VEGA_CLI_ONLY=1 bash scripts/install-obs.sh
 ```
+
+Run this from a reviewed checkout. The helper detects the Leap version,
+including the upstream `/usr/lib/os-release` on Lyra. Headless installation
+configures only the Vega repository. An existing alias pointing to another
+base version is rejected before package installation.
 
 Or, if the repository is already configured:
 
@@ -139,10 +150,30 @@ run `vega-gtk`. Run `vega` to start the terminal interface.
 
 Alternatively, `scripts/install.sh` downloads RPMs from the latest GitHub
 release of each component's repository (`vega`, `vegad`, `vega-cli`)
-without configuring the OBS repository. A specific tag can be selected with
+using the Lyra OBS repository for GTK runtime dependencies, including Sheliak.
+Run it from a reviewed checkout. A specific tag can be selected with
 `VEGA_VERSION=vX.Y.Z` (used against all three repos, so it only works if
 their releases share that tag); these standalone RPMs are still installed
 as unsigned packages.
+
+The GTK RPM requires the three bundled translation catalogs, `glibc-locale-base`,
+GTK/libadwaita runtime libraries, vegad, and the GNOME applications opened by
+the personalization cards. Development packages are not required to run Vega.
+Publish compatible Vega, vegad and Sheliak builds together: Vega's suite
+dependency cannot be satisfied by the older Sheliak 1.x packages.
+
+## Interface language
+
+Open **Main menu → Settings → Vega language** to select Portuguese (Brazil),
+English, Spanish, or **Follow system language**. Reopen Vega to apply the
+choice. It is saved in the user's preferences and does not change the GNOME
+system language or require administrator authentication.
+
+Automatic selection honors `LANGUAGE` (including preference lists), followed
+by `LC_ALL`, `LC_MESSAGES` and `LANG`; portable C/POSIX entries are skipped.
+Other Portuguese/Spanish/English regions use the corresponding bundled
+translation. Unsupported languages fall back to English. Installed binaries
+read their RPM catalogs from the system, independently of the source checkout.
 
 ## Uninstalling
 
@@ -230,10 +261,16 @@ Readback confirms settings, not completion of Shell rendering. Concurrent
 external changes after that read are outside this command's confirmation.
 
 `tests/profile-command.py` checks the built command against real GSettings in a
-private persistent keyfile backend. `tests/native-profiles/extension.js` can also
-run through Sheliak's `tests/native-pins/run.py --probe` with
-`VEGA_PROFILE_TEST_BINARY` pointing to the built binary, validating live Shell
-switches in its private compositor.
+private persistent keyfile backend. Pass `--suite-helper` with the current
+Sheliak helper when testing the six-extension suite. The legacy test without
+that option requires an environment without system-wide suite extensions.
+`tests/native-ubuntu-workspaces/extension.js` runs through Sheliak's
+`tests/native-pins/run.py --probe` with `LYRA_NATIVE_VEGA_BINARY` pointing to the
+built Vega binary and `LYRA_NATIVE_SUITE_HELPER` to Sheliak's
+`packaging/lyra-shell-suite.py`. It validates profile switches, panel toggling
+and clicks opening and closing the GNOME workspace overview in a private
+compositor. `tests/native-profiles/extension.js` is the older monolithic
+extension probe, using `VEGA_PROFILE_TEST_BINARY`.
 
 ### Desktop icons and Lyra Floating
 

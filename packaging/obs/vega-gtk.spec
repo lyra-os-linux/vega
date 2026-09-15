@@ -30,6 +30,12 @@ Requires:       vegad
 Requires:       secret-tool
 Requires:       python3-gobject
 Requires:       typelib-1_0-Atspi-2_0
+# Provides the en_US.UTF-8 fallback required by gettext for all three catalogs.
+Requires:       glibc-locale-base
+# These applications back the GNOME personalization cards.
+Requires:       gnome-control-center
+Requires:       gnome-tweaks
+Requires:       gnome-extensions
 Provides:       vega = %{version}-%{release}
 Obsoletes:      vega < %{version}-%{release}
 # vega-gtk se chamava lyra-vega-gtk antes do projeto deixar de ser

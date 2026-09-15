@@ -3311,3 +3311,15 @@ msgstr ""
 
 msgid "Tempo sem atividade. Zero mantém a tela ativa."
 msgstr ""
+
+#: vega-gtk/src/ui/shell.rs
+msgid "Idioma do Vega"
+msgstr ""
+
+#: vega-gtk/src/ui/shell.rs
+msgid "A alteração será aplicada ao reabrir o Vega."
+msgstr ""
+
+#: vega-gtk/src/ui/shell.rs
+msgid "Seguir o sistema"
+msgstr ""

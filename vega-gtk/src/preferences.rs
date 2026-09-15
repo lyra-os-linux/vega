@@ -8,6 +8,7 @@ use std::{
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Settings {
+    pub language: String,
     pub start_page: String,
     pub confirm_actions: bool,
     pub refresh_interval_minutes: u32,
@@ -21,6 +22,7 @@ pub struct Settings {
 impl Default for Settings {
     fn default() -> Self {
         Self {
+            language: "system".into(),
             start_page: "dashboard".into(),
             confirm_actions: true,
             refresh_interval_minutes: 5,
@@ -97,5 +99,19 @@ mod tests {
         let settings = Settings::default();
         assert_eq!(settings.start_page, "dashboard");
         assert!(settings.confirm_actions);
+        assert_eq!(settings.language, "system");
+    }
+
+    #[test]
+    fn language_is_backward_compatible_with_existing_preferences() {
+        let settings: Settings =
+            serde_json::from_str(r#"{"start_page":"software","confirm_actions":false}"#).unwrap();
+        assert_eq!(settings.language, "system");
+        assert_eq!(settings.start_page, "software");
+        assert!(!settings.confirm_actions);
+        let settings: Settings =
+            serde_json::from_str(r#"{"language":"es_ES","start_page":"monitor"}"#).unwrap();
+        assert_eq!(settings.language, "es_ES");
+        assert_eq!(settings.start_page, "monitor");
     }
 }

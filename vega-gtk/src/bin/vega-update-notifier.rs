@@ -1,6 +1,8 @@
-use gettextrs::gettext;
+#[path = "../i18n.rs"]
+mod i18n;
 use gtk::gio::prelude::*;
 use gtk::{gio, glib};
+use i18n::gettext;
 use lyra_vega_dbus::{SoftwareClient, SoftwareEvent, VegaDbus};
 use serde_json::Value;
 use std::{fs, path::PathBuf, process::Command};
@@ -8,7 +10,13 @@ use std::{fs, path::PathBuf, process::Command};
 const APPLICATION_ID: &str = "org.lyraos.Vega.UpdateNotifier";
 
 fn main() -> glib::ExitCode {
-    let _ = gettextrs::TextDomain::new("vega-gtk").init();
+    let preferences = read_preferences();
+    i18n::init(
+        preferences
+            .get("language")
+            .and_then(Value::as_str)
+            .unwrap_or("system"),
+    );
     let app = gio::Application::builder()
         .application_id(APPLICATION_ID)
         .build();
@@ -103,10 +111,16 @@ fn notification_state_path() -> PathBuf {
 }
 
 fn update_notifications_enabled() -> bool {
+    read_preferences()
+        .get("notify_updates")
+        .and_then(Value::as_bool)
+        .unwrap_or(true)
+}
+
+fn read_preferences() -> Value {
     let path = glib::user_config_dir().join("vega-gtk/preferences.json");
     fs::read_to_string(path)
         .ok()
         .and_then(|raw| serde_json::from_str::<Value>(&raw).ok())
-        .and_then(|value| value.get("notify_updates").and_then(Value::as_bool))
-        .unwrap_or(true)
+        .unwrap_or(Value::Null)
 }

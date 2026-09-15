@@ -51,6 +51,10 @@ install -Dm644 "$REPO_ROOT/packaging/vega/org.lyraos.Vega.UpdateNotifier.desktop
 install -Dm644 "$REPO_ROOT/packaging/vega/vega-update-notifier.desktop" /etc/xdg/autostart/vega-update-notifier.desktop
 install -Dm644 "$REPO_ROOT/packaging/vega/vega.svg" /usr/share/icons/hicolor/scalable/apps/vega.svg
 install -Dm644 "$REPO_ROOT/packaging/vega/icons/lyra-updates-symbolic.svg" /usr/share/icons/hicolor/symbolic/apps/lyra-updates-symbolic.svg
+for locale in en_US pt_BR es_ES; do
+  install -Dm644 "$REPO_ROOT/vega-gtk/po/locale/${locale}/LC_MESSAGES/vega-gtk.mo" \
+    "/usr/share/locale/${locale}/LC_MESSAGES/vega-gtk.mo"
+done
 
 cat <<EOF
 
