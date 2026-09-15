@@ -14,7 +14,7 @@ fn main() -> gtk::glib::ExitCode {
     if let Some(code) = profile_command::run(std::env::args().skip(1).collect()) {
         return code.into();
     }
-    i18n::init();
+    i18n::init(&preferences::load().language);
     application::run()
 }
 mod assistant;

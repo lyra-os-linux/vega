@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 # Instalador de conveniência via openSUSE Build Service (OBS): adiciona o
-# repositório home:rodrigosbrito:vega e instala os pacotes de lá — openSUSE
-# Leap 16.0. Alternativa: scripts/install.sh, que baixa RPM pré-compilado
-# direto da release do GitHub, sem precisar de repositório nenhum.
+# repositório home:rodrigosbrito:vega e, para GNOME, home:rodrigosbrito:lyra.
+# Detecta a versão da base Leap; os pacotes GTK continuam em RPM.
 #
 # Uso a partir de um checkout revisado:
 #   sudo bash scripts/install-obs.sh
@@ -16,7 +15,6 @@
 set -euo pipefail
 
 VEGA_OBS_PROJECT="home:rodrigosbrito:vega"
-VEGA_OBS_REPO_URL="https://download.opensuse.org/repositories/home:/rodrigosbrito:/vega/openSUSE_Leap_16.0/"
 VEGA_OBS_ALIAS="vega-obs"
 VEGA_CLI_ONLY="${VEGA_CLI_ONLY:-0}"
 
@@ -30,19 +28,12 @@ if ! command -v zypper >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "==> Repositório $VEGA_OBS_PROJECT (OBS)"
-if zypper lr "$VEGA_OBS_ALIAS" >/dev/null 2>&1; then
-  echo "Já configurado como '$VEGA_OBS_ALIAS', seguindo com refresh."
-else
-  echo "Adicionando como '$VEGA_OBS_ALIAS'..."
-  zypper --non-interactive addrepo "$VEGA_OBS_REPO_URL" "$VEGA_OBS_ALIAS"
+. "$(dirname "${BASH_SOURCE[0]}")/obs-repositories.sh"
+target="$(vega_obs_target)"
+vega_obs_configure vega "$target"
+if [ "$VEGA_CLI_ONLY" != "1" ]; then
+  vega_obs_configure lyra "$target"
 fi
-
-# --gpg-auto-import-keys: a Home Project do OBS não tem uma chave assinada
-# por uma CA reconhecida — sem essa flag, o primeiro refresh pararia num
-# prompt interativo pedindo pra confiar (ou não) na chave nova.
-echo "==> Confiando na chave de assinatura do OBS (se for a primeira vez) e atualizando"
-zypper --non-interactive --gpg-auto-import-keys refresh "$VEGA_OBS_ALIAS"
 
 if [ "$VEGA_CLI_ONLY" = "1" ]; then
   echo "==> VEGA_CLI_ONLY=1: instalando só vegad + vega-cli"

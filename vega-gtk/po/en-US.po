@@ -3295,3 +3295,15 @@ msgstr "Starts when the screen turns off. Zero locks immediately."
 
 msgid "Tempo sem atividade. Zero mantém a tela ativa."
 msgstr "Time without activity. Zero keeps the screen on."
+
+#: vega-gtk/src/ui/shell.rs
+msgid "Idioma do Vega"
+msgstr "Vega language"
+
+#: vega-gtk/src/ui/shell.rs
+msgid "A alteração será aplicada ao reabrir o Vega."
+msgstr "The change will take effect when you reopen Vega."
+
+#: vega-gtk/src/ui/shell.rs
+msgid "Seguir o sistema"
+msgstr "Follow system language"

@@ -717,7 +717,7 @@ mod desktop_tests {
         );
         let home = std::env::var("HOME").unwrap();
         assert!(home.starts_with("/tmp/sheliak-pins-"));
-        crate::i18n::init();
+        crate::i18n::init("system");
         adw::init().unwrap();
         let page = ScreenPage::new();
         fn find(widget: &gtk::Widget, title: &str) -> Option<adw::SwitchRow> {

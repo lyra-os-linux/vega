@@ -84,6 +84,11 @@ case "$distro_id $distro_id_like" in
     download_release_assets "lyra-os-linux/vegad"
     download_release_assets "lyra-os-linux/vega-cli"
     if [ "$VEGA_CLI_ONLY" != "1" ]; then
+      # GTK requires the matching Sheliak suite, distributed by the Lyra OBS
+      # repository. GitHub assets alone do not supply this dependency.
+      . "$(dirname "${BASH_SOURCE[0]}")/obs-repositories.sh"
+      target="$(vega_obs_target)"
+      vega_obs_configure lyra "$target"
       download_release_assets "lyra-os-linux/vega"
     fi
 

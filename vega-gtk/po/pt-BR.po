@@ -3294,3 +3294,15 @@ msgstr "Contado após a tela apagar. Zero bloqueia imediatamente."
 
 msgid "Tempo sem atividade. Zero mantém a tela ativa."
 msgstr "Tempo sem atividade. Zero mantém a tela ativa."
+
+#: vega-gtk/src/ui/shell.rs
+msgid "Idioma do Vega"
+msgstr "Idioma do Vega"
+
+#: vega-gtk/src/ui/shell.rs
+msgid "A alteração será aplicada ao reabrir o Vega."
+msgstr "A alteração será aplicada ao reabrir o Vega."
+
+#: vega-gtk/src/ui/shell.rs
+msgid "Seguir o sistema"
+msgstr "Seguir o sistema"

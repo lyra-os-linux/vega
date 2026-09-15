@@ -3295,3 +3295,15 @@ msgstr "Se cuenta desde que se apaga la pantalla. Cero bloquea inmediatamente."
 
 msgid "Tempo sem atividade. Zero mantém a tela ativa."
 msgstr "Tiempo sin actividad. Cero mantiene la pantalla encendida."
+
+#: vega-gtk/src/ui/shell.rs
+msgid "Idioma do Vega"
+msgstr "Idioma de Vega"
+
+#: vega-gtk/src/ui/shell.rs
+msgid "A alteração será aplicada ao reabrir o Vega."
+msgstr "El cambio se aplicará al volver a abrir Vega."
+
+#: vega-gtk/src/ui/shell.rs
+msgid "Seguir o sistema"
+msgstr "Seguir el idioma del sistema"
