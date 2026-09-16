@@ -21,3 +21,5 @@ src/ui/storage.rs
 src/ui/users.rs
 src/ui/wallpaper.rs
 src/wallpaper.rs
+src/nvidia.rs
+src/ui/nvidia.rs

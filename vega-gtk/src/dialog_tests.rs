@@ -69,6 +69,22 @@ fn fixture_with_network(
     calls: &Calls,
     network: Option<NetworkFixture>,
 ) -> gio::DBusConnection {
+    fixture_with_services(address, calls, network, None)
+}
+
+#[derive(Clone)]
+struct NvidiaFixture {
+    state: Rc<RefCell<String>>,
+    capable: Rc<Cell<bool>>,
+    result: Rc<Cell<u8>>,
+}
+
+fn fixture_with_services(
+    address: &str,
+    calls: &Calls,
+    network: Option<NetworkFixture>,
+    nvidia: Option<NvidiaFixture>,
+) -> gio::DBusConnection {
     assert_eq!(std::env::var("DBUS_SYSTEM_BUS_ADDRESS").unwrap(), address);
     let connection = gio::DBusConnection::for_address_sync(
         address,
@@ -125,6 +141,16 @@ fn fixture_with_network(
                 ("Remove", vec!["s", "s"], "u"),
                 ("ClearCache", vec![], "u"),
                 ("TrustRepoKey", vec!["s", "s"], "u"),
+                ("NvidiaStatus", vec![], "(bbbssssu)"),
+                ("InstallNvidia", vec!["b"], "u"),
+            ],
+        ),
+        (
+            "Metadata",
+            vec![
+                ("Profile", vec![], "s"),
+                ("Version", vec![], "s"),
+                ("Capabilities", vec![], "as"),
             ],
         ),
     ] {
@@ -143,10 +169,81 @@ fn fixture_with_network(
         let info = gio::DBusNodeInfo::for_xml(&xml).unwrap();
         let calls = calls.clone();
         let network = network.clone();
+        let nvidia = nvidia.clone();
         connection
             .register_object("/org/lyraos/Vega1", &info.interfaces()[0])
-            .method_call(move |_, _, _, _, method, parameters, invocation| {
+            .method_call(move |conn, _, _, _, method, parameters, invocation| {
                 let value = match method {
+                    "Profile" => Some(("desktop",).to_variant()),
+                    "Version" => Some(("5.1.28",).to_variant()),
+                    "Capabilities" => Some(
+                        (if nvidia.as_ref().is_some_and(|n| n.capable.get()) {
+                            vec!["nvidia-official-v1"]
+                        } else {
+                            vec![]
+                        },)
+                            .to_variant(),
+                    ),
+                    "NvidiaStatus" if nvidia.is_some() => {
+                        let state = nvidia.as_ref().unwrap().state.borrow().clone();
+                        Some(
+                            ((
+                                true,
+                                state == "active",
+                                false,
+                                "NVIDIA GTX 1650",
+                                "enabled",
+                                state,
+                                "NVIDIA 610.57.04",
+                                0u32,
+                            ),)
+                                .to_variant(),
+                        )
+                    }
+                    "InstallNvidia"
+                        if nvidia.is_some() && nvidia.as_ref().unwrap().result.get() != 0 =>
+                    {
+                        calls.borrow_mut().push((method.into(), parameters));
+                        invocation.return_value(Some(&(73u32,).to_variant()));
+                        let n = nvidia.as_ref().unwrap().clone();
+                        glib::timeout_add_local_once(Duration::from_millis(50), move || {
+                            if n.result.get() == 3 {
+                                conn.call_sync(
+                                    Some("org.freedesktop.DBus"),
+                                    "/org/freedesktop/DBus",
+                                    "org.freedesktop.DBus",
+                                    "ReleaseName",
+                                    Some(&("org.lyraos.Vega1",).to_variant()),
+                                    None,
+                                    gio::DBusCallFlags::NONE,
+                                    2000,
+                                    gio::Cancellable::NONE,
+                                )
+                                .unwrap();
+                            } else {
+                                let success = n.result.get() == 1;
+                                *n.state.borrow_mut() =
+                                    if success { "active" } else { "inconsistent" }.into();
+                                conn.emit_signal(
+                                    None,
+                                    "/org/lyraos/Vega1",
+                                    "org.lyraos.Vega1.Software",
+                                    "TransactionProgress",
+                                    Some(&(73u32, 50u32, "fixture").to_variant()),
+                                )
+                                .unwrap();
+                                conn.emit_signal(
+                                    None,
+                                    "/org/lyraos/Vega1",
+                                    "org.lyraos.Vega1.Software",
+                                    "TransactionFinished",
+                                    Some(&(73u32, success, "fixture result").to_variant()),
+                                )
+                                .unwrap();
+                            }
+                        });
+                        return;
+                    }
                     "ListConfigs" => Some(glib::Variant::parse(None, "(@a(sassss) [],)").unwrap()),
                     "Available" => Some((true,).to_variant()),
                     "ListSnapshots" => Some(glib::Variant::parse(None, "(@a(uxss) [],)").unwrap()),
@@ -680,5 +777,95 @@ fn native_ipv4_retry() {
             assert!(network.pending.borrow().is_empty());
         }
         window.destroy();
+    });
+}
+
+#[test]
+#[ignore = "requires a disposable graphical compositor and private D-Bus"]
+fn native_nvidia_flow() {
+    let Ok(address) = std::env::var("VEGA_DIALOG_TEST_BUS") else {
+        isolated_child("application::dialog_tests::native_nvidia_flow");
+        return;
+    };
+    adw::init().unwrap();
+    glib::MainContext::default().block_on(async {
+        let calls: Calls = Rc::new(RefCell::new(Vec::new()));
+        let nvidia = NvidiaFixture {
+            state: Rc::new(RefCell::new("available".into())),
+            capable: Rc::new(Cell::new(true)),
+            result: Rc::new(Cell::new(0)),
+        };
+        let _service = fixture_with_services(&address, &calls, None, Some(nvidia.clone()));
+        let dbus = VegaDbus::connect().await.unwrap();
+        let card = crate::ui::NvidiaCard::new();
+        let window = adw::ApplicationWindow::builder()
+            .content(&card.root)
+            .build();
+        window.present();
+        crate::nvidia::configure(&card, &window, dbus);
+        until("public initial status", || !card.busy.get()).await;
+        assert!(card.install.is_sensitive());
+        assert!(calls.borrow().is_empty(), "startup mutated state");
+        for optional in [true, false] {
+            crate::preferences::save(&crate::preferences::Settings {
+                confirm_actions: optional,
+                ..Default::default()
+            });
+            for close in [false, true] {
+                card.install.emit_clicked();
+                let d = dialog(&calls, 0).await;
+                assert_eq!(d.default_response().as_deref(), Some("cancel"));
+                if close {
+                    d.force_close();
+                } else {
+                    respond(&d, "cancel").await;
+                }
+                until("cancelled", || !card.busy.get()).await;
+                assert!(
+                    calls.borrow().is_empty(),
+                    "cancel reached administrative method"
+                );
+            }
+        }
+        card.install.emit_clicked();
+        respond(&dialog(&calls, 0).await, "install").await;
+        until("denied authorization", || !card.busy.get()).await;
+        assert_eq!(
+            calls.borrow()[0],
+            ("InstallNvidia".into(), (true,).to_variant())
+        );
+        assert!(card.install.is_sensitive(), "denial cannot leave UI busy");
+        calls.borrow_mut().clear();
+        for state in [
+            "conflict",
+            "inconsistent",
+            "kernel-missing",
+            "unknown-secure-boot",
+            "active",
+            "future-state",
+        ] {
+            *nvidia.state.borrow_mut() = state.into();
+            card.refresh.emit_clicked();
+            until("blocked state", || !card.busy.get()).await;
+            assert!(!card.install.is_sensitive(), "{state}");
+            assert!(calls.borrow().is_empty());
+        }
+        for result in [1u8, 2, 3] {
+            *nvidia.state.borrow_mut() = "available".into();
+            nvidia.result.set(result);
+            card.refresh.emit_clicked();
+            until("ready", || !card.busy.get()).await;
+            assert!(card.install.is_sensitive());
+            let before = calls.borrow().len();
+            card.install.emit_clicked();
+            respond(&dialog(&calls, before).await, "install").await;
+            until("transaction completed/lost owner", || !card.busy.get()).await;
+            assert!(
+                !card.install.is_sensitive(),
+                "completed/failed/unknown state must be refreshed"
+            );
+            assert_eq!(calls.borrow().len(), before + 1);
+        }
+        window.close();
     });
 }

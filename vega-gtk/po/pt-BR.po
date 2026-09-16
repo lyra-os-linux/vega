@@ -3306,3 +3306,115 @@ msgstr "A alteração será aplicada ao reabrir o Vega."
 #: vega-gtk/src/ui/shell.rs
 msgid "Seguir o sistema"
 msgstr "Seguir o sistema"
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "NVIDIA"
+msgstr "NVIDIA"
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Driver oficial NVIDIA com módulo assinado pela SUSE"
+msgstr "Driver oficial NVIDIA com módulo assinado pela SUSE"
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Instalar driver NVIDIA"
+msgstr "Instalar driver NVIDIA"
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Atualizar diagnóstico"
+msgstr "Atualizar diagnóstico"
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Secure Boot: {state}"
+msgstr "Secure Boot: {state}"
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Snapshot de recuperação: {id}"
+msgstr "Snapshot de recuperação: {id}"
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Ativar integração Lyra"
+msgstr "Ativar integração Lyra"
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Diagnóstico NVIDIA indisponível"
+msgstr "Diagnóstico NVIDIA indisponível"
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Instalando a integração NVIDIA…"
+msgstr "Instalando a integração NVIDIA…"
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "A instalação não foi concluída. Consulte os detalhes antes de reiniciar."
+msgstr "A instalação não foi concluída. Consulte os detalhes antes de reiniciar."
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Nenhuma GPU NVIDIA detectada."
+msgstr "Nenhuma GPU NVIDIA detectada."
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Esta GPU não está na lista de suporte do driver NVIDIA qualificado."
+msgstr "Esta GPU não está na lista de suporte do driver NVIDIA qualificado."
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Esta integração requer Lyra OS ou openSUSE Leap 16.1, em x86_64."
+msgstr "Esta integração requer Lyra OS ou openSUSE Leap 16.1, em x86_64."
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Não foi possível verificar o Secure Boot. A instalação está bloqueada."
+msgstr "Não foi possível verificar o Secure Boot. A instalação está bloqueada."
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Não foi possível identificar o kernel padrão. Revise a configuração de inicialização."
+msgstr "Não foi possível identificar o kernel padrão. Revise a configuração de inicialização."
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Há outro driver NVIDIA instalado. A migração precisa ser revisada antes de continuar."
+msgstr "Há outro driver NVIDIA instalado. A migração precisa ser revisada antes de continuar."
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Os pacotes NVIDIA estão incompletos ou com versões incompatíveis. Revise a instalação antes de reiniciar."
+msgstr "Os pacotes NVIDIA estão incompletos ou com versões incompatíveis. Revise a instalação antes de reiniciar."
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "O módulo NVIDIA correspondente não está disponível para o kernel em uso ou para o kernel padrão."
+msgstr "O módulo NVIDIA correspondente não está disponível para o kernel em uso ou para o kernel padrão."
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "O módulo encontrado não corresponde ao pacote assinado pela SUSE."
+msgstr "O módulo encontrado não corresponde ao pacote assinado pela SUSE."
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "O driver NVIDIA qualificado está disponível para instalação opcional."
+msgstr "O driver NVIDIA qualificado está disponível para instalação opcional."
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Driver oficial instalado. Ative a integração Lyra para manter bibliotecas e módulo em versões correspondentes."
+msgstr "Driver oficial instalado. Ative a integração Lyra para manter bibliotecas e módulo em versões correspondentes."
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Driver instalado. Reinicie para carregar o módulo e conferir o funcionamento."
+msgstr "Driver instalado. Reinicie para carregar o módulo e conferir o funcionamento."
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Driver NVIDIA ativo; bibliotecas, módulo e integração Lyra correspondem."
+msgstr "Driver NVIDIA ativo; bibliotecas, módulo e integração Lyra correspondem."
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Atualize o vegad para usar a integração NVIDIA atual."
+msgstr "Atualize o vegad para usar a integração NVIDIA atual."
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Instalar a integração NVIDIA?"
+msgstr "Instalar a integração NVIDIA?"
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "Não se aplica (BIOS)"
+msgstr "Não se aplica (BIOS)"
+
+#: src/nvidia.rs src/ui/nvidia.rs
+msgid "O Vega usará os repositórios Lyra no OBS, NVIDIA oficial e openSUSE Leap 16.1. Serão instalados apenas os RPMs qualificados, com verificação de assinaturas e módulo assinado pela SUSE.\n\nÉ necessário criar um snapshot de recuperação. O Vega não remove drivers conflitantes nem troca o kernel automaticamente. Uma falha pode exigir recuperação pelo snapshot. Reinicie somente após uma instalação concluída e verificada.\n\nA autorização de administrador será solicitada ao continuar."
+msgstr "O Vega usará os repositórios Lyra no OBS, NVIDIA oficial e openSUSE Leap 16.1. Serão instalados apenas os RPMs qualificados, com verificação de assinaturas e módulo assinado pela SUSE.\n\nÉ necessário criar um snapshot de recuperação. O Vega não remove drivers conflitantes nem troca o kernel automaticamente. Uma falha pode exigir recuperação pelo snapshot. Reinicie somente após uma instalação concluída e verificada.\n\nA autorização de administrador será solicitada ao continuar."
+
+#: src/ui/nvidia.rs
+msgid "O módulo NVIDIA está carregado, mas a GPU não respondeu corretamente ao diagnóstico."
+msgstr "O módulo NVIDIA está carregado, mas a GPU não respondeu corretamente ao diagnóstico."

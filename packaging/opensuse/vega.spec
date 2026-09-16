@@ -15,7 +15,7 @@ BuildRequires:  rust
 BuildRequires:  pkgconfig(gtk4)
 BuildRequires:  pkgconfig(libadwaita-1)
 BuildRequires:  gettext-tools
-Requires:       vegad
+Requires:       vegad >= 5.1.29
 Requires:       secret-tool
 Requires:       python3-gobject
 Requires:       typelib-1_0-Atspi-2_0

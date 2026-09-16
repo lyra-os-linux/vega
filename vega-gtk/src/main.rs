@@ -3,6 +3,7 @@ mod application;
 mod dock;
 mod i18n;
 mod model;
+mod nvidia;
 mod preferences;
 mod profile_command;
 mod screensaver;
