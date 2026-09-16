@@ -46,6 +46,15 @@ jobs:
       - name: cargo test --workspace --locked
         run: cargo test --workspace --locked
 
+      - name: Verify desktop toggle without system GSettings schemas
+        run: |
+          schema_fixture_dir="$(mktemp -d)"
+          trap 'rm -rf "$schema_fixture_dir"' EXIT
+          GSETTINGS_SCHEMA_DIR="$schema_fixture_dir" XDG_DATA_DIRS="$schema_fixture_dir" \
+            cargo test --workspace --locked \
+              dock::profile_tests::desktop_toggle_preserves_other_extensions_and_global_preference \
+              -- --exact
+
       - name: Load the matching Sheliak profile schemas
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
