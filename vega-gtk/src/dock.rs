@@ -1075,10 +1075,16 @@ mod profile_tests {
 
     #[test]
     fn desktop_toggle_preserves_other_extensions_and_global_preference() {
-        let source = gio::SettingsSchemaSource::default().unwrap();
-        let schema = source.lookup("org.gnome.shell", true).unwrap();
-        let shell =
-            gio::Settings::new_full(&schema, Some(&gio::memory_settings_backend_new()), None);
+        // This unit test must not depend on GNOME Shell being installed on the builder.
+        let shell = settings_from_xml(
+            "org.gnome.shell",
+            "/org/gnome/shell/",
+            r#"<schemalist><schema id="org.gnome.shell" path="/org/gnome/shell/">
+                <key name="enabled-extensions" type="as"><default>[]</default></key>
+                <key name="disabled-extensions" type="as"><default>[]</default></key>
+                <key name="disable-user-extensions" type="b"><default>false</default></key>
+            </schema></schemalist>"#,
+        );
         shell
             .set_strv(
                 "enabled-extensions",
@@ -1167,15 +1173,6 @@ mod profile_tests {
     }
 
     fn settings_with_cache(cache: bool) -> gio::Settings {
-        let path = std::env::temp_dir().join(format!(
-            "vega-profile-{}-{}",
-            std::process::id(),
-            std::time::SystemTime::now()
-                .duration_since(std::time::UNIX_EPOCH)
-                .unwrap()
-                .as_nanos()
-        ));
-        std::fs::create_dir(&path).unwrap();
         let mut xml = format!("<schemalist><schema id='{SCHEMA_ID}' path='{SCHEMA_PATH}'>");
         if cache {
             xml.push_str(
@@ -1214,6 +1211,19 @@ mod profile_tests {
             ));
         }
         xml.push_str("</schema></schemalist>");
+        settings_from_xml(SCHEMA_ID, SCHEMA_PATH, &xml)
+    }
+
+    fn settings_from_xml(id: &str, schema_path: &str, xml: &str) -> gio::Settings {
+        let path = std::env::temp_dir().join(format!(
+            "vega-profile-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir(&path).unwrap();
         std::fs::write(path.join("test.gschema.xml"), xml).unwrap();
         assert!(
             std::process::Command::new("glib-compile-schemas")
@@ -1223,11 +1233,11 @@ mod profile_tests {
                 .success()
         );
         let source = gio::SettingsSchemaSource::from_directory(&path, None, false).unwrap();
-        let schema = source.lookup(SCHEMA_ID, false).unwrap();
+        let schema = source.lookup(id, false).unwrap();
         let settings = gio::Settings::new_full(
             &schema,
             Some(&gio::memory_settings_backend_new()),
-            Some(SCHEMA_PATH),
+            Some(schema_path),
         );
         std::fs::remove_dir_all(path).unwrap();
         settings
