@@ -117,6 +117,7 @@ fn update_content(shell: VegaShell, window: adw::ApplicationWindow) {
         configure_backup(&shell, dbus.clone());
         configure_snapshots(&shell, dbus.clone());
         configure_kernel(&shell, dbus.clone());
+        crate::nvidia::configure(&shell.nvidia, &window, dbus.clone());
         configure_datetime(&shell, dbus.clone());
         configure_screen(&shell, dbus.clone());
         configure_storage(&shell, dbus.clone());
@@ -4082,6 +4083,7 @@ fn set_unavailable(shell: &VegaShell, message: &str) {
     shell.hardware_gpu.set_label("—");
     shell.hardware_ram.set_label("—");
     shell.hardware_firmware.set_label("—");
+    shell.nvidia.unavailable(message);
 }
 
 fn send_notification(title: &str, body: &str, id: &str) {

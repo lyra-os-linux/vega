@@ -23,6 +23,7 @@ pub struct VegaShell {
     pub hardware_gpu: gtk::Label,
     pub hardware_ram: gtk::Label,
     pub hardware_firmware: gtk::Label,
+    pub nvidia: super::NvidiaCard,
     pub software: SoftwarePage,
     pub backup: BackupPage,
     pub snapshots: SnapshotsPage,
@@ -53,6 +54,7 @@ impl VegaShell {
         let hardware_gpu = value_label(&gettext("Carregando…"));
         let hardware_ram = value_label(&gettext("Carregando…"));
         let hardware_firmware = value_label(&gettext("Carregando…"));
+        let nvidia = super::NvidiaCard::new();
         let software = SoftwarePage::new();
         let backup = BackupPage::new();
         let snapshots = SnapshotsPage::new();
@@ -143,6 +145,7 @@ impl VegaShell {
                             &hardware_gpu,
                             &hardware_ram,
                             &hardware_firmware,
+                            &nvidia,
                         ),
                     ),
                     (gettext("Kernel"), kernel.root.clone()),
@@ -304,6 +307,7 @@ impl VegaShell {
             hardware_gpu,
             hardware_ram,
             hardware_firmware,
+            nvidia,
             software,
             backup,
             snapshots,
@@ -738,6 +742,7 @@ fn hardware_page(
     gpu: &gtk::Label,
     ram: &gtk::Label,
     firmware: &gtk::Label,
+    nvidia: &super::NvidiaCard,
 ) -> gtk::Widget {
     let content = gtk::Box::builder()
         .orientation(gtk::Orientation::Vertical)
@@ -753,6 +758,7 @@ fn hardware_page(
     group.add(&property_row(&gettext("Memória"), ram));
     group.add(&property_row(&gettext("Firmware"), firmware));
     content.append(&group);
+    content.append(&nvidia.root);
     scrolled(content)
 }
 
