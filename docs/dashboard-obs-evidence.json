@@ -1,0 +1,50 @@
+{
+  "version": "5.1.40",
+  "source_commit": "99b039bc6d6f9bc62c697b9af1668434e1410fee",
+  "source_ci": 35533662810,
+  "obs_request": 1379318,
+  "request_state": "accepted",
+  "staging": {
+    "passed": true,
+    "revision": "22",
+    "srcmd5": "a1f0d2fdf43a9d0f3faaaa7981d473f1",
+    "build_srcmd5": "6f75ec3ef91075b7dd6bfe2819e9042b",
+    "commit": "99b039bc6d6f9bc62c697b9af1668434e1410fee"
+  },
+  "release": {
+    "passed": true,
+    "revision": "110",
+    "srcmd5": "1b1db225334849f2629a0cacca43fcf8",
+    "build_srcmd5": "fe541ca8df4ae4cc35393b3d6aa4aa38",
+    "commit": "99b039bc6d6f9bc62c697b9af1668434e1410fee"
+  },
+  "public": {
+    "passed": true,
+    "url": "https://download.opensuse.org/repositories/home:/rodrigosbrito:/vega/openSUSE_Leap_16.1/x86_64/vega-gtk-5.1.40-lp161.1.1.x86_64.rpm",
+    "file": "vega-gtk-5.1.40-lp161.1.1.x86_64.rpm",
+    "sha256": "1564ec93722bfd35230570679c08ba585899d38876fcf4475ca8323f2ac321ff",
+    "matches_release": true
+  },
+  "signature_key": "7edca82e",
+  "binary_sha256": "fc9d08cd15f1f93e9c25bc2333fc98f49b08124ba7dc29cd563137e666c20c93",
+  "release_binary_matches_staging": true,
+  "tests": {
+    "rust": 46,
+    "python": 12,
+    "desktop_python": 208
+  },
+  "rpm_ui_checks": [
+    "initial summary",
+    "active tab click",
+    "return from software",
+    "30 clicks coalesced into one followup",
+    "failure displayed",
+    "independent disk preserved",
+    "recovery after error"
+  ],
+  "isolated_profile_checks": 52,
+  "staging_gate": "passed Lyra20/Vega6/Fina1",
+  "release_gate": "passed Lyra20/Vega6/Fina1",
+  "iso_qualified": false,
+  "rollback_revision": 109
+}

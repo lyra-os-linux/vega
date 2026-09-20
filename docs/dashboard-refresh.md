@@ -34,5 +34,28 @@ conectar novamente, configurando as páginas uma única vez após conectar.
   regressão dos formulários e callbacks de software que compartilham o card.
 
 O CI executa os dois novos testes gráficos sob Xvfb. A fixture não modifica
-pacotes, serviços nem preferências da sessão do usuário. Publicação RPM e
-validação na candidata Alpha 8 ainda são etapas posteriores.
+pacotes, serviços nem preferências da sessão do usuário. A validação na candidata Alpha 8 permanece pendente.
+
+
+## Publicação 5.1.40 — 20/09/2026
+
+[OBS1379318](https://build.opensuse.org/request/show/1379318) aceito: staging22 e
+release110, fontes Git `99b039bc6d6f9bc62c697b9af1668434e1410fee`,
+[CI35533662810](https://github.com/lyra-os-linux/vega/actions/runs/35533662810) aprovado.
+Leap16.1 e Tumbleweed publicados. RPM público Leap
+`vega-gtk-5.1.40-lp161.1.1.x86_64.rpm`, SHA256
+`1564ec93722bfd35230570679c08ba585899d38876fcf4475ca8323f2ac321ff`.
+Assinatura7edca82e válida; download público idêntico ao RPM da API de release.
+
+O teste AT-SPI no RPM5.1.39 reproduziu a ausência de refresh ao clicar na aba
+ativa. O RPM5.1.40 passou sete verificações: abertura, clique ativo, retorno de
+Software, 30 cliques agrupados em uma repetição, erro exibido, Disco preservado
+quando Status falha e recuperação. Backend e configurações isolados. Passaram
+52 verificações do comando de perfis com os schemas da suíte. O binário da
+release é idêntico ao testado em staging. Gates completos dos canais staging e
+release passaram; rpmlint: zero erros, seis avisos de empacotamento existentes.
+
+[Comprovantes portáveis](dashboard-obs-evidence.json). O DesktopPR96 exige
+Vega>=5.1.40 na imagem. Nenhuma instalação do RPM na estação nem geração de ISO
+nesta entrega; VEGA-01 permanece pendente de qualificação da candidata exata.
+Rollback: revisão109 da release, pelo fluxo de staging e nova qualificação.
