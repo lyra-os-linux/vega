@@ -85,6 +85,18 @@ fn fixture_with_services(
     network: Option<NetworkFixture>,
     nvidia: Option<NvidiaFixture>,
 ) -> gio::DBusConnection {
+    fixture_with_updates(address, calls, network, nvidia, None)
+}
+
+type PendingUpdates = Rc<RefCell<Vec<gio::DBusMethodInvocation>>>;
+
+fn fixture_with_updates(
+    address: &str,
+    calls: &Calls,
+    network: Option<NetworkFixture>,
+    nvidia: Option<NvidiaFixture>,
+    updates: Option<PendingUpdates>,
+) -> gio::DBusConnection {
     assert_eq!(std::env::var("DBUS_SYSTEM_BUS_ADDRESS").unwrap(), address);
     let connection = gio::DBusConnection::for_address_sync(
         address,
@@ -154,6 +166,10 @@ fn fixture_with_services(
             ],
         ),
     ] {
+        let mut methods = methods;
+        if interface == "Software" && updates.is_some() {
+            methods.push(("ListUpdates", vec![], "a(ssssbss)"));
+        }
         let mut xml = format!("<node><interface name='org.lyraos.Vega1.{interface}'>");
         for (method, inputs, output) in methods {
             xml.push_str(&format!("<method name='{method}'>"));
@@ -170,10 +186,15 @@ fn fixture_with_services(
         let calls = calls.clone();
         let network = network.clone();
         let nvidia = nvidia.clone();
+        let updates = updates.clone();
         connection
             .register_object("/org/lyraos/Vega1", &info.interfaces()[0])
             .method_call(move |conn, _, _, _, method, parameters, invocation| {
                 let value = match method {
+                    "ListUpdates" if updates.is_some() => {
+                        updates.as_ref().unwrap().borrow_mut().push(invocation);
+                        return;
+                    }
                     "Profile" => Some(("desktop",).to_variant()),
                     "Version" => Some(("5.1.28",).to_variant()),
                     "Capabilities" => Some(
@@ -867,5 +888,137 @@ fn native_nvidia_flow() {
             assert_eq!(calls.borrow().len(), before + 1);
         }
         window.close();
+    });
+}
+
+#[test]
+#[ignore = "requires a graphical display and dbus-daemon; uses isolated settings and a fake daemon"]
+fn native_dashboard_refresh() {
+    let Ok(address) = std::env::var("VEGA_DIALOG_TEST_BUS") else {
+        isolated_child("application::dialog_tests::native_dashboard_refresh");
+        return;
+    };
+    adw::init().unwrap();
+    glib::MainContext::default().block_on(async {
+        let calls: Calls = Rc::default();
+        let service = fixture(&address, &calls);
+        let pending: Rc<RefCell<Vec<gio::DBusMethodInvocation>>> = Rc::default();
+        let pings = Rc::new(Cell::new(0));
+        let xml = gio::DBusNodeInfo::for_xml(r#"<node><interface name="org.lyraos.Vega1.System">
+            <method name="Ping"><arg type="b" direction="out"/></method>
+            <method name="Version"><arg type="s" direction="out"/></method>
+            <method name="Distro"><arg type="s" direction="out"/></method>
+            <method name="Logo"><arg type="s" direction="out"/></method>
+            <method name="DiskUsage"><arg type="s" direction="out"/><arg type="s" direction="out"/><arg type="u" direction="out"/></method>
+            </interface></node>"#).unwrap();
+        service.register_object("/org/lyraos/Vega1", &xml.interfaces()[0])
+            .method_call({
+                let pending = pending.clone();
+                let pings = pings.clone();
+                move |_, _, _, _, method, _, invocation| {
+                    if method == "Ping" {
+                        pings.set(pings.get() + 1);
+                        pending.borrow_mut().push(invocation);
+                        return;
+                    }
+                    let result = match method {
+                        "Version" => ("fixture",).to_variant(),
+                        "Distro" => ("Lyra test",).to_variant(),
+                        "Logo" => ("",).to_variant(),
+                        "DiskUsage" => ("10 GiB", "100 GiB", 10_u32).to_variant(),
+                        _ => unreachable!(),
+                    };
+                    invocation.return_value(Some(&result));
+                }
+            }).build().unwrap();
+        let shell = VegaShell::new();
+        let window = adw::ApplicationWindow::builder().content(&shell.root).build();
+        update_content(shell.clone(), window.clone());
+        until("first summary", || !pending.borrow().is_empty()).await;
+        for _ in 0..50 { shell.dashboard_button.emit_clicked(); }
+        glib::timeout_future(Duration::from_millis(100)).await;
+        assert_eq!(pings.get(), 1, "clicks must not start overlapping summaries");
+        pending.borrow_mut().pop().unwrap().return_value(Some(&(true,).to_variant()));
+        until("one coalesced followup", || !pending.borrow().is_empty()).await;
+        assert_eq!(pings.get(), 2);
+        pending.borrow_mut().pop().unwrap().return_dbus_error("org.lyraos.Test.Rejected", "status unavailable");
+        until("status failure", || shell.backend_status.text().contains("status unavailable")).await;
+        assert!(shell.dashboard_disk.text().contains("10%"), "status failure must not overwrite independent cards");
+        assert!(!shell.dashboard_backup.text().contains("status unavailable"));
+        glib::timeout_future(Duration::from_millis(100)).await;
+        assert_eq!(pings.get(), 2, "the burst must not leave a queue");
+        shell.stack.set_visible_child_name("software");
+        shell.dashboard_button.emit_clicked();
+        assert_eq!(shell.stack.visible_child_name().as_deref(), Some("dashboard"));
+        until("return to dashboard", || !pending.borrow().is_empty()).await;
+        pending.borrow_mut().pop().unwrap().return_value(Some(&(true,).to_variant()));
+        until("recovery", || shell.backend_status.text().contains("Lyra test")).await;
+        glib::timeout_future(Duration::from_millis(100)).await;
+        shell.dashboard_button.emit_clicked();
+        until("click already active dashboard", || !pending.borrow().is_empty()).await;
+        assert_eq!(pings.get(), 4);
+        pending.borrow_mut().pop().unwrap().return_value(Some(&(true,).to_variant()));
+        window.close();
+    });
+}
+
+#[test]
+#[ignore = "requires a graphical display and dbus-daemon; uses isolated settings and a fake daemon"]
+fn native_dashboard_updates() {
+    let Ok(address) = std::env::var("VEGA_DIALOG_TEST_BUS") else {
+        isolated_child("application::dialog_tests::native_dashboard_updates");
+        return;
+    };
+    adw::init().unwrap();
+    glib::MainContext::default().block_on(async {
+        let pending: PendingUpdates = Rc::default();
+        let service =
+            fixture_with_updates(&address, &Rc::default(), None, None, Some(pending.clone()));
+        let dbus = VegaDbus::connect().await.unwrap();
+        let card = crate::refresh::UpdatesCard::new(gtk::Label::new(None));
+        let first = {
+            let card = card.clone();
+            let dbus = dbus.clone();
+            glib::MainContext::default().spawn_local(async move {
+                refresh_dashboard_updates(&card, &dbus.software()).await;
+            })
+        };
+        until("initial updates query", || !pending.borrow().is_empty()).await;
+        for _ in 0..50 {
+            refresh_dashboard_updates(&card, &dbus.software()).await;
+        }
+        assert_eq!(pending.borrow().len(), 1);
+        pending
+            .borrow_mut()
+            .pop()
+            .unwrap()
+            .return_dbus_error("org.lyraos.Test.Rejected", "updates unavailable");
+        until("followup after failed updates query", || {
+            !pending.borrow().is_empty()
+        })
+        .await;
+        assert_eq!(pending.borrow().len(), 1);
+        pending.borrow_mut().pop().unwrap().return_value(Some(
+            &glib::Variant::parse(None, "(@a(ssssbss) [],)").unwrap(),
+        ));
+        first.await.unwrap();
+        assert_eq!(card.text(), gettext("Tudo em dia"));
+        assert!(pending.borrow().is_empty());
+        // A later request must still be accepted after the failed query and burst.
+        let next = {
+            let card = card.clone();
+            glib::MainContext::default().spawn_local(async move {
+                refresh_dashboard_updates(&card, &dbus.software()).await;
+            })
+        };
+        until("subsequent updates query", || !pending.borrow().is_empty()).await;
+        pending
+            .borrow_mut()
+            .pop()
+            .unwrap()
+            .return_dbus_error("org.lyraos.Test.Rejected", "updates unavailable");
+        next.await.unwrap();
+        assert!(card.text().contains("updates unavailable"));
+        drop(service);
     });
 }

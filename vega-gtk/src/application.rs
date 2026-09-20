@@ -100,56 +100,92 @@ fn build_window(app: &adw::Application, show_updates: bool) -> (VegaShell, adw::
 }
 
 fn update_content(shell: VegaShell, window: adw::ApplicationWindow) {
-    glib::MainContext::default().spawn_local(async move {
-        let dbus = match VegaDbus::connect().await {
-            Ok(dbus) => dbus,
-            Err(error) => {
-                set_unavailable(&shell, &error.to_string());
+    let state = Rc::new(crate::refresh::RefreshState::default());
+    let connection = Rc::new(RefCell::new(None::<VegaDbus>));
+    let request: Rc<dyn Fn()> = Rc::new({
+        let shell = shell.clone();
+        let window = window.downgrade();
+        move || {
+            if !state.request() {
                 return;
             }
-        };
-
-        // Cada página é configurada (e seu carregamento inicial disparado) de forma
-        // independente, sem esperar a cadeia sequencial do resumo do painel abaixo
-        // terminar — do contrário, navegar para outra página antes do painel concluir
-        // deixa essa página presa em "carregando" indefinidamente.
-        configure_software(&shell, &window, dbus.clone());
-        configure_backup(&shell, dbus.clone());
-        configure_snapshots(&shell, dbus.clone());
-        configure_kernel(&shell, dbus.clone());
-        crate::nvidia::configure(&shell.nvidia, &window, dbus.clone());
-        configure_datetime(&shell, dbus.clone());
-        configure_screen(&shell, dbus.clone());
-        configure_storage(&shell, dbus.clone());
-        configure_network(&shell, &window, dbus.clone());
-        configure_bluetooth(&shell, &window, dbus.clone());
-        configure_services(&shell, dbus.clone());
-        configure_users(&shell, dbus.clone());
-        configure_logs(&shell, dbus.clone());
-        configure_assistant(&shell, &window, dbus.clone());
-
-        refresh_dashboard_summary(&shell, &dbus).await;
-        schedule_dashboard_refresh(shell, dbus);
+            let shell = shell.clone();
+            let window = window.clone();
+            let state = state.clone();
+            let connection = connection.clone();
+            glib::MainContext::default().spawn_local(async move {
+                loop {
+                    let Some(window) = window.upgrade() else {
+                        break;
+                    };
+                    let existing = connection.borrow().clone();
+                    let dbus = match existing {
+                        Some(dbus) => Some(dbus),
+                        None => match VegaDbus::connect().await {
+                            Ok(dbus) => {
+                                configure_pages(&shell, &window, &dbus);
+                                connection.replace(Some(dbus.clone()));
+                                Some(dbus)
+                            }
+                            Err(error) => {
+                                set_unavailable(&shell, &error.to_string());
+                                None
+                            }
+                        },
+                    };
+                    if let Some(dbus) = dbus {
+                        refresh_dashboard_summary(&shell, &dbus).await;
+                    }
+                    if !state.finish() {
+                        break;
+                    }
+                }
+            });
+        }
     });
+    // The timer owns the callback until the window closes. A weak reference here
+    // avoids a cycle from the navigation button back to its own shell.
+    let on_click = Rc::downgrade(&request);
+    shell.dashboard_button.connect_clicked(move |_| {
+        if let Some(request) = on_click.upgrade() {
+            request();
+        }
+    });
+    request();
+    schedule_dashboard_refresh(shell, request);
 }
 
-fn schedule_dashboard_refresh(shell: VegaShell, dbus: VegaDbus) {
-    let elapsed_minutes = Rc::new(std::cell::Cell::new(0_u32));
+fn configure_pages(shell: &VegaShell, window: &adw::ApplicationWindow, dbus: &VegaDbus) {
+    // Cada página é configurada (e seu carregamento inicial disparado) de forma
+    // independente, sem esperar a cadeia sequencial do resumo do painel abaixo
+    // terminar — do contrário, navegar para outra página antes do painel concluir
+    // deixa essa página presa em "carregando" indefinidamente.
+    configure_software(shell, window, dbus.clone());
+    configure_backup(shell, dbus.clone());
+    configure_snapshots(shell, dbus.clone());
+    configure_kernel(shell, dbus.clone());
+    crate::nvidia::configure(&shell.nvidia, window, dbus.clone());
+    configure_datetime(shell, dbus.clone());
+    configure_screen(shell, dbus.clone());
+    configure_storage(shell, dbus.clone());
+    configure_network(shell, window, dbus.clone());
+    configure_bluetooth(shell, window, dbus.clone());
+    configure_services(shell, dbus.clone());
+    configure_users(shell, dbus.clone());
+    configure_logs(shell, dbus.clone());
+    configure_assistant(shell, window, dbus.clone());
+}
+
+fn schedule_dashboard_refresh(shell: VegaShell, request: Rc<dyn Fn()>) {
+    let mut elapsed_minutes = 0_u32;
     glib::timeout_add_seconds_local(60, move || {
         if shell.root.root().is_none() {
             return glib::ControlFlow::Break;
         }
-        let elapsed = elapsed_minutes.get() + 1;
-        let interval = crate::preferences::refresh_interval_minutes();
-        if elapsed >= interval {
-            elapsed_minutes.set(0);
-            let shell = shell.clone();
-            let dbus = dbus.clone();
-            glib::MainContext::default().spawn_local(async move {
-                refresh_dashboard_summary(&shell, &dbus).await;
-            });
-        } else {
-            elapsed_minutes.set(elapsed);
+        elapsed_minutes += 1;
+        if elapsed_minutes >= crate::preferences::refresh_interval_minutes() {
+            elapsed_minutes = 0;
+            request();
         }
         glib::ControlFlow::Continue
     });
@@ -174,7 +210,12 @@ async fn refresh_dashboard_summary(shell: &VegaShell, dbus: &VegaDbus) {
                         .replace("{distro}", &status.distro),
                 );
             }
-            Err(error) => set_unavailable(shell, &error.to_string()),
+            Err(error) => {
+                shell.backend_status.set_label(&error.to_string());
+                shell
+                    .dashboard_system
+                    .set_label(&gettext("Backend indisponível"));
+            }
         }
     };
 
@@ -3569,7 +3610,7 @@ fn connect_repository_toggle(page: &crate::ui::SoftwarePage, dbus: &VegaDbus) {
 fn connect_add_repo(
     page: &crate::ui::SoftwarePage,
     dbus: &VegaDbus,
-    dashboard_updates: &gtk::Label,
+    dashboard_updates: &crate::refresh::UpdatesCard,
 ) {
     let page = page.clone();
     let dbus = dbus.clone();
@@ -3615,7 +3656,7 @@ fn connect_add_repo(
 fn connect_update_package(
     page: &crate::ui::SoftwarePage,
     dbus: &VegaDbus,
-    dashboard_updates: &gtk::Label,
+    dashboard_updates: &crate::refresh::UpdatesCard,
 ) {
     let page = page.clone();
     let dbus = dbus.clone();
@@ -3668,7 +3709,7 @@ fn connect_update_package(
 fn connect_install_queue(
     page: &crate::ui::SoftwarePage,
     dbus: &VegaDbus,
-    dashboard_updates: &gtk::Label,
+    dashboard_updates: &crate::refresh::UpdatesCard,
 ) {
     let page = page.clone();
     let dbus = dbus.clone();
@@ -3797,7 +3838,7 @@ async fn monitor_add_repo_transaction(
     client: &lyra_vega_dbus::ZbusSoftwareClient,
     events: &mut lyra_vega_dbus::SoftwareEventStream,
     transaction_id: u32,
-    dashboard_updates: &gtk::Label,
+    dashboard_updates: &crate::refresh::UpdatesCard,
 ) {
     let mut pending_key: Option<RepositoryKeyInfo> = None;
     loop {
@@ -3847,7 +3888,7 @@ async fn confirm_and_trust_repo_key(
     page: &crate::ui::SoftwarePage,
     client: &lyra_vega_dbus::ZbusSoftwareClient,
     key_info: RepositoryKeyInfo,
-    dashboard_updates: &gtk::Label,
+    dashboard_updates: &crate::refresh::UpdatesCard,
 ) {
     let body = if key_info.key_id.is_empty() {
         gettext(
@@ -3928,7 +3969,7 @@ async fn monitor_software_transaction(
     client: &impl SoftwareClient,
     events: &mut lyra_vega_dbus::SoftwareEventStream,
     transaction_id: u32,
-    dashboard_updates: &gtk::Label,
+    dashboard_updates: &crate::refresh::UpdatesCard,
 ) {
     loop {
         match events.next_transaction(transaction_id).await {
@@ -3983,7 +4024,7 @@ async fn monitor_software_transaction(
 async fn refresh_current_software_page(
     page: &crate::ui::SoftwarePage,
     client: &impl SoftwareClient,
-    dashboard_updates: &gtk::Label,
+    dashboard_updates: &crate::refresh::UpdatesCard,
 ) {
     page.set_busy(true);
     if page.installed_tab.is_active() {
@@ -4029,21 +4070,34 @@ fn label_update_rows(mut packages: Vec<PackageRef>) -> Vec<PackageRef> {
     packages
 }
 
-async fn refresh_dashboard_updates(dashboard_updates: &gtk::Label, client: &impl SoftwareClient) {
-    dashboard_updates.set_label(&gettext("Verificando atualizações…"));
-    match client.list_updates().await {
-        Ok(updates) if updates.is_empty() => dashboard_updates.set_label(&gettext("Tudo em dia")),
-        Ok(updates) => dashboard_updates.set_label(
-            &gettext("{count} pacote(s) pendente(s)")
-                .replace("{count}", &updates.len().to_string()),
-        ),
-        Err(error) => dashboard_updates.set_label(&error.to_string()),
+async fn refresh_dashboard_updates(
+    dashboard_updates: &crate::refresh::UpdatesCard,
+    client: &impl SoftwareClient,
+) {
+    if !dashboard_updates.refresh.request() {
+        return;
+    }
+    loop {
+        dashboard_updates.set_label(&gettext("Verificando atualizações…"));
+        match client.list_updates().await {
+            Ok(updates) if updates.is_empty() => {
+                dashboard_updates.set_label(&gettext("Tudo em dia"))
+            }
+            Ok(updates) => dashboard_updates.set_label(
+                &gettext("{count} pacote(s) pendente(s)")
+                    .replace("{count}", &updates.len().to_string()),
+            ),
+            Err(error) => dashboard_updates.set_label(&error.to_string()),
+        }
+        if !dashboard_updates.refresh.finish() {
+            break;
+        }
     }
 }
 
 /// Escuta o sinal `UpdatesAvailable` emitido pela checagem periódica em segundo
 /// plano do vegad e atualiza o resumo do painel quando novos pacotes surgirem.
-fn watch_dashboard_updates(dashboard_updates: gtk::Label) {
+fn watch_dashboard_updates(dashboard_updates: crate::refresh::UpdatesCard) {
     glib::MainContext::default().spawn_local(async move {
         loop {
             if let Ok(dbus) = VegaDbus::connect().await {
@@ -4056,10 +4110,7 @@ fn watch_dashboard_updates(dashboard_updates: gtk::Label) {
                                 refresh_dashboard_updates(&dashboard_updates, &client).await;
                             }
                             Ok(_) => {}
-                            Err(error) => {
-                                dashboard_updates.set_label(&error.to_string());
-                                break;
-                            }
+                            Err(_) => break,
                         }
                     }
                 }

@@ -12,9 +12,10 @@ use super::{
 pub struct VegaShell {
     pub root: gtk::Box,
     pub stack: gtk::Stack,
+    pub dashboard_button: gtk::ToggleButton,
     pub backend_status: gtk::Label,
     pub dashboard_system: gtk::Label,
-    pub dashboard_updates: gtk::Label,
+    pub dashboard_updates: crate::refresh::UpdatesCard,
     pub dashboard_backup: gtk::Label,
     pub dashboard_snapshots: gtk::Label,
     pub dashboard_services: gtk::Label,
@@ -45,7 +46,8 @@ impl VegaShell {
         let preferences = Rc::new(RefCell::new(crate::preferences::load()));
         let backend_status = status_label(&gettext("Conectando ao vegad…"));
         let dashboard_system = status_label(&gettext("Carregando informações do sistema…"));
-        let dashboard_updates = status_label(&gettext("Carregando…"));
+        let dashboard_updates =
+            crate::refresh::UpdatesCard::new(status_label(&gettext("Carregando…")));
         let dashboard_backup = status_label(&gettext("Carregando…"));
         let dashboard_snapshots = status_label(&gettext("Carregando…"));
         let dashboard_services = status_label(&gettext("Carregando…"));
@@ -238,6 +240,12 @@ impl VegaShell {
             &mut searchable,
             &mut nav_group,
         );
+        let dashboard_button = searchable
+            .iter()
+            .find(|(_, target, _, _)| target == "dashboard")
+            .expect("dashboard navigation button")
+            .2
+            .clone();
         let start_page = preferences.borrow().start_page.clone();
         if let Some((_, target, button, _)) = searchable
             .iter()
@@ -296,6 +304,7 @@ impl VegaShell {
         Self {
             root,
             stack,
+            dashboard_button,
             backend_status,
             dashboard_system,
             dashboard_updates,
