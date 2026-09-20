@@ -6,6 +6,7 @@ mod model;
 mod nvidia;
 mod preferences;
 mod profile_command;
+mod refresh;
 mod screensaver;
 mod tweaks;
 mod ui;
