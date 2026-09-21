@@ -25,10 +25,26 @@ thread_local! {
 pub fn run() -> glib::ExitCode {
     let app = adw::Application::builder()
         .application_id(APPLICATION_ID)
+        .flags(gio::ApplicationFlags::HANDLES_COMMAND_LINE)
         .build();
+    app.add_main_option(
+        "virtual-machines",
+        glib::Char::from(0),
+        glib::OptionFlags::NONE,
+        glib::OptionArg::None,
+        "Open virtual machines",
+        None,
+    );
     let current_window: Rc<RefCell<Option<(VegaShell, adw::ApplicationWindow)>>> =
         Rc::new(RefCell::new(None));
     let open_updates = Rc::new(Cell::new(false));
+    let open_vms = Rc::new(Cell::new(false));
+    let request_vms = open_vms.clone();
+    app.connect_command_line(move |app, command| {
+        request_vms.set(command.options_dict().contains("virtual-machines"));
+        app.activate();
+        glib::ExitCode::SUCCESS
+    });
 
     let action = gio::SimpleAction::new("open-updates", None);
     let action_app = app.clone();
@@ -49,6 +65,9 @@ pub fn run() -> glib::ExitCode {
                 shell.stack.set_visible_child_name("software");
                 shell.software.select_updates();
             }
+            if open_vms.replace(false) {
+                shell.stack.set_visible_child_name("virtualization");
+            }
             window.present();
             return;
         }
@@ -56,6 +75,9 @@ pub fn run() -> glib::ExitCode {
             || std::env::var_os("VEGA_START_PAGE").as_deref()
                 == Some(std::ffi::OsStr::new("software"));
         let window = build_window(app, show_updates);
+        if open_vms.replace(false) {
+            window.0.stack.set_visible_child_name("virtualization");
+        }
         *activate_window.borrow_mut() = Some(window);
         if std::env::var_os("VEGA_BENCHMARK_MARKER").is_some() {
             eprintln!("VEGA_WINDOW_READY_MS={}", started.elapsed().as_millis());

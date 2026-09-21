@@ -14,6 +14,7 @@ BuildRequires:  cargo
 BuildRequires:  rust
 BuildRequires:  pkgconfig(gtk4)
 BuildRequires:  pkgconfig(libadwaita-1)
+BuildRequires:  pkgconfig(libvirt)
 BuildRequires:  gettext-tools
 Requires:       vegad >= 5.1.29
 Requires:       secret-tool

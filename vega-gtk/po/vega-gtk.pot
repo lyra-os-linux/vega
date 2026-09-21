@@ -3435,3 +3435,163 @@ msgstr ""
 #: src/ui/nvidia.rs
 msgid "O módulo NVIDIA está carregado, mas a GPU não respondeu corretamente ao diagnóstico."
 msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "A operação foi interrompida."
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Abrir tela"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Buscar máquina virtual"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Buscar máquina virtual…"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "CPUs virtuais"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Cancelar criação"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Carregando máquinas virtuais…"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Conexão das máquinas virtuais"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Confirmar"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Criando disco e copiando a mídia… A máquina ficará desligada ao concluir."
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Desligada"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Disco (GiB)"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Em execução"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Executando operação…"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Forçar parada"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Gerencie aqui e abra a tela da máquina no Lyra VMs. Fechar a janela mantém a máquina em execução."
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Indisponível ou em transição"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Instalação por ISO, com BIOS e rede compartilhada. Uma cópia da mídia e o disco ficarão na pasta de dados do Lyra VMs."
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Interromper imediatamente? Dados não salvos podem ser perdidos."
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Memória (MiB)"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Máquinas virtuais"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Nenhuma máquina corresponde à busca."
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Nenhuma máquina nesta conexão."
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Nome da máquina"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Nova máquina"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Nova máquina pessoal"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Não foi possível abrir o Lyra VMs. Confira se o pacote está instalado."
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Não foi possível acessar as máquinas virtuais. Confira o serviço libvirt e tente novamente."
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Pausada"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Pausar"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Pessoais"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Remover a definição desta máquina? Os discos serão preservados."
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Remover máquina"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Retomar"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Selecionar ISO"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Selecionar ISO…"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Selecione uma ISO antes de criar a máquina."
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Solicitar que o sistema convidado desligue?"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "CPU e memória"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "CPU e memória serão alteradas com a máquina desligada."
+msgstr ""

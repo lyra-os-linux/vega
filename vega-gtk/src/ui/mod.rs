@@ -19,6 +19,7 @@ mod software;
 mod sparkline;
 mod storage;
 mod users;
+mod virtualization;
 
 pub use assistant::AssistantPage;
 pub use backup::BackupPage;

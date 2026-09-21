@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["vega-gtk"]
+members = ["vega-gtk", "vega-virtualization"]
 
 [workspace.package]
 version = "5.1.40"

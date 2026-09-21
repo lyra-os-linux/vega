@@ -74,6 +74,7 @@ impl VegaShell {
         );
         let screen = ScreenPage::new();
         let monitor = MonitorPage::new();
+        let virtualization = super::virtualization::VirtualizationPage::new();
 
         let stack = gtk::Stack::builder()
             .transition_type(gtk::StackTransitionType::Crossfade)
@@ -101,6 +102,11 @@ impl VegaShell {
             &gettext("Painel"),
         );
         stack.add_titled(&storage.root, Some("storage"), &gettext("Armazenamento"));
+        stack.add_titled(
+            &virtualization.root,
+            Some("virtualization"),
+            &gettext("Máquinas virtuais"),
+        );
         stack.add_titled(&network.root, Some("network"), &gettext("Rede e Firewall"));
         stack.add_titled(&bluetooth.root, Some("desktop"), &gettext("Bluetooth"));
         stack.add_titled(&services.root, Some("services"), &gettext("Serviços"));
@@ -187,6 +193,11 @@ impl VegaShell {
                     "system-software-install-symbolic",
                 ),
                 (gettext("Backup"), "backup", "document-save-symbolic"),
+                (
+                    gettext("Máquinas virtuais"),
+                    "virtualization",
+                    "computer-symbolic",
+                ),
                 (
                     gettext("Assistente de IA"),
                     "assistant",

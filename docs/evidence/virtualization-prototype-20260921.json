@@ -1,0 +1,33 @@
+{
+  "date": "2026-09-21",
+  "status": "component-prototype-only",
+  "issue": "https://github.com/lyra-os-linux/vega/issues/148",
+  "qemu_guest_marker": "lyra.virtualization-test=1",
+  "user": "installeduser (unprivileged, qemu:///session)",
+  "result": {
+    "id": "d653c16a7fb645f89f27f2b61706da8c",
+    "rc": 0,
+    "stdout": "CREATED 2c408db4-b0c6-44eb-9908-1d8020040333\nPASS: cancellation, create, duplicate refusal, KVM start, pause/resume, force-stop, removal, source and disk preservation\n",
+    "stderr": ""
+  },
+  "checks": [
+    "early cancellation creates no domain",
+    "create personal machine",
+    "duplicate name rejected",
+    "edit stopped CPU/RAM and read back",
+    "resource edit rejected when running",
+    "KVM start",
+    "remove running machine rejected",
+    "pause/resume",
+    "force stop",
+    "remove definition",
+    "original media preserved",
+    "disk and copied media preserved"
+  ],
+  "limitations": [
+    "Nonbootable fixture media, not an OS installation",
+    "No graphical console qualification",
+    "No mid-transfer cancellation or rollback fault injection",
+    "No exact candidate ISO qualification"
+  ]
+}
