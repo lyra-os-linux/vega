@@ -72,6 +72,35 @@ impl Backend {
                 }
             }
         }
+        // A detached clone can still depend on this disk as its backing file.
+        for pool in self.conn.list_all_storage_pools(0).map_err(error)? {
+            if !pool.is_active().map_err(error)? {
+                continue;
+            }
+            for volume in pool.list_all_volumes(0).map_err(error)? {
+                let xml = volume.get_xml_desc(0).map_err(error)?;
+                let doc = roxmltree::Document::parse(&xml).map_err(|e| e.to_string())?;
+                for n in doc.descendants().filter(|n| n.has_tag_name("backingStore")) {
+                    for p in n
+                        .children()
+                        .filter(|n| n.has_tag_name("path"))
+                        .filter_map(|n| n.text())
+                    {
+                        if p == path {
+                            return Ok(true);
+                        }
+                        match std::fs::metadata(p) {
+                            Ok(m) if (m.dev(), m.ino()) == (target.dev(), target.ino()) => {
+                                return Ok(true);
+                            }
+                            Ok(_) => {}
+                            Err(e) if e.kind() == std::io::ErrorKind::NotFound => {}
+                            Err(e) => return Err(e.to_string()),
+                        }
+                    }
+                }
+            }
+        }
         Ok(false)
     }
     pub fn removal_plan(&self, uuid: &str) -> Result<RemovalPlan> {

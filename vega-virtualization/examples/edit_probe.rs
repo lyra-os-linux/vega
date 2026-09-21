@@ -67,6 +67,13 @@ fn main() -> Result<(), String> {
     assert!(b.grow_disk(&id, &disk.target, 6 << 30).is_err());
     assert!(!b.removal_plan(&id)?.files.contains(&disk.path));
     b.act(&peer, Action::Remove)?;
+    let volume = virt::storage_vol::StorageVol::lookup_by_path(&conn, &disk.path).unwrap();
+    let pool = virt::storage_pool::StoragePool::lookup_by_volume(&volume).unwrap();
+    let overlay=virt::storage_vol::StorageVol::create_xml(&pool,&format!("<volume><name>{id}-clone.qcow2</name><capacity unit='GiB'>5</capacity><target><format type='qcow2'/></target><backingStore><path>{}</path><format type='qcow2'/></backingStore></volume>",disk.path),0).unwrap();
+    assert!(b.grow_disk(&id, &disk.target, 6 << 30).is_err());
+    assert!(!b.removal_plan(&id)?.files.contains(&disk.path));
+    overlay.delete(0).unwrap();
+
     b.act(&id, Action::Start)?;
     assert!(b.rename(&id, "Running rename").is_err());
     assert!(b.grow_disk(&id, &disk.target, 6 << 30).is_err());
