@@ -4,6 +4,10 @@ use std::path::{Path, PathBuf};
 use virt::{connect::Connect, domain::Domain};
 mod create;
 pub use create::CreateRequest;
+mod media;
+pub use media::{Firmware, MediaKind};
+mod shortcut;
+pub use shortcut::create_shortcut;
 
 pub type Result<T> = std::result::Result<T, String>;
 
@@ -152,9 +156,21 @@ impl Backend {
             Action::Pause => domain.suspend().map(|_| ()).map_err(error),
             Action::Resume => domain.resume().map(|_| ()).map_err(error),
             Action::ForceStop => domain.destroy().map_err(error),
-            // No flags: libvirt refuses removal with saved state/snapshots/NVRAM
-            // requiring special treatment. Never delete disks or firmware here.
-            Action::Remove => domain.undefine().map_err(error),
+            // Preserve NVRAM explicitly. Saved state/snapshots still require
+            // special treatment; never delete disks or firmware here.
+            Action::Remove => {
+                let xml = domain
+                    .get_xml_desc(virt::sys::VIR_DOMAIN_XML_INACTIVE)
+                    .map_err(error)?;
+                let doc = roxmltree::Document::parse(&xml).map_err(|e| e.to_string())?;
+                if doc.descendants().any(|n| n.has_tag_name("nvram")) {
+                    domain
+                        .undefine_flags(virt::sys::VIR_DOMAIN_UNDEFINE_KEEP_NVRAM)
+                        .map_err(error)
+                } else {
+                    domain.undefine().map_err(error)
+                }
+            }
         }
     }
 }

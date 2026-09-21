@@ -3595,3 +3595,159 @@ msgstr ""
 #: src/ui/virtualization.rs
 msgid "CPU e memória serão alteradas com a máquina desligada."
 msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "HOME must be an absolute path"
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "Shut down the persistent machine and discard any saved state before editing resources."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "The requested CPU or memory exceeds this host's capacity."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "The machine state changed. Refresh and try again."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "This machine has an advanced CPU or memory layout. Edit it in virt-manager."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "This machine has custom CPU placement. Edit it in virt-manager."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "The machine definition has no editable CPU/memory fields."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "Enter a machine name (1–128 bytes, no control characters)."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "CPU, memory or disk size is outside the supported range."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "Select an absolute media path."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "Create personal machines in the personal connection."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "A machine with this name already exists."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "The installation media must be a nonempty regular file."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "Creation cancelled."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "HOME is not set"
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "The storage path must be UTF-8"
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "The existing lyra-vms storage pool uses another path. It was not changed."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "The installation media changed while copying."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "The source media changed while copying."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "Media transfer stopped unexpectedly."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "The source media changed while copying. Shut down its machine before importing."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "Select a valid QCOW2 disk, or choose the RAW format explicitly."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "Unsupported QCOW2 header or virtual disk size."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "Import requires a standalone, unencrypted QCOW2 disk without backing files or internal snapshots."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "QCOW2 features require conversion to a clean standalone image before import."
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Instale por ISO ou importe uma cópia de um disco. Para importar, desligue a máquina de origem. Os arquivos originais serão preservados."
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Instalar por ISO"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Importar QCOW2"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Importar RAW"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Origem da máquina"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Selecionar arquivo…"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Selecionar arquivo"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Selecione a mídia antes de criar a máquina."
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Remover a definição desta máquina? Os discos e dados do firmware serão preservados."
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Atalho da tela"
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Adiciona a tela ao menu de aplicativos. Se a máquina estiver desligada, o console aguardará o início pelo Vega."
+msgstr ""
+
+#: src/ui/virtualization.rs
+msgid "Atalho criado no menu de aplicativos."
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "Invalid data directory"
+msgstr ""
+
+#: src/virtualization_messages.rs
+msgid "A shortcut for this machine already exists."
+msgstr ""

@@ -24,3 +24,4 @@ src/wallpaper.rs
 src/nvidia.rs
 src/ui/nvidia.rs
 src/ui/virtualization.rs
+src/virtualization_messages.rs

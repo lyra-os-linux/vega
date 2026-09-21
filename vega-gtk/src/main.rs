@@ -10,6 +10,7 @@ mod refresh;
 mod screensaver;
 mod tweaks;
 mod ui;
+mod virtualization_messages;
 
 fn main() -> gtk::glib::ExitCode {
     // Handle the local profile contract before GTK/GApplication or session UI.

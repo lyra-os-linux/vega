@@ -1,0 +1,23 @@
+{
+  "id": "515527ffc6c047c4b0efe5e3456df56f",
+  "rc": 0,
+  "stderr": "",
+  "validation": {
+    "uuid": "7f3b9a7c-e344-40d8-abc9-d6e5cb3a5147",
+    "fullscreen_geometry": "WINDOW=2097160\nX=0\nY=0\nWIDTH=1280\nHEIGHT=800\nSCREEN=0",
+    "viewer_exit": 0,
+    "running_after_close": true,
+    "reconnect_process_survived": true,
+    "keyboard": "PASS: LYRA_CONSOLE_KEYBOARD_OK visually confirmed in guest framebuffer",
+    "display": "Xvfb 1280x800, Openbox, virt-viewer 11.0"
+  },
+  "limitations": [
+    "BIOS boot-sector fixture, not a guest OS installation",
+    "X11/Xvfb test; candidate GNOME/Wayland still pending"
+  ],
+  "screenshots": {
+    "console-keyboard.png": "0f0efedf87df836a84d74bce789d66747fdb4b0655392f1cc7dc10adfc21339a",
+    "console-fullscreen.png": "9896573ca237da9887a520122a38026054e12c50b4ff67812489ce3e4f93c071",
+    "console-reconnect.png": "3234d0b1a5e58776328db301f2c646e33e7d5d9469e442a010ba0df93b1492e4"
+  }
+}

@@ -3579,3 +3579,159 @@ msgstr "CPU and memory"
 #: src/ui/virtualization.rs
 msgid "CPU e memória serão alteradas com a máquina desligada."
 msgstr "CPU and memory will be changed while the machine is powered off."
+
+#: src/virtualization_messages.rs
+msgid "HOME must be an absolute path"
+msgstr "HOME must be an absolute path"
+
+#: src/virtualization_messages.rs
+msgid "Shut down the persistent machine and discard any saved state before editing resources."
+msgstr "Shut down the persistent machine and discard any saved state before editing resources."
+
+#: src/virtualization_messages.rs
+msgid "The requested CPU or memory exceeds this host's capacity."
+msgstr "The requested CPU or memory exceeds this host's capacity."
+
+#: src/virtualization_messages.rs
+msgid "The machine state changed. Refresh and try again."
+msgstr "The machine state changed. Refresh and try again."
+
+#: src/virtualization_messages.rs
+msgid "This machine has an advanced CPU or memory layout. Edit it in virt-manager."
+msgstr "This machine has an advanced CPU or memory layout. Edit it in virt-manager."
+
+#: src/virtualization_messages.rs
+msgid "This machine has custom CPU placement. Edit it in virt-manager."
+msgstr "This machine has custom CPU placement. Edit it in virt-manager."
+
+#: src/virtualization_messages.rs
+msgid "The machine definition has no editable CPU/memory fields."
+msgstr "The machine definition has no editable CPU/memory fields."
+
+#: src/virtualization_messages.rs
+msgid "Enter a machine name (1–128 bytes, no control characters)."
+msgstr "Enter a machine name (1–128 bytes, no control characters)."
+
+#: src/virtualization_messages.rs
+msgid "CPU, memory or disk size is outside the supported range."
+msgstr "CPU, memory or disk size is outside the supported range."
+
+#: src/virtualization_messages.rs
+msgid "Select an absolute media path."
+msgstr "Select an absolute media path."
+
+#: src/virtualization_messages.rs
+msgid "Create personal machines in the personal connection."
+msgstr "Create personal machines in the personal connection."
+
+#: src/virtualization_messages.rs
+msgid "A machine with this name already exists."
+msgstr "A machine with this name already exists."
+
+#: src/virtualization_messages.rs
+msgid "The installation media must be a nonempty regular file."
+msgstr "The installation media must be a nonempty regular file."
+
+#: src/virtualization_messages.rs
+msgid "Creation cancelled."
+msgstr "Creation cancelled."
+
+#: src/virtualization_messages.rs
+msgid "HOME is not set"
+msgstr "HOME is not set"
+
+#: src/virtualization_messages.rs
+msgid "The storage path must be UTF-8"
+msgstr "The storage path must be UTF-8"
+
+#: src/virtualization_messages.rs
+msgid "The existing lyra-vms storage pool uses another path. It was not changed."
+msgstr "The existing lyra-vms storage pool uses another path. It was not changed."
+
+#: src/virtualization_messages.rs
+msgid "The installation media changed while copying."
+msgstr "The installation media changed while copying."
+
+#: src/virtualization_messages.rs
+msgid "The source media changed while copying."
+msgstr "The source media changed while copying."
+
+#: src/virtualization_messages.rs
+msgid "Media transfer stopped unexpectedly."
+msgstr "Media transfer stopped unexpectedly."
+
+#: src/virtualization_messages.rs
+msgid "The source media changed while copying. Shut down its machine before importing."
+msgstr "The source media changed while copying. Shut down its machine before importing."
+
+#: src/virtualization_messages.rs
+msgid "Select a valid QCOW2 disk, or choose the RAW format explicitly."
+msgstr "Select a valid QCOW2 disk, or choose the RAW format explicitly."
+
+#: src/virtualization_messages.rs
+msgid "Unsupported QCOW2 header or virtual disk size."
+msgstr "Unsupported QCOW2 header or virtual disk size."
+
+#: src/virtualization_messages.rs
+msgid "Import requires a standalone, unencrypted QCOW2 disk without backing files or internal snapshots."
+msgstr "Import requires a standalone, unencrypted QCOW2 disk without backing files or internal snapshots."
+
+#: src/virtualization_messages.rs
+msgid "QCOW2 features require conversion to a clean standalone image before import."
+msgstr "QCOW2 features require conversion to a clean standalone image before import."
+
+#: src/ui/virtualization.rs
+msgid "Instale por ISO ou importe uma cópia de um disco. Para importar, desligue a máquina de origem. Os arquivos originais serão preservados."
+msgstr "Install from an ISO or import a copy of a disk. Shut down the source machine before importing. Original files will be preserved."
+
+#: src/ui/virtualization.rs
+msgid "Instalar por ISO"
+msgstr "Install from ISO"
+
+#: src/ui/virtualization.rs
+msgid "Importar QCOW2"
+msgstr "Import QCOW2"
+
+#: src/ui/virtualization.rs
+msgid "Importar RAW"
+msgstr "Import RAW"
+
+#: src/ui/virtualization.rs
+msgid "Origem da máquina"
+msgstr "Machine source"
+
+#: src/ui/virtualization.rs
+msgid "Selecionar arquivo…"
+msgstr "Select file…"
+
+#: src/ui/virtualization.rs
+msgid "Selecionar arquivo"
+msgstr "Select file"
+
+#: src/ui/virtualization.rs
+msgid "Selecione a mídia antes de criar a máquina."
+msgstr "Select the media before creating the machine."
+
+#: src/ui/virtualization.rs
+msgid "Remover a definição desta máquina? Os discos e dados do firmware serão preservados."
+msgstr "Remove this machine definition? Disks and firmware data will be preserved."
+
+#: src/ui/virtualization.rs
+msgid "Atalho da tela"
+msgstr "Display shortcut"
+
+#: src/ui/virtualization.rs
+msgid "Adiciona a tela ao menu de aplicativos. Se a máquina estiver desligada, o console aguardará o início pelo Vega."
+msgstr "Adds the display to the application menu. If the machine is off, the console waits for it to be started in Vega."
+
+#: src/ui/virtualization.rs
+msgid "Atalho criado no menu de aplicativos."
+msgstr "Shortcut created in the application menu."
+
+#: src/virtualization_messages.rs
+msgid "Invalid data directory"
+msgstr "Invalid data directory"
+
+#: src/virtualization_messages.rs
+msgid "A shortcut for this machine already exists."
+msgstr "A shortcut for this machine already exists."

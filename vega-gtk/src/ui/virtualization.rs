@@ -6,10 +6,12 @@ use std::{
     rc::Rc,
     sync::{
         Arc,
-        atomic::{AtomicBool, Ordering},
+        atomic::{AtomicBool, AtomicU64, Ordering},
     },
 };
-use vega_virtualization::{Action, Backend, Connection, CreateRequest, Machine, State};
+use vega_virtualization::{
+    Action, Backend, Connection, CreateRequest, Firmware, Machine, MediaKind, State,
+};
 
 #[derive(Clone)]
 pub struct VirtualizationPage {
@@ -20,6 +22,7 @@ pub struct VirtualizationPage {
     create: gtk::Button,
     cancel: gtk::Button,
     status: gtk::Label,
+    progress: gtk::ProgressBar,
     list: gtk::ListBox,
     busy: Rc<Cell<bool>>,
     poll_enabled: Rc<Cell<bool>>,
@@ -75,6 +78,10 @@ impl VirtualizationPage {
             .selectable(true)
             .build();
         body.append(&status);
+        let progress = gtk::ProgressBar::new();
+        progress.set_visible(false);
+        progress.set_show_text(true);
+        body.append(&progress);
         let list = gtk::ListBox::new();
         list.set_selection_mode(gtk::SelectionMode::None);
         list.add_css_class("boxed-list");
@@ -92,6 +99,7 @@ impl VirtualizationPage {
             cancel,
             search,
             status,
+            progress,
             list,
             busy: Rc::new(Cell::new(false)),
             poll_enabled: Rc::new(Cell::new(true)),
@@ -181,7 +189,8 @@ impl VirtualizationPage {
 
     fn operation_failed(&self, error: &str) {
         self.poll_enabled.set(false);
-        self.status.set_label(error);
+        self.status
+            .set_label(&crate::virtualization_messages::translate(error));
     }
 
     fn failed(&self, error: &str) {
@@ -254,6 +263,12 @@ impl VirtualizationPage {
                 }
             });
             actions.insert(&console, -1);
+            let shortcut = gtk::Button::with_label(&gettext("Atalho da tela"));
+            shortcut.set_tooltip_text(Some(&gettext("Adiciona a tela ao menu de aplicativos. Se a máquina estiver desligada, o console aguardará o início pelo Vega.")));
+            let page = self.clone();
+            let machine_for_shortcut = machine.clone();
+            shortcut.connect_clicked(move |_| page.create_shortcut(&machine_for_shortcut));
+            actions.insert(&shortcut, -1);
             if machine.state == State::Off && machine.persistent {
                 let configure = gtk::Button::with_label(&gettext("CPU e memória"));
                 let page = self.clone();
@@ -309,9 +324,9 @@ impl VirtualizationPage {
             return;
         }
         let message = match action {
-            Action::Remove => {
-                gettext("Remover a definição desta máquina? Os discos serão preservados.")
-            }
+            Action::Remove => gettext(
+                "Remover a definição desta máquina? Os discos e dados do firmware serão preservados.",
+            ),
             Action::ForceStop => {
                 gettext("Interromper imediatamente? Dados não salvos podem ser perdidos.")
             }
@@ -364,12 +379,44 @@ impl VirtualizationPage {
         });
     }
 
+    fn create_shortcut(&self, machine: &Machine) {
+        if self.busy.get() {
+            return;
+        }
+        let connection = self.selected_connection();
+        let machine = machine.clone();
+        let page = self.clone();
+        self.set_busy(true);
+        glib::spawn_future_local(async move {
+            let result = gio::spawn_blocking(move || {
+                let home = std::env::var_os("HOME").ok_or("HOME is not set")?;
+                let xdg = std::env::var_os("XDG_DATA_HOME").map(std::path::PathBuf::from);
+                vega_virtualization::create_shortcut(
+                    connection,
+                    &machine.uuid,
+                    &machine.name,
+                    xdg.as_deref(),
+                    &std::path::PathBuf::from(home),
+                )
+            })
+            .await;
+            page.set_busy(false);
+            match result {
+                Ok(Ok(_)) => page
+                    .status
+                    .set_label(&gettext("Atalho criado no menu de aplicativos.")),
+                Ok(Err(error)) => page.operation_failed(&error),
+                Err(_) => page.operation_failed(&gettext("A operação foi interrompida.")),
+            }
+        });
+    }
+
     fn create_dialog(&self) {
         if self.busy.get() || self.selected_connection() != Connection::Personal {
             return;
         }
         let dialog = adw::AlertDialog::builder().heading(gettext("Nova máquina pessoal"))
-            .body(gettext("Instalação por ISO, com BIOS e rede compartilhada. Uma cópia da mídia e o disco ficarão na pasta de dados do Lyra VMs."))
+            .body(gettext("Instale por ISO ou importe uma cópia de um disco. Para importar, desligue a máquina de origem. Os arquivos originais serão preservados."))
             .build();
         let form = gtk::Box::new(gtk::Orientation::Vertical, 8);
         let name = gtk::Entry::builder()
@@ -379,6 +426,26 @@ impl VirtualizationPage {
             "Nome da máquina",
         ))]);
         form.append(&name);
+        let kind = gtk::DropDown::from_strings(&[
+            &gettext("Instalar por ISO"),
+            &gettext("Importar QCOW2"),
+            &gettext("Importar RAW"),
+        ]);
+        kind.update_property(&[gtk::accessible::Property::Label(&gettext(
+            "Origem da máquina",
+        ))]);
+        let row = adw::ActionRow::builder()
+            .title(gettext("Origem da máquina"))
+            .build();
+        kind.set_valign(gtk::Align::Center);
+        row.add_suffix(&kind);
+        form.append(&row);
+        let firmware = gtk::DropDown::from_strings(&["BIOS", "UEFI"]);
+        firmware.update_property(&[gtk::accessible::Property::Label(&gettext("Firmware"))]);
+        let row = adw::ActionRow::builder().title(gettext("Firmware")).build();
+        firmware.set_valign(gtk::Align::Center);
+        row.add_suffix(&firmware);
+        form.append(&row);
         let cpu = gtk::SpinButton::with_range(1.0, 64.0, 1.0);
         cpu.set_value(2.0);
         let ram = gtk::SpinButton::with_range(512.0, 262144.0, 512.0);
@@ -396,13 +463,21 @@ impl VirtualizationPage {
             row.add_suffix(control);
             form.append(&row);
         }
-        let media = gtk::Button::with_label(&gettext("Selecionar ISO…"));
+        let media = gtk::Button::with_label(&gettext("Selecionar arquivo…"));
         let path = Rc::new(RefCell::new(None));
         let selected = path.clone();
+        let import_disk = disk.clone();
+        let selected_path = path.clone();
+        let media_button = media.clone();
+        kind.connect_selected_notify(move |kind| {
+            import_disk.set_sensitive(kind.selected() == 0);
+            *selected_path.borrow_mut() = None;
+            media_button.set_label(&gettext("Selecionar arquivo…"));
+        });
         let root = self.root.clone();
         media.connect_clicked(move |button| {
             let chooser = gtk::FileDialog::builder()
-                .title(gettext("Selecionar ISO"))
+                .title(gettext("Selecionar arquivo"))
                 .build();
             let parent = root.root().and_downcast::<gtk::Window>();
             let selected = selected.clone();
@@ -430,14 +505,24 @@ impl VirtualizationPage {
             if response != "create" {
                 return;
             }
-            let Some(iso) = path.borrow().clone() else {
+            let Some(source) = path.borrow().clone() else {
                 page.status
-                    .set_label(&gettext("Selecione uma ISO antes de criar a máquina."));
+                    .set_label(&gettext("Selecione a mídia antes de criar a máquina."));
                 return;
             };
             let request = CreateRequest {
                 name: name.text().to_string(),
-                iso,
+                source,
+                kind: match kind.selected() {
+                    1 => MediaKind::Qcow2,
+                    2 => MediaKind::Raw,
+                    _ => MediaKind::Iso,
+                },
+                firmware: if firmware.selected() == 1 {
+                    Firmware::Uefi
+                } else {
+                    Firmware::Bios
+                },
                 cpus: cpu.value_as_int() as u32,
                 memory_mib: ram.value_as_int() as u64,
                 disk_gib: disk.value_as_int() as u64,
@@ -515,11 +600,13 @@ impl VirtualizationPage {
             return;
         }
         if let Err(error) = request.validate() {
-            self.status.set_label(&error);
+            self.operation_failed(&error);
             return;
         }
         self.set_busy(true);
         self.cancel.set_visible(true);
+        self.progress.set_fraction(0.0);
+        self.progress.set_visible(true);
         self.status.set_label(&gettext(
             "Criando disco e copiando a mídia… A máquina ficará desligada ao concluir.",
         ));
@@ -530,11 +617,27 @@ impl VirtualizationPage {
             button.set_sensitive(false);
         });
         let page = self.clone();
+        let fraction = Arc::new(AtomicU64::new(0));
+        let meter = fraction.clone();
+        let bar = self.progress.clone();
+        let timer = glib::timeout_add_local(std::time::Duration::from_millis(100), move || {
+            bar.set_fraction(meter.load(Ordering::Relaxed) as f64 / 10000.0);
+            glib::ControlFlow::Continue
+        });
         glib::spawn_future_local(async move {
             let result = gio::spawn_blocking(move || {
-                Backend::open(Connection::Personal, false)?.create(&request, &cancel)
+                Backend::open(Connection::Personal, false)?.create_with_progress(
+                    &request,
+                    &cancel,
+                    |done, total| {
+                        fraction
+                            .store(done.saturating_mul(10000) / total.max(1), Ordering::Relaxed);
+                    },
+                )
             })
             .await;
+            timer.remove();
+            page.progress.set_visible(false);
             page.cancel.disconnect(handler);
             page.cancel.set_visible(false);
             page.cancel.set_sensitive(true);

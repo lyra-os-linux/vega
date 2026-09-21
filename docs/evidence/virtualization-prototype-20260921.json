@@ -5,9 +5,9 @@
   "qemu_guest_marker": "lyra.virtualization-test=1",
   "user": "installeduser (unprivileged, qemu:///session)",
   "result": {
-    "id": "d653c16a7fb645f89f27f2b61706da8c",
+    "id": "797f192d30264c15a1fda62fac9da222",
     "rc": 0,
-    "stdout": "CREATED 2c408db4-b0c6-44eb-9908-1d8020040333\nPASS: cancellation, create, duplicate refusal, KVM start, pause/resume, force-stop, removal, source and disk preservation\n",
+    "stdout": "CREATED d4701fb5-f4c4-4de3-a45c-be0d2726d164\nPASS import Qcow2 Bios 02c9d50e-66f0-48c8-a904-04ed118a8ec0\nPASS import Raw Bios ed62f0a0-762d-46e4-a095-94a9a906c69d\nPASS import Iso Uefi a2665141-d355-4f95-9290-68128ec46b4a\nPASS mid-copy cancellation and truncated-source rollback\nPASS: cancellation, create, duplicate refusal, KVM start, pause/resume, force-stop, removal, source and disk preservation\n",
     "stderr": ""
   },
   "checks": [
@@ -22,12 +22,15 @@
     "force stop",
     "remove definition",
     "original media preserved",
-    "disk and copied media preserved"
+    "disk and copied media preserved",
+    "QCOW2 and RAW copy import",
+    "UEFI start and NVRAM preservation",
+    "mid-transfer cancellation rollback",
+    "truncated source rollback preserves pre-existing volumes"
   ],
   "limitations": [
-    "Nonbootable fixture media, not an OS installation",
-    "No graphical console qualification",
-    "No mid-transfer cancellation or rollback fault injection",
-    "No exact candidate ISO qualification"
+    "Fixtures do not qualify guest OS installation",
+    "No exact candidate ISO qualification",
+    "Package/release gates still pending"
   ]
 }
