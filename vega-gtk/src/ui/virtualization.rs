@@ -335,6 +335,11 @@ impl VirtualizationPage {
             let erase = gtk::CheckButton::with_label(&gettext(
                 "Apagar também os discos e arquivos locais listados abaixo",
             ));
+            if let Some(label) = erase.child().and_downcast::<gtk::Label>() {
+                label.set_wrap(true);
+                label.set_wrap_mode(gtk::pango::WrapMode::WordChar);
+                label.set_max_width_chars(48);
+            }
             erase.set_active(false);
             let plan = match result {
                 Ok(Ok(plan)) => Some(plan),
@@ -356,6 +361,8 @@ impl VirtualizationPage {
                     .label(plan.files.join("\n"))
                     .selectable(true)
                     .wrap(true)
+                    .wrap_mode(gtk::pango::WrapMode::WordChar)
+                    .max_width_chars(48)
                     .xalign(0.0)
                     .build();
                 form.append(&files);
@@ -363,6 +370,9 @@ impl VirtualizationPage {
             form.append(&gtk::Label::builder().label(gettext("A exclusão é permanente. Discos compartilhados e mídias externas não serão apagados.")).wrap(true).build());
             let scroll = gtk::ScrolledWindow::builder()
                 .child(&form)
+                .hscrollbar_policy(gtk::PolicyType::Never)
+                .propagate_natural_width(true)
+                .min_content_height(200)
                 .max_content_height(320)
                 .propagate_natural_height(true)
                 .build();
@@ -675,13 +685,15 @@ impl VirtualizationPage {
             return;
         }
         let connection = self.selected_connection();
-        let dialog = adw::AlertDialog::builder()
-            .heading(&machine.name)
-            .body(gettext(
-                "A máquina deve estar desligada. Cada botão aplica apenas a alteração indicada.",
-            ))
+        let dialog = adw::Dialog::builder()
+            .title(&machine.name)
+            .content_width(640)
+            .content_height(580)
             .build();
         let form = gtk::Box::new(gtk::Orientation::Vertical, 8);
+        form.append(&gtk::Label::builder()
+            .label(gettext("A máquina deve estar desligada. Cada botão aplica apenas a alteração indicada."))
+            .wrap(true).xalign(0.0).build());
         let name = adw::EntryRow::builder()
             .title(gettext("Nome da máquina"))
             .text(&machine.name)
@@ -786,22 +798,39 @@ impl VirtualizationPage {
         }
         let scroll = gtk::ScrolledWindow::builder()
             .child(&form)
-            .max_content_height(480)
-            .propagate_natural_height(true)
+            .hscrollbar_policy(gtk::PolicyType::Never)
+            .vexpand(true)
             .build();
-        dialog.set_extra_child(Some(&scroll));
-        dialog.add_responses(&[
-            ("cancel", &gettext("Fechar")),
-            ("save", &gettext("Aplicar CPU e memória")),
-        ]);
-        dialog.set_default_response(Some("cancel"));
-        dialog.set_close_response("cancel");
+        let content = gtk::Box::new(gtk::Orientation::Vertical, 16);
+        content.set_margin_start(16);
+        content.set_margin_end(16);
+        content.set_margin_top(16);
+        content.set_margin_bottom(16);
+        content.append(&scroll);
+        let footer = gtk::Box::new(gtk::Orientation::Horizontal, 8);
+        footer.set_halign(gtk::Align::End);
+        let close = gtk::Button::with_label(&gettext("Fechar"));
+        let dismiss = dialog.clone();
+        close.connect_clicked(move |_| {
+            dismiss.close();
+        });
+        let save = gtk::Button::with_label(&gettext("Aplicar CPU e memória"));
+        save.add_css_class("suggested-action");
+        footer.append(&close);
+        footer.append(&save);
+        content.append(&footer);
+        let toolbar = adw::ToolbarView::new();
+        toolbar.add_top_bar(&adw::HeaderBar::new());
+        toolbar.set_content(Some(&content));
+        dialog.set_child(Some(&toolbar));
         let page = self.clone();
         let uuid = machine.uuid.clone();
-        dialog.connect_response(None, move |_, response| {
-            if response != "save" || page.busy.get() || page.selected_connection() != connection {
+        let dismiss = dialog.clone();
+        save.connect_clicked(move |_| {
+            if page.busy.get() || page.selected_connection() != connection {
                 return;
             }
+            dismiss.close();
             page.set_busy(true);
             page.status.set_label(&gettext("Executando operação…"));
             let uuid = uuid.clone();
@@ -970,10 +999,11 @@ mod tests {
                 media: vec!["sda".into()],
             },
         );
-        for _ in 0..20 {
+        for _ in 0..40 {
             while context.pending() {
                 context.iteration(false);
             }
+            std::thread::sleep(std::time::Duration::from_millis(5));
         }
         fn widgets(w: &gtk::Widget, out: &mut Vec<gtk::Widget>) {
             out.push(w.clone());
@@ -987,6 +1017,21 @@ mod tests {
         for top in gtk::Window::list_toplevels() {
             widgets(&top, &mut all);
         }
+        // The old alert's narrow extra-child viewport clipped the disk controls
+        // even on a desktop display. A form dialog must allocate usable width.
+        let editor = all
+            .iter()
+            .filter_map(|w| w.downcast_ref::<adw::Dialog>())
+            .find(|d| d.title().as_str() == "Beta")
+            .expect("VM editor");
+        assert!(editor.width() >= 500, "editor width: {}", editor.width());
+        let grow = all
+            .iter()
+            .filter_map(|w| w.downcast_ref::<gtk::Button>())
+            .find(|b| b.label().as_deref() == Some(gettext("Ampliar").as_str()))
+            .unwrap();
+        let bounds = grow.compute_bounds(editor).expect("grow button in editor");
+        assert!(bounds.x() >= 0.0 && bounds.x() + bounds.width() <= editor.width() as f32);
         let buttons: Vec<_> = all
             .iter()
             .filter_map(|w| w.downcast_ref::<gtk::Button>())

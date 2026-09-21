@@ -1,0 +1,47 @@
+{
+  "date": "2026-09-21",
+  "scope": "disposable nested QEMU/KVM, personal libvirt, real GTK UI and Lyra VMs console",
+  "guest_iso": "alpine-virt-3.24.2-x86_64.iso",
+  "iso_sha256": "3ab424762af704b2c2a9e57df1dc37f982af260071504d977f2fb96822e7130b",
+  "firmware": "BIOS",
+  "uuid": "70b679e4-0cb2-45cd-a808-4eae54748221",
+  "installed_root": "/dev/vda2 ext4",
+  "original_resources": {
+    "cpus": 2,
+    "memory_mib": 768,
+    "disk_gib": 4
+  },
+  "edited_resources": {
+    "cpus": 1,
+    "memory_mib": 1024,
+    "disk_gib": 5
+  },
+  "marker_sha256": "126bd8aced133fbee248dab0d247a483d3e05d30d8131809bfb0a3a9d0450360",
+  "boot_without_iso": true,
+  "edited_boot_preserves_marker": true,
+  "default_removal_preserves_file_hashes": true,
+  "explicit_removal_deletes_owned_disk_and_ejected_iso": true,
+  "original_iso_preserved": true,
+  "scales": [
+    "1600x1000@1",
+    "1366x768@1",
+    "2560x1600@2"
+  ],
+  "keyboard_resource_edit_and_apply": true,
+  "screen_reader_qualified": false,
+  "alpha8_iso_qualified": false,
+  "host_changed": false,
+  "artifact_scope": "initial flow public GTK5.1.43; corrected UI source for final keyboard/edit/removal; final5.1.44RPM pending",
+  "evidence": {
+    "initial.xml": "899e44de9dcf13f66137b9db4619cc1214b3585a9b2529c744a53fea8d64fc30",
+    "install.log": "45fcd8589e9e7179f6378586fbe8d0fc3bbd7c817108a3344a8529a7acbc4869",
+    "boot-report.txt": "bbcf9cef946d8c0ec28b927af1d211f41cb81c628896a81202e18418984b55ab",
+    "edit.png": "67d26f874234538b8584282e07d2f53d28a2aa32824a99a2ae4629033f731a8c",
+    "edit-fixed.png": "0b2fd9ac8aa2f851754d335d399d1f6da300d6a16dd74208c44c40c7f56fbdc4",
+    "edit-keyboard.png": "39f97aa712989379abad575bb7d7a0f1ee05a7270a162b7b03c3f45ecb7b63e0",
+    "scale2-editor.png": "537be7a10676a617c142dbb532cb206b30aeb9660ae0cebe69e8595704bea0dc",
+    "small-editor.png": "d8132e4216b53a057c3f7a4b887e0d8cf7feb66e711fca5357526b73236f064f",
+    "remove-dialog.png": "1aff250470e9974754e84370992ad82b953353b373ce49d4ca72dd9aec754039",
+    "remove-fixed.png": "d1c6eeb40984ef13af7d103adcf1f89b05378a918fbe2dc936162bd2b164dda4"
+  }
+}
