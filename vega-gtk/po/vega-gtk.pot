@@ -3769,3 +3769,72 @@ msgstr ""
 
 msgid "Requer Lyra Animações ativo."
 msgstr ""
+
+msgid "Editar máquina"
+msgstr ""
+
+msgid "A máquina deve estar desligada. Cada botão aplica apenas a alteração indicada."
+msgstr ""
+
+msgid "Renomear"
+msgstr ""
+
+msgid "Nova capacidade (GiB)"
+msgstr ""
+
+msgid "Ampliar"
+msgstr ""
+
+msgid "Ampliar disco?"
+msgstr ""
+
+msgid "O disco não poderá ser reduzido pelo Vega. Depois, expanda a partição dentro do sistema convidado para usar o novo espaço."
+msgstr ""
+
+msgid "Leitor de ISO"
+msgstr ""
+
+msgid "Ejetar a mídia preserva o arquivo ISO no disco."
+msgstr ""
+
+msgid "Ejetar ISO"
+msgstr ""
+
+msgid "Aplicar CPU e memória"
+msgstr ""
+
+msgid "Remover esta máquina? Por padrão, os discos e arquivos locais serão preservados."
+msgstr ""
+
+msgid "Apagar também os discos e arquivos locais listados abaixo"
+msgstr ""
+
+msgid "A exclusão é permanente. Discos compartilhados e mídias externas não serão apagados."
+msgstr ""
+
+msgid "Only standalone, unshared RAW/QCOW2 file volumes without snapshots can be enlarged."
+msgstr ""
+
+msgid "The selected disk or optical drive no longer exists."
+msgstr ""
+
+msgid "Choose a larger disk capacity, up to 2048 GiB. Shrinking is not allowed."
+msgstr ""
+
+msgid "Linked or non-regular files will not be deleted."
+msgstr ""
+
+msgid "Remove snapshots before deleting the machine's local files."
+msgstr ""
+
+msgid "Activate the local storage pool before deleting its files."
+msgstr ""
+
+msgid "The local file list changed. Review the removal again."
+msgstr ""
+
+msgid "File ownership changed; preserved."
+msgstr ""
+
+msgid "The machine was removed, but some local files were preserved."
+msgstr ""

@@ -3753,3 +3753,72 @@ msgstr "Available with a floating panel in compatible profiles and a dock that i
 
 msgid "Controles indisponíveis dependem do perfil, das opções ou dos componentes ativos. Os valores salvos são preservados."
 msgstr "Unavailable controls depend on the profile, options or active components. Saved values are preserved."
+
+msgid "Editar máquina"
+msgstr "Edit machine"
+
+msgid "A máquina deve estar desligada. Cada botão aplica apenas a alteração indicada."
+msgstr "The machine must be shut down. Each button applies only the indicated change."
+
+msgid "Renomear"
+msgstr "Rename"
+
+msgid "Nova capacidade (GiB)"
+msgstr "New capacity (GiB)"
+
+msgid "Ampliar"
+msgstr "Enlarge"
+
+msgid "Ampliar disco?"
+msgstr "Enlarge disk?"
+
+msgid "O disco não poderá ser reduzido pelo Vega. Depois, expanda a partição dentro do sistema convidado para usar o novo espaço."
+msgstr "Vega cannot shrink the disk. Afterwards, expand the partition inside the guest system to use the new space."
+
+msgid "Leitor de ISO"
+msgstr "ISO drive"
+
+msgid "Ejetar a mídia preserva o arquivo ISO no disco."
+msgstr "Ejecting the media preserves the ISO file on disk."
+
+msgid "Ejetar ISO"
+msgstr "Eject ISO"
+
+msgid "Aplicar CPU e memória"
+msgstr "Apply CPU and memory"
+
+msgid "Remover esta máquina? Por padrão, os discos e arquivos locais serão preservados."
+msgstr "Remove this machine? Disks and local files are preserved by default."
+
+msgid "Apagar também os discos e arquivos locais listados abaixo"
+msgstr "Also delete the disks and local files listed below"
+
+msgid "A exclusão é permanente. Discos compartilhados e mídias externas não serão apagados."
+msgstr "Deletion is permanent. Shared disks and external media will not be deleted."
+
+msgid "Only standalone, unshared RAW/QCOW2 file volumes without snapshots can be enlarged."
+msgstr "Only standalone, unshared RAW/QCOW2 file volumes without snapshots can be enlarged."
+
+msgid "The selected disk or optical drive no longer exists."
+msgstr "The selected disk or optical drive no longer exists."
+
+msgid "Choose a larger disk capacity, up to 2048 GiB. Shrinking is not allowed."
+msgstr "Choose a larger disk capacity, up to 2048 GiB. Shrinking is not allowed."
+
+msgid "Linked or non-regular files will not be deleted."
+msgstr "Linked or non-regular files will not be deleted."
+
+msgid "Remove snapshots before deleting the machine's local files."
+msgstr "Remove snapshots before deleting the machine's local files."
+
+msgid "Activate the local storage pool before deleting its files."
+msgstr "Activate the local storage pool before deleting its files."
+
+msgid "The local file list changed. Review the removal again."
+msgstr "The local file list changed. Review the removal again."
+
+msgid "File ownership changed; preserved."
+msgstr "File ownership changed; preserved."
+
+msgid "The machine was removed, but some local files were preserved."
+msgstr "The machine was removed, but some local files were preserved."

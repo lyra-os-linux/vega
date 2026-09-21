@@ -2,6 +2,10 @@
 //! UI callers must run operations on a worker, never the GTK main thread.
 use std::path::{Path, PathBuf};
 use virt::{connect::Connect, domain::Domain};
+mod remove;
+pub use remove::RemovalPlan;
+mod edit;
+pub use edit::{Disk, EditDetails};
 mod create;
 pub use create::CreateRequest;
 mod media;

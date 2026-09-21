@@ -3753,3 +3753,72 @@ msgstr "Disponible con un panel flotante en perfiles compatibles y un dock no ex
 
 msgid "Controles indisponíveis dependem do perfil, das opções ou dos componentes ativos. Os valores salvos são preservados."
 msgstr "Los controles no disponibles dependen del perfil, de las opciones o de los componentes activos. Se conservan los valores guardados."
+
+msgid "Editar máquina"
+msgstr "Editar máquina"
+
+msgid "A máquina deve estar desligada. Cada botão aplica apenas a alteração indicada."
+msgstr "La máquina debe estar apagada. Cada botón aplica solo el cambio indicado."
+
+msgid "Renomear"
+msgstr "Renombrar"
+
+msgid "Nova capacidade (GiB)"
+msgstr "Nueva capacidad (GiB)"
+
+msgid "Ampliar"
+msgstr "Ampliar"
+
+msgid "Ampliar disco?"
+msgstr "¿Ampliar disco?"
+
+msgid "O disco não poderá ser reduzido pelo Vega. Depois, expanda a partição dentro do sistema convidado para usar o novo espaço."
+msgstr "Vega no puede reducir el disco. Después, amplíe la partición dentro del sistema invitado para usar el nuevo espacio."
+
+msgid "Leitor de ISO"
+msgstr "Lector de ISO"
+
+msgid "Ejetar a mídia preserva o arquivo ISO no disco."
+msgstr "Expulsar el medio conserva el archivo ISO en el disco."
+
+msgid "Ejetar ISO"
+msgstr "Expulsar ISO"
+
+msgid "Aplicar CPU e memória"
+msgstr "Aplicar CPU y memoria"
+
+msgid "Remover esta máquina? Por padrão, os discos e arquivos locais serão preservados."
+msgstr "¿Eliminar esta máquina? Los discos y archivos locales se conservan de forma predeterminada."
+
+msgid "Apagar também os discos e arquivos locais listados abaixo"
+msgstr "Eliminar también los discos y archivos locales enumerados abajo"
+
+msgid "A exclusão é permanente. Discos compartilhados e mídias externas não serão apagados."
+msgstr "La eliminación es permanente. Los discos compartidos y los medios externos no se eliminarán."
+
+msgid "Only standalone, unshared RAW/QCOW2 file volumes without snapshots can be enlarged."
+msgstr "Solo se pueden ampliar volúmenes RAW/QCOW2 independientes, no compartidos y sin instantáneas."
+
+msgid "The selected disk or optical drive no longer exists."
+msgstr "El disco o lector óptico seleccionado ya no existe."
+
+msgid "Choose a larger disk capacity, up to 2048 GiB. Shrinking is not allowed."
+msgstr "Elija una capacidad mayor, hasta 2048 GiB. No se permite reducir el disco."
+
+msgid "Linked or non-regular files will not be deleted."
+msgstr "No se eliminarán archivos enlazados o no regulares."
+
+msgid "Remove snapshots before deleting the machine's local files."
+msgstr "Elimine las instantáneas antes de borrar los archivos locales de la máquina."
+
+msgid "Activate the local storage pool before deleting its files."
+msgstr "Active el almacenamiento local antes de eliminar sus archivos."
+
+msgid "The local file list changed. Review the removal again."
+msgstr "La lista de archivos locales cambió. Revise de nuevo la eliminación."
+
+msgid "File ownership changed; preserved."
+msgstr "La pertenencia del archivo cambió; se ha conservado."
+
+msgid "The machine was removed, but some local files were preserved."
+msgstr "La máquina se eliminó, pero se conservaron algunos archivos locales."

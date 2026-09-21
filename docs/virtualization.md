@@ -58,3 +58,6 @@ Its media is a nonbootable fixture: it does not prove a guest OS installation.
 The boot-sector console fixture passed keyboard echo, fullscreen (1280×800),
 reconnection after restart, and normal close with the domain still running.
 See `evidence/console-20260921.json`. This does not replace candidate tests.
+
+Edição offline de nome/recursos, ampliação de disco, ejeção de ISO e remoção
+com exclusão explícita: [contrato e testes](virtualization-editing.md).
