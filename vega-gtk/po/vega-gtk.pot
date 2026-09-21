@@ -3751,3 +3751,21 @@ msgstr ""
 #: src/virtualization_messages.rs
 msgid "A shortcut for this machine already exists."
 msgstr ""
+
+msgid "Controles indisponíveis dependem do perfil, das opções ou dos componentes ativos. Os valores salvos são preservados."
+msgstr ""
+
+msgid "Disponível com painel flutuante nos perfis compatíveis e dock não estendido. Janelas maximizadas suspendem a margem temporariamente."
+msgstr ""
+
+msgid "Disponível quando o dock não está estendido."
+msgstr ""
+
+msgid "Disponível quando os aplicativos em execução são exibidos."
+msgstr ""
+
+msgid "No perfil Lyra Flutuante, os menus ficam à esquerda. A preferência dos outros perfis é preservada."
+msgstr ""
+
+msgid "Requer Lyra Animações ativo."
+msgstr ""

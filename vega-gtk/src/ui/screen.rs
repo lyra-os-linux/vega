@@ -240,6 +240,8 @@ fn appearance_pages(
         let rows = component_rows.clone();
         let guard = component_guard.clone();
         let status = status.clone();
+        let dock_page = dock_page.clone();
+        let menu_page = menu_page.clone();
         row.connect_active_notify(move |row| {
             if guard.get() {
                 return;
@@ -249,6 +251,9 @@ fn appearance_pages(
                 Err(error) => status.set_label(&error.to_string()),
             }
             refresh_components(&rows, &guard);
+            let context = crate::dock::settings_context();
+            dock_page.set_context(context);
+            menu_page.set_context(context);
         });
     }
     let suppress = Rc::new(Cell::new(false));
@@ -283,6 +288,9 @@ fn appearance_pages(
                     if let Some(settings) = crate::dock::current_menu() {
                         menu_page.show(&settings);
                     }
+                    let context = crate::dock::settings_context();
+                    dock_page.set_context(context);
+                    menu_page.set_context(context);
                 }
                 Err(error) => {
                     status.set_label(&error.to_string());

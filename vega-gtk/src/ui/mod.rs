@@ -40,3 +40,6 @@ pub use snapshots::SnapshotsPage;
 pub use software::SoftwarePage;
 pub use storage::StoragePage;
 pub use users::UsersPage;
+
+#[cfg(test)]
+mod settings_context_tests;

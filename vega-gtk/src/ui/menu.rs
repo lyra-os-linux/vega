@@ -32,12 +32,6 @@ fn id_dropdown(ids: &[&str], labels: impl Fn(&str) -> String, current: &str) -> 
     dropdown
 }
 
-fn dropdown_selected<'a>(dropdown: &gtk::DropDown, ids: &'a [&str]) -> &'a str {
-    ids.get(dropdown.selected() as usize)
-        .copied()
-        .unwrap_or(ids[0])
-}
-
 #[derive(Clone)]
 pub struct MenuPage {
     pub root: gtk::Widget,
@@ -59,6 +53,8 @@ pub struct MenuPage {
     pub open_application_submenus_sideways: gtk::Switch,
     pub show_place_bookmarks: gtk::Switch,
     pub show_place_volumes: gtk::Switch,
+    context: Rc<Cell<crate::dock::SettingsContext>>,
+    saved_position: Rc<Cell<u32>>,
     suppress: Rc<Cell<bool>>,
     change_handlers: Rc<RefCell<Vec<ChangeHandler>>>,
 }
@@ -152,6 +148,10 @@ impl MenuPage {
 
         let content = gtk::Box::new(gtk::Orientation::Vertical, 18);
         content.append(&status);
+        let context_hint = gtk::Label::builder()
+            .label(gettext("Controles indisponíveis dependem do perfil, das opções ou dos componentes ativos. Os valores salvos são preservados."))
+            .xalign(0.0).wrap(true).css_classes(["dim-label"]).build();
+        content.append(&context_hint);
         content.append(&appearance_group);
         content.append(&panel_group);
         content.append(&panel_content_group);
@@ -182,10 +182,20 @@ impl MenuPage {
             open_application_submenus_sideways,
             show_place_bookmarks,
             show_place_volumes,
+            context: Rc::new(Cell::new(crate::dock::SettingsContext::default())),
+            saved_position: Rc::new(Cell::new(0)),
             suppress: Rc::new(Cell::new(false)),
             change_handlers: Rc::new(RefCell::new(Vec::new())),
         };
         page.wire_changed_signals();
+        page.update_controls();
+        let mapped = page.clone();
+        page.root.connect_map(move |_| {
+            if let Some(settings) = crate::dock::current_menu() {
+                mapped.show(&settings);
+            }
+            mapped.refresh_context();
+        });
         page
     }
 
@@ -196,7 +206,62 @@ impl MenuPage {
         self.change_handlers.borrow_mut().push(Rc::new(handler));
     }
 
+    pub fn set_context(&self, context: crate::dock::SettingsContext) {
+        self.context.set(context);
+        let was_suppressed = self.suppress.replace(true);
+        self.panel_menu_position
+            .set_selected(if context.fixed_menu_position {
+                0
+            } else {
+                self.saved_position.get()
+            });
+        self.suppress.set(was_suppressed);
+        self.update_controls();
+    }
+
+    pub fn refresh_context(&self) {
+        self.set_context(crate::dock::settings_context());
+    }
+
+    fn update_controls(&self) {
+        let c = self.context.get();
+        self.panel_height.set_sensitive(c.panel && !c.fixed_panel);
+        self.floating_panel.set_sensitive(c.panel && !c.fixed_panel);
+        self.panel_margin.set_sensitive(
+            c.panel && !c.fixed_panel && !c.extended_dock && self.floating_panel.is_active(),
+        );
+        self.show_clock.set_sensitive(c.panel);
+        self.show_panel_indicators.set_sensitive(c.panel);
+        self.hide_workspace_button.set_sensitive(c.panel);
+        self.show_applications_menu.set_sensitive(c.menus);
+        self.show_places_menu.set_sensitive(c.menus);
+        self.show_system_menu.set_sensitive(c.menus);
+        self.show_search_menu.set_sensitive(c.search);
+        self.show_system_about
+            .set_sensitive(c.menus && self.show_system_menu.is_active());
+        self.panel_menu_position
+            .set_sensitive((c.menus || c.search) && !c.fixed_menu_position);
+        for widget in [
+            self.show_application_icons.clone().upcast::<gtk::Widget>(),
+            self.sort_applications_menu.clone().upcast(),
+            self.open_application_submenus_sideways.clone().upcast(),
+        ] {
+            widget.set_sensitive(
+                c.menus && self.show_applications_menu.is_active() && !c.fixed_menu_position,
+            );
+        }
+        self.show_place_bookmarks
+            .set_sensitive(c.menus && self.show_places_menu.is_active());
+        self.show_place_volumes
+            .set_sensitive(c.menus && self.show_places_menu.is_active());
+        self.panel_menu_position.set_tooltip_text(Some(&gettext("No perfil Lyra Flutuante, os menus ficam à esquerda. A preferência dos outros perfis é preservada.")));
+        self.panel_margin.set_tooltip_text(Some(&gettext(
+            "Disponível com painel flutuante nos perfis compatíveis e dock não estendido. Janelas maximizadas suspendem a margem temporariamente.",
+        )));
+    }
+
     fn emit_changed(&self) {
+        self.update_controls();
         if self.suppress.get() {
             return;
         }
@@ -242,7 +307,12 @@ impl MenuPage {
             .connect_active_notify(move |_| page.emit_changed());
         let page = self.clone();
         self.panel_menu_position
-            .connect_selected_notify(move |_| page.emit_changed());
+            .connect_selected_notify(move |dropdown| {
+                if !page.suppress.get() && !page.context.get().fixed_menu_position {
+                    page.saved_position.set(dropdown.selected());
+                }
+                page.emit_changed();
+            });
         let page = self.clone();
         self.show_application_icons
             .connect_active_notify(move |_| page.emit_changed());
@@ -283,6 +353,7 @@ impl MenuPage {
                 .position(|&id| id == settings.panel_menu_position)
                 .unwrap_or(0) as u32,
         );
+        self.saved_position.set(self.panel_menu_position.selected());
         self.show_application_icons
             .set_active(settings.show_application_icons);
         self.sort_applications_menu
@@ -294,6 +365,7 @@ impl MenuPage {
         self.show_place_volumes
             .set_active(settings.show_place_volumes);
         self.suppress.set(false);
+        self.set_context(self.context.get());
         self.status
             .set_label(&gettext("Configuração atual carregada"));
     }
@@ -311,7 +383,9 @@ impl MenuPage {
             show_system_about: self.show_system_about.is_active(),
             show_search_menu: self.show_search_menu.is_active(),
             hide_workspace_button: self.hide_workspace_button.is_active(),
-            panel_menu_position: dropdown_selected(&self.panel_menu_position, PANEL_MENU_POSITIONS)
+            panel_menu_position: PANEL_MENU_POSITIONS
+                .get(self.saved_position.get() as usize)
+                .unwrap_or(&"left")
                 .to_string(),
             show_application_icons: self.show_application_icons.is_active(),
             sort_applications_menu: self.sort_applications_menu.is_active(),

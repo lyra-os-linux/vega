@@ -3734,3 +3734,21 @@ msgstr "Diretório de dados inválido"
 #: src/virtualization_messages.rs
 msgid "A shortcut for this machine already exists."
 msgstr "Já existe um atalho para esta máquina."
+
+msgid "Disponível quando o dock não está estendido."
+msgstr "Disponível quando o dock não está estendido."
+
+msgid "Disponível quando os aplicativos em execução são exibidos."
+msgstr "Disponível quando os aplicativos em execução são exibidos."
+
+msgid "Requer Lyra Animações ativo."
+msgstr "Requer Lyra Animações ativo."
+
+msgid "No perfil Lyra Flutuante, os menus ficam à esquerda. A preferência dos outros perfis é preservada."
+msgstr "No perfil Lyra Flutuante, os menus ficam à esquerda. A preferência dos outros perfis é preservada."
+
+msgid "Disponível com painel flutuante nos perfis compatíveis e dock não estendido. Janelas maximizadas suspendem a margem temporariamente."
+msgstr "Disponível com painel flutuante nos perfis compatíveis e dock não estendido. Janelas maximizadas suspendem a margem temporariamente."
+
+msgid "Controles indisponíveis dependem do perfil, das opções ou dos componentes ativos. Os valores salvos são preservados."
+msgstr "Controles indisponíveis dependem do perfil, das opções ou dos componentes ativos. Os valores salvos são preservados."

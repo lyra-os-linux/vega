@@ -91,6 +91,7 @@ pub struct DockPage {
     pub show_trash: gtk::Switch,
     pub show_apps_button: gtk::Switch,
     pub fullscreen_hide: gtk::Switch,
+    context: Rc<Cell<crate::dock::SettingsContext>>,
     suppress: Rc<Cell<bool>>,
     change_handlers: Rc<RefCell<Vec<ChangeHandler>>>,
 }
@@ -129,7 +130,11 @@ impl DockPage {
         let effects_row = property_row(&gettext("Efeitos do dock"), &animation);
         effects_row.set_subtitle(&gettext("Ampliação dos ícones e transições do dock."));
         appearance_group.add(&effects_row);
-        appearance_group.add(&property_row(
+        let animations_group = adw::PreferencesGroup::builder()
+            .title(gettext("Lyra Animações"))
+            .description(gettext("Efeitos ao minimizar e restaurar janelas."))
+            .build();
+        animations_group.add(&property_row(
             &gettext("Animação ao minimizar"),
             &minimize_animation,
         ));
@@ -171,9 +176,14 @@ impl DockPage {
 
         let content = gtk::Box::new(gtk::Orientation::Vertical, 18);
         content.append(&status);
+        let context_hint = gtk::Label::builder()
+            .label(gettext("Controles indisponíveis dependem do perfil, das opções ou dos componentes ativos. Os valores salvos são preservados."))
+            .xalign(0.0).wrap(true).css_classes(["dim-label"]).build();
+        content.append(&context_hint);
         content.append(&appearance_group);
         content.append(&behavior_group);
         content.append(&content_group);
+        content.append(&animations_group);
 
         let root = gtk::ScrolledWindow::builder()
             .child(&content)
@@ -198,10 +208,19 @@ impl DockPage {
             show_trash,
             show_apps_button,
             fullscreen_hide,
+            context: Rc::new(Cell::new(crate::dock::SettingsContext::default())),
             suppress: Rc::new(Cell::new(false)),
             change_handlers: Rc::new(RefCell::new(Vec::new())),
         };
         page.wire_changed_signals();
+        page.update_controls();
+        let mapped = page.clone();
+        page.root.connect_map(move |_| {
+            if let Some(settings) = crate::dock::current() {
+                mapped.show(&settings);
+            }
+            mapped.refresh_context();
+        });
         page
     }
 
@@ -212,7 +231,50 @@ impl DockPage {
         self.change_handlers.borrow_mut().push(Rc::new(handler));
     }
 
+    pub fn set_context(&self, context: crate::dock::SettingsContext) {
+        self.context.set(context);
+        self.update_controls();
+    }
+
+    pub fn refresh_context(&self) {
+        self.set_context(crate::dock::settings_context());
+    }
+
+    fn update_controls(&self) {
+        let c = self.context.get();
+        for widget in [
+            self.position.clone().upcast::<gtk::Widget>(),
+            self.hide_mode.clone().upcast(),
+            self.icon_size.clone().upcast(),
+            self.animation.clone().upcast(),
+            self.extend_to_edges.clone().upcast(),
+            self.content_alignment.clone().upcast(),
+            self.show_running.clone().upcast(),
+            self.show_trash.clone().upcast(),
+            self.show_apps_button.clone().upcast(),
+            self.fullscreen_hide.clone().upcast(),
+        ] {
+            widget.set_sensitive(c.dock);
+        }
+        self.edge_margin
+            .set_sensitive(c.dock && !self.extend_to_edges.is_active());
+        self.running_apps_position
+            .set_sensitive(c.dock && self.show_running.is_active());
+        self.hide_delay
+            .set_sensitive(c.dock && dropdown_selected(&self.hide_mode, HIDE_MODES) != "always");
+        self.minimize_animation.set_sensitive(c.animations);
+        self.edge_margin.set_tooltip_text(Some(&gettext(
+            "Disponível quando o dock não está estendido.",
+        )));
+        self.running_apps_position.set_tooltip_text(Some(&gettext(
+            "Disponível quando os aplicativos em execução são exibidos.",
+        )));
+        self.minimize_animation
+            .set_tooltip_text(Some(&gettext("Requer Lyra Animações ativo.")));
+    }
+
     fn emit_changed(&self) {
+        self.update_controls();
         if self.suppress.get() {
             return;
         }
@@ -325,6 +387,7 @@ impl DockPage {
         self.show_apps_button.set_active(settings.show_apps_button);
         self.fullscreen_hide.set_active(settings.fullscreen_hide);
         self.suppress.set(false);
+        self.update_controls();
         self.status
             .set_label(&gettext("Configuração atual carregada"));
     }
