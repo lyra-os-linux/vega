@@ -1046,6 +1046,54 @@ fn suite_command(args: &[&str]) -> Result<SuiteState, DockError> {
     Ok(state)
 }
 
+/// Context for editing preferences. A failed status query disables dependent controls.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct SettingsContext {
+    pub dock: bool,
+    pub panel: bool,
+    pub menus: bool,
+    pub search: bool,
+    pub animations: bool,
+    pub fixed_panel: bool,
+    pub fixed_menu_position: bool,
+    pub extended_dock: bool,
+}
+
+pub fn settings_context() -> SettingsContext {
+    let profile = current_profile();
+    let active = |role: &str, state: &Option<std::collections::BTreeMap<String, bool>>| {
+        state
+            .as_ref()
+            .and_then(|s| s.get(role))
+            .copied()
+            .unwrap_or(false)
+    };
+    let state = if suite_available() {
+        suite_components()
+    } else {
+        let enabled = is_installed() && is_enabled() && profile != DesktopProfile::GnomeVanilla;
+        Some(
+            ["dock", "panel", "menus", "search", "animations"]
+                .into_iter()
+                .map(|role| (role.to_string(), enabled))
+                .collect(),
+        )
+    };
+    SettingsContext {
+        dock: active("dock", &state),
+        panel: active("panel", &state),
+        menus: active("menus", &state),
+        search: active("search", &state),
+        animations: active("animations", &state),
+        fixed_panel: matches!(
+            profile,
+            DesktopProfile::Windows10 | DesktopProfile::Windows11
+        ),
+        fixed_menu_position: profile == DesktopProfile::Macos,
+        extended_dock: current().is_none_or(|settings| settings.extend_to_edges),
+    }
+}
+
 pub fn suite_components() -> Option<std::collections::BTreeMap<String, bool>> {
     if !suite_available() {
         return None;

@@ -44,6 +44,9 @@ impl ScreensaverPage {
             "Contado após a tela apagar. Zero bloqueia imediatamente.",
         ));
         settings_group.add(&lock_row);
+        let delay = lock_delay.clone();
+        lock_enabled.connect_active_notify(move |switch| delay.set_sensitive(switch.is_active()));
+        lock_delay.set_sensitive(lock_enabled.is_active());
         let idle_row = property_row(&gettext("Apagar a tela após (segundos)"), &idle_delay);
         idle_row.set_subtitle(&gettext("Tempo sem atividade. Zero mantém a tela ativa."));
         settings_group.add(&idle_row);

@@ -3735,3 +3735,21 @@ msgstr "Invalid data directory"
 #: src/virtualization_messages.rs
 msgid "A shortcut for this machine already exists."
 msgstr "A shortcut for this machine already exists."
+
+msgid "Disponível quando o dock não está estendido."
+msgstr "Available when the dock is not extended."
+
+msgid "Disponível quando os aplicativos em execução são exibidos."
+msgstr "Available when running applications are shown."
+
+msgid "Requer Lyra Animações ativo."
+msgstr "Requires Lyra Animations to be enabled."
+
+msgid "No perfil Lyra Flutuante, os menus ficam à esquerda. A preferência dos outros perfis é preservada."
+msgstr "Menus stay on the left in the Lyra Floating profile. The preference for other profiles is preserved."
+
+msgid "Disponível com painel flutuante nos perfis compatíveis e dock não estendido. Janelas maximizadas suspendem a margem temporariamente."
+msgstr "Available with a floating panel in compatible profiles and a dock that is not extended. Maximized windows temporarily suspend the margin."
+
+msgid "Controles indisponíveis dependem do perfil, das opções ou dos componentes ativos. Os valores salvos são preservados."
+msgstr "Unavailable controls depend on the profile, options or active components. Saved values are preserved."
