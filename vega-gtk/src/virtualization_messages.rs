@@ -29,6 +29,15 @@ pub fn translate(message: &str) -> String {
         "Unsupported QCOW2 header or virtual disk size." => gettext("Unsupported QCOW2 header or virtual disk size."),
         "Invalid data directory" => gettext("Invalid data directory"),
         "A shortcut for this machine already exists." => gettext("A shortcut for this machine already exists."),
+        "Only standalone, unshared RAW/QCOW2 file volumes without snapshots can be enlarged." => gettext("Only standalone, unshared RAW/QCOW2 file volumes without snapshots can be enlarged."),
+        "The selected disk or optical drive no longer exists." => gettext("The selected disk or optical drive no longer exists."),
+        "Choose a larger disk capacity, up to 2048 GiB. Shrinking is not allowed." => gettext("Choose a larger disk capacity, up to 2048 GiB. Shrinking is not allowed."),
+        "Linked or non-regular files will not be deleted." => gettext("Linked or non-regular files will not be deleted."),
+        "Remove snapshots before deleting the machine's local files." => gettext("Remove snapshots before deleting the machine's local files."),
+        "Activate the local storage pool before deleting its files." => gettext("Activate the local storage pool before deleting its files."),
+        "The local file list changed. Review the removal again." => gettext("The local file list changed. Review the removal again."),
+        "File ownership changed; preserved." => gettext("File ownership changed; preserved."),
+        "The machine was removed, but some local files were preserved." => gettext("The machine was removed, but some local files were preserved."),
         _ => line.to_string(),
     }).collect::<Vec<_>>().join("\n")
 }

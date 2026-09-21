@@ -1,0 +1,12 @@
+{
+  "id": "2d68e02683a840ccb95a936cbc14400b",
+  "rc": 0,
+  "stdout": "DETAILS EditDetails { disks: [Disk { target: \"vda\", path: \"/home/installeduser/.local/share/lyra-vms/3e658c37-4ffd-4d7d-a2a7-7e60020615fe.qcow2\", capacity: Some(4294967296), unavailable: None }], media: [\"sda\"] }\nwrote 4096/4096 bytes at offset 1048576\n4 KiB, 1 ops; 00.01 sec (580.938 KiB/sec and 145.2346 ops/sec)\nread 4096/4096 bytes at offset 1048576\n4 KiB, 1 ops; 00.00 sec (94.773 MiB/sec and 24261.8337 ops/sec)\nDELETE PLAN [\"/home/installeduser/.local/share/lyra-vms/3e658c37-4ffd-4d7d-a2a7-7e60020615fe.iso\", \"/home/installeduser/.local/share/lyra-vms/3e658c37-4ffd-4d7d-a2a7-7e60020615fe.qcow2\", \"/home/installeduser/.config/libvirt/qemu/nvram/Editing fixture_VARS.qcow2\", \"/home/installeduser/.local/share/applications/org.lyraos.VMs.personal.3e658c37-4ffd-4d7d-a2a7-7e60020615fe.desktop\"]\nPASS rename, CPU/RAM, grow-only and payload preservation, ISO ejection, shared/running guards, preserve default, stale-plan rejection, explicit local cleanup including detached ISO, NVRAM and shortcut\nPASS imported RAW and QCOW2 expansion and owned-copy deletion preserve source files\n",
+  "stderr": "",
+  "scope": "marked disposable QEMU/KVM guest; no personal host VMs changed",
+  "gtk_native": "native_virtualization_page passed: editor labels and grow-only lower bound",
+  "rust_tests": 55,
+  "translations_tests": 4,
+  "iso_qualified": false,
+  "detached_clone_guard": true
+}

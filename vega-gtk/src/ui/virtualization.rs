@@ -10,7 +10,7 @@ use std::{
     },
 };
 use vega_virtualization::{
-    Action, Backend, Connection, CreateRequest, Firmware, Machine, MediaKind, State,
+    Action, Backend, Connection, CreateRequest, EditDetails, Firmware, Machine, MediaKind, State,
 };
 
 #[derive(Clone)]
@@ -270,7 +270,7 @@ impl VirtualizationPage {
             shortcut.connect_clicked(move |_| page.create_shortcut(&machine_for_shortcut));
             actions.insert(&shortcut, -1);
             if machine.state == State::Off && machine.persistent {
-                let configure = gtk::Button::with_label(&gettext("CPU e memória"));
+                let configure = gtk::Button::with_label(&gettext("Editar máquina"));
                 let page = self.clone();
                 let machine = machine.clone();
                 configure.connect_clicked(move |_| page.configure_dialog(&machine));
@@ -312,7 +312,93 @@ impl VirtualizationPage {
         }
     }
 
+    fn confirm_removal(&self, machine: &Machine) {
+        if self.busy.get() {
+            return;
+        }
+        self.set_busy(true);
+        let connection = self.selected_connection();
+        let page = self.clone();
+        let machine = machine.clone();
+        glib::spawn_future_local(async move {
+            let uuid = machine.uuid.clone();
+            let result =
+                gio::spawn_blocking(move || Backend::open(connection, true)?.removal_plan(&uuid))
+                    .await;
+            page.set_busy(false);
+            if page.selected_connection() != connection {
+                return;
+            }
+            let dialog=adw::AlertDialog::builder().heading(&machine.name)
+                .body(gettext("Remover esta máquina? Por padrão, os discos e arquivos locais serão preservados.")).build();
+            let form = gtk::Box::new(gtk::Orientation::Vertical, 8);
+            let erase = gtk::CheckButton::with_label(&gettext(
+                "Apagar também os discos e arquivos locais listados abaixo",
+            ));
+            erase.set_active(false);
+            let plan = match result {
+                Ok(Ok(plan)) => Some(plan),
+                Ok(Err(error)) => {
+                    form.append(
+                        &gtk::Label::builder()
+                            .label(crate::virtualization_messages::translate(&error))
+                            .wrap(true)
+                            .build(),
+                    );
+                    None
+                }
+                Err(_) => None,
+            };
+            erase.set_sensitive(plan.as_ref().is_some_and(|p| !p.files.is_empty()));
+            form.append(&erase);
+            if let Some(plan) = &plan {
+                let files = gtk::Label::builder()
+                    .label(plan.files.join("\n"))
+                    .selectable(true)
+                    .wrap(true)
+                    .xalign(0.0)
+                    .build();
+                form.append(&files);
+            }
+            form.append(&gtk::Label::builder().label(gettext("A exclusão é permanente. Discos compartilhados e mídias externas não serão apagados.")).wrap(true).build());
+            let scroll = gtk::ScrolledWindow::builder()
+                .child(&form)
+                .max_content_height(320)
+                .propagate_natural_height(true)
+                .build();
+            dialog.set_extra_child(Some(&scroll));
+            dialog.add_responses(&[
+                ("cancel", &gettext("Cancelar")),
+                ("remove", &gettext("Remover")),
+            ]);
+            dialog.set_default_response(Some("cancel"));
+            dialog.set_close_response("cancel");
+            dialog.set_response_appearance("remove", adw::ResponseAppearance::Destructive);
+            let page2 = page.clone();
+            dialog.connect_response(None, move |_, response| {
+                if response != "remove" || page2.selected_connection() != connection {
+                    return;
+                }
+                if erase.is_active() {
+                    if let Some(plan) = plan.clone() {
+                        let uuid = machine.uuid.clone();
+                        page2.run_edit(connection, move |backend| {
+                            backend.remove_with_files(&uuid, &plan)
+                        });
+                    }
+                } else {
+                    page2.execute(&machine, Action::Remove);
+                }
+            });
+            dialog.present(Some(&page.root));
+        });
+    }
+
     fn confirm(&self, machine: &Machine, action: Action) {
+        if action == Action::Remove {
+            self.confirm_removal(machine);
+            return;
+        }
         if self.busy.get() {
             return;
         }
@@ -536,14 +622,84 @@ impl VirtualizationPage {
         if self.busy.get() {
             return;
         }
+        self.set_busy(true);
+        let connection = self.selected_connection();
+        let machine = machine.clone();
+        let page = self.clone();
+        glib::spawn_future_local(async move {
+            let uuid = machine.uuid.clone();
+            let result =
+                gio::spawn_blocking(move || Backend::open(connection, false)?.edit_details(&uuid))
+                    .await;
+            page.set_busy(false);
+            if page.selected_connection() != connection {
+                return;
+            }
+            match result {
+                Ok(Ok(details)) => page.edit_dialog(&machine, details),
+                Ok(Err(error)) => page.operation_failed(&error),
+                Err(_) => page
+                    .status
+                    .set_label(&gettext("A operação foi interrompida.")),
+            }
+        });
+    }
+
+    fn run_edit(
+        &self,
+        connection: Connection,
+        operation: impl FnOnce(Backend) -> Result<(), String> + Send + 'static,
+    ) {
+        if self.busy.get() || self.selected_connection() != connection {
+            return;
+        }
+        self.set_busy(true);
+        self.status.set_label(&gettext("Executando operação…"));
+        let page = self.clone();
+        glib::spawn_future_local(async move {
+            let result =
+                gio::spawn_blocking(move || operation(Backend::open(connection, false)?)).await;
+            page.set_busy(false);
+            match result {
+                Ok(Ok(())) => page.load(),
+                Ok(Err(error)) => page.operation_failed(&error),
+                Err(_) => page
+                    .status
+                    .set_label(&gettext("A operação foi interrompida.")),
+            }
+        });
+    }
+
+    fn edit_dialog(&self, machine: &Machine, details: EditDetails) {
+        if self.busy.get() {
+            return;
+        }
         let connection = self.selected_connection();
         let dialog = adw::AlertDialog::builder()
             .heading(&machine.name)
             .body(gettext(
-                "CPU e memória serão alteradas com a máquina desligada.",
+                "A máquina deve estar desligada. Cada botão aplica apenas a alteração indicada.",
             ))
             .build();
         let form = gtk::Box::new(gtk::Orientation::Vertical, 8);
+        let name = adw::EntryRow::builder()
+            .title(gettext("Nome da máquina"))
+            .text(&machine.name)
+            .build();
+        let rename = gtk::Button::with_label(&gettext("Renomear"));
+        rename.set_valign(gtk::Align::Center);
+        name.add_suffix(&rename);
+        form.append(&name);
+        let page = self.clone();
+        let uuid = machine.uuid.clone();
+        let close = dialog.clone();
+        rename.connect_clicked(move |_| {
+            let value = name.text().to_string();
+            let uuid = uuid.clone();
+            close.close();
+            page.run_edit(connection, move |backend| backend.rename(&uuid, &value));
+        });
+
         let cpu = gtk::SpinButton::with_range(1.0, 64.0, 1.0);
         cpu.set_value(f64::from(machine.cpus));
         let ram = gtk::SpinButton::with_range(512.0, 262144.0, 512.0);
@@ -558,10 +714,85 @@ impl VirtualizationPage {
             row.add_suffix(control);
             form.append(&row);
         }
-        dialog.set_extra_child(Some(&form));
+
+        for disk in details.disks {
+            let row = adw::ActionRow::builder().use_markup(false).build();
+            row.set_title(&format!("{} · {}", gettext("Disco"), disk.target));
+            if let Some(capacity) = disk.capacity {
+                row.set_subtitle(&format!(
+                    "{:.2} GiB",
+                    capacity as f64 / (1_u64 << 30) as f64
+                ));
+                let minimum = (capacity / (1 << 30) + 1) as f64;
+                let size = gtk::SpinButton::with_range(minimum.min(2048.0), 2048.0, 1.0);
+                size.set_valign(gtk::Align::Center);
+                size.update_property(&[gtk::accessible::Property::Label(&gettext(
+                    "Nova capacidade (GiB)",
+                ))]);
+                let grow = gtk::Button::with_label(&gettext("Ampliar"));
+                grow.set_valign(gtk::Align::Center);
+                grow.set_sensitive(minimum <= 2048.0);
+                let page = self.clone();
+                let uuid = machine.uuid.clone();
+                let target = disk.target.clone();
+                let close = dialog.clone();
+                let selected_size = size.clone();
+                grow.connect_clicked(move |_| {
+                    let bytes = (selected_size.value_as_int() as u64) << 30;
+                    let confirm = adw::AlertDialog::builder()
+                        .heading(gettext("Ampliar disco?"))
+                        .body(format!("{:.2} GiB → {} GiB\n{}", capacity as f64 / (1_u64 << 30) as f64, bytes >> 30,
+                            gettext("O disco não poderá ser reduzido pelo Vega. Depois, expanda a partição dentro do sistema convidado para usar o novo espaço.")))
+                        .build();
+                    confirm.add_responses(&[("cancel", &gettext("Cancelar")), ("grow", &gettext("Ampliar"))]);
+                    confirm.set_default_response(Some("cancel"));
+                    confirm.set_close_response("cancel");
+                    let page2 = page.clone(); let uuid = uuid.clone(); let target = target.clone(); let close = close.clone();
+                    confirm.connect_response(None, move |_, response| {
+                        if response == "grow" {
+                            close.close(); let uuid=uuid.clone(); let target=target.clone();
+                            page2.run_edit(connection, move |backend| backend.grow_disk(&uuid,&target,bytes));
+                        }
+                    });
+                    confirm.present(Some(&page.root));
+                });
+                row.add_suffix(&size);
+                row.add_suffix(&grow);
+            } else {
+                row.set_subtitle(&crate::virtualization_messages::translate(
+                    disk.unavailable.as_deref().unwrap_or(""),
+                ));
+            }
+            form.append(&row);
+        }
+        for target in details.media {
+            let row = adw::ActionRow::builder()
+                .title(format!("{} · {target}", gettext("Leitor de ISO")))
+                .subtitle(gettext("Ejetar a mídia preserva o arquivo ISO no disco."))
+                .build();
+            let eject = gtk::Button::with_label(&gettext("Ejetar ISO"));
+            eject.set_valign(gtk::Align::Center);
+            let page = self.clone();
+            let uuid = machine.uuid.clone();
+            let close = dialog.clone();
+            eject.connect_clicked(move |_| {
+                close.close();
+                let uuid = uuid.clone();
+                let target = target.clone();
+                page.run_edit(connection, move |backend| backend.eject_iso(&uuid, &target));
+            });
+            row.add_suffix(&eject);
+            form.append(&row);
+        }
+        let scroll = gtk::ScrolledWindow::builder()
+            .child(&form)
+            .max_content_height(480)
+            .propagate_natural_height(true)
+            .build();
+        dialog.set_extra_child(Some(&scroll));
         dialog.add_responses(&[
-            ("cancel", &gettext("Cancelar")),
-            ("save", &gettext("Salvar")),
+            ("cancel", &gettext("Fechar")),
+            ("save", &gettext("Aplicar CPU e memória")),
         ]);
         dialog.set_default_response(Some("cancel"));
         dialog.set_close_response("cancel");
@@ -725,6 +956,53 @@ mod tests {
         assert!(!page.create.is_sensitive());
         page.set_busy(false);
         assert!(page.create.is_sensitive());
+        // Opening the editor must be side-effect free; drive capacity starts
+        // strictly above the existing size and ISO removal is explicit.
+        page.edit_dialog(
+            &page.machines.borrow()[1],
+            EditDetails {
+                disks: vec![vega_virtualization::Disk {
+                    target: "vda".into(),
+                    path: "/fixture/disk.qcow2".into(),
+                    capacity: Some(4_u64 << 30),
+                    unavailable: None,
+                }],
+                media: vec!["sda".into()],
+            },
+        );
+        for _ in 0..20 {
+            while context.pending() {
+                context.iteration(false);
+            }
+        }
+        fn widgets(w: &gtk::Widget, out: &mut Vec<gtk::Widget>) {
+            out.push(w.clone());
+            let mut child = w.first_child();
+            while let Some(c) = child {
+                widgets(&c, out);
+                child = c.next_sibling();
+            }
+        }
+        let mut all = vec![];
+        for top in gtk::Window::list_toplevels() {
+            widgets(&top, &mut all);
+        }
+        let buttons: Vec<_> = all
+            .iter()
+            .filter_map(|w| w.downcast_ref::<gtk::Button>())
+            .filter_map(|b| b.label())
+            .collect();
+        for label in ["Renomear", "Ampliar", "Ejetar ISO", "Aplicar CPU e memória"] {
+            assert!(
+                buttons.iter().any(|s| s.as_str() == gettext(label)),
+                "{label}"
+            );
+        }
+        assert!(
+            all.iter()
+                .filter_map(|w| w.downcast_ref::<gtk::SpinButton>())
+                .any(|s| s.adjustment().lower() == 5.0 && s.value() == 5.0)
+        );
         window.close();
     }
 }
