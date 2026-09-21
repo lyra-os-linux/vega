@@ -1060,37 +1060,77 @@ pub struct SettingsContext {
 }
 
 pub fn settings_context() -> SettingsContext {
+    let extended_dock = current().is_none_or(|settings| settings.extend_to_edges);
+    if suite_available() {
+        return suite_command(&["status"])
+            .map(|state| settings_context_from_suite(state, extended_dock))
+            .unwrap_or_default();
+    }
     let profile = current_profile();
-    let active = |role: &str, state: &Option<std::collections::BTreeMap<String, bool>>| {
-        state
-            .as_ref()
-            .and_then(|s| s.get(role))
-            .copied()
-            .unwrap_or(false)
-    };
-    let state = if suite_available() {
-        suite_components()
-    } else {
-        let enabled = is_installed() && is_enabled() && profile != DesktopProfile::GnomeVanilla;
-        Some(
-            ["dock", "panel", "menus", "search", "animations"]
+    let enabled = is_installed() && is_enabled() && profile != DesktopProfile::GnomeVanilla;
+    settings_context_from_suite(
+        SuiteState {
+            version: 1,
+            profile: profile.id().into(),
+            globally_disabled: !enabled,
+            components: ["dock", "panel", "menus", "search", "animations"]
                 .into_iter()
-                .map(|role| (role.to_string(), enabled))
+                .map(|role| (role.into(), enabled))
                 .collect(),
-        )
+        },
+        extended_dock,
+    )
+}
+
+// Use one status snapshot for profile and components, so a failed profile query
+// can never silently enable controls that are fixed by the active profile.
+fn settings_context_from_suite(state: SuiteState, extended_dock: bool) -> SettingsContext {
+    let Some(profile) = DesktopProfile::from_id(&state.profile) else {
+        return SettingsContext::default();
+    };
+    let active = |role: &str| {
+        !state.globally_disabled && state.components.get(role).copied().unwrap_or(false)
     };
     SettingsContext {
-        dock: active("dock", &state),
-        panel: active("panel", &state),
-        menus: active("menus", &state),
-        search: active("search", &state),
-        animations: active("animations", &state),
+        dock: active("dock"),
+        panel: active("panel"),
+        menus: active("menus"),
+        search: active("search"),
+        animations: active("animations"),
         fixed_panel: matches!(
             profile,
             DesktopProfile::Windows10 | DesktopProfile::Windows11
         ),
         fixed_menu_position: profile == DesktopProfile::Macos,
-        extended_dock: current().is_none_or(|settings| settings.extend_to_edges),
+        extended_dock,
+    }
+}
+
+#[cfg(test)]
+mod settings_context_tests {
+    use super::*;
+
+    #[test]
+    fn status_snapshot_respects_disabled_missing_and_unknown_components() {
+        let state = |profile: &str, globally_disabled| SuiteState {
+            version: 1,
+            profile: profile.into(),
+            globally_disabled,
+            components: [
+                ("dock".into(), true),
+                ("panel".into(), false),
+                ("menus".into(), true),
+            ]
+            .into(),
+        };
+        let floating = settings_context_from_suite(state("macos", false), false);
+        assert!(floating.dock && floating.menus && floating.fixed_menu_position);
+        assert!(!floating.panel && !floating.search && !floating.animations);
+        let disabled = settings_context_from_suite(state("windows11", true), true);
+        assert!(disabled.fixed_panel && disabled.extended_dock);
+        assert!(!disabled.dock && !disabled.menus);
+        let unknown = settings_context_from_suite(state("unknown", false), false);
+        assert!(!unknown.dock && !unknown.menus);
     }
 }
 
