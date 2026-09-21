@@ -21,7 +21,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            libgtk-4-dev libadwaita-1-dev pkg-config build-essential gettext locales xvfb xauth dbus-x11 \
+            libgtk-4-dev libadwaita-1-dev libvirt-dev pkg-config build-essential gettext locales xvfb xauth dbus-x11 \
             gnome-shell-common gsettings-desktop-schemas python3-gi
           # Match the UTF-8 locale names used by Vega and glibc-locale-base.
           for locale in en_US pt_BR es_ES; do
@@ -45,6 +45,9 @@ jobs:
 
       - name: cargo test --workspace --locked
         run: cargo test --workspace --locked
+
+      - name: Verify virtual machine page without a host hypervisor
+        run: xvfb-run -a dbus-run-session -- cargo test --workspace --locked native_virtualization_page -- --ignored --test-threads=1
 
       - name: Verify desktop toggle without system GSettings schemas
         run: |

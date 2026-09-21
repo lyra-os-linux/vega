@@ -1,0 +1,34 @@
+// Keep backend diagnostics in the UI translation domain; libvirt details stay intact.
+use crate::i18n::gettext;
+pub fn translate(message: &str) -> String {
+    message.lines().map(|line| match line {
+        "A machine with this name already exists." => gettext("A machine with this name already exists."),
+        "CPU, memory or disk size is outside the supported range." => gettext("CPU, memory or disk size is outside the supported range."),
+        "Create personal machines in the personal connection." => gettext("Create personal machines in the personal connection."),
+        "Creation cancelled." => gettext("Creation cancelled."),
+        "Enter a machine name (1–128 bytes, no control characters)." => gettext("Enter a machine name (1–128 bytes, no control characters)."),
+        "HOME is not set" => gettext("HOME is not set"),
+        "HOME must be an absolute path" => gettext("HOME must be an absolute path"),
+        "Import requires a standalone, unencrypted QCOW2 disk without backing files or internal snapshots." => gettext("Import requires a standalone, unencrypted QCOW2 disk without backing files or internal snapshots."),
+        "Media transfer stopped unexpectedly." => gettext("Media transfer stopped unexpectedly."),
+        "QCOW2 features require conversion to a clean standalone image before import." => gettext("QCOW2 features require conversion to a clean standalone image before import."),
+        "Select a valid QCOW2 disk, or choose the RAW format explicitly." => gettext("Select a valid QCOW2 disk, or choose the RAW format explicitly."),
+        "Select an absolute media path." => gettext("Select an absolute media path."),
+        "Shut down the persistent machine and discard any saved state before editing resources." => gettext("Shut down the persistent machine and discard any saved state before editing resources."),
+        "The existing lyra-vms storage pool uses another path. It was not changed." => gettext("The existing lyra-vms storage pool uses another path. It was not changed."),
+        "The installation media changed while copying." => gettext("The installation media changed while copying."),
+        "The installation media must be a nonempty regular file." => gettext("The installation media must be a nonempty regular file."),
+        "The machine definition has no editable CPU/memory fields." => gettext("The machine definition has no editable CPU/memory fields."),
+        "The machine state changed. Refresh and try again." => gettext("The machine state changed. Refresh and try again."),
+        "The requested CPU or memory exceeds this host's capacity." => gettext("The requested CPU or memory exceeds this host's capacity."),
+        "The source media changed while copying." => gettext("The source media changed while copying."),
+        "The source media changed while copying. Shut down its machine before importing." => gettext("The source media changed while copying. Shut down its machine before importing."),
+        "The storage path must be UTF-8" => gettext("The storage path must be UTF-8"),
+        "This machine has an advanced CPU or memory layout. Edit it in virt-manager." => gettext("This machine has an advanced CPU or memory layout. Edit it in virt-manager."),
+        "This machine has custom CPU placement. Edit it in virt-manager." => gettext("This machine has custom CPU placement. Edit it in virt-manager."),
+        "Unsupported QCOW2 header or virtual disk size." => gettext("Unsupported QCOW2 header or virtual disk size."),
+        "Invalid data directory" => gettext("Invalid data directory"),
+        "A shortcut for this machine already exists." => gettext("A shortcut for this machine already exists."),
+        _ => line.to_string(),
+    }).collect::<Vec<_>>().join("\n")
+}

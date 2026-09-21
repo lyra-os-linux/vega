@@ -3418,3 +3418,319 @@ msgstr "O Vega usará os repositórios Lyra no OBS, NVIDIA oficial e openSUSE Le
 #: src/ui/nvidia.rs
 msgid "O módulo NVIDIA está carregado, mas a GPU não respondeu corretamente ao diagnóstico."
 msgstr "O módulo NVIDIA está carregado, mas a GPU não respondeu corretamente ao diagnóstico."
+
+#: src/ui/virtualization.rs
+msgid "A operação foi interrompida."
+msgstr "A operação foi interrompida."
+
+#: src/ui/virtualization.rs
+msgid "Abrir tela"
+msgstr "Abrir tela"
+
+#: src/ui/virtualization.rs
+msgid "Buscar máquina virtual"
+msgstr "Buscar máquina virtual"
+
+#: src/ui/virtualization.rs
+msgid "Buscar máquina virtual…"
+msgstr "Buscar máquina virtual…"
+
+#: src/ui/virtualization.rs
+msgid "CPUs virtuais"
+msgstr "CPUs virtuais"
+
+#: src/ui/virtualization.rs
+msgid "Cancelar criação"
+msgstr "Cancelar criação"
+
+#: src/ui/virtualization.rs
+msgid "Carregando máquinas virtuais…"
+msgstr "Carregando máquinas virtuais…"
+
+#: src/ui/virtualization.rs
+msgid "Conexão das máquinas virtuais"
+msgstr "Conexão das máquinas virtuais"
+
+#: src/ui/virtualization.rs
+msgid "Confirmar"
+msgstr "Confirmar"
+
+#: src/ui/virtualization.rs
+msgid "Criando disco e copiando a mídia… A máquina ficará desligada ao concluir."
+msgstr "Criando disco e copiando a mídia… A máquina ficará desligada ao concluir."
+
+#: src/ui/virtualization.rs
+msgid "Desligada"
+msgstr "Desligada"
+
+#: src/ui/virtualization.rs
+msgid "Disco (GiB)"
+msgstr "Disco (GiB)"
+
+#: src/ui/virtualization.rs
+msgid "Em execução"
+msgstr "Em execução"
+
+#: src/ui/virtualization.rs
+msgid "Executando operação…"
+msgstr "Executando operação…"
+
+#: src/ui/virtualization.rs
+msgid "Forçar parada"
+msgstr "Forçar parada"
+
+#: src/ui/virtualization.rs
+msgid "Gerencie aqui e abra a tela da máquina no Lyra VMs. Fechar a janela mantém a máquina em execução."
+msgstr "Gerencie aqui e abra a tela da máquina no Lyra VMs. Fechar a janela mantém a máquina em execução."
+
+#: src/ui/virtualization.rs
+msgid "Indisponível ou em transição"
+msgstr "Indisponível ou em transição"
+
+#: src/ui/virtualization.rs
+msgid "Instalação por ISO, com BIOS e rede compartilhada. Uma cópia da mídia e o disco ficarão na pasta de dados do Lyra VMs."
+msgstr "Instalação por ISO, com BIOS e rede compartilhada. Uma cópia da mídia e o disco ficarão na pasta de dados do Lyra VMs."
+
+#: src/ui/virtualization.rs
+msgid "Interromper imediatamente? Dados não salvos podem ser perdidos."
+msgstr "Interromper imediatamente? Dados não salvos podem ser perdidos."
+
+#: src/ui/virtualization.rs
+msgid "Memória (MiB)"
+msgstr "Memória (MiB)"
+
+#: src/ui/virtualization.rs
+msgid "Máquinas virtuais"
+msgstr "Máquinas virtuais"
+
+#: src/ui/virtualization.rs
+msgid "Nenhuma máquina corresponde à busca."
+msgstr "Nenhuma máquina corresponde à busca."
+
+#: src/ui/virtualization.rs
+msgid "Nenhuma máquina nesta conexão."
+msgstr "Nenhuma máquina nesta conexão."
+
+#: src/ui/virtualization.rs
+msgid "Nome da máquina"
+msgstr "Nome da máquina"
+
+#: src/ui/virtualization.rs
+msgid "Nova máquina"
+msgstr "Nova máquina"
+
+#: src/ui/virtualization.rs
+msgid "Nova máquina pessoal"
+msgstr "Nova máquina pessoal"
+
+#: src/ui/virtualization.rs
+msgid "Não foi possível abrir o Lyra VMs. Confira se o pacote está instalado."
+msgstr "Não foi possível abrir o Lyra VMs. Confira se o pacote está instalado."
+
+#: src/ui/virtualization.rs
+msgid "Não foi possível acessar as máquinas virtuais. Confira o serviço libvirt e tente novamente."
+msgstr "Não foi possível acessar as máquinas virtuais. Confira o serviço libvirt e tente novamente."
+
+#: src/ui/virtualization.rs
+msgid "Pausada"
+msgstr "Pausada"
+
+#: src/ui/virtualization.rs
+msgid "Pausar"
+msgstr "Pausar"
+
+#: src/ui/virtualization.rs
+msgid "Pessoais"
+msgstr "Pessoais"
+
+#: src/ui/virtualization.rs
+msgid "Remover a definição desta máquina? Os discos serão preservados."
+msgstr "Remover a definição desta máquina? Os discos serão preservados."
+
+#: src/ui/virtualization.rs
+msgid "Remover máquina"
+msgstr "Remover máquina"
+
+#: src/ui/virtualization.rs
+msgid "Retomar"
+msgstr "Retomar"
+
+#: src/ui/virtualization.rs
+msgid "Selecionar ISO"
+msgstr "Selecionar ISO"
+
+#: src/ui/virtualization.rs
+msgid "Selecionar ISO…"
+msgstr "Selecionar ISO…"
+
+#: src/ui/virtualization.rs
+msgid "Selecione uma ISO antes de criar a máquina."
+msgstr "Selecione uma ISO antes de criar a máquina."
+
+#: src/ui/virtualization.rs
+msgid "Solicitar que o sistema convidado desligue?"
+msgstr "Solicitar que o sistema convidado desligue?"
+
+#: src/ui/virtualization.rs
+msgid "CPU e memória"
+msgstr "CPU e memória"
+
+#: src/ui/virtualization.rs
+msgid "CPU e memória serão alteradas com a máquina desligada."
+msgstr "CPU e memória serão alteradas com a máquina desligada."
+
+#: src/virtualization_messages.rs
+msgid "HOME must be an absolute path"
+msgstr "HOME deve ser um caminho absoluto"
+
+#: src/virtualization_messages.rs
+msgid "Shut down the persistent machine and discard any saved state before editing resources."
+msgstr "Desligue a máquina e descarte o estado salvo antes de editar os recursos."
+
+#: src/virtualization_messages.rs
+msgid "The requested CPU or memory exceeds this host's capacity."
+msgstr "A CPU ou memória solicitada excede a capacidade deste computador."
+
+#: src/virtualization_messages.rs
+msgid "The machine state changed. Refresh and try again."
+msgstr "O estado da máquina mudou. Atualize e tente novamente."
+
+#: src/virtualization_messages.rs
+msgid "This machine has an advanced CPU or memory layout. Edit it in virt-manager."
+msgstr "Esta máquina usa uma configuração avançada de CPU ou memória. Edite-a no virt-manager."
+
+#: src/virtualization_messages.rs
+msgid "This machine has custom CPU placement. Edit it in virt-manager."
+msgstr "Esta máquina tem uma distribuição personalizada de CPUs. Edite-a no virt-manager."
+
+#: src/virtualization_messages.rs
+msgid "The machine definition has no editable CPU/memory fields."
+msgstr "A definição da máquina não possui campos de CPU/memória editáveis."
+
+#: src/virtualization_messages.rs
+msgid "Enter a machine name (1–128 bytes, no control characters)."
+msgstr "Informe um nome para a máquina (1–128 bytes, sem caracteres de controle)."
+
+#: src/virtualization_messages.rs
+msgid "CPU, memory or disk size is outside the supported range."
+msgstr "A CPU, memória ou tamanho do disco está fora dos limites aceitos."
+
+#: src/virtualization_messages.rs
+msgid "Select an absolute media path."
+msgstr "Selecione um caminho absoluto para a mídia."
+
+#: src/virtualization_messages.rs
+msgid "Create personal machines in the personal connection."
+msgstr "Crie máquinas pessoais na conexão Pessoais."
+
+#: src/virtualization_messages.rs
+msgid "A machine with this name already exists."
+msgstr "Já existe uma máquina com este nome."
+
+#: src/virtualization_messages.rs
+msgid "The installation media must be a nonempty regular file."
+msgstr "A mídia deve ser um arquivo comum e não vazio."
+
+#: src/virtualization_messages.rs
+msgid "Creation cancelled."
+msgstr "Criação cancelada."
+
+#: src/virtualization_messages.rs
+msgid "HOME is not set"
+msgstr "HOME não está definido"
+
+#: src/virtualization_messages.rs
+msgid "The storage path must be UTF-8"
+msgstr "O caminho de armazenamento deve usar UTF-8"
+
+#: src/virtualization_messages.rs
+msgid "The existing lyra-vms storage pool uses another path. It was not changed."
+msgstr "O armazenamento lyra-vms existente usa outro caminho. Ele não foi alterado."
+
+#: src/virtualization_messages.rs
+msgid "The installation media changed while copying."
+msgstr "A mídia de instalação mudou durante a cópia."
+
+#: src/virtualization_messages.rs
+msgid "The source media changed while copying."
+msgstr "A mídia de origem mudou durante a cópia."
+
+#: src/virtualization_messages.rs
+msgid "Media transfer stopped unexpectedly."
+msgstr "A transferência da mídia parou inesperadamente."
+
+#: src/virtualization_messages.rs
+msgid "The source media changed while copying. Shut down its machine before importing."
+msgstr "A mídia de origem mudou durante a cópia. Desligue a máquina de origem antes de importar."
+
+#: src/virtualization_messages.rs
+msgid "Select a valid QCOW2 disk, or choose the RAW format explicitly."
+msgstr "Selecione um disco QCOW2 válido ou escolha explicitamente o formato RAW."
+
+#: src/virtualization_messages.rs
+msgid "Unsupported QCOW2 header or virtual disk size."
+msgstr "Cabeçalho QCOW2 ou tamanho de disco virtual não suportado."
+
+#: src/virtualization_messages.rs
+msgid "Import requires a standalone, unencrypted QCOW2 disk without backing files or internal snapshots."
+msgstr "A importação requer um QCOW2 independente, sem criptografia, arquivos de base ou snapshots internos."
+
+#: src/virtualization_messages.rs
+msgid "QCOW2 features require conversion to a clean standalone image before import."
+msgstr "Os recursos deste QCOW2 exigem conversão para uma imagem independente e íntegra antes da importação."
+
+#: src/ui/virtualization.rs
+msgid "Instale por ISO ou importe uma cópia de um disco. Para importar, desligue a máquina de origem. Os arquivos originais serão preservados."
+msgstr "Instale por ISO ou importe uma cópia de um disco. Para importar, desligue a máquina de origem. Os arquivos originais serão preservados."
+
+#: src/ui/virtualization.rs
+msgid "Instalar por ISO"
+msgstr "Instalar por ISO"
+
+#: src/ui/virtualization.rs
+msgid "Importar QCOW2"
+msgstr "Importar QCOW2"
+
+#: src/ui/virtualization.rs
+msgid "Importar RAW"
+msgstr "Importar RAW"
+
+#: src/ui/virtualization.rs
+msgid "Origem da máquina"
+msgstr "Origem da máquina"
+
+#: src/ui/virtualization.rs
+msgid "Selecionar arquivo…"
+msgstr "Selecionar arquivo…"
+
+#: src/ui/virtualization.rs
+msgid "Selecionar arquivo"
+msgstr "Selecionar arquivo"
+
+#: src/ui/virtualization.rs
+msgid "Selecione a mídia antes de criar a máquina."
+msgstr "Selecione a mídia antes de criar a máquina."
+
+#: src/ui/virtualization.rs
+msgid "Remover a definição desta máquina? Os discos e dados do firmware serão preservados."
+msgstr "Remover a definição desta máquina? Os discos e dados do firmware serão preservados."
+
+#: src/ui/virtualization.rs
+msgid "Atalho da tela"
+msgstr "Atalho da tela"
+
+#: src/ui/virtualization.rs
+msgid "Adiciona a tela ao menu de aplicativos. Se a máquina estiver desligada, o console aguardará o início pelo Vega."
+msgstr "Adiciona a tela ao menu de aplicativos. Se a máquina estiver desligada, o console aguardará o início pelo Vega."
+
+#: src/ui/virtualization.rs
+msgid "Atalho criado no menu de aplicativos."
+msgstr "Atalho criado no menu de aplicativos."
+
+#: src/virtualization_messages.rs
+msgid "Invalid data directory"
+msgstr "Diretório de dados inválido"
+
+#: src/virtualization_messages.rs
+msgid "A shortcut for this machine already exists."
+msgstr "Já existe um atalho para esta máquina."
