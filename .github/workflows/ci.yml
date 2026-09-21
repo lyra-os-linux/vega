@@ -49,6 +49,9 @@ jobs:
       - name: Verify virtual machine page without a host hypervisor
         run: xvfb-run -a dbus-run-session -- cargo test --workspace --locked native_virtualization_page -- --ignored --test-threads=1
 
+      - name: Verify settings context preserves saved preferences
+        run: GTK_A11Y=none GSETTINGS_BACKEND=memory xvfb-run -a dbus-run-session -- cargo test --workspace --locked native_settings_context -- --ignored --test-threads=1
+
       - name: Verify desktop toggle without system GSettings schemas
         run: |
           schema_fixture_dir="$(mktemp -d)"
