@@ -29,6 +29,7 @@ impl PackageGroup {
 
 #[derive(Clone)]
 pub struct SoftwarePage {
+    pub preparation: super::preparation::PreparationPanel,
     pub root: gtk::Widget,
     pub query: gtk::SearchEntry,
     pub search: gtk::Button,
@@ -359,6 +360,8 @@ impl SoftwarePage {
                 .css_classes(["title-1"])
                 .build(),
         );
+        let preparation = super::preparation::PreparationPanel::new();
+        content.append(preparation.widget());
         content.append(&tabs);
         content.append(&transaction_panel);
         content.append(&controls);
@@ -416,6 +419,7 @@ impl SoftwarePage {
         });
 
         Self {
+            preparation,
             root,
             query,
             search,

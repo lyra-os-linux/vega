@@ -10,6 +10,7 @@ mod monitor;
 mod network;
 mod nvidia;
 mod personalization;
+mod preparation;
 mod screen;
 mod screensaver;
 mod services;
