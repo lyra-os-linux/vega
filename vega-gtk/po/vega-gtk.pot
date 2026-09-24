@@ -3838,3 +3838,107 @@ msgstr ""
 
 msgid "The machine was removed, but some local files were preserved."
 msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Tentar novamente"
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Solicitando autorização…"
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Nova tentativa solicitada. Acompanhando o serviço…"
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Não foi possível solicitar uma nova tentativa: {detail}"
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Estado da preparação indisponível"
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Não foi possível consultar o serviço. A conexão será verificada novamente."
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Preparação dos repositórios pendente"
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Preparando os repositórios"
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Aguardando nova tentativa"
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Uma chave de assinatura precisa de aprovação"
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "A preparação dos repositórios não terminou"
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Repositórios preparados"
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Conferindo as chaves de assinatura autorizadas…"
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Atualizando os metadados dos repositórios…"
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Consultando as atualizações disponíveis…"
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Registrando o resultado da preparação…"
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Iniciando a preparação…"
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Os repositórios estão prontos. Você pode escolher quais atualizações instalar."
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "A preparação ainda não começou."
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Verifique a conexão de rede. Não foi possível acessar os repositórios."
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "É necessário revisar e aprovar a chave do repositório. Apenas aguardar ou tentar novamente não autoriza a chave."
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "A preparação foi interrompida. Você pode tentar novamente."
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "O serviço não concluiu a preparação. Tente novamente ou consulte o registro do serviço."
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Última atualização: {time}"
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Próxima tentativa automática, aproximadamente: {time}"
+msgstr ""
+
+#: src/ui/preparation.rs
+msgid "Estado da preparação indisponível nesta versão do serviço."
+msgstr ""

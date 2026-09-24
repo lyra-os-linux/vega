@@ -3286,6 +3286,10 @@ async fn monitor_backup_transaction(
 }
 
 fn configure_software(shell: &VegaShell, window: &adw::ApplicationWindow, dbus: VegaDbus) {
+    shell
+        .software
+        .preparation
+        .connect(&shell.software.root, dbus.clone());
     let dashboard_updates = shell.dashboard_updates.clone();
     watch_dashboard_updates(dashboard_updates.clone());
 

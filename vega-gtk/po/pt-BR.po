@@ -3821,3 +3821,107 @@ msgstr "O vínculo do arquivo mudou; arquivo preservado."
 
 msgid "The machine was removed, but some local files were preserved."
 msgstr "A máquina foi removida, mas alguns arquivos locais foram preservados."
+
+#: src/ui/preparation.rs
+msgid "Tentar novamente"
+msgstr "Tentar novamente"
+
+#: src/ui/preparation.rs
+msgid "Solicitando autorização…"
+msgstr "Solicitando autorização…"
+
+#: src/ui/preparation.rs
+msgid "Nova tentativa solicitada. Acompanhando o serviço…"
+msgstr "Nova tentativa solicitada. Acompanhando o serviço…"
+
+#: src/ui/preparation.rs
+msgid "Não foi possível solicitar uma nova tentativa: {detail}"
+msgstr "Não foi possível solicitar uma nova tentativa: {detail}"
+
+#: src/ui/preparation.rs
+msgid "Estado da preparação indisponível"
+msgstr "Estado da preparação indisponível"
+
+#: src/ui/preparation.rs
+msgid "Não foi possível consultar o serviço. A conexão será verificada novamente."
+msgstr "Não foi possível consultar o serviço. A conexão será verificada novamente."
+
+#: src/ui/preparation.rs
+msgid "Preparação dos repositórios pendente"
+msgstr "Preparação dos repositórios pendente"
+
+#: src/ui/preparation.rs
+msgid "Preparando os repositórios"
+msgstr "Preparando os repositórios"
+
+#: src/ui/preparation.rs
+msgid "Aguardando nova tentativa"
+msgstr "Aguardando nova tentativa"
+
+#: src/ui/preparation.rs
+msgid "Uma chave de assinatura precisa de aprovação"
+msgstr "Uma chave de assinatura precisa de aprovação"
+
+#: src/ui/preparation.rs
+msgid "A preparação dos repositórios não terminou"
+msgstr "A preparação dos repositórios não terminou"
+
+#: src/ui/preparation.rs
+msgid "Repositórios preparados"
+msgstr "Repositórios preparados"
+
+#: src/ui/preparation.rs
+msgid "Conferindo as chaves de assinatura autorizadas…"
+msgstr "Conferindo as chaves de assinatura autorizadas…"
+
+#: src/ui/preparation.rs
+msgid "Atualizando os metadados dos repositórios…"
+msgstr "Atualizando os metadados dos repositórios…"
+
+#: src/ui/preparation.rs
+msgid "Consultando as atualizações disponíveis…"
+msgstr "Consultando as atualizações disponíveis…"
+
+#: src/ui/preparation.rs
+msgid "Registrando o resultado da preparação…"
+msgstr "Registrando o resultado da preparação…"
+
+#: src/ui/preparation.rs
+msgid "Iniciando a preparação…"
+msgstr "Iniciando a preparação…"
+
+#: src/ui/preparation.rs
+msgid "Os repositórios estão prontos. Você pode escolher quais atualizações instalar."
+msgstr "Os repositórios estão prontos. Você pode escolher quais atualizações instalar."
+
+#: src/ui/preparation.rs
+msgid "A preparação ainda não começou."
+msgstr "A preparação ainda não começou."
+
+#: src/ui/preparation.rs
+msgid "Verifique a conexão de rede. Não foi possível acessar os repositórios."
+msgstr "Verifique a conexão de rede. Não foi possível acessar os repositórios."
+
+#: src/ui/preparation.rs
+msgid "É necessário revisar e aprovar a chave do repositório. Apenas aguardar ou tentar novamente não autoriza a chave."
+msgstr "É necessário revisar e aprovar a chave do repositório. Apenas aguardar ou tentar novamente não autoriza a chave."
+
+#: src/ui/preparation.rs
+msgid "A preparação foi interrompida. Você pode tentar novamente."
+msgstr "A preparação foi interrompida. Você pode tentar novamente."
+
+#: src/ui/preparation.rs
+msgid "O serviço não concluiu a preparação. Tente novamente ou consulte o registro do serviço."
+msgstr "O serviço não concluiu a preparação. Tente novamente ou consulte o registro do serviço."
+
+#: src/ui/preparation.rs
+msgid "Última atualização: {time}"
+msgstr "Última atualização: {time}"
+
+#: src/ui/preparation.rs
+msgid "Próxima tentativa automática, aproximadamente: {time}"
+msgstr "Próxima tentativa automática, aproximadamente: {time}"
+
+#: src/ui/preparation.rs
+msgid "Estado da preparação indisponível nesta versão do serviço."
+msgstr "Estado da preparação indisponível nesta versão do serviço."
