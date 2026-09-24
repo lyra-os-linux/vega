@@ -1,8 +1,14 @@
-use std::{cell::Cell, rc::Rc, time::Duration};
+use std::{
+    cell::{Cell, RefCell},
+    rc::Rc,
+    time::Duration,
+};
 
 use adw::prelude::*;
 use gtk::glib;
-use lyra_vega_dbus::{PreparationClient, PreparationStatus, VegaDbus};
+use lyra_vega_dbus::{
+    PreparationClient, PreparationKey, PreparationStatus, SoftwareEvent, VegaDbus,
+};
 
 use crate::i18n::gettext;
 
@@ -12,6 +18,8 @@ struct Inner {
     detail: gtk::Label,
     feedback: gtk::Label,
     retry: gtk::Button,
+    review: gtk::Button,
+    key: RefCell<Option<PreparationKey>>,
     busy: Cell<bool>,
     can_retry: Cell<bool>,
 }
@@ -48,6 +56,11 @@ impl PreparationPanel {
             .halign(gtk::Align::Start)
             .visible(false)
             .build();
+        let review = gtk::Button::builder()
+            .label(gettext("Revisar chave…"))
+            .halign(gtk::Align::Start)
+            .visible(false)
+            .build();
         let content = gtk::Box::builder()
             .orientation(gtk::Orientation::Vertical)
             .spacing(8)
@@ -60,6 +73,7 @@ impl PreparationPanel {
         content.append(&detail);
         content.append(&feedback);
         content.append(&retry);
+        content.append(&review);
         root.append(&content);
         Self(Rc::new(Inner {
             root,
@@ -67,6 +81,8 @@ impl PreparationPanel {
             detail,
             feedback,
             retry,
+            review,
+            key: RefCell::new(None),
             busy: Cell::new(false),
             can_retry: Cell::new(false),
         }))
@@ -93,9 +109,23 @@ impl PreparationPanel {
                 return;
             }
             panel.retry.set_sensitive(false);
+            panel.review.set_sensitive(false);
             let client = poll_dbus.preparation();
             glib::MainContext::default().spawn_local(async move {
                 let result=client.status().await;
+                let keys = if matches!(&result, Ok(Some(status)) if status.state == "awaiting-approval") {
+                    client.pending_keys().await
+                } else { Ok(Vec::new()) };
+                match keys {
+                    Ok(keys) => { *panel.key.borrow_mut() = keys.into_iter().next(); },
+                    Err(_) => {
+                        *panel.key.borrow_mut() = None;
+                        panel.feedback.set_visible(true);
+                        panel.feedback.set_text(&gettext("Não foi possível carregar a chave pendente. A consulta será repetida."));
+                    }
+                }
+                panel.review.set_visible(panel.key.borrow().is_some());
+                panel.review.set_sensitive(true);
                 panel.busy.set(false);
                 match result {
                     Ok(Some(status)) => panel.show_status(&status),
@@ -123,6 +153,52 @@ impl PreparationPanel {
         });
         poll();
         let weak = Rc::downgrade(&self.0);
+        let review_dbus = dbus.clone();
+        let review_poll = poll.clone();
+        let weak_page = page.downgrade();
+        self.0.review.connect_clicked(move |_| {
+            let Some(panel) = weak.upgrade() else {
+                return;
+            };
+            if panel.busy.get() {
+                return;
+            }
+            let Some(key) = panel.key.borrow().clone() else {
+                return;
+            };
+            let Some(parent) = weak_page.upgrade() else {
+                return;
+            };
+            panel.busy.set(true);
+            panel.retry.set_sensitive(false);
+            panel.review.set_sensitive(false);
+            let dbus = review_dbus.clone();
+            let refresh = review_poll.clone();
+            glib::MainContext::default().spawn_local(async move {
+                let dialog = key_review_dialog(&key);
+                if dialog.choose_future(Some(&parent)).await == "confirm" {
+                    panel.feedback.set_visible(true);
+                    panel
+                        .feedback
+                        .set_text(&gettext("Solicitando autorização…"));
+                    let result = approve_key_transaction(&dbus, &key, &panel.feedback).await;
+                    match result {
+                        Ok(()) => panel
+                            .feedback
+                            .set_text(&gettext("Chave aprovada. Acompanhando a preparação…")),
+                        Err(error) => panel.feedback.set_text(
+                            &gettext("Não foi possível aprovar a chave: {detail}")
+                                .replace("{detail}", &error),
+                        ),
+                    }
+                }
+                panel.busy.set(false);
+                panel.review.set_sensitive(true);
+                panel.retry.set_sensitive(panel.can_retry.get());
+                refresh();
+            });
+        });
+        let weak = Rc::downgrade(&self.0);
         self.0.retry.connect_clicked(move |_| {
             let Some(panel) = weak.upgrade() else {
                 return;
@@ -131,6 +207,7 @@ impl PreparationPanel {
                 return;
             }
             panel.retry.set_sensitive(false);
+            panel.review.set_sensitive(false);
             panel.feedback.set_visible(true);
             panel
                 .feedback
@@ -159,6 +236,58 @@ impl PreparationPanel {
                 refresh();
             });
         });
+    }
+}
+
+fn key_review_dialog(key: &PreparationKey) -> adw::AlertDialog {
+    let body = gettext("Repositório: {repo}\nAssinante: {user}\nImpressão digital completa: {fingerprint}\n\nConfira a impressão digital com o responsável pelo repositório antes de confiar. A aprovação retomará a preparação.")
+        .replace("{repo}", &key.repo).replace("{user}", &key.user_id).replace("{fingerprint}", &key.fingerprint);
+    let dialog = adw::AlertDialog::new(
+        Some(&gettext("Confiar na chave do repositório?")),
+        Some(&body),
+    );
+    dialog.add_responses(&[
+        ("cancel", &gettext("Cancelar")),
+        ("confirm", &gettext("Confiar")),
+    ]);
+    dialog.set_body_use_markup(false);
+    dialog.set_default_response(Some("cancel"));
+    dialog.set_close_response("cancel");
+    dialog
+}
+
+async fn approve_key_transaction(
+    dbus: &VegaDbus,
+    key: &PreparationKey,
+    feedback: &gtk::Label,
+) -> Result<(), String> {
+    // Subscribe before starting so fast completion cannot race the listener.
+    let mut events = dbus
+        .software()
+        .subscribe()
+        .await
+        .map_err(|error| error.to_string())?;
+    let id = dbus
+        .preparation()
+        .approve_key(key)
+        .await
+        .map_err(|error| error.to_string())?;
+    loop {
+        match events
+            .next_transaction(id)
+            .await
+            .map_err(|error| error.to_string())?
+        {
+            SoftwareEvent::Progress(progress) => feedback.set_text(&progress.message),
+            SoftwareEvent::Finished(finished) => {
+                return if finished.success {
+                    Ok(())
+                } else {
+                    Err(finished.message)
+                };
+            }
+            _ => {}
+        }
     }
 }
 
@@ -287,6 +416,18 @@ mod tests {
             .default_height(280)
             .child(panel.widget())
             .build();
+        let key = PreparationKey {
+            repo: "fixture <untrusted>".into(),
+            fingerprint: "0123456789ABCDEF0123456789ABCDEF01234567".into(),
+            user_id: "Fixture signer".into(),
+            token: "review-token".into(),
+        };
+        let dialog = key_review_dialog(&key);
+        assert_eq!(dialog.default_response().as_deref(), Some("cancel"));
+        assert_eq!(dialog.close_response(), "cancel");
+        assert!(!dialog.is_body_use_markup());
+        assert!(dialog.body().contains(&key.fingerprint));
+        assert!(dialog.body().contains(&key.repo));
         window.present();
         for (state, kind, retry) in [
             ("waiting-retry", "network", true),
@@ -297,6 +438,7 @@ mod tests {
             let mut value = status(state, kind);
             value.can_retry = retry;
             panel.0.show_status(&value);
+            panel.0.review.set_visible(state == "awaiting-approval");
             for _ in 0..100 {
                 while glib::MainContext::default().pending() {
                     glib::MainContext::default().iteration(false);

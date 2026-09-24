@@ -3925,3 +3925,23 @@ msgstr "Próxima tentativa automática, aproximadamente: {time}"
 #: src/ui/preparation.rs
 msgid "Estado da preparação indisponível nesta versão do serviço."
 msgstr "Estado da preparação indisponível nesta versão do serviço."
+
+#: src/ui/preparation.rs
+msgid "Revisar chave…"
+msgstr "Revisar chave…"
+
+#: src/ui/preparation.rs
+msgid "Não foi possível carregar a chave pendente. A consulta será repetida."
+msgstr "Não foi possível carregar a chave pendente. A consulta será repetida."
+
+#: src/ui/preparation.rs
+msgid "Repositório: {repo}\nAssinante: {user}\nImpressão digital completa: {fingerprint}\n\nConfira a impressão digital com o responsável pelo repositório antes de confiar. A aprovação retomará a preparação."
+msgstr "Repositório: {repo}\nAssinante: {user}\nImpressão digital completa: {fingerprint}\n\nConfira a impressão digital com o responsável pelo repositório antes de confiar. A aprovação retomará a preparação."
+
+#: src/ui/preparation.rs
+msgid "Chave aprovada. Acompanhando a preparação…"
+msgstr "Chave aprovada. Acompanhando a preparação…"
+
+#: src/ui/preparation.rs
+msgid "Não foi possível aprovar a chave: {detail}"
+msgstr "Não foi possível aprovar a chave: {detail}"
