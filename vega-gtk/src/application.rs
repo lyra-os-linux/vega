@@ -88,14 +88,36 @@ pub fn run() -> glib::ExitCode {
 
 fn install_style() {
     gtk::Window::set_default_icon_name("vega");
-    adw::StyleManager::default().set_color_scheme(adw::ColorScheme::Default);
+    let manager = adw::StyleManager::default();
+    manager.set_color_scheme(adw::ColorScheme::Default);
     let provider = gtk::CssProvider::new();
-    provider.load_from_data(include_str!("../resources/style.css"));
+    reload_style(&provider, &manager);
+    let dark_provider = provider.clone();
+    manager.connect_dark_notify(move |manager| reload_style(&dark_provider, manager));
+    let contrast_provider = provider.clone();
+    manager.connect_high_contrast_notify(move |manager| reload_style(&contrast_provider, manager));
     gtk::style_context_add_provider_for_display(
         &gtk::gdk::Display::default().expect("display gráfico disponível"),
         &provider,
         gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
     );
+}
+
+fn reload_style(provider: &gtk::CssProvider, manager: &adw::StyleManager) {
+    // App-owned colors follow the actual libadwaita style, including live
+    // changes and high contrast. No dependency on a user-wide GTK override.
+    let palette = if manager.is_high_contrast() {
+        ""
+    } else if manager.is_dark() {
+        include_str!("../resources/palette-dark.css")
+    } else {
+        include_str!("../resources/palette-light.css")
+    };
+    provider.load_from_data(&format!(
+        "{}\n{}",
+        include_str!("../resources/style.css"),
+        palette
+    ));
 }
 
 fn build_window(app: &adw::Application, show_updates: bool) -> (VegaShell, adw::ApplicationWindow) {

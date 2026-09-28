@@ -6,10 +6,15 @@
 @define-color lyra_text @window_fg_color;
 @define-color lyra_muted alpha(@window_fg_color, 0.72);
 @define-color lyra_blue @accent_color;
-@define-color lyra_violet #9b6bff;
-@define-color lyra_danger #ff5b6e;
-@define-color lyra_warning #ffb84d;
-@define-color lyra_success #4dd68c;
+@define-color lyra_violet @accent_color;
+@define-color lyra_danger @error_color;
+@define-color lyra_warning @warning_color;
+@define-color lyra_success @success_color;
+
+.dim-label {
+  color: @lyra_muted;
+  opacity: 1;
+}
 
 .app-frame {
   background-color: @lyra_night;
@@ -24,7 +29,7 @@
 
 .vega-sidebar {
   min-width: 240px;
-  background-color: @lyra_night_alt;
+  background-color: @sidebar_bg_color;
   border-right: 1px solid @lyra_border;
   padding: 16px 8px;
 }
@@ -404,8 +409,9 @@ button.dashboard-card label:not(.card-title) {
 }
 
 button.suggested-action {
-  background-image: linear-gradient(135deg, @lyra_blue, @lyra_violet);
-  color: white;
+  background-image: none;
+  background-color: @accent_bg_color;
+  color: @accent_fg_color;
 }
 
 button.vega-theme-card {
@@ -522,11 +528,11 @@ button.vega-profile-card:checked {
 }
 
 .vega-window-preview-light {
-  background-color: #f6f6f6;
+  background-color: #f6f8fc;
 }
 
 .vega-window-preview-light .vega-window-preview-header {
-  background-color: #e2e2e2;
+  background-color: #e7edf6;
 }
 
 .vega-window-preview-light .vega-window-preview-dot {
@@ -534,15 +540,15 @@ button.vega-profile-card:checked {
 }
 
 .vega-window-preview-light .vega-window-preview-line {
-  background-color: #d4d4d4;
+  background-color: #c7d8ee;
 }
 
 .vega-window-preview-dark {
-  background-color: #2e2e2e;
+  background-color: #0b1018;
 }
 
 .vega-window-preview-dark .vega-window-preview-header {
-  background-color: #222222;
+  background-color: #111925;
 }
 
 .vega-window-preview-dark .vega-window-preview-dot {
@@ -550,7 +556,7 @@ button.vega-profile-card:checked {
 }
 
 .vega-window-preview-dark .vega-window-preview-line {
-  background-color: #484848;
+  background-color: #354966;
 }
 
 .vega-profile-preview-dock-ubuntu {

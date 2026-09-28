@@ -1,0 +1,72 @@
+{
+  "passed": true,
+  "binary": "/home/rodrigo/Git/LyraOS/vega/target/debug/vega-gtk",
+  "checks": [
+    {
+      "mode": "dark",
+      "high_contrast": false,
+      "sample": [
+        17,
+        25,
+        37
+      ],
+      "pid": 19545,
+      "capture": "vega-dark.png"
+    },
+    {
+      "mode": "light",
+      "high_contrast": false,
+      "sample": [
+        246,
+        248,
+        252
+      ],
+      "pid": 19545,
+      "capture": "vega-light.png"
+    },
+    {
+      "mode": "dark",
+      "high_contrast": false,
+      "sample": [
+        17,
+        25,
+        37
+      ],
+      "pid": 19545,
+      "capture": "vega-dark.png"
+    },
+    {
+      "mode": "light",
+      "high_contrast": true,
+      "sample": [
+        250,
+        250,
+        251
+      ],
+      "pid": 19545,
+      "capture": "vega-light-hc.png"
+    },
+    {
+      "mode": "dark",
+      "high_contrast": true,
+      "sample": [
+        34,
+        34,
+        38
+      ],
+      "pid": 19545,
+      "capture": "vega-dark-hc.png"
+    },
+    {
+      "mode": "light",
+      "high_contrast": false,
+      "sample": [
+        246,
+        248,
+        252
+      ],
+      "pid": 19545,
+      "capture": "vega-light.png"
+    }
+  ]
+}
