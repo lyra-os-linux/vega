@@ -528,11 +528,11 @@ button.vega-profile-card:checked {
 }
 
 .vega-window-preview-light {
-  background-color: #f6f8fc;
+  background-color: #f6f6f6;
 }
 
 .vega-window-preview-light .vega-window-preview-header {
-  background-color: #e7edf6;
+  background-color: #e2e2e2;
 }
 
 .vega-window-preview-light .vega-window-preview-dot {
@@ -540,15 +540,15 @@ button.vega-profile-card:checked {
 }
 
 .vega-window-preview-light .vega-window-preview-line {
-  background-color: #c7d8ee;
+  background-color: #d4d4d4;
 }
 
 .vega-window-preview-dark {
-  background-color: #0b1018;
+  background-color: #2e2e2e;
 }
 
 .vega-window-preview-dark .vega-window-preview-header {
-  background-color: #111925;
+  background-color: #222222;
 }
 
 .vega-window-preview-dark .vega-window-preview-dot {
@@ -556,7 +556,7 @@ button.vega-profile-card:checked {
 }
 
 .vega-window-preview-dark .vega-window-preview-line {
-  background-color: #354966;
+  background-color: #484848;
 }
 
 .vega-profile-preview-dock-ubuntu {
