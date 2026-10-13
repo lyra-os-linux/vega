@@ -215,7 +215,7 @@ fn fixture_with_updates(
                                 "NVIDIA GTX 1650",
                                 "enabled",
                                 state,
-                                "NVIDIA 610.57.04",
+                                "NVIDIA 615.71.09",
                                 0u32,
                             ),)
                                 .to_variant(),

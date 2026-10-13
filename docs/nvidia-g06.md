@@ -1,24 +1,33 @@
-A instalação de drivers NVIDIA e firmware pelo Vega foi removida.
+# NVIDIA no Vega
 
-As interfaces GNOME e XFCE exibem o inventário de hardware e o estado do
-firmware informado pelo fwupd, sem cartões de instalação. A monitoração de
-uso da GPU continua disponível.
+A instalação genérica de drivers, a troca de drivers (`Hardware.SwitchNvidiaDriver`)
+e a instalação de firmware não livre (`Software.InstallNonFreeFirmware`) foram
+removidas. Esses dois métodos D-Bus v1 permanecem apenas para compatibilidade e
+retornam `org.freedesktop.DBus.Error.NotSupported` antes de autenticação,
+execução de comandos ou criação de transação. As ações Polkit correspondentes
+foram removidas. A pilha G06 não é mais instalada por nenhum fluxo do Vega.
 
-O vegad não adiciona repositórios NVIDIA, instala a pilha G06, troca drivers
-nem instala firmware opcional por esses fluxos. Os métodos D-Bus v1
-`Software.InstallNvidia`, `Software.InstallNonFreeFirmware` e
-`Hardware.SwitchNvidiaDriver` permanecem apenas para compatibilidade: retornam
-`org.freedesktop.DBus.Error.NotSupported` antes de autenticação, execução de
-comandos ou criação de transação. As ações Polkit correspondentes foram
-removidas. As consultas legadas de diagnóstico continuam disponíveis.
+A instalação **opcional e qualificada** do driver NVIDIA oficial (G07, módulo
+assinado pela SUSE) voltou com outra forma: o `vegad` anuncia a capability
+`nvidia-official-v1` em `Metadata.Capabilities` e reativa
+`Software.InstallNvidia(confirmed)` para esse fluxo restrito. O cartão NVIDIA da
+página Hardware do `vega-gtk` (`vega-gtk/src/nvidia.rs`) só mostra o botão de
+instalação quando a capability está presente e `Software.NvidiaStatus` responde
+`available` ou `unmanaged`; nos outros estados exibe o diagnóstico traduzido.
+A revisão de repositórios, confiança e recuperação é obrigatória mesmo com as
+confirmações opcionais desativadas nas preferências.
 
-A proteção de suspensão já existente para NVIDIA 580.159.03 em notebooks
-híbridos continua sendo reconciliada na inicialização do daemon. Remover os
-instaladores não altera os drivers instalados nem desativa essa proteção.
-O comportamento dos módulos gerais de pacotes, kernel e recuperação permanece
-independente desses fluxos removidos.
+Estados, pacotes qualificados, política de kernel, recuperação e limites do
+fluxo estão documentados em `docs/nvidia.md` do repositório
+[vegad](https://github.com/lyra-os-linux/vegad). Em particular, uma instalação
+nova exige que o kernel em uso seja o kernel padrão de boot (`-default`) e que o
+Leap publique o KMP assinado para esse kernel; caso contrário o estado é
+`kernel-missing` e o botão fica oculto.
 
-Para distribuir a mudança, atualizar os frontends e o vegad de forma coordenada.
-Um frontend novo não chama os instaladores antigos; um frontend antigo conectado
-ao daemon novo recebe a recusa explícita. O contrato v1 conserva suas assinaturas
-e documenta os três métodos como descontinuados.
+A proteção de suspensão para NVIDIA 580.159.03 em notebooks híbridos continua
+sendo reconciliada na inicialização do daemon e independe desse fluxo.
+
+Frontend e daemon devem ser atualizados de forma coordenada: um frontend novo
+com daemon antigo mostra "Atualize o vegad para usar a integração NVIDIA atual";
+um frontend antigo com daemon novo continua recebendo a recusa explícita dos
+métodos descontinuados.
