@@ -48,8 +48,12 @@ As preferências anteriores de cada perfil são restauradas ao voltar, incluindo
 a migração do backup Lyra criado pelas versões com perfil Ubuntu. Todos os
 componentes continuam empacotados em RPM.
 
-A instalação e a troca de drivers, incluindo NVIDIA e firmware opcional, foram
-removidas do Vega. O inventário de hardware e a monitoração da GPU continuam disponíveis.
+A troca genérica de drivers e a instalação de firmware opcional foram removidas
+do Vega. A página Hardware oferece a instalação opcional e qualificada do driver
+NVIDIA oficial (módulo assinado pela SUSE, snapshot de recuperação obrigatório)
+quando o `vegad` anuncia a capability `nvidia-official-v1`; veja `docs/nvidia.md`
+no repositório [vegad](https://github.com/lyra-os-linux/vegad). O inventário de
+hardware e a monitoração da GPU continuam disponíveis.
 
 
 ## Arquitetura
