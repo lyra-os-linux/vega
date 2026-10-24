@@ -1,9 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::{
-    fs,
-    path::PathBuf,
-    sync::atomic::{AtomicBool, Ordering},
-};
+use std::{fs, path::PathBuf};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
@@ -35,10 +31,8 @@ impl Default for Settings {
     }
 }
 
-static CONFIRM_ACTIONS: AtomicBool = AtomicBool::new(true);
-
 fn path() -> PathBuf {
-    gtk::glib::user_config_dir()
+    glib::user_config_dir()
         .join("vega-gtk")
         .join("preferences.json")
 }
@@ -48,7 +42,6 @@ pub fn load() -> Settings {
         .ok()
         .and_then(|raw| serde_json::from_str(&raw).ok())
         .unwrap_or_default();
-    CONFIRM_ACTIONS.store(settings.confirm_actions, Ordering::Relaxed);
     settings
 }
 
@@ -62,24 +55,6 @@ pub fn save(settings: &Settings) {
     if let Ok(raw) = serde_json::to_string_pretty(settings) {
         let _ = fs::write(path, raw);
     }
-    CONFIRM_ACTIONS.store(settings.confirm_actions, Ordering::Relaxed);
-}
-
-pub fn confirmations_enabled() -> bool {
-    CONFIRM_ACTIONS.load(Ordering::Relaxed)
-}
-
-pub fn refresh_interval_minutes() -> u32 {
-    load().refresh_interval_minutes.clamp(1, 60)
-}
-
-pub fn notifications() -> (bool, bool, bool) {
-    let settings = load();
-    (
-        settings.notify_updates,
-        settings.notify_service_failures,
-        settings.notify_backups,
-    )
 }
 
 pub fn redact_ai_data() -> bool {

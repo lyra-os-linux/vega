@@ -5,6 +5,11 @@ const DOMAIN: &str = "vega-gtk";
 const LOCALES: &[(&str, &str)] = &[("en-US", "en_US"), ("pt-BR", "pt_BR"), ("es-ES", "es_ES")];
 
 fn main() {
+    compile_catalogs();
+    tauri_build::build();
+}
+
+fn compile_catalogs() {
     println!("cargo:rerun-if-changed=po");
 
     let po_dir = Path::new("po");

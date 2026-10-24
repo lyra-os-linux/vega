@@ -1,14 +1,14 @@
 use std::path::PathBuf;
 
 use crate::i18n::gettext;
-use gtk::{gio, gio::prelude::*, glib};
+use gio::prelude::*;
 
 const EXTENSION_UUID: &str = "sheliak@lyraos.com.br";
 const SCHEMA_ID: &str = "org.gnome.shell.extensions.sheliak";
 const SCHEMA_PATH: &str = "/org/gnome/shell/extensions/sheliak/";
 const SHELL_SCHEMA_ID: &str = "org.gnome.shell";
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct DockSettings {
     pub position: String,
     pub hide_mode: String,
@@ -28,7 +28,7 @@ pub struct DockSettings {
 
 /// Menus da barra superior (Aplicativos/Locais) e seu conteúdo — mesma
 /// extensão Sheliak do dock, mas editados na aba "Menu" da Personalização.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct MenuSettings {
     pub panel_height: u32,
     pub floating_panel: bool,
@@ -1047,7 +1047,7 @@ fn suite_command(args: &[&str]) -> Result<SuiteState, DockError> {
 }
 
 /// Context for editing preferences. A failed status query disables dependent controls.
-#[derive(Debug, Clone, Copy, Default)]
+#[derive(Debug, Clone, Copy, Default, serde::Serialize)]
 pub struct SettingsContext {
     pub dock: bool,
     pub panel: bool,

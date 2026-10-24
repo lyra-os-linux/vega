@@ -45,7 +45,7 @@ pub fn run(args: Vec<String>) -> Option<u8> {
         if let Action::Set(profile) = action {
             dock::apply_profile(profile)?;
             // The process exits after the write; flush dconf before returning.
-            gtk::gio::Settings::sync();
+            gio::Settings::sync();
         }
         dock::confirmed_profile()
     })();

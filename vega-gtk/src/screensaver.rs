@@ -1,10 +1,10 @@
 use crate::i18n::gettext;
-use gtk::{gio, gio::prelude::*};
+use gio::prelude::*;
 
 const SCREENSAVER_SCHEMA: &str = "org.gnome.desktop.screensaver";
 const SESSION_SCHEMA: &str = "org.gnome.desktop.session";
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct ScreensaverSettings {
     pub lock_enabled: bool,
     pub lock_delay_secs: u32,

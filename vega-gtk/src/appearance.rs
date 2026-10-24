@@ -1,4 +1,4 @@
-use gtk::{gio, gio::prelude::*};
+use gio::prelude::*;
 
 const SCHEMA: &str = "org.gnome.desktop.interface";
 

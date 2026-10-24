@@ -1,7 +1,8 @@
 #[path = "../i18n.rs"]
+#[allow(dead_code)]
 mod i18n;
-use gtk::gio::prelude::*;
-use gtk::{gio, glib};
+use gio::prelude::*;
+
 use i18n::gettext;
 use lyra_vega_dbus::{SoftwareClient, SoftwareEvent, VegaDbus};
 use serde_json::Value;
@@ -23,7 +24,10 @@ fn main() -> glib::ExitCode {
 
     let open = gio::SimpleAction::new("open-updates", None);
     open.connect_activate(|_, _| {
+        // O argumento chega também a uma janela já aberta (instância única);
+        // a variável mantém compatibilidade com o vega-gtk anterior.
         let _ = Command::new("/usr/bin/vega-gtk")
+            .arg("--open-updates")
             .env("VEGA_START_PAGE", "software")
             .spawn();
     });

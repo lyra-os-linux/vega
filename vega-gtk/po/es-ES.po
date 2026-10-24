@@ -3946,3 +3946,226 @@ msgstr "Clave aprobada. Siguiendo la preparación…"
 #: src/ui/preparation.rs
 msgid "Não foi possível aprovar a chave: {detail}"
 msgstr "No se pudo aprobar la clave: {detail}"
+
+# Interface Tauri (vega-gtk/ui).
+msgid "Não foi possível abrir esta página"
+msgstr "No se pudo abrir esta página"
+
+msgid "Páginas"
+msgstr "Páginas"
+
+msgid "Ações"
+msgstr "Acciones"
+
+msgid "Atalhos de teclado"
+msgstr "Atajos de teclado"
+
+msgid "Nada encontrado para “{query}”"
+msgstr "No se encontró nada para «{query}»"
+
+msgid "navegar"
+msgstr "navegar"
+
+msgid "abrir"
+msgstr "abrir"
+
+msgid "Densidade"
+msgstr "Densidad"
+
+msgid "Confortável"
+msgstr "Cómoda"
+
+msgid "Compacta"
+msgstr "Compacta"
+
+msgid "Buscar no Vega"
+msgstr "Buscar en Vega"
+
+msgid "Ir para a página 1–9"
+msgstr "Ir a la página 1–9"
+
+msgid "Atualizar página"
+msgstr "Recargar página"
+
+msgid "Fechar diálogo"
+msgstr "Cerrar diálogo"
+
+msgid "Centro de controle"
+msgstr "Centro de control"
+
+msgid "Site"
+msgstr "Sitio web"
+
+msgid "Relatar problema"
+msgstr "Informar un problema"
+
+msgid "Maximizar"
+msgstr "Maximizar"
+
+msgid "Minimizar"
+msgstr "Minimizar"
+
+msgid "Fechar"
+msgstr "Cerrar"
+
+msgid "Mostrar navegação"
+msgstr "Mostrar navegación"
+
+msgid "vegad {version} conectado"
+msgstr "vegad {version} conectado"
+
+msgid "Proposta do Assistente de IA"
+msgstr "Propuesta del Asistente de IA"
+
+msgid "Resultado de ferramenta"
+msgstr "Resultado de herramienta"
+
+msgid "Pergunte ao assistente…"
+msgstr "Pregunta al asistente…"
+
+msgid "Mensagem"
+msgstr "Mensaje"
+
+msgid "nova linha"
+msgstr "nueva línea"
+
+msgid "Há atualizações disponíveis?"
+msgstr "¿Hay actualizaciones disponibles?"
+
+msgid "Como está o uso de disco?"
+msgstr "¿Cómo está el uso del disco?"
+
+msgid "Mostre erros recentes do sistema"
+msgstr "Muestra los errores recientes del sistema"
+
+msgid "{count} caminho(s)"
+msgstr "{count} ruta(s)"
+
+msgid "{count} núcleos"
+msgstr "{count} núcleos"
+
+msgid "de {total}"
+msgstr "de {total}"
+
+msgid "Swap: {used} de {total}"
+msgstr "Swap: {used} de {total}"
+
+msgid "Envio {rate}"
+msgstr "Envío {rate}"
+
+msgid "Em andamento"
+msgstr "En curso"
+
+msgid "Acompanhar"
+msgstr "Seguir"
+
+msgid "Verificando…"
+msgstr "Comprobando…"
+
+msgid "O vegad não respondeu"
+msgstr "vegad no respondió"
+
+msgid "Um ponto de restauração é criado antes de atualizar."
+msgstr "Se crea un punto de restauración antes de actualizar."
+
+msgid "Ver serviços"
+msgstr "Ver servicios"
+
+msgid "Ver atualizações"
+msgstr "Ver actualizaciones"
+
+msgid "em uso"
+msgstr "en uso"
+
+msgid "Agora"
+msgstr "Ahora"
+
+msgid "Resumo"
+msgstr "Resumen"
+
+msgid "Desconhecido"
+msgstr "Desconocido"
+
+msgid "Continuar"
+msgstr "Continuar"
+
+msgid "Copiar"
+msgstr "Copiar"
+
+msgid "Copiado"
+msgstr "Copiado"
+
+msgid "Download"
+msgstr "Descarga"
+
+msgid "Em disco"
+msgstr "En disco"
+
+msgid "Licenças"
+msgstr "Licencias"
+
+msgid "Mantenedor"
+msgstr "Mantenedor"
+
+msgid "Dependências ({count})"
+msgstr "Dependencias ({count})"
+
+msgid "Fila"
+msgstr "Cola"
+
+msgid "Mostrando {shown} de {total}"
+msgstr "Mostrando {shown} de {total}"
+
+msgid "Busque, instale e atualize aplicativos do sistema e do Flathub."
+msgstr "Busca, instala y actualiza aplicaciones del sistema y de Flathub."
+
+msgid "Mais ações"
+msgstr "Más acciones"
+
+msgid "concluído"
+msgstr "completado"
+
+msgid "falhou"
+msgstr "falló"
+
+msgid "Console"
+msgstr "Consola"
+
+msgid "{count} tarefa(s) em andamento"
+msgstr "{count} tarea(s) en curso"
+
+msgid "Tarefas"
+msgstr "Tareas"
+
+msgid "Nenhuma tarefa nesta sessão. Atualizações, backups e instalações aparecem aqui."
+msgstr "No hay tareas en esta sesión. Las actualizaciones, copias de seguridad e instalaciones aparecen aquí."
+
+msgid "{title}: concluído"
+msgstr "{title}: completado"
+
+msgid "{title}: falhou"
+msgstr "{title}: falló"
+
+msgid "{days} d {hours} h"
+msgstr "{days} d {hours} h"
+
+msgid "{hours} h {minutes} min"
+msgstr "{hours} h {minutes} min"
+
+msgid "{minutes} min"
+msgstr "{minutes} min"
+
+msgid "agora"
+msgstr "ahora"
+
+msgid "Hoje"
+msgstr "Hoy"
+
+msgid "Ontem"
+msgstr "Ayer"
+
+msgid "Digite {text} para confirmar"
+msgstr "Escribe {text} para confirmar"
+
+msgid "Para confirmar, digite {text}:"
+msgstr "Para confirmar, escribe {text}:"
