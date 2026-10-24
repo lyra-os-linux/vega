@@ -28,6 +28,12 @@ fn main() -> ExitCode {
     }
     i18n::init(&preferences::load().language);
     let started = std::time::Instant::now();
+    // A unicidade fica com o plugin de instância única; o GApplication do
+    // GTK não pode registrar o mesmo id (ele reativaria a janela "main" e o
+    // Tauri entraria em pânico). O prgname mantém o app_id/WM_CLASS
+    // org.lyraos.Vega, que liga a janela ao vega.desktop.
+    glib::set_prgname(Some("org.lyraos.Vega"));
+    glib::set_application_name("Vega");
 
     let mut builder = tauri::Builder::default();
     // Só em builds de desenvolvimento: várias instâncias lado a lado para

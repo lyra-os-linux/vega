@@ -7,10 +7,61 @@ use tauri::{AppHandle, Emitter};
 
 use super::{CmdResult, State, dto, err, list};
 
-dto!(Package from PackageRef {
-    origin: String, id: String, name: String, description: String,
-    installed: bool, icon: String, repository: String,
-});
+/// Pacote com o ícone já embutido (`icon_data`, data URL): a webview não lê
+/// caminhos locais, e o vega-gtk carregava o arquivo de `icon` direto.
+#[derive(Debug, Clone, Serialize)]
+pub struct Package {
+    pub origin: String,
+    pub id: String,
+    pub name: String,
+    pub description: String,
+    pub installed: bool,
+    pub icon: String,
+    pub repository: String,
+    pub icon_data: Option<String>,
+}
+
+impl From<PackageRef> for Package {
+    fn from(value: PackageRef) -> Self {
+        let icon_data = icon_data_url(&value.icon);
+        Self {
+            origin: value.origin,
+            id: value.id,
+            name: value.name,
+            description: value.description,
+            installed: value.installed,
+            icon: value.icon,
+            repository: value.repository,
+            icon_data,
+        }
+    }
+}
+
+/// Ícones maiores que isso ficam de fora: a lista pode ter centenas de itens.
+const ICON_LIMIT: u64 = 96 * 1024;
+
+fn icon_data_url(path: &str) -> Option<String> {
+    use base64::Engine;
+    let path = std::path::Path::new(path);
+    if !path.is_absolute() {
+        return None;
+    }
+    let mime = match path.extension()?.to_str()?.to_ascii_lowercase().as_str() {
+        "png" => "image/png",
+        "svg" => "image/svg+xml",
+        "jpg" | "jpeg" => "image/jpeg",
+        _ => return None,
+    };
+    let metadata = std::fs::metadata(path).ok()?;
+    if !metadata.is_file() || metadata.len() > ICON_LIMIT {
+        return None;
+    }
+    let bytes = std::fs::read(path).ok()?;
+    Some(format!(
+        "data:{mime};base64,{}",
+        base64::engine::general_purpose::STANDARD.encode(bytes)
+    ))
+}
 dto!(Repository from RepositoryRef { name: String, enabled: bool });
 dto!(Details from PackageDetails {
     origin: String, id: String, name: String, description: String, installed: bool,

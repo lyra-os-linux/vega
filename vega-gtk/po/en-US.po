@@ -3946,3 +3946,226 @@ msgstr "Key approved. Monitoring preparation…"
 #: src/ui/preparation.rs
 msgid "Não foi possível aprovar a chave: {detail}"
 msgstr "Could not approve the key: {detail}"
+
+# Interface Tauri (vega-gtk/ui).
+msgid "Não foi possível abrir esta página"
+msgstr "Could not open this page"
+
+msgid "Páginas"
+msgstr "Pages"
+
+msgid "Ações"
+msgstr "Actions"
+
+msgid "Atalhos de teclado"
+msgstr "Keyboard shortcuts"
+
+msgid "Nada encontrado para “{query}”"
+msgstr "Nothing found for “{query}”"
+
+msgid "navegar"
+msgstr "navigate"
+
+msgid "abrir"
+msgstr "open"
+
+msgid "Densidade"
+msgstr "Density"
+
+msgid "Confortável"
+msgstr "Comfortable"
+
+msgid "Compacta"
+msgstr "Compact"
+
+msgid "Buscar no Vega"
+msgstr "Search Vega"
+
+msgid "Ir para a página 1–9"
+msgstr "Go to page 1–9"
+
+msgid "Atualizar página"
+msgstr "Reload page"
+
+msgid "Fechar diálogo"
+msgstr "Close dialog"
+
+msgid "Centro de controle"
+msgstr "Control Center"
+
+msgid "Site"
+msgstr "Website"
+
+msgid "Relatar problema"
+msgstr "Report a problem"
+
+msgid "Maximizar"
+msgstr "Maximize"
+
+msgid "Minimizar"
+msgstr "Minimize"
+
+msgid "Fechar"
+msgstr "Close"
+
+msgid "Mostrar navegação"
+msgstr "Show navigation"
+
+msgid "vegad {version} conectado"
+msgstr "vegad {version} connected"
+
+msgid "Proposta do Assistente de IA"
+msgstr "AI Assistant proposal"
+
+msgid "Resultado de ferramenta"
+msgstr "Tool result"
+
+msgid "Pergunte ao assistente…"
+msgstr "Ask the assistant…"
+
+msgid "Mensagem"
+msgstr "Message"
+
+msgid "nova linha"
+msgstr "new line"
+
+msgid "Há atualizações disponíveis?"
+msgstr "Are there updates available?"
+
+msgid "Como está o uso de disco?"
+msgstr "How is disk usage?"
+
+msgid "Mostre erros recentes do sistema"
+msgstr "Show recent system errors"
+
+msgid "{count} caminho(s)"
+msgstr "{count} path(s)"
+
+msgid "{count} núcleos"
+msgstr "{count} cores"
+
+msgid "de {total}"
+msgstr "of {total}"
+
+msgid "Swap: {used} de {total}"
+msgstr "Swap: {used} of {total}"
+
+msgid "Envio {rate}"
+msgstr "Upload {rate}"
+
+msgid "Em andamento"
+msgstr "In progress"
+
+msgid "Acompanhar"
+msgstr "Follow"
+
+msgid "Verificando…"
+msgstr "Checking…"
+
+msgid "O vegad não respondeu"
+msgstr "vegad did not respond"
+
+msgid "Um ponto de restauração é criado antes de atualizar."
+msgstr "A restore point is created before updating."
+
+msgid "Ver serviços"
+msgstr "View services"
+
+msgid "Ver atualizações"
+msgstr "View updates"
+
+msgid "em uso"
+msgstr "in use"
+
+msgid "Agora"
+msgstr "Now"
+
+msgid "Resumo"
+msgstr "Summary"
+
+msgid "Desconhecido"
+msgstr "Unknown"
+
+msgid "Continuar"
+msgstr "Continue"
+
+msgid "Copiar"
+msgstr "Copy"
+
+msgid "Copiado"
+msgstr "Copied"
+
+msgid "Download"
+msgstr "Download"
+
+msgid "Em disco"
+msgstr "On disk"
+
+msgid "Licenças"
+msgstr "Licenses"
+
+msgid "Mantenedor"
+msgstr "Maintainer"
+
+msgid "Dependências ({count})"
+msgstr "Dependencies ({count})"
+
+msgid "Fila"
+msgstr "Queue"
+
+msgid "Mostrando {shown} de {total}"
+msgstr "Showing {shown} of {total}"
+
+msgid "Busque, instale e atualize aplicativos do sistema e do Flathub."
+msgstr "Search, install and update system and Flathub applications."
+
+msgid "Mais ações"
+msgstr "More actions"
+
+msgid "concluído"
+msgstr "completed"
+
+msgid "falhou"
+msgstr "failed"
+
+msgid "Console"
+msgstr "Console"
+
+msgid "{count} tarefa(s) em andamento"
+msgstr "{count} task(s) in progress"
+
+msgid "Tarefas"
+msgstr "Tasks"
+
+msgid "Nenhuma tarefa nesta sessão. Atualizações, backups e instalações aparecem aqui."
+msgstr "No tasks in this session. Updates, backups and installations appear here."
+
+msgid "{title}: concluído"
+msgstr "{title}: completed"
+
+msgid "{title}: falhou"
+msgstr "{title}: failed"
+
+msgid "{days} d {hours} h"
+msgstr "{days} d {hours} h"
+
+msgid "{hours} h {minutes} min"
+msgstr "{hours} h {minutes} min"
+
+msgid "{minutes} min"
+msgstr "{minutes} min"
+
+msgid "agora"
+msgstr "now"
+
+msgid "Hoje"
+msgstr "Today"
+
+msgid "Ontem"
+msgstr "Yesterday"
+
+msgid "Digite {text} para confirmar"
+msgstr "Type {text} to confirm"
+
+msgid "Para confirmar, digite {text}:"
+msgstr "To confirm, type {text}:"

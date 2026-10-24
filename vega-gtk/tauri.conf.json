@@ -7,7 +7,7 @@
     "frontendDist": "ui"
   },
   "app": {
-    "enableGTKAppId": true,
+    "enableGTKAppId": false,
     "withGlobalTauri": true,
     "windows": [
       {

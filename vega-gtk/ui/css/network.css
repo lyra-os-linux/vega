@@ -1,0 +1,49 @@
+/* Rede e Firewall, Bluetooth */
+
+.net-hero { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-bottom: var(--gap); }
+.net-hero h3 { font-size: 20px; font-weight: 800; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+.net-hero .spacer { min-width: 180px; }
+.net-hero-ic {
+  width: 56px; height: 56px; border-radius: 16px; flex: none;
+  display: grid; place-items: center;
+  background: var(--fill); color: var(--fg-2);
+}
+.net-hero-ic.green { background: var(--green-bg); color: var(--green); }
+.net-hero-ic.red { background: var(--red-bg); color: var(--red); }
+.net-hero-ic.accent { background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); }
+.net-hero-signal { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--fg-2); }
+
+.net-tabs { margin: 4px 0 16px; overflow-x: auto; scrollbar-width: none; }
+.net-tabs .seg { flex-wrap: nowrap; }
+
+/* Barras de sinal Wi-Fi */
+.signal { display: inline-flex; gap: 2px; align-items: flex-end; height: 15px; }
+.signal i { width: 3px; border-radius: 1.5px; background: var(--fill-3); }
+.signal i.b1 { height: 5px; } .signal i.b2 { height: 8px; } .signal i.b3 { height: 11px; } .signal i.b4 { height: 14px; }
+.signal i.on { background: currentColor; }
+.lead .signal { color: var(--fg); }
+.lead.green .signal { color: var(--green); }
+
+/* Formulários (IPv4, proxy) */
+.net-form { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 10px 14px; align-items: center; text-align: left; }
+.net-form label { display: contents; }
+.net-form label > span { font-size: 13.5px; color: var(--fg-2); font-weight: 600; }
+.net-form .input { width: 100%; }
+.net-form .input[readonly] { opacity: 0.7; }
+.net-form-actions { grid-column: 1 / -1; justify-content: flex-end; margin-top: 4px; }
+
+.net-kv { grid-template-columns: max-content minmax(0, 1fr); max-width: 560px; }
+.net-kv dd { text-align: left; font-weight: 500; }
+
+.net-port-add { background: transparent; flex-wrap: wrap; }
+.net-port-add .input:first-child { flex: 1; min-width: 200px; }
+
+/* Bluetooth */
+.bt-hero-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.bt-flags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.bt-transfer { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+@media (max-width: 520px) {
+  .net-form { grid-template-columns: minmax(0, 1fr); }
+  .net-form label { display: flex; flex-direction: column; gap: 4px; }
+}

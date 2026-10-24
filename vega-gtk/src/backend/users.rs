@@ -23,15 +23,15 @@ fn read_photo(path: &str) -> CmdResult<Vec<u8>> {
     if path.is_empty() {
         return Ok(Vec::new());
     }
-    let lower = path.to_ascii_lowercase();
-    if !(lower.ends_with(".png") || lower.ends_with(".jpg") || lower.ends_with(".jpeg")) {
-        return Err(gettextrs::gettext("A foto deve ser PNG ou JPEG."));
-    }
-    let size = std::fs::metadata(path).map_err(err)?.len();
-    if size > PHOTO_LIMIT {
+    // O seletor já filtra PNG/JPEG; o limite é o mesmo do vega-gtk.
+    let read_error = |error: std::io::Error| {
+        gettextrs::gettext("Não foi possível ler a foto: {error}")
+            .replace("{error}", &error.to_string())
+    };
+    if std::fs::metadata(path).map_err(read_error)?.len() > PHOTO_LIMIT {
         return Err(gettextrs::gettext("A foto deve ter no máximo 5 MB."));
     }
-    std::fs::read(path).map_err(err)
+    std::fs::read(path).map_err(read_error)
 }
 
 #[tauri::command]

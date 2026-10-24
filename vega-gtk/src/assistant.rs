@@ -47,15 +47,6 @@ impl Provider {
             Self::Gemini => "gemini-2.5-flash",
         }
     }
-    pub fn from_index(index: u32) -> Self {
-        Self::ALL
-            .get(index as usize)
-            .copied()
-            .unwrap_or(Self::Anthropic)
-    }
-    pub fn index(self) -> u32 {
-        Self::ALL.iter().position(|item| *item == self).unwrap_or(0) as u32
-    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -90,6 +81,7 @@ impl Settings {
             Provider::Gemini => &self.gemini_model,
         }
     }
+    #[cfg(test)]
     pub fn set_model(&mut self, value: String) {
         match self.provider {
             Provider::Anthropic => self.anthropic_model = value,
@@ -200,13 +192,13 @@ fn attachment_text(attachment: &Attachment) -> String {
         .replace("{content}", &text)
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct ToolCall {
     pub name: String,
     pub input: Value,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Reply {
     pub text: String,
     pub input_tokens: u64,

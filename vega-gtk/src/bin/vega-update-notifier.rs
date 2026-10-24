@@ -24,7 +24,10 @@ fn main() -> glib::ExitCode {
 
     let open = gio::SimpleAction::new("open-updates", None);
     open.connect_activate(|_, _| {
+        // O argumento chega também a uma janela já aberta (instância única);
+        // a variável mantém compatibilidade com o vega-gtk anterior.
         let _ = Command::new("/usr/bin/vega-gtk")
+            .arg("--open-updates")
             .env("VEGA_START_PAGE", "software")
             .spawn();
     });

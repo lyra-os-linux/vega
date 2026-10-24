@@ -23,8 +23,11 @@ Source1:        vendor.tar.gz
 
 BuildRequires:  cargo
 BuildRequires:  rust
-BuildRequires:  pkgconfig(gtk4)
-BuildRequires:  pkgconfig(libadwaita-1)
+# Interface em Tauri 2: WebKitGTK 4.1 (webkit2gtk3-devel) sobre GTK 3.
+BuildRequires:  pkgconfig(gtk+-3.0)
+BuildRequires:  pkgconfig(webkit2gtk-4.1)
+BuildRequires:  pkgconfig(javascriptcoregtk-4.1)
+BuildRequires:  pkgconfig(libsoup-3.0)
 BuildRequires:  pkgconfig(libvirt)
 BuildRequires:  gettext-tools
 Requires:       vegad >= 5.1.29
@@ -51,7 +54,7 @@ Recommends:     restic
 Requires:       sheliak >= 2.0.0
 
 %description
-Interface nativa do Vega, construída com Rust, GTK4 e libadwaita.
+Interface do Vega, construída com Rust e Tauri (WebKitGTK).
 
 %prep
 %setup -q -n vega-src-%{version}

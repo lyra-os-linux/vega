@@ -1,0 +1,84 @@
+/* Serviços, Usuários, Log do Sistema e Monitor do Sistema. */
+
+/* ---------- Serviços ---------- */
+
+.svc-row { flex-wrap: wrap; row-gap: 8px; }
+.svc-row .body { min-width: 220px; }
+.svc-suffix { flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+.svc-badges, .svc-actions { display: inline-flex; align-items: center; gap: 6px; }
+.svc-unavailable { opacity: 0.6; }
+.svc-row .subtitle .mono { font-size: 12px; }
+
+@media (max-width: 820px) {
+  .svc-suffix { width: 100%; justify-content: flex-start; padding-left: 50px; }
+}
+
+/* ---------- Usuários ---------- */
+
+.users-grid { grid-template-columns: repeat(auto-fill, minmax(272px, 1fr)); }
+.user-avatar {
+  border-radius: 50%; display: grid; place-items: center; flex: none;
+  color: #fff; font-weight: 800; letter-spacing: 0.02em;
+  box-shadow: inset 0 -2px 0 rgb(0 0 0 / 0.12);
+}
+.user-card { padding: 22px 18px 16px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+.user-card-name strong { font-size: 15.5px; display: block; }
+.user-card-badges { justify-content: center; }
+.user-card-groups { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.user-card-actions { display: flex; gap: 6px; margin-top: 4px; padding-top: 12px; border-top: 1px solid var(--line); width: 100%; justify-content: center; flex-wrap: nowrap; align-items: center; }
+.danger-icon { color: var(--red); }
+.danger-icon:hover { background: var(--red-bg); }
+.icon-btn:disabled { opacity: 0.4; pointer-events: none; }
+
+.user-editor-head { display: flex; gap: 16px; align-items: center; }
+.user-editor-fields { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.user-editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.input.invalid { box-shadow: 0 0 0 2px color-mix(in srgb, var(--red) 65%, transparent); }
+.input:disabled { opacity: 0.6; }
+@media (max-width: 520px) { .user-editor-grid { grid-template-columns: 1fr; } }
+
+/* ---------- Log do Sistema ---------- */
+
+.logs-toolbar { gap: 8px; margin-bottom: 8px; }
+.toolbar.logs-toolbar .logs-search { flex: 1; max-width: none; }
+.logs-filters { gap: 8px; }
+.logs-filters select.input { flex: 1 1 160px; min-width: 0; max-width: 260px; }
+.logs-status { margin: -4px 2px 10px; min-height: 18px; }
+.log-view {
+  max-height: calc(100vh - 290px); min-height: 240px;
+  overflow: auto; padding: 6px 0;
+  font-size: 12.5px; line-height: 1.55;
+}
+.log-line { padding: 1px 14px; white-space: pre; border-left: 3px solid transparent; }
+.log-line:hover { background: var(--card-hover); }
+.log-line.err { border-left-color: var(--red); background: color-mix(in srgb, var(--red) 6%, transparent); }
+.log-line.warn { border-left-color: var(--yellow); }
+
+/* ---------- Monitor ---------- */
+
+.mon-grid { display: grid; gap: var(--gap); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.mon-card { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.mon-head { display: flex; align-items: center; gap: 8px; }
+.mon-title { font-weight: 700; font-size: 13px; color: var(--fg-2); }
+.mon-value { font-size: 19px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mon-detail { font-variant-numeric: tabular-nums; }
+.mon-unavailable .chart { opacity: 0.35; }
+.mon-card .chart { height: 96px; }
+
+.mini-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; margin-top: 4px; }
+.mini-grid:empty { display: none; }
+.mini-cell { background: var(--fill); border-radius: 8px; padding: 6px 8px 4px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.mini-label { font-size: 11px; font-weight: 600; color: var(--fg-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.spark.mini { width: 100%; height: 24px; }
+
+.proc-list .list-row { min-height: 48px; gap: 10px; padding-top: 6px; padding-bottom: 6px; }
+.proc-indent { flex: none; align-self: stretch; position: relative; }
+.proc-child .proc-indent::after { content: ""; position: absolute; right: 6px; top: 50%; width: 8px; border-top: 1px solid var(--line-strong); }
+.proc-usage { display: inline-flex; align-items: center; gap: 10px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.proc-meter { width: 60px; height: 4px; }
+.proc-nums { min-width: 128px; text-align: right; }
+
+@media (max-width: 820px) {
+  .mon-grid { grid-template-columns: minmax(0, 1fr); }
+  .proc-meter { display: none; }
+}
