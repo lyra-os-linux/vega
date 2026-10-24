@@ -1,3 +1,5 @@
+pub mod commands;
+
 use std::{
     fs::{self, OpenOptions},
     io::{BufRead, BufReader, Write},
@@ -10,7 +12,7 @@ use std::{
 
 use crate::i18n::gettext;
 use base64::{Engine, engine::general_purpose::STANDARD as base64_engine};
-use gtk::glib;
+
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 

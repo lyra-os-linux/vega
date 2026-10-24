@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use crate::i18n::gettext;
-use gtk::{gio, gio::prelude::*, glib};
+use gio::prelude::*;
 
 const EXTENSION_UUID: &str = "sheliak@lyraos.com.br";
 const SCHEMA_ID: &str = "org.gnome.shell.extensions.sheliak";

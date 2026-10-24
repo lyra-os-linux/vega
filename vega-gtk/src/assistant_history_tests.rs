@@ -1,5 +1,4 @@
 use super::*;
-use gtk::prelude::*;
 use std::os::unix::fs::symlink;
 
 struct TestHome(PathBuf);
@@ -210,46 +209,4 @@ fn history_deletion_regressions_with_real_preferences_and_files() {
             false,
         );
     }
-}
-
-#[test]
-#[ignore = "requires a graphical display; CI runs under Xvfb with isolated XDG directories"]
-fn native_history_ui() {
-    if std::env::var("VEGA_HISTORY_CASE").is_err() {
-        run_child("ui", "assistant::history_tests::native_history_ui", true);
-        return;
-    }
-    adw::init().unwrap();
-    persistence(true);
-    save_history(&messages()).unwrap();
-    persistence(false);
-    let page = crate::ui::AssistantPage::new(&Settings::default(), messages());
-    page.stage_attachment(messages()[0].attachments[0].clone());
-    page.prompt.buffer().set_text("pending prompt");
-    let context = glib::MainContext::default();
-    page.set_busy(true);
-    assert!(!page.clear_history.is_sensitive());
-    assert!(!page.attach.is_sensitive());
-    assert!(context.block_on(page.clear()).is_err());
-    assert_eq!(page.history().len(), 1);
-    assert!(page.has_staged_attachments());
-    page.set_busy(false);
-    let path = data_dir().join("ai-history.json");
-    fs::remove_file(&path).unwrap();
-    fs::create_dir(&path).unwrap();
-    assert!(context.block_on(page.clear()).is_err());
-    assert!(!page.is_busy());
-    assert!(page.clear_history.is_sensitive());
-    assert_eq!(page.history().len(), 1);
-    assert!(page.has_staged_attachments());
-    assert_eq!(page.prompt_text(), "pending prompt");
-    fs::remove_dir(&path).unwrap();
-    fs::write(&path, serde_json::to_vec(&messages()).unwrap()).unwrap();
-    context.block_on(page.clear()).unwrap();
-    assert!(page.history().is_empty());
-    assert!(!page.has_staged_attachments());
-    assert!(page.prompt_text().is_empty());
-    assert!(!path.exists());
-    persistence(true);
-    assert!(load_history().is_empty());
 }

@@ -38,7 +38,7 @@ impl Default for Settings {
 static CONFIRM_ACTIONS: AtomicBool = AtomicBool::new(true);
 
 fn path() -> PathBuf {
-    gtk::glib::user_config_dir()
+    glib::user_config_dir()
         .join("vega-gtk")
         .join("preferences.json")
 }

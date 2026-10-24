@@ -1,7 +1,8 @@
 #[path = "../i18n.rs"]
+#[allow(dead_code)]
 mod i18n;
-use gtk::gio::prelude::*;
-use gtk::{gio, glib};
+use gio::prelude::*;
+
 use i18n::gettext;
 use lyra_vega_dbus::{SoftwareClient, SoftwareEvent, VegaDbus};
 use serde_json::Value;

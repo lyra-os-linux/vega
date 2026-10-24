@@ -1,7 +1,5 @@
 use std::{cell::RefCell, ffi::OsStr};
 
-use gtk::gio;
-
 use crate::i18n::gettext;
 
 #[derive(Clone, Copy)]

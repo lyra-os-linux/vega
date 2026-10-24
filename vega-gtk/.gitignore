@@ -2,3 +2,4 @@
 # .mo compilados pelo build.rs a partir de po/*.po — artefato, não fonte.
 /po/locale/
 
+gen/

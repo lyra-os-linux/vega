@@ -1,5 +1,5 @@
 use crate::i18n::gettext;
-use gtk::{gio, gio::prelude::*};
+use gio::prelude::*;
 
 const SCREENSAVER_SCHEMA: &str = "org.gnome.desktop.screensaver";
 const SESSION_SCHEMA: &str = "org.gnome.desktop.session";
