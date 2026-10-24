@@ -72,6 +72,11 @@ const P = {
   star: '<path d="M12 1.5c.4 4.7 2.5 8.3 10.5 10.5-8 2.2-10.1 5.8-10.5 10.5-.4-4.7-2.5-8.3-10.5-10.5C9.5 9.8 11.6 6.2 12 1.5Z" fill="currentColor" stroke="none"/>',
 };
 
+/** Páginas podem acrescentar ícones próprios sem editar este arquivo. */
+export function registerIcons(extra) {
+  Object.assign(P, extra);
+}
+
 export function svg(name, size = 16) {
   const body = P[name] ?? P.info;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
