@@ -30,7 +30,7 @@ BuildRequires:  pkgconfig(javascriptcoregtk-4.1)
 BuildRequires:  pkgconfig(libsoup-3.0)
 BuildRequires:  pkgconfig(libvirt)
 BuildRequires:  gettext-tools
-Requires:       vegad >= 5.1.29
+Requires:       vegad >= 5.1.42
 Requires:       secret-tool
 Requires:       python3-gobject
 Requires:       typelib-1_0-Atspi-2_0
@@ -48,10 +48,14 @@ Obsoletes:      vega < %{version}-%{release}
 Provides:       lyra-vega-gtk = %{version}-%{release}
 Obsoletes:      lyra-vega-gtk < %{version}-%{release}
 
-Recommends:     flatpak
 Recommends:     restic
 
 Requires:       sheliak >= 2.0.0
+# Controle parental: grupo lyra-supervised, app "Controle parental" e regra de
+# leitura. Também leva esses componentes a instalações anteriores pelo zypper.
+# O flatpak deixou de ser recomendado: ele é habilitado na página Software,
+# com aviso para contas supervisionadas.
+Requires:       lyra-parental-controls
 
 %description
 Interface do Vega, construída com Rust e Tauri (WebKitGTK).

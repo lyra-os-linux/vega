@@ -140,6 +140,7 @@ fn main() -> ExitCode {
             users::users_save,
             users::users_set_admin,
             users::users_remove,
+            users::users_open_parental_controls,
             logs::logs_units,
             logs::logs_query,
             monitor::monitor_metrics,

@@ -4169,3 +4169,87 @@ msgstr "Escribe {text} para confirmar"
 
 msgid "Para confirmar, digite {text}:"
 msgstr "Para confirmar, escribe {text}:"
+
+msgid "Nome de usuário inválido."
+msgstr "Nombre de usuario no válido."
+
+msgid "Não foi possível abrir o Controle Parental. Confira se o pacote lyra-parental-controls está instalado."
+msgstr "No se pudo abrir el Control parental. Comprueba que el paquete lyra-parental-controls esté instalado."
+
+msgid "Habilitar Flatpak e Flathub?"
+msgstr "¿Habilitar Flatpak y Flathub?"
+
+msgid "Isso instala o Flatpak e ativa a loja Flathub, com milhares de aplicativos."
+msgstr "Esto instala Flatpak y activa la tienda Flathub, con miles de aplicaciones."
+
+msgid "Atenção: este computador tem contas supervisionadas."
+msgstr "Atención: este equipo tiene cuentas supervisadas."
+
+msgid "Com o Flatpak ativo, uma criança com conhecimentos técnicos consegue instalar aplicativos Flatpak na própria conta e abrir aplicativos Flatpak que você bloqueou no Controle Parental. As demais restrições continuam valendo."
+msgstr "Con Flatpak activo, un niño con conocimientos técnicos puede instalar aplicaciones Flatpak en su propia cuenta y abrir aplicaciones Flatpak que bloqueaste en el Control parental. Las demás restricciones siguen vigentes."
+
+msgid "Habilitando o Flatpak…"
+msgstr "Habilitando Flatpak…"
+
+msgid "Flatpak habilitado. Os aplicativos do Flathub já aparecem na busca."
+msgstr "Flatpak habilitado. Las aplicaciones de Flathub ya aparecen en la búsqueda."
+
+msgid "Não foi possível habilitar o Flatpak."
+msgstr "No se pudo habilitar Flatpak."
+
+msgid "Flatpak desabilitado"
+msgstr "Flatpak deshabilitado"
+
+msgid "Os aplicativos do Flathub ficam disponíveis depois de habilitar o Flatpak."
+msgstr "Las aplicaciones de Flathub están disponibles después de habilitar Flatpak."
+
+msgid "Habilitando…"
+msgstr "Habilitando…"
+
+msgid "Habilitar Flatpak"
+msgstr "Habilitar Flatpak"
+
+msgid "A conta supervisionada:"
+msgstr "La cuenta supervisada:"
+
+msgid "não administra o sistema nem instala programas no sistema;"
+msgstr "no administra el sistema ni instala programas en el sistema;"
+
+msgid "não entra pelo console de texto nem por SSH, e não executa comandos pelo Alt+F2;"
+msgstr "no inicia sesión en la consola de texto ni por SSH, y no ejecuta comandos con Alt+F2;"
+
+msgid "não vê os terminais nem o Vega nos menus;"
+msgstr "no ve las terminales ni Vega en los menús;"
+
+msgid "segue as regras definidas no Controle Parental: navegadores, aplicativos e instalação."
+msgstr "sigue las reglas definidas en el Control parental: navegadores, aplicaciones e instalación."
+
+msgid "Limites:"
+msgstr "Límites:"
+
+msgid "o controle é básico: uma criança com conhecimentos técnicos ainda consegue executar programas próprios ou baixados;"
+msgstr "el control es básico: un niño con conocimientos técnicos aún puede ejecutar programas propios o descargados;"
+
+msgid "navegadores e aplicativos bloqueados somem dos menus, mas não deixam de existir no sistema."
+msgstr "los navegadores y aplicaciones bloqueados desaparecen de los menús, pero siguen existiendo en el sistema."
+
+msgid "o Flatpak está habilitado: uma criança com conhecimentos técnicos consegue instalar aplicativos Flatpak na própria conta e abrir aplicativos Flatpak que você bloqueou."
+msgstr "Flatpak está habilitado: un niño con conocimientos técnicos puede instalar aplicaciones Flatpak en su propia cuenta y abrir aplicaciones Flatpak que bloqueaste."
+
+msgid "Conta supervisionada"
+msgstr "Cuenta supervisada"
+
+msgid "Controle parental para crianças"
+msgstr "Control parental para niños"
+
+msgid "conta supervisionada"
+msgstr "cuenta supervisada"
+
+msgid "Supervisionada"
+msgstr "Supervisada"
+
+msgid "Uma conta supervisionada não pode ser administradora."
+msgstr "Una cuenta supervisada no puede ser administradora."
+
+msgid "Controle Parental"
+msgstr "Control parental"

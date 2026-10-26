@@ -9,6 +9,7 @@ import { local, saveLocal } from "../store.js";
 import { runSoftware, runningTasks, onTasks, transactionPanel } from "../tasks.js";
 import { h, icon, clear, button, badge, segmented, list, section, empty, skeletonRows, confirm, sheet, toast, fail, tile, normalize, meter } from "../ui.js";
 import { preparationPanel } from "./software/preparation.js";
+import { flatpakPanel } from "./software/flatpak.js";
 
 const TABS = ["search", "installed", "updates", "repos"];
 const ORIGIN_RANK = { official: 0, flathub: 1 };
@@ -555,6 +556,7 @@ export default {
         h("div", {}, h("h2", {}, t("Software")), h("p", {}, t("Busque, instale e atualize aplicativos do sistema e do Flathub."))),
         tabs),
       preparationPanel(ctx),
+      flatpakPanel(() => reload()),
       panelHost,
       toolbarHost,
       body);

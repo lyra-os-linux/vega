@@ -2,6 +2,11 @@ import { call, pick } from "../api.js";
 import { N_, t } from "../i18n.js";
 import { h, icon, clear, badge, button, toggle, row, list, empty, skeletonRows, confirm, sheet, fail, toast, hueFor } from "../ui.js";
 
+/** Grupo das contas supervisionadas (pacote lyra-parental-controls). */
+export const SUPERVISED_GROUP = "lyra-supervised";
+
+export const isSupervised = (user) => user.groups.includes(SUPERVISED_GROUP);
+
 /** Mesma regra do vega-gtk (e do vegad) para contas comuns. */
 export function validUsername(value) {
   return /^[a-z_][a-z0-9_-]*$/.test(value.trim());
@@ -21,11 +26,17 @@ export default {
   title: N_("Usuários"),
   icon: "users",
   group: "system",
-  keywords: ["conta", "senha", "administrador", "wheel", "grupo", "login"],
+  keywords: ["conta", "senha", "administrador", "wheel", "grupo", "login", "controle parental", "criança", "supervisionada"],
 
   render(ctx) {
     let users = null;
     let busy = false;
+    // Habilitado, o Flatpak deixa a criança instalar e abrir apps Flatpak
+    // (o Flatpak do Leap não aplica o controle parental).
+    let flatpakInstalled = false;
+    call("software_details", { origin: "official", id: "flatpak" })
+      .then((details) => { flatpakInstalled = Boolean(details?.installed); })
+      .catch(() => {});
     const status = h("span", { class: "small faint selectable" }, t("Carregando usuários…"));
     const body = h("div", {}, skeletonRows(3));
 
@@ -67,6 +78,30 @@ export default {
       if (ok) run(t("Processando {user}…", { user: user.username }), () => call("users_set_admin", { username: user.username, admin: !user.is_admin }));
     }
 
+    async function openParentalControls(user) {
+      try {
+        await call("users_open_parental_controls", { username: user.username });
+      } catch (error) {
+        fail(error);
+      }
+    }
+
+    // O que a supervisão cobre e o que não cobre (plano do controle parental).
+    function coverage() {
+      return h("div", { class: "card parental-coverage" },
+        h("p", { class: "small" }, h("strong", {}, t("A conta supervisionada:"))),
+        h("ul", { class: "small" },
+          h("li", {}, t("não administra o sistema nem instala programas no sistema;")),
+          h("li", {}, t("não entra pelo console de texto nem por SSH, e não executa comandos pelo Alt+F2;")),
+          h("li", {}, t("não vê os terminais nem o Vega nos menus;")),
+          h("li", {}, t("segue as regras definidas no Controle Parental: navegadores, aplicativos e instalação."))),
+        h("p", { class: "small" }, h("strong", {}, t("Limites:"))),
+        h("ul", { class: "small" },
+          h("li", {}, t("o controle é básico: uma criança com conhecimentos técnicos ainda consegue executar programas próprios ou baixados;")),
+          h("li", {}, t("navegadores e aplicativos bloqueados somem dos menus, mas não deixam de existir no sistema.")),
+          flatpakInstalled && h("li", { class: "warn-text" }, t("o Flatpak está habilitado: uma criança com conhecimentos técnicos consegue instalar aplicativos Flatpak na própria conta e abrir aplicativos Flatpak que você bloqueou."))));
+    }
+
     async function remove(user) {
       const ok = await confirm({
         title: t("Remover usuário?"),
@@ -92,8 +127,10 @@ export default {
       const username = input(t("nome de usuário"), { value: user?.username ?? "", class: "input mono", disabled: editing, autocapitalize: "off", spellcheck: "false" });
       const password = input(t("Senha (mínimo de 8 caracteres)"), { type: "password", autocomplete: "new-password" });
       const passwordConfirm = input(t("Confirmar senha"), { type: "password", autocomplete: "new-password" });
-      const groups = input(t("Grupos adicionais, separados por vírgula"), { value: user?.groups.join(", ") ?? "" });
+      const groups = input(t("Grupos adicionais, separados por vírgula"), { value: user?.groups.filter((g) => g !== SUPERVISED_GROUP).join(", ") ?? "" });
+      let supervised = user ? isSupervised(user) : false;
       let admin = user ? user.is_admin : true;
+      if (supervised) admin = false;
       let photoPath = "";
       const photoLabel = h("span", { class: "spacer" }, editing ? t("Manter foto atual (ou selecionar outra)…") : t("Selecionar foto…"));
       const photoButton = h("button", { class: "btn", onclick: async () => {
@@ -105,6 +142,20 @@ export default {
       } }, icon("camera", 16), photoLabel);
       photoButton.style.width = "100%";
       photoButton.style.justifyContent = "flex-start";
+
+      const coverageHost = h("div", {});
+      let adminToggle = toggle(admin, (on) => (admin = on), t("Administrador"));
+      function setSupervised(on) {
+        supervised = on;
+        // Uma conta supervisionada não pode ser administradora (vegad recusa).
+        if (on) admin = false;
+        const fresh = toggle(admin, (value) => (admin = value), t("Administrador"));
+        fresh.querySelector("input")?.toggleAttribute("disabled", on);
+        adminToggle.replaceWith(fresh);
+        adminToggle = fresh;
+        clear(coverageHost, on ? coverage() : null);
+      }
+      queueMicrotask(() => setSupervised(supervised));
 
       const submit = button(editing ? t("Salvar alterações") : t("Criar usuário"), { kind: "primary" });
       const valid = () => {
@@ -136,14 +187,17 @@ export default {
         groups,
         h("p", { class: "small faint" }, t("Informe grupos existentes, por exemplo: audio, video, docker. O grupo wheel é incluído automaticamente para administradores.")),
         photoButton,
-        list(row({ icon: "key", title: t("Administrador"), suffix: toggle(admin, (on) => (admin = on), t("Administrador")) })),
+        list(
+          row({ icon: "key", title: t("Administrador"), suffix: adminToggle }),
+          row({ icon: "shield", title: t("Conta supervisionada"), subtitle: t("Controle parental para crianças"), suffix: toggle(supervised, (on) => setSupervised(on), t("Conta supervisionada")) })),
+        coverageHost,
         h("div", { class: "row-flex", style: { "justify-content": "flex-end" } }, button(t("Cancelar"), { onClick: () => close() }), submit),
       ], { wide: false });
 
       submit.addEventListener("click", async () => {
         if (!valid()) return;
         const login = username.value.trim();
-        const role = admin ? t("administrador") : t("usuário comum");
+        const role = supervised ? t("conta supervisionada") : admin ? t("administrador") : t("usuário comum");
         const ok = await confirm({
           title: editing ? t("Salvar alterações?") : t("Criar usuário?"),
           text: editing ? t("Os dados da conta {username} serão atualizados.", { username: login }) : t("A conta {username} será criada como {role}.", { username: login, role }),
@@ -156,9 +210,9 @@ export default {
           username: login,
           full_name: fullName.value.trim(),
           password: password.value,
-          groups: groups.value.split(",").map((g) => g.trim()).filter(Boolean),
+          groups: [...groups.value.split(",").map((g) => g.trim()).filter((g) => g && g !== SUPERVISED_GROUP), ...(supervised ? [SUPERVISED_GROUP] : [])],
           photo_path: photoPath,
-          is_admin: admin,
+          is_admin: supervised ? false : admin,
         };
         submit.disabled = true;
         const done = await run(t("Criando {username}…", { username: login }), () => call("users_save", { form, create: !editing }));
@@ -174,17 +228,20 @@ export default {
 
     function card(user) {
       const mutable = user.username !== "root" && !busy;
+      const visibleGroups = user.groups.filter((g) => g !== SUPERVISED_GROUP);
       return h("div", { class: "card user-card" },
         avatar(user.full_name || user.username),
         h("div", { class: "user-card-name" },
           h("strong", {}, user.full_name || user.username),
           h("div", { class: "small muted mono" }, user.username)),
         h("div", { class: "row-flex user-card-badges" },
-          badge(user.is_admin ? t("Administrador") : t("Usuário comum"), user.is_admin ? "accent" : "outline", user.is_admin ? "key" : null)),
-        user.groups.length > 0 && h("div", { class: "small faint user-card-groups", title: user.groups.join(", ") }, user.groups.join(", ")),
+          badge(user.is_admin ? t("Administrador") : t("Usuário comum"), user.is_admin ? "accent" : "outline", user.is_admin ? "key" : null),
+          isSupervised(user) && badge(t("Supervisionada"), "yellow", "shield")),
+        visibleGroups.length > 0 && h("div", { class: "small faint user-card-groups", title: visibleGroups.join(", ") }, visibleGroups.join(", ")),
         h("div", { class: "user-card-actions" },
           button(t("Editar"), { size: "sm", disabled: !mutable, onClick: () => editor(user) }),
-          button(user.is_admin ? t("Remover admin") : t("Tornar admin"), { size: "sm", disabled: !mutable, onClick: () => toggleAdmin(user) }),
+          button(user.is_admin ? t("Remover admin") : t("Tornar admin"), { size: "sm", disabled: !mutable || isSupervised(user), title: isSupervised(user) ? t("Uma conta supervisionada não pode ser administradora.") : undefined, onClick: () => toggleAdmin(user) }),
+          !user.is_admin && user.username !== "root" && button(t("Controle Parental"), { size: "sm", icon: "shield", disabled: busy, onClick: () => openParentalControls(user) }),
           h("button", { class: "icon-btn sm danger-icon", "aria-label": t("Remover"), title: t("Remover"), disabled: !mutable, onclick: () => remove(user) }, icon("trash", 15))));
     }
 

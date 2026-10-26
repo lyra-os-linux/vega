@@ -64,3 +64,6 @@
   .sw-row .suffix { max-width: none; }
   .sw-row { flex-wrap: wrap; }
 }
+
+/* Painel "Habilitar Flatpak" (controle parental): separa da barra de busca. */
+.sw-flatpak .banner { margin-bottom: 14px; }
