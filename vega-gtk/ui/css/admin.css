@@ -25,7 +25,7 @@
 .user-card-name strong { font-size: 15.5px; display: block; }
 .user-card-badges { justify-content: center; }
 .user-card-groups { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.user-card-actions { display: flex; gap: 6px; margin-top: 4px; padding-top: 12px; border-top: 1px solid var(--line); width: 100%; justify-content: center; flex-wrap: nowrap; align-items: center; }
+.user-card-actions { display: flex; gap: 6px; margin-top: 4px; padding-top: 12px; border-top: 1px solid var(--line); width: 100%; justify-content: center; flex-wrap: wrap; align-items: center; }
 .danger-icon { color: var(--red); }
 .danger-icon:hover { background: var(--red-bg); }
 .icon-btn:disabled { opacity: 0.4; pointer-events: none; }
@@ -82,3 +82,9 @@
   .mon-grid { grid-template-columns: minmax(0, 1fr); }
   .proc-meter { display: none; }
 }
+
+/* Controle parental: quadro da conta supervisionada e painel do Flatpak. */
+.parental-coverage { text-align: left; padding: 12px 16px; margin-top: 4px; }
+.parental-coverage ul { margin: 2px 0 8px 18px; padding: 0; }
+.parental-coverage li { margin: 2px 0; }
+.warn-text { color: var(--orange); }

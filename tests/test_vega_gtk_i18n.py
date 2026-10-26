@@ -58,8 +58,10 @@ class VegaGtkI18nTests(unittest.TestCase):
             catalog = messages(PO_DIR / f"{locale}.po")
             for key, value in catalog.items():
                 for token in protected:
-                    if token in key:
-                        self.assertIn(token, value, f"{locale}: {key}")
+                    # Whole words: "navegadores" must not count as "vegad".
+                    word = re.compile(rf"\b{re.escape(token)}\b")
+                    if word.search(key):
+                        self.assertRegex(value, word, f"{locale}: {key}")
 
     def test_rpm_specs_install_all_catalogs(self):
         for relative in ("packaging/opensuse/vega.spec", "packaging/obs/vega-gtk.spec"):

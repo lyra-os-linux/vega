@@ -97,3 +97,51 @@ pub async fn users_remove(state: State<'_>, username: String) -> CmdResult<()> {
         .await
         .map_err(err)
 }
+
+/// Abre o aplicativo "Controle parental" (malcontent-control) já na conta
+/// indicada. As regras pertencem ao malcontent; o Vega só abre a janela, e a
+/// autorização é a do polkit do próprio malcontent.
+#[tauri::command]
+pub async fn users_open_parental_controls(username: String) -> CmdResult<()> {
+    if !valid_username(&username) {
+        return Err(gettextrs::gettext("Nome de usuário inválido."));
+    }
+    let mut child = std::process::Command::new("malcontent-control")
+        .args(["--user", &username])
+        .spawn()
+        .map_err(|error| {
+            format!(
+                "{}\n{error}",
+                gettextrs::gettext(
+                    "Não foi possível abrir o Controle Parental. Confira se o pacote lyra-parental-controls está instalado."
+                )
+            )
+        })?;
+    // Recolhe o processo quando a janela fechar.
+    std::thread::spawn(move || {
+        let _ = child.wait();
+    });
+    Ok(())
+}
+
+/// Mesma regra do vegad e da interface para nomes de conta.
+fn valid_username(name: &str) -> bool {
+    let mut chars = name.chars();
+    matches!(chars.next(), Some(c) if c.is_ascii_lowercase() || c == '_')
+        && chars.all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_' || c == '-')
+}
+
+#[cfg(test)]
+mod tests {
+    use super::valid_username;
+
+    #[test]
+    fn parental_controls_only_accepts_account_names() {
+        for name in ["crianca", "ana_2", "_svc", "joao-pedro"] {
+            assert!(valid_username(name), "{name}");
+        }
+        for name in ["", "Ana", "--user", "-x", "a b", "a;rm", "2fast"] {
+            assert!(!valid_username(name), "{name}");
+        }
+    }
+}
