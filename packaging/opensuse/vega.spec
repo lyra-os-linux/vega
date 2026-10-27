@@ -19,7 +19,7 @@ BuildRequires:  pkgconfig(javascriptcoregtk-4.1)
 BuildRequires:  pkgconfig(libsoup-3.0)
 BuildRequires:  pkgconfig(libvirt)
 BuildRequires:  gettext-tools
-Requires:       vegad >= 5.1.42
+Requires:       vegad >= 5.1.44
 Requires:       secret-tool
 Requires:       python3-gobject
 Requires:       typelib-1_0-Atspi-2_0
