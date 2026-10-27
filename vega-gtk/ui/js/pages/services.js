@@ -82,15 +82,18 @@ export default {
     function serviceRow(service) {
       const state = [service.active ? t("Ativo") : t("Parado"), service.enabled ? t("Habilitado") : t("Desabilitado")];
       const can = service.available && !busy;
-      const leadTone = !service.available ? "" : service.active ? "green" : service.enabled ? "red" : "";
+      // Indisponível (sem a unit, ou pulada por condição, como o Bluetooth sem
+      // adaptador): parado sem alerta, porque não há o que corrigir.
+      const attention = service.available && service.enabled && !service.active;
+      const leadTone = !service.available ? "" : service.active ? "green" : attention ? "red" : "";
       return h("div", { class: `list-row svc-row ${service.available ? "" : "svc-unavailable"}`.trim() },
-        h("span", { class: `lead ${leadTone}`.trim() }, icon(service.active ? "play" : service.enabled ? "alert" : "stop", 16)),
+        h("span", { class: `lead ${leadTone}`.trim() }, icon(service.active ? "play" : attention ? "alert" : "stop", 16)),
         h("div", { class: "body" },
           h("div", { class: "title" }, service.label || service.name),
           h("div", { class: "subtitle selectable" }, h("span", { class: "mono" }, service.name), service.description ? ` • ${service.description}` : "")),
         h("div", { class: "suffix svc-suffix" },
           h("span", { class: "svc-badges" },
-            badge(state[0], service.active ? "green" : service.enabled ? "red" : ""),
+            badge(state[0], service.active ? "green" : attention ? "red" : ""),
             badge(state[1], "outline")),
           h("span", { class: "svc-actions" },
             button(service.enabled ? t("Desabilitar") : t("Habilitar"), { size: "sm", disabled: !can, onClick: () => act(service, "enable") }),
