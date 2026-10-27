@@ -1438,8 +1438,8 @@ msgid "Bluetooth não está disponível nesta máquina."
 msgstr "Bluetooth no está disponible en esta máquina."
 
 #: /home/rbrito/Git/Vega/vega-gtk/src/ui/bluetooth.rs:119
-msgid "bluetoothctl não detectado"
-msgstr "bluetoothctl no detectado"
+msgid "Nenhum adaptador Bluetooth encontrado"
+msgstr "No se encontró ningún adaptador Bluetooth"
 
 #: /home/rbrito/Git/Vega/vega-gtk/src/ui/bluetooth.rs:120
 msgid "Nenhum dispositivo disponível"

@@ -1453,7 +1453,7 @@ msgid "Bluetooth não está disponível nesta máquina."
 msgstr ""
 
 #: vega-gtk/src/ui/bluetooth.rs:119
-msgid "bluetoothctl não detectado"
+msgid "Nenhum adaptador Bluetooth encontrado"
 msgstr ""
 
 #: vega-gtk/src/ui/bluetooth.rs:120
