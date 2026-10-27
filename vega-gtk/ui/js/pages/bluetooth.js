@@ -175,7 +175,7 @@ export default {
       if (error && !status) return clear(body, banner("danger", "alert-circle", t("Bluetooth"), error));
       if (!status) return;
       if (!status.available) {
-        return clear(body, empty("bluetooth", t("Bluetooth não está disponível nesta máquina."), t("bluetoothctl não detectado")));
+        return clear(body, empty("bluetooth", t("Bluetooth não está disponível nesta máquina."), t("Nenhum adaptador Bluetooth encontrado")));
       }
 
       const powerBtn = h("button", { class: `btn ${status.powered ? "" : "primary"}`.trim(), onclick: () => togglePower(powerBtn) },
