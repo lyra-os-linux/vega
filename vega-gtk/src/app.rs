@@ -93,8 +93,9 @@ pub fn open_uri(uri: String) -> Result<(), String> {
     if !(uri.starts_with("https://") || uri.starts_with("file://")) {
         return Err("endereço não permitido".into());
     }
-    gio::AppInfo::launch_default_for_uri(&uri, None::<&gio::AppLaunchContext>)
-        .map_err(|e| e.to_string())
+    let context = gio::AppLaunchContext::new();
+    crate::webkit_env::clean_launch_context(&context);
+    gio::AppInfo::launch_default_for_uri(&uri, Some(&context)).map_err(|e| e.to_string())
 }
 
 /// Erros não tratados da interface vão para o stderr (journal da sessão).

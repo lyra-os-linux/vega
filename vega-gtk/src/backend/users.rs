@@ -106,7 +106,7 @@ pub async fn users_open_parental_controls(username: String) -> CmdResult<()> {
     if !valid_username(&username) {
         return Err(gettextrs::gettext("Nome de usuário inválido."));
     }
-    let mut child = std::process::Command::new("malcontent-control")
+    let mut child = crate::webkit_env::clean_command(&mut std::process::Command::new("malcontent-control"))
         .args(["--user", &username])
         .spawn()
         .map_err(|error| {

@@ -14,6 +14,7 @@ mod screensaver;
 mod tweaks;
 mod virtualization;
 mod virtualization_messages;
+mod webkit_env;
 
 use std::process::ExitCode;
 
@@ -21,6 +22,8 @@ use backend::*;
 use tauri::{Emitter, Manager};
 
 fn main() -> ExitCode {
+    // Antes de qualquer thread e de o WebKit iniciar (vega#166).
+    webkit_env::apply();
     // O contrato de perfil (usado pelo Lyra Welcome) roda antes de qualquer
     // janela e nunca abre uma.
     if let Some(code) = profile_command::run(std::env::args().skip(1).collect()) {
