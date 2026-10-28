@@ -152,17 +152,19 @@ pub async fn vms_call(
             let target: Target = self::args(args)?;
             let conn = connection(&target.connection)?;
             uuid_check(&target.uuid)?;
-            let mut child = std::process::Command::new("lyra-vms")
-                .args(["--connect", conn.uri(), "--uuid", &target.uuid])
-                .spawn()
-                .map_err(|error| {
-                    format!(
-                        "{}\n{error}",
-                        crate::i18n::gettext(
-                            "Não foi possível abrir o Lyra VMs. Confira se o pacote está instalado."
-                        )
+            let mut child = crate::webkit_env::clean_command(&mut std::process::Command::new(
+                "lyra-vms",
+            ))
+            .args(["--connect", conn.uri(), "--uuid", &target.uuid])
+            .spawn()
+            .map_err(|error| {
+                format!(
+                    "{}\n{error}",
+                    crate::i18n::gettext(
+                        "Não foi possível abrir o Lyra VMs. Confira se o pacote está instalado."
                     )
-                })?;
+                )
+            })?;
             // Recolhe o processo quando o console fechar.
             std::thread::spawn(move || {
                 let _ = child.wait();

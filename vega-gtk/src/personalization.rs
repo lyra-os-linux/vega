@@ -138,6 +138,7 @@ fn launch(name: &str, accessibility: bool) -> Result<(), String> {
     let ids = app_ids(name).ok_or_else(|| format!("aplicativo desconhecido: {name}"))?;
     let app = find_app(ids).ok_or_else(|| gettext("Aplicativo não instalado"))?;
     let context = gio::AppLaunchContext::new();
+    crate::webkit_env::clean_launch_context(&context);
     if accessibility {
         context.setenv("GTK_A11Y", "atspi");
     }
