@@ -144,16 +144,31 @@ export function cleanupSection(ctx, refreshVolumes) {
       const size = category.entries.filter((e) => chosen.has(e.name)).reduce((sum, e) => sum + e.bytes, 0);
       total.textContent = t("{count} pasta(s) • {size}", { count: chosen.size, size: bytes(size) });
       go.disabled = !chosen.size || busy;
+      // "Selecionar todos" acompanha as escolhas uma a uma.
+      all.checked = chosen.size > 0 && chosen.size === category.entries.length;
+      all.indeterminate = chosen.size > 0 && chosen.size < category.entries.length;
     };
-    const rows = category.entries.map((entry) => {
+    const all = h("input", { type: "checkbox", class: "check" });
+    const checks = category.entries.map((entry) => {
       const check = h("input", { type: "checkbox", class: "check" });
       check.addEventListener("change", () => { check.checked ? chosen.add(entry.name) : chosen.delete(entry.name); paintTotal(); });
-      return h("label", { class: "cleanup-entry" }, check, h("span", { class: "mono selectable spacer" }, entry.name), h("span", { class: "small muted" }, bytes(entry.bytes)));
+      return check;
     });
+    all.addEventListener("change", () => {
+      category.entries.forEach((entry, i) => {
+        checks[i].checked = all.checked;
+        all.checked ? chosen.add(entry.name) : chosen.delete(entry.name);
+      });
+      paintTotal();
+    });
+    const rows = category.entries.map((entry, i) =>
+      h("label", { class: "cleanup-entry" }, checks[i], h("span", { class: "mono selectable spacer" }, entry.name), h("span", { class: "small muted" }, bytes(entry.bytes))));
+    const header = rows.length > 0 && h("label", { class: "cleanup-entry cleanup-all" }, all, h("strong", { class: "spacer" }, t("Selecionar todos")),
+      h("span", { class: "small muted" }, bytes(category.entries.reduce((sum, e) => sum + e.bytes, 0))));
     paintTotal();
     const close = sheet(t("Cache dos aplicativos"), h("div", {},
       banner("warning", "alert", t("Feche os aplicativos antes"), t("Um aplicativo aberto pode recriar o cache ou perder dados temporários.")),
-      h("div", { class: "cleanup-entries" }, rows.length ? rows : h("p", { class: "muted" }, t("Nenhuma pasta em ~/.cache"))),
+      h("div", { class: "cleanup-entries" }, header, rows.length ? rows : h("p", { class: "muted" }, t("Nenhuma pasta em ~/.cache"))),
       h("div", { class: "row-flex cleanup-sheet-actions" }, total, h("span", { class: "spacer" }), go)));
     go.onclick = () => {
       const entries = [...chosen];

@@ -4868,3 +4868,6 @@ msgstr "Free up space"
 
 msgid "Medir de novo"
 msgstr "Measure again"
+
+msgid "Selecionar todos"
+msgstr "Select all"

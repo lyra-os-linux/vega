@@ -4868,3 +4868,6 @@ msgstr "Liberar espacio"
 
 msgid "Medir de novo"
 msgstr "Medir de nuevo"
+
+msgid "Selecionar todos"
+msgstr "Seleccionar todo"
