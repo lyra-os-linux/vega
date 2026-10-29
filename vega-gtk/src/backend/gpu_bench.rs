@@ -161,6 +161,9 @@ fn nvidia_runtime_pm() -> Option<std::path::PathBuf> {
     })
 }
 
+/// Duração de cada cena do glmark2, aplicada a toda a lista padrão.
+const GLMARK2_SCENE_DURATION: &str = ":duration=3";
+
 static CANCELLED: AtomicBool = AtomicBool::new(false);
 static RUNNING: Mutex<Option<Child>> = Mutex::new(None);
 
@@ -271,11 +274,13 @@ fn bench(app: &AppHandle) -> Value {
         let base = 5 + 85 * index as u32 / targets.len().max(1) as u32;
         progress(base, gettext("Medindo {gpu}").replace("{gpu}", &gpu.name));
         let env = offload_env(gpu);
+        // 3 s por cena (o padrão é 10 s): as 33 cenas levam ~100 s por GPU
+        // em vez de ~6 min; a pontuação continua comparável entre execuções.
         let out = run(
             "glmark2-es2-wayland",
-            &["--off-screen"],
+            &["--off-screen", "-b", GLMARK2_SCENE_DURATION],
             &env,
-            Duration::from_secs(300),
+            Duration::from_secs(240),
         )
         .unwrap_or_default();
         if CANCELLED.load(Ordering::Relaxed) {
