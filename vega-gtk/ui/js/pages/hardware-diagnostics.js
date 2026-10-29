@@ -97,6 +97,7 @@ const GUIDE = {
   "smart.hot": COOLING, "platform.hot-idle": COOLING, "cpu.slow-under-load": COOLING, "thermal.abort": COOLING,
   "platform.battery-worn": { text: N_("A bateria guarda bem menos carga do que quando era nova. Considere trocá-la.") },
   "platform.firmware-updates": { text: N_("Há atualizações de firmware. Instale-as pela central de software do GNOME e reinicie quando pedir.") },
+  "storage.low-space": { text: N_("Pouco espaço livre faz atualizações e snapshots falharem. Veja o que dá para apagar com segurança."), go: ["storage", "cleanup"], label: N_("Abrir Liberar espaço") },
   "platform.ntp": { text: N_("A sincronização está ligada, mas sem resposta. Confira a conexão com a internet."), go: ["datetime"], label: N_("Abrir Data e hora") },
   "platform.secure-boot-off": { text: N_("Se quiser essa proteção, ative o Secure Boot nas configurações de firmware (UEFI) do computador.") },
   "platform.kernel-tainted": { text: N_("O kernel registrou uma falha. Reinicie o computador; se voltar a acontecer, veja os logs."), go: ["logs"], label: N_("Abrir Logs") },

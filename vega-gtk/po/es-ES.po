@@ -4715,3 +4715,156 @@ msgstr "Ningún programa escuchando en la red"
 
 msgid "zona"
 msgstr "zona"
+
+msgid "Escolha as pastas do cache que serão apagadas."
+msgstr "Elija las carpetas de caché que se borrarán."
+
+msgid "A pasta do cache é um link simbólico; nada foi apagado."
+msgstr "La carpeta de caché es un enlace simbólico; no se borró nada."
+
+msgid "Categoria de limpeza desconhecida."
+msgstr "Categoría de limpieza desconocida."
+
+msgid "HOME não definido."
+msgstr "HOME no está definido."
+
+msgid "Pouco espaço livre faz atualizações e snapshots falharem. Veja o que dá para apagar com segurança."
+msgstr "Poco espacio libre hace fallar las actualizaciones y las instantáneas. Vea qué se puede borrar con seguridad."
+
+msgid "Abrir Liberar espaço"
+msgstr "Abrir Liberar espacio"
+
+msgid "Relatórios de falha (core dumps)"
+msgstr "Informes de fallos (core dumps)"
+
+msgid "Cópias da memória de programas que travaram. Servem para depurar; podem ser apagadas."
+msgstr "Copias de la memoria de programas que fallaron. Sirven para depurar; se pueden borrar."
+
+msgid "Logs antigos do sistema"
+msgstr "Registros antiguos del sistema"
+
+msgid "O journal fica em até 500 MB. O boot atual e o anterior são sempre mantidos."
+msgstr "El journal se queda en hasta 500 MB. El arranque actual y el anterior siempre se conservan."
+
+msgid "Pacotes baixados"
+msgstr "Paquetes descargados"
+
+msgid "Cópias de pacotes que o Zypper já instalou. São baixados de novo se precisar."
+msgstr "Copias de paquetes que Zypper ya instaló. Se descargan de nuevo si hace falta."
+
+msgid "Runtimes Flatpak sem uso (sistema)"
+msgstr "Runtimes Flatpak sin uso (sistema)"
+
+msgid "Bibliotecas que nenhum aplicativo instalado usa mais."
+msgstr "Bibliotecas que ninguna aplicación instalada usa ya."
+
+msgid "Kernels antigos"
+msgstr "Kernels antiguos"
+
+msgid "Segue a regra do openSUSE: o kernel em uso e o mais novo ficam. Um snapshot é criado antes."
+msgstr "Sigue la regla de openSUSE: el kernel en uso y el más nuevo se quedan. Antes se crea una instantánea."
+
+msgid "Snapshots fora da política"
+msgstr "Instantáneas fuera de la política"
+
+msgid "Aplica a limpeza automática do Snapper, que respeita a retenção configurada."
+msgstr "Aplica la limpieza automática de Snapper, que respeta la retención configurada."
+
+msgid "Arquivos que você já mandou para a lixeira."
+msgstr "Archivos que ya envió a la papelera."
+
+msgid "Miniaturas"
+msgstr "Miniaturas"
+
+msgid "Prévias de imagens e vídeos; são recriadas quando necessário."
+msgstr "Vistas previas de imágenes y vídeos; se recrean cuando hace falta."
+
+msgid "Cache dos aplicativos"
+msgstr "Caché de las aplicaciones"
+
+msgid "Arquivos temporários por aplicativo, em ~/.cache. Escolha quais apagar."
+msgstr "Archivos temporales por aplicación, en ~/.cache. Elija cuáles borrar."
+
+msgid "Runtimes Flatpak sem uso (usuário)"
+msgstr "Runtimes Flatpak sin uso (usuario)"
+
+msgid "Bibliotecas da sua instalação Flatpak que nenhum aplicativo usa mais."
+msgstr "Bibliotecas de su instalación Flatpak que ninguna aplicación usa ya."
+
+msgid "Nada para limpar"
+msgstr "Nada que limpiar"
+
+msgid "Outra operação do sistema está em andamento"
+msgstr "Hay otra operación del sistema en curso"
+
+msgid "O Snapper não está configurado"
+msgstr "Snapper no está configurado"
+
+msgid "Bloqueado: a remoção tiraria o kernel em uso ou o mais novo"
+msgstr "Bloqueado: la eliminación quitaría el kernel en uso o el más nuevo"
+
+msgid "Não foi possível medir"
+msgstr "No se pudo medir"
+
+msgid "Requer o pacote {package}"
+msgstr "Requiere el paquete {package}"
+
+msgid "pelo menos {count} • tamanho desconhecido"
+msgstr "al menos {count} • tamaño desconocido"
+
+msgid "tamanho desconhecido"
+msgstr "tamaño desconocido"
+
+msgid "Limpando: {name}…"
+msgstr "Limpiando: {name}…"
+
+msgid "Liberar espaço?"
+msgstr "¿Liberar espacio?"
+
+msgid "Os itens abaixo serão apagados. Não é possível desfazer."
+msgstr "Los elementos de abajo se borrarán. No se puede deshacer."
+
+msgid "Falhou: {list}"
+msgstr "Falló: {list}"
+
+msgid "{size} liberados"
+msgstr "{size} liberados"
+
+msgid "O espaço dos kernels volta ao disco quando os snapshots antigos forem limpos."
+msgstr "El espacio de los kernels vuelve al disco cuando se limpian las instantáneas antiguas."
+
+msgid "Limpar selecionados"
+msgstr "Limpiar seleccionados"
+
+msgid "{count} pasta(s) • {size}"
+msgstr "{count} carpeta(s) • {size}"
+
+msgid "Feche os aplicativos antes"
+msgstr "Cierre las aplicaciones antes"
+
+msgid "Um aplicativo aberto pode recriar o cache ou perder dados temporários."
+msgstr "Una aplicación abierta puede recrear la caché o perder datos temporales."
+
+msgid "Nenhuma pasta em ~/.cache"
+msgstr "Ninguna carpeta en ~/.cache"
+
+msgid "{count} arquivo(s)"
+msgstr "{count} archivo(s)"
+
+msgid "Escolher…"
+msgstr "Elegir…"
+
+msgid "Vazio"
+msgstr "Vacío"
+
+msgid "Recuperável: {total}. O seguro sem escolher: {safe}."
+msgstr "Recuperable: {total}. Lo seguro sin elegir: {safe}."
+
+msgid "Limpar tudo o que for seguro"
+msgstr "Limpiar todo lo que sea seguro"
+
+msgid "Liberar espaço"
+msgstr "Liberar espacio"
+
+msgid "Medir de novo"
+msgstr "Medir de nuevo"
