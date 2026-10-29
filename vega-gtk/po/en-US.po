@@ -4592,3 +4592,15 @@ msgstr "Updating {app}…"
 
 msgid "A atualização do Flatpak falhou."
 msgstr "The Flatpak update failed."
+
+msgid "Atualizar os pacotes do sistema e os Flatpaks agora? Os pacotes do sistema pedem a senha de administrador; os Flatpaks, não."
+msgstr "Update the system packages and the Flatpaks now? System packages ask for the administrator password; Flatpaks do not."
+
+msgid "Atualizar os Flatpaks agora? Não é preciso senha."
+msgstr "Update the Flatpaks now? No password is needed."
+
+msgid "Atualizando {name} ({current}/{total})…"
+msgstr "Updating {name} ({current}/{total})…"
+
+msgid "Atualizar pacotes do sistema"
+msgstr "Update system packages"
