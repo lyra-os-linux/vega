@@ -4583,3 +4583,12 @@ msgstr "Antes, una instantánea permite deshacerlo todo."
 
 msgid "Depois, os testes afetados rodam de novo para confirmar."
 msgstr "Después, las pruebas afectadas se ejecutan de nuevo para confirmar."
+
+msgid "Identificador de aplicativo Flatpak inválido."
+msgstr "Identificador de aplicación Flatpak no válido."
+
+msgid "Atualizando {app}…"
+msgstr "Actualizando {app}…"
+
+msgid "A atualização do Flatpak falhou."
+msgstr "La actualización de Flatpak falló."

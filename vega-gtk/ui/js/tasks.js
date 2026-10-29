@@ -61,8 +61,14 @@ on("software-transaction", (event) => {
       appendConsole(task, `[zypper] ${event.package} ${event.phase} ${event.percent}%`);
       break;
     case "console":
-      // As fontes "event" e "stdout" repetem o que já aparece no progresso.
-      if (event.source !== "event" && event.source !== "stdout") appendConsole(task, `[${event.source}] ${event.line}`);
+      // "stdout" do vegad repete os eventos de pacote acima; "event" é a linha
+      // do tempo da operação e entra no console, sem repetir a anterior.
+      if (event.source === "stdout") break;
+      if (event.source === "event") {
+        if (task.console.at(-1) !== event.line) appendConsole(task, event.line);
+      } else {
+        appendConsole(task, `[${event.source}] ${event.line}`);
+      }
       break;
     case "key-pending":
       task.keyPending = event;
@@ -126,7 +132,8 @@ export function localTask(title) {
 /** Painel de transação reutilizável (progresso, console e resultado). */
 export function transactionPanel(task, { onClose } = {}) {
   const root = h("div", { class: "card job-card" });
-  let showConsole = false;
+  // O console vem aberto: o usuário vê o que está rodando sem procurar.
+  let showConsole = true;
   const paint = () => {
     const running = task.state === "running";
     const consoleEl = showConsole && h("div", { class: "job-log mono" }, task.console.slice(-400).map((line) => h("div", {}, line)));

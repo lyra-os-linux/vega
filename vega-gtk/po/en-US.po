@@ -4583,3 +4583,12 @@ msgstr "First, a snapshot lets you undo everything."
 
 msgid "Depois, os testes afetados rodam de novo para confirmar."
 msgstr "Then the affected tests run again to confirm."
+
+msgid "Identificador de aplicativo Flatpak inválido."
+msgstr "Invalid Flatpak application ID."
+
+msgid "Atualizando {app}…"
+msgstr "Updating {app}…"
+
+msgid "A atualização do Flatpak falhou."
+msgstr "The Flatpak update failed."

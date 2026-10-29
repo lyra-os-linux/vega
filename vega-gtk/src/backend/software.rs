@@ -249,6 +249,13 @@ pub enum TransactionEvent {
 /// transação numa tarefa própria até o fim.
 #[tauri::command]
 pub async fn software_run(app: AppHandle, state: State<'_>, action: Action) -> CmdResult<u32> {
+    // Flatpak se atualiza pela sessão do usuário: o polkit do Flatpak libera
+    // sem senha e o Vega não pede a ação administrativa própria.
+    if let Action::UpdatePackage { origin, id } = &action
+        && origin == "flathub"
+    {
+        return super::flatpak_update::start(app, id.clone());
+    }
     let dbus = state.dbus().await?;
     let software = dbus.software();
     let events = software.subscribe().await.map_err(err)?;
