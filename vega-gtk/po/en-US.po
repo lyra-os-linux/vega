@@ -4463,3 +4463,123 @@ msgstr "The diagnostics did not finish"
 
 msgid "Executar só os testes sem carga"
 msgstr "Run only the tests without load"
+
+msgid "Reinstalar os pacotes: {packages}"
+msgstr "Reinstall the packages: {packages}"
+
+msgid "Instalar as dependências que faltam"
+msgstr "Install the missing dependencies"
+
+msgid "Reiniciar os serviços: {units}"
+msgstr "Restart the services: {units}"
+
+msgid "Ligar a sincronização de hora pela rede"
+msgstr "Turn on network time synchronization"
+
+msgid "Reinstalando pacotes"
+msgstr "Reinstalling packages"
+
+msgid "Corrigindo dependências"
+msgstr "Fixing dependencies"
+
+msgid "Reiniciando serviços"
+msgstr "Restarting services"
+
+msgid "Ligando a sincronização de hora"
+msgstr "Turning on time synchronization"
+
+msgid "Faça backup dos seus arquivos agora e planeje a troca do disco. O Vega não tenta consertar disco com defeito."
+msgstr "Back up your files now and plan to replace the disk. Vega does not try to repair a failing disk."
+
+msgid "Abrir Backup"
+msgstr "Open Backup"
+
+msgid "Limpe as saídas de ar, use o computador sobre uma superfície rígida e evite deixá-lo no colo durante tarefas pesadas."
+msgstr "Clean the air vents, use the computer on a hard surface and avoid keeping it on your lap during heavy work."
+
+msgid "Tente de novo. Se voltar a acontecer, exporte o relatório e abra uma issue."
+msgstr "Try again. If it happens again, export the report and open an issue."
+
+msgid "O disco está chegando ao fim da vida útil. Mantenha backups em dia e planeje a troca."
+msgstr "The disk is reaching the end of its service life. Keep backups up to date and plan the replacement."
+
+msgid "A bateria guarda bem menos carga do que quando era nova. Considere trocá-la."
+msgstr "The battery holds much less charge than when it was new. Consider replacing it."
+
+msgid "Há atualizações de firmware. Instale-as pela central de software do GNOME e reinicie quando pedir."
+msgstr "Firmware updates are available. Install them from GNOME Software and restart when asked."
+
+msgid "A sincronização está ligada, mas sem resposta. Confira a conexão com a internet."
+msgstr "Synchronization is on but not responding. Check the internet connection."
+
+msgid "Abrir Data e hora"
+msgstr "Open Date and time"
+
+msgid "Se quiser essa proteção, ative o Secure Boot nas configurações de firmware (UEFI) do computador."
+msgstr "If you want this protection, turn on Secure Boot in the computer's firmware (UEFI) settings."
+
+msgid "O kernel registrou uma falha. Reinicie o computador; se voltar a acontecer, veja os logs."
+msgstr "The kernel recorded a fault. Restart the computer; if it happens again, check the logs."
+
+msgid "Abrir Logs"
+msgstr "Open Logs"
+
+msgid "Os dados brutos mostram quais programas falharam. Manter o sistema atualizado costuma resolver."
+msgstr "The raw data shows which programs crashed. Keeping the system up to date usually fixes it."
+
+msgid "Algum programa está usando a NVIDIA. Feche-o para economizar bateria."
+msgstr "A program is using the NVIDIA GPU. Close it to save battery."
+
+msgid "Abrir Monitor"
+msgstr "Open Monitor"
+
+msgid "Confira o estado do driver da GPU."
+msgstr "Check the state of the GPU driver."
+
+msgid "Ver NVIDIA"
+msgstr "View NVIDIA"
+
+msgid "Conecte o carregador e execute o teste de novo."
+msgstr "Plug in the charger and run the test again."
+
+msgid "Feche alguns programas para liberar memória e execute o teste de novo."
+msgstr "Close some programs to free memory and run the test again."
+
+msgid "Libere ao menos 10 GiB no disco e execute o teste de novo."
+msgstr "Free at least 10 GiB on the disk and run the test again."
+
+msgid "Abrir Armazenamento"
+msgstr "Open Storage"
+
+msgid "O serviço continua falhando. Veja o log dele para entender o motivo."
+msgstr "The service still fails. Check its log to find out why."
+
+msgid "Resolver"
+msgstr "Fix"
+
+msgid "O Vega pode corrigir {count} problema(s) com segurança"
+msgstr "Vega can safely fix {count} problem(s)"
+
+msgid "Antes ele cria um snapshot e, depois, roda de novo os testes afetados."
+msgstr "It takes a snapshot first and runs the affected tests again afterwards."
+
+msgid "Resolver tudo o que for seguro"
+msgstr "Fix everything that is safe"
+
+msgid "Problemas resolvidos"
+msgstr "Problems fixed"
+
+msgid "Correção concluída; veja o relatório"
+msgstr "Fix finished; see the report"
+
+msgid "Resolver os problemas encontrados?"
+msgstr "Fix the problems found?"
+
+msgid "O Vega vai fazer o seguinte. A senha de administrador será pedida."
+msgstr "Vega will do the following. The administrator password will be requested."
+
+msgid "Antes, um snapshot permite desfazer tudo."
+msgstr "First, a snapshot lets you undo everything."
+
+msgid "Depois, os testes afetados rodam de novo para confirmar."
+msgstr "Then the affected tests run again to confirm."

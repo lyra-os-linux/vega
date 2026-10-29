@@ -4462,3 +4462,123 @@ msgstr "O diagnóstico não foi concluído"
 
 msgid "Executar só os testes sem carga"
 msgstr "Executar só os testes sem carga"
+
+msgid "Reinstalar os pacotes: {packages}"
+msgstr "Reinstalar os pacotes: {packages}"
+
+msgid "Instalar as dependências que faltam"
+msgstr "Instalar as dependências que faltam"
+
+msgid "Reiniciar os serviços: {units}"
+msgstr "Reiniciar os serviços: {units}"
+
+msgid "Ligar a sincronização de hora pela rede"
+msgstr "Ligar a sincronização de hora pela rede"
+
+msgid "Reinstalando pacotes"
+msgstr "Reinstalando pacotes"
+
+msgid "Corrigindo dependências"
+msgstr "Corrigindo dependências"
+
+msgid "Reiniciando serviços"
+msgstr "Reiniciando serviços"
+
+msgid "Ligando a sincronização de hora"
+msgstr "Ligando a sincronização de hora"
+
+msgid "Faça backup dos seus arquivos agora e planeje a troca do disco. O Vega não tenta consertar disco com defeito."
+msgstr "Faça backup dos seus arquivos agora e planeje a troca do disco. O Vega não tenta consertar disco com defeito."
+
+msgid "Abrir Backup"
+msgstr "Abrir Backup"
+
+msgid "Limpe as saídas de ar, use o computador sobre uma superfície rígida e evite deixá-lo no colo durante tarefas pesadas."
+msgstr "Limpe as saídas de ar, use o computador sobre uma superfície rígida e evite deixá-lo no colo durante tarefas pesadas."
+
+msgid "Tente de novo. Se voltar a acontecer, exporte o relatório e abra uma issue."
+msgstr "Tente de novo. Se voltar a acontecer, exporte o relatório e abra uma issue."
+
+msgid "O disco está chegando ao fim da vida útil. Mantenha backups em dia e planeje a troca."
+msgstr "O disco está chegando ao fim da vida útil. Mantenha backups em dia e planeje a troca."
+
+msgid "A bateria guarda bem menos carga do que quando era nova. Considere trocá-la."
+msgstr "A bateria guarda bem menos carga do que quando era nova. Considere trocá-la."
+
+msgid "Há atualizações de firmware. Instale-as pela central de software do GNOME e reinicie quando pedir."
+msgstr "Há atualizações de firmware. Instale-as pela central de software do GNOME e reinicie quando pedir."
+
+msgid "A sincronização está ligada, mas sem resposta. Confira a conexão com a internet."
+msgstr "A sincronização está ligada, mas sem resposta. Confira a conexão com a internet."
+
+msgid "Abrir Data e hora"
+msgstr "Abrir Data e hora"
+
+msgid "Se quiser essa proteção, ative o Secure Boot nas configurações de firmware (UEFI) do computador."
+msgstr "Se quiser essa proteção, ative o Secure Boot nas configurações de firmware (UEFI) do computador."
+
+msgid "O kernel registrou uma falha. Reinicie o computador; se voltar a acontecer, veja os logs."
+msgstr "O kernel registrou uma falha. Reinicie o computador; se voltar a acontecer, veja os logs."
+
+msgid "Abrir Logs"
+msgstr "Abrir Logs"
+
+msgid "Os dados brutos mostram quais programas falharam. Manter o sistema atualizado costuma resolver."
+msgstr "Os dados brutos mostram quais programas falharam. Manter o sistema atualizado costuma resolver."
+
+msgid "Algum programa está usando a NVIDIA. Feche-o para economizar bateria."
+msgstr "Algum programa está usando a NVIDIA. Feche-o para economizar bateria."
+
+msgid "Abrir Monitor"
+msgstr "Abrir Monitor"
+
+msgid "Confira o estado do driver da GPU."
+msgstr "Confira o estado do driver da GPU."
+
+msgid "Ver NVIDIA"
+msgstr "Ver NVIDIA"
+
+msgid "Conecte o carregador e execute o teste de novo."
+msgstr "Conecte o carregador e execute o teste de novo."
+
+msgid "Feche alguns programas para liberar memória e execute o teste de novo."
+msgstr "Feche alguns programas para liberar memória e execute o teste de novo."
+
+msgid "Libere ao menos 10 GiB no disco e execute o teste de novo."
+msgstr "Libere ao menos 10 GiB no disco e execute o teste de novo."
+
+msgid "Abrir Armazenamento"
+msgstr "Abrir Armazenamento"
+
+msgid "O serviço continua falhando. Veja o log dele para entender o motivo."
+msgstr "O serviço continua falhando. Veja o log dele para entender o motivo."
+
+msgid "Resolver"
+msgstr "Resolver"
+
+msgid "O Vega pode corrigir {count} problema(s) com segurança"
+msgstr "O Vega pode corrigir {count} problema(s) com segurança"
+
+msgid "Antes ele cria um snapshot e, depois, roda de novo os testes afetados."
+msgstr "Antes ele cria um snapshot e, depois, roda de novo os testes afetados."
+
+msgid "Resolver tudo o que for seguro"
+msgstr "Resolver tudo o que for seguro"
+
+msgid "Problemas resolvidos"
+msgstr "Problemas resolvidos"
+
+msgid "Correção concluída; veja o relatório"
+msgstr "Correção concluída; veja o relatório"
+
+msgid "Resolver os problemas encontrados?"
+msgstr "Resolver os problemas encontrados?"
+
+msgid "O Vega vai fazer o seguinte. A senha de administrador será pedida."
+msgstr "O Vega vai fazer o seguinte. A senha de administrador será pedida."
+
+msgid "Antes, um snapshot permite desfazer tudo."
+msgstr "Antes, um snapshot permite desfazer tudo."
+
+msgid "Depois, os testes afetados rodam de novo para confirmar."
+msgstr "Depois, os testes afetados rodam de novo para confirmar."
