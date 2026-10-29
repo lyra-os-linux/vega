@@ -1,6 +1,6 @@
 use lyra_vega_dbus::{
-    FirewallClient, FirewallPort, FirewallService, FirewallStatus, NetworkClient, NetworkInterface,
-    ProxyConfig, WifiNetwork,
+    FirewallClient, FirewallPort, FirewallService, FirewallStatus, ListeningSocket, NetworkClient,
+    NetworkInterface, ProxyConfig, WifiNetwork,
 };
 
 use super::{CmdResult, State, dto, err, list};
@@ -14,6 +14,16 @@ dto!(Proxy from ProxyConfig { http: String, https: String, socks: String, no_pro
 dto!(Firewall from FirewallStatus { enabled: bool, active_zone: String });
 dto!(Service from FirewallService { name: String, label: String, enabled: bool });
 dto!(Port from FirewallPort { port: String, protocol: String });
+dto!(Listening from ListeningSocket {
+    protocol: String,
+    address: String,
+    port: u16,
+    executable: String,
+    unit: String,
+    reach: String,
+    state: String,
+    zone: String,
+});
 
 #[tauri::command]
 pub async fn network_interfaces(state: State<'_>) -> CmdResult<Vec<Interface>> {
@@ -192,5 +202,18 @@ pub async fn firewall_remove_port(
         .firewall()
         .remove_port(&port, &protocol)
         .await
+        .map_err(err)
+}
+
+/// O que escuta na rede e se o firewall deixa entrar (network-exposure-v1).
+#[tauri::command]
+pub async fn firewall_listening(state: State<'_>) -> CmdResult<Vec<Listening>> {
+    state
+        .dbus()
+        .await?
+        .firewall()
+        .listening()
+        .await
+        .map(list)
         .map_err(err)
 }

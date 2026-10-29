@@ -21,13 +21,14 @@ const TESTS = [
   { id: "gpu", icon: "monitor", name: N_("GPUs"), desc: N_("Drivers, renderização e pontuação de cada GPU") },
   { id: "logs", icon: "logs", name: N_("Logs e falhas"), desc: N_("Erros por boot, falhas de programas e serviços com problema") },
   { id: "platform", icon: "activity", name: N_("Estado da plataforma"), desc: N_("Temperaturas, bateria, firmware, relógio e Secure Boot") },
+  { id: "security", icon: "shield", name: N_("Segurança"), desc: N_("Firewall, portas expostas, correções de segurança, SSH, criptografia e contas") },
 ];
 const NAMES = Object.fromEntries(TESTS.map((test) => [test.id, test.name]));
 
 // Ordem de execução do vegad: leituras rápidas primeiro.
-const DAEMON_ORDER = ["packages", "disk-health", "logs", "platform", "fs-scrub", "cpu-stress", "memory-stress", "disk-bench"];
+const DAEMON_ORDER = ["packages", "disk-health", "logs", "platform", "security", "fs-scrub", "cpu-stress", "memory-stress", "disk-bench"];
 const MODES = {
-  quick: { tests: ["packages", "disk-health", "logs", "platform", "cpu-stress", "memory-stress"], gpu: false, duration: 60 },
+  quick: { tests: ["packages", "disk-health", "logs", "platform", "security", "cpu-stress", "memory-stress"], gpu: false, duration: 60 },
   full: { tests: DAEMON_ORDER, gpu: true, duration: 240 },
 };
 const LOAD_TESTS = new Set(["cpu-stress", "memory-stress", "disk-bench"]);
@@ -56,7 +57,7 @@ function reasonText(reason) {
 // ---------- O que fazer com cada achado ----------
 
 // Consertos que o vegad aplica (diagnostics-v2), na ordem do contrato.
-const REMEDY_ORDER = ["reinstall-packages", "verify-dependencies", "restart-units", "enable-ntp"];
+const REMEDY_ORDER = ["reinstall-packages", "verify-dependencies", "restart-units", "enable-ntp", "enable-firewall", "close-port", "apply-security-patches"];
 
 function remedyText(remedy, args = []) {
   switch (remedy) {
@@ -64,6 +65,9 @@ function remedyText(remedy, args = []) {
     case "verify-dependencies": return t("Instalar as dependências que faltam");
     case "restart-units": return t("Reiniciar os serviços: {units}", { units: args.join(", ") });
     case "enable-ntp": return t("Ligar a sincronização de hora pela rede");
+    case "enable-firewall": return t("Ligar o firewall");
+    case "close-port": return t("Fechar no firewall: {ports}", { ports: args.map((arg) => arg.replace("|service:", ": serviço ").replace("|port:", ": porta ")).join(", ") });
+    case "apply-security-patches": return t("Instalar as correções de segurança");
     default: return remedy;
   }
 }
@@ -73,6 +77,9 @@ const REPAIR_STAGES = {
   "repair:verify-dependencies": N_("Corrigindo dependências"),
   "repair:restart-units": N_("Reiniciando serviços"),
   "repair:enable-ntp": N_("Ligando a sincronização de hora"),
+  "repair:enable-firewall": N_("Ligando o firewall"),
+  "repair:close-port": N_("Fechando portas"),
+  "repair:apply-security-patches": N_("Instalando correções de segurança"),
 };
 const stageName = (id) => t(NAMES[id] ?? REPAIR_STAGES[id] ?? id);
 
@@ -100,8 +107,19 @@ const GUIDE = {
   "memory.insufficient": { text: N_("Feche alguns programas para liberar memória e execute o teste de novo.") },
   "bench.insufficient-space": { text: N_("Libere ao menos 10 GiB no disco e execute o teste de novo."), go: ["storage"], label: N_("Abrir Armazenamento") },
   "stage.timeout": RETRY, "stage.tool-failed": RETRY, "bench.failed": RETRY, "stress.incomplete": RETRY, "scrub.incomplete": RETRY,
+  "security.ssh-root-password": { text: N_("Desative o login do root por senha no SSH (PermitRootLogin) ou desligue o servidor SSH se não usa."), go: ["services"], label: N_("Abrir Serviços") },
+  "security.ssh-password": { text: N_("Prefira entrar no SSH com chave em vez de senha (PasswordAuthentication no)."), go: ["services"], label: N_("Abrir Serviços") },
+  "security.exposed-port": { text: N_("Feche a porta se não usa esse serviço a partir de outros computadores."), go: ["network", "firewall"], label: N_("Abrir Firewall") },
+  "security.empty-password": { text: N_("Defina uma senha para essas contas, ou remova-as."), go: ["users"], label: N_("Abrir Usuários") },
+  "security.sudo-open": { text: N_("Só administradores (grupo wheel) devem usar sudo. Revise as contas."), go: ["users"], label: N_("Abrir Usuários") },
+  "security.disk-unencrypted": { text: N_("A criptografia do disco se escolhe na instalação; para ativá-la, faça backup e reinstale com a opção de criptografar.") },
+  "security.selinux": { text: N_("O SELinux reforça o isolamento dos serviços. A política do Lyra para ele ainda está em definição.") },
+  "repair.restart-needed": { text: N_("Reinicie quando puder para concluir a atualização.") },
   "repair.failed": RETRY, "repair.unit-failed": { text: N_("O serviço continua falhando. Veja o log dele para entender o motivo."), go: ["logs"], label: N_("Abrir Logs") },
 };
+
+// Informações que também merecem uma orientação.
+const INFO_GUIDE = new Set(["platform.firmware-updates", "security.disk-unencrypted", "security.selinux", "repair.restart-needed"]);
 
 /** Consertos propostos pelo relatório: id → argumentos somados. */
 function reportRemedies(report) {
@@ -167,7 +185,7 @@ function findingRow({ stage, finding }, actions = {}) {
       toast(t("Copiado"));
     },
   });
-  const guide = finding.severity !== "info" || finding.code === "platform.firmware-updates" ? GUIDE[finding.code] : null;
+  const guide = finding.severity !== "info" || INFO_GUIDE.has(finding.code) ? GUIDE[finding.code] : null;
   const fix = finding.remedy && actions.repair
     ? button(t("Resolver"), { kind: "primary", size: "sm", icon: "zap", onClick: () => actions.repair([{ id: finding.remedy, args: finding.remedyArgs ?? [] }]) })
     : null;

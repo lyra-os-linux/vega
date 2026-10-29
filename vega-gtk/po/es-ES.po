@@ -4604,3 +4604,114 @@ msgstr "Actualizando {name} ({current}/{total})…"
 
 msgid "Atualizar pacotes do sistema"
 msgstr "Actualizar paquetes del sistema"
+
+msgid "Segurança"
+msgstr "Seguridad"
+
+msgid "Firewall, portas expostas, correções de segurança, SSH, criptografia e contas"
+msgstr "Cortafuegos, puertos expuestos, parches de seguridad, SSH, cifrado y cuentas"
+
+msgid "Ligar o firewall"
+msgstr "Activar el cortafuegos"
+
+msgid "Fechar no firewall: {ports}"
+msgstr "Cerrar en el cortafuegos: {ports}"
+
+msgid "Instalar as correções de segurança"
+msgstr "Instalar los parches de seguridad"
+
+msgid "Ligando o firewall"
+msgstr "Activando el cortafuegos"
+
+msgid "Fechando portas"
+msgstr "Cerrando puertos"
+
+msgid "Instalando correções de segurança"
+msgstr "Instalando parches de seguridad"
+
+msgid "Desative o login do root por senha no SSH (PermitRootLogin) ou desligue o servidor SSH se não usa."
+msgstr "Desactive el inicio de sesión de root con contraseña en SSH (PermitRootLogin), o apague el servidor SSH si no lo usa."
+
+msgid "Abrir Serviços"
+msgstr "Abrir Servicios"
+
+msgid "Prefira entrar no SSH com chave em vez de senha (PasswordAuthentication no)."
+msgstr "Prefiera entrar por SSH con clave en lugar de contraseña (PasswordAuthentication no)."
+
+msgid "Feche a porta se não usa esse serviço a partir de outros computadores."
+msgstr "Cierre el puerto si no usa este servicio desde otros equipos."
+
+msgid "Abrir Firewall"
+msgstr "Abrir Cortafuegos"
+
+msgid "Defina uma senha para essas contas, ou remova-as."
+msgstr "Defina una contraseña para estas cuentas, o elimínelas."
+
+msgid "Abrir Usuários"
+msgstr "Abrir Usuarios"
+
+msgid "Só administradores (grupo wheel) devem usar sudo. Revise as contas."
+msgstr "Solo los administradores (grupo wheel) deben usar sudo. Revise las cuentas."
+
+msgid "A criptografia do disco se escolhe na instalação; para ativá-la, faça backup e reinstale com a opção de criptografar."
+msgstr "El cifrado del disco se elige en la instalación; para activarlo, haga una copia de seguridad y reinstale con la opción de cifrar."
+
+msgid "O SELinux reforça o isolamento dos serviços. A política do Lyra para ele ainda está em definição."
+msgstr "SELinux refuerza el aislamiento de los servicios. La política de Lyra para él aún se está definiendo."
+
+msgid "Reinicie quando puder para concluir a atualização."
+msgstr "Reinicie cuando pueda para terminar la actualización."
+
+msgid "Programa desconhecido"
+msgstr "Programa desconocido"
+
+msgid "Só esta máquina"
+msgstr "Solo este equipo"
+
+msgid "Rede local virtual"
+msgstr "Red local virtual"
+
+msgid "Exposta na rede"
+msgstr "Expuesto en la red"
+
+msgid "Bloqueada pelo firewall"
+msgstr "Bloqueado por el cortafuegos"
+
+msgid "Remover a regra {port}/{protocol} do firewall"
+msgstr "Quitar la regla {port}/{protocol} del cortafuegos"
+
+msgid "Parar o serviço {unit}"
+msgstr "Detener el servicio {unit}"
+
+msgid "A porta é liberada por um serviço do firewall. Desative-o na lista abaixo, ou feche o programa {program}."
+msgstr "El puerto lo abre un servicio del cortafuegos. Desactívelo en la lista de abajo, o cierre el programa {program}."
+
+msgid "Fechar a porta {port}/{protocol}?"
+msgstr "¿Cerrar el puerto {port}/{protocol}?"
+
+msgid "{program} aceita conexões de outros computadores da rede. O Vega vai:"
+msgstr "{program} acepta conexiones de otros equipos de la red. Vega hará lo siguiente:"
+
+msgid "Porta fechada"
+msgstr "Puerto cerrado"
+
+msgid "Portas abertas"
+msgstr "Puertos abiertos"
+
+msgid "{count} serviço(s) aceitam conexões da rede"
+msgstr "{count} servicio(s) aceptan conexiones de la red"
+
+msgid "Outros computadores da rede podem acessar estas portas. Feche o que você não usa."
+msgstr "Otros equipos de la red pueden acceder a estos puertos. Cierre lo que no use."
+
+msgid "Nada exposto à rede"
+msgstr "Nada expuesto a la red"
+
+msgid "Os programas abaixo só aceitam conexões desta máquina ou estão bloqueados pelo firewall."
+msgstr "Los programas de abajo solo aceptan conexiones de este equipo o están bloqueados por el cortafuegos."
+
+msgid "Nenhum programa escutando na rede"
+msgstr "Ningún programa escuchando en la red"
+
+msgid "zona"
+msgstr "zona"

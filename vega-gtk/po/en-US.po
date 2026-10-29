@@ -4604,3 +4604,114 @@ msgstr "Updating {name} ({current}/{total})…"
 
 msgid "Atualizar pacotes do sistema"
 msgstr "Update system packages"
+
+msgid "Segurança"
+msgstr "Security"
+
+msgid "Firewall, portas expostas, correções de segurança, SSH, criptografia e contas"
+msgstr "Firewall, exposed ports, security patches, SSH, encryption and accounts"
+
+msgid "Ligar o firewall"
+msgstr "Turn on the firewall"
+
+msgid "Fechar no firewall: {ports}"
+msgstr "Close in the firewall: {ports}"
+
+msgid "Instalar as correções de segurança"
+msgstr "Install the security patches"
+
+msgid "Ligando o firewall"
+msgstr "Turning on the firewall"
+
+msgid "Fechando portas"
+msgstr "Closing ports"
+
+msgid "Instalando correções de segurança"
+msgstr "Installing security patches"
+
+msgid "Desative o login do root por senha no SSH (PermitRootLogin) ou desligue o servidor SSH se não usa."
+msgstr "Turn off root password login in SSH (PermitRootLogin), or switch off the SSH server if you do not use it."
+
+msgid "Abrir Serviços"
+msgstr "Open Services"
+
+msgid "Prefira entrar no SSH com chave em vez de senha (PasswordAuthentication no)."
+msgstr "Prefer key login to passwords for SSH (PasswordAuthentication no)."
+
+msgid "Feche a porta se não usa esse serviço a partir de outros computadores."
+msgstr "Close the port if you do not use this service from other computers."
+
+msgid "Abrir Firewall"
+msgstr "Open Firewall"
+
+msgid "Defina uma senha para essas contas, ou remova-as."
+msgstr "Set a password for these accounts, or remove them."
+
+msgid "Abrir Usuários"
+msgstr "Open Users"
+
+msgid "Só administradores (grupo wheel) devem usar sudo. Revise as contas."
+msgstr "Only administrators (wheel group) should use sudo. Review the accounts."
+
+msgid "A criptografia do disco se escolhe na instalação; para ativá-la, faça backup e reinstale com a opção de criptografar."
+msgstr "Disk encryption is chosen during installation; to turn it on, back up and reinstall with the encryption option."
+
+msgid "O SELinux reforça o isolamento dos serviços. A política do Lyra para ele ainda está em definição."
+msgstr "SELinux strengthens the isolation of services. Lyra's policy for it is still being defined."
+
+msgid "Reinicie quando puder para concluir a atualização."
+msgstr "Restart when you can to finish the update."
+
+msgid "Programa desconhecido"
+msgstr "Unknown program"
+
+msgid "Só esta máquina"
+msgstr "This computer only"
+
+msgid "Rede local virtual"
+msgstr "Virtual local network"
+
+msgid "Exposta na rede"
+msgstr "Exposed to the network"
+
+msgid "Bloqueada pelo firewall"
+msgstr "Blocked by the firewall"
+
+msgid "Remover a regra {port}/{protocol} do firewall"
+msgstr "Remove the {port}/{protocol} rule from the firewall"
+
+msgid "Parar o serviço {unit}"
+msgstr "Stop the {unit} service"
+
+msgid "A porta é liberada por um serviço do firewall. Desative-o na lista abaixo, ou feche o programa {program}."
+msgstr "The port is opened by a firewall service. Turn it off in the list below, or close the {program} program."
+
+msgid "Fechar a porta {port}/{protocol}?"
+msgstr "Close port {port}/{protocol}?"
+
+msgid "{program} aceita conexões de outros computadores da rede. O Vega vai:"
+msgstr "{program} accepts connections from other computers on the network. Vega will:"
+
+msgid "Porta fechada"
+msgstr "Port closed"
+
+msgid "Portas abertas"
+msgstr "Open ports"
+
+msgid "{count} serviço(s) aceitam conexões da rede"
+msgstr "{count} service(s) accept connections from the network"
+
+msgid "Outros computadores da rede podem acessar estas portas. Feche o que você não usa."
+msgstr "Other computers on the network can reach these ports. Close what you do not use."
+
+msgid "Nada exposto à rede"
+msgstr "Nothing exposed to the network"
+
+msgid "Os programas abaixo só aceitam conexões desta máquina ou estão bloqueados pelo firewall."
+msgstr "The programs below only accept connections from this computer or are blocked by the firewall."
+
+msgid "Nenhum programa escutando na rede"
+msgstr "No program listening on the network"
+
+msgid "zona"
+msgstr "zone"
