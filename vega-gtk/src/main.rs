@@ -138,6 +138,7 @@ fn main() -> ExitCode {
             network::firewall_set_service,
             network::firewall_add_port,
             network::firewall_remove_port,
+            network::firewall_listening,
             bluetooth::bluetooth_status,
             bluetooth::bluetooth_devices,
             bluetooth::bluetooth_set_powered,

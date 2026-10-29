@@ -1,6 +1,7 @@
 import { call, pick } from "../api.js";
 import { registerIcons } from "../icons.js";
 import { N_, t } from "../i18n.js";
+import { hasCapability } from "../store.js";
 import { h, icon, clear, button, badge, toggle, row, list, section, banner, empty, skeletonRows, confirm, toast, fail, busy, segmented } from "../ui.js";
 
 registerIcons({
@@ -74,12 +75,12 @@ export default {
     { id: "wifi", label: N_("Wi‑Fi"), icon: "wifi", keywords: ["wifi", "wireless", "senha"] },
     { id: "proxy", label: N_("Proxy"), icon: "globe", keywords: ["http", "socks", "environment"] },
     { id: "vpn", label: "VPN", icon: "key", keywords: ["openvpn", "ovpn"] },
-    { id: "firewall", label: N_("Firewall"), icon: "shield", keywords: ["firewalld", "porta", "zona", "ssh"] },
+    { id: "firewall", label: N_("Firewall"), icon: "shield", keywords: ["firewalld", "porta", "zona", "ssh", "portas abertas", "exposta", "seguranca"] },
   ],
 
   render(ctx) {
     let tab = TABS.some((x) => x.id === ctx.sub) ? ctx.sub : "interfaces";
-    const data = { interfaces: null, wifi: null, proxy: null, firewall: null, services: null, ports: null };
+    const data = { interfaces: null, wifi: null, proxy: null, firewall: null, services: null, ports: null, listening: null };
     const errors = {};
     const heroHost = h("div");
     const body = h("div", {}, skeletonRows(4));
@@ -103,6 +104,7 @@ export default {
       settle("firewall", call("firewall_status")),
       settle("services", call("firewall_services")),
       settle("ports", call("firewall_ports")),
+      hasCapability("network-exposure-v1") && settle("listening", call("firewall_listening")),
     ]);
 
     async function loadAll() {
@@ -416,6 +418,87 @@ export default {
       draw();
     }
 
+    // ---------- Portas abertas (network-exposure-v1) ----------
+    const programName = (socket) => socket.unit || socket.executable.split("/").pop() || t("Programa desconhecido");
+
+    function reachBadge(socket) {
+      if (socket.reach === "local") return badge(t("Só esta máquina"), "green", "lock");
+      if (socket.reach === "link") return badge(t("Rede local virtual"), "", "layers");
+      if (socket.state === "exposed") return badge(t("Exposta na rede"), "yellow", "alert");
+      return badge(t("Bloqueada pelo firewall"), "green", "shield-check");
+    }
+
+    /** Fechar a exposição: a regra de porta, quando há uma, e/ou parar o serviço. */
+    async function closeExposure(socket, btn) {
+      const status = data.firewall;
+      const rule = (data.ports ?? []).find((p) => p.protocol === socket.protocol && portCovers(p.port, socket.port));
+      const sameZone = !socket.zone || socket.zone === status?.active_zone;
+      const actions = [];
+      if (rule && sameZone) actions.push({ id: "rule", text: t("Remover a regra {port}/{protocol} do firewall", { port: rule.port, protocol: rule.protocol }) });
+      if (socket.unit) actions.push({ id: "stop", text: t("Parar o serviço {unit}", { unit: socket.unit }) });
+      if (!actions.length) {
+        toast(t("A porta é liberada por um serviço do firewall. Desative-o na lista abaixo, ou feche o programa {program}.", { program: programName(socket) }), { ic: "info", timeout: 8000 });
+        return;
+      }
+      const ok = await confirm({
+        title: t("Fechar a porta {port}/{protocol}?", { port: socket.port, protocol: socket.protocol }),
+        text: t("{program} aceita conexões de outros computadores da rede. O Vega vai:", { program: programName(socket) }),
+        ic: "shield",
+        facts: actions.map((a) => ({ icon: "check", text: a.text })),
+        confirmLabel: t("Fechar"),
+        required: true,
+      });
+      if (!ok) return;
+      await busy(btn, async () => {
+        try {
+          if (rule && sameZone) await call("firewall_remove_port", { port: rule.port, protocol: rule.protocol });
+          if (socket.unit) await call("services_set_running", { name: socket.unit, running: false });
+          toast(t("Porta fechada"));
+        } catch (error) {
+          fail(error);
+        }
+        await loadFirewall();
+      });
+      draw();
+    }
+
+    function portCovers(rule, port) {
+      const [low, high] = String(rule).split("-").map(Number);
+      return port >= low && port <= (high || low);
+    }
+
+    function drawListening() {
+      if (!hasCapability("network-exposure-v1")) return null;
+      if (errors.listening) return section(t("Portas abertas"), {}, banner("danger", "alert-circle", t("Portas abertas"), errors.listening));
+      const sockets = data.listening ?? [];
+      // Uma linha por programa e porta: IPv4 e IPv6 da mesma escuta se juntam.
+      const seen = new Map();
+      for (const socket of sockets) {
+        const key = `${socket.protocol}/${socket.port}/${programName(socket)}`;
+        const prev = seen.get(key);
+        if (!prev || (socket.state === "exposed" && prev.state !== "exposed") || (socket.reach === "network" && prev.reach !== "network")) seen.set(key, socket);
+      }
+      const rows = [...seen.values()].sort((a, b) => (b.state === "exposed") - (a.state === "exposed") || a.port - b.port);
+      const exposed = rows.filter((s) => s.state === "exposed").length;
+      const summary = exposed
+        ? banner("warn", "alert", t("{count} serviço(s) aceitam conexões da rede", { count: exposed }), t("Outros computadores da rede podem acessar estas portas. Feche o que você não usa."))
+        : banner("success", "shield-check", t("Nada exposto à rede"), t("Os programas abaixo só aceitam conexões desta máquina ou estão bloqueados pelo firewall."));
+      return section(t("Portas abertas"), { id: "sec-ports" }, summary,
+        rows.length === 0
+          ? h("div", { class: "card pad muted small" }, t("Nenhum programa escutando na rede"))
+          : list(rows.map((socket) => {
+              const close = socket.state === "exposed" && h("button", { class: "btn sm danger-soft" }, t("Fechar"));
+              if (close) close.addEventListener("click", () => closeExposure(socket, close));
+              return row({
+                icon: socket.state === "exposed" ? "alert" : socket.reach === "local" ? "lock" : "plug",
+                tint: socket.state === "exposed" ? "yellow" : socket.reach === "local" ? "green" : "",
+                title: programName(socket),
+                subtitle: h("span", { class: "mono" }, `${socket.port}/${socket.protocol} · ${socket.address}${socket.zone ? ` · ${t("zona")} ${socket.zone}` : ""}`),
+                suffix: [reachBadge(socket), close].filter(Boolean),
+              });
+            })));
+    }
+
     function drawFirewall() {
       const status = data.firewall;
       const state = status ? (status.enabled ? t("Ativo") : t("Inativo")) : "";
@@ -457,7 +540,7 @@ export default {
                 }),
             h("div", { class: "list-footer net-port-add" }, portInput, protocol, addBtn));
 
-      return h("div", {}, top, services, section(t("Regras de porta personalizadas"), {}, ports));
+      return h("div", {}, top, drawListening(), services, section(t("Regras de porta personalizadas"), {}, ports));
     }
 
     // ---------- Montagem ----------

@@ -4603,3 +4603,114 @@ msgstr "Atualizando {name} ({current}/{total})…"
 
 msgid "Atualizar pacotes do sistema"
 msgstr "Atualizar pacotes do sistema"
+
+msgid "Segurança"
+msgstr "Segurança"
+
+msgid "Firewall, portas expostas, correções de segurança, SSH, criptografia e contas"
+msgstr "Firewall, portas expostas, correções de segurança, SSH, criptografia e contas"
+
+msgid "Ligar o firewall"
+msgstr "Ligar o firewall"
+
+msgid "Fechar no firewall: {ports}"
+msgstr "Fechar no firewall: {ports}"
+
+msgid "Instalar as correções de segurança"
+msgstr "Instalar as correções de segurança"
+
+msgid "Ligando o firewall"
+msgstr "Ligando o firewall"
+
+msgid "Fechando portas"
+msgstr "Fechando portas"
+
+msgid "Instalando correções de segurança"
+msgstr "Instalando correções de segurança"
+
+msgid "Desative o login do root por senha no SSH (PermitRootLogin) ou desligue o servidor SSH se não usa."
+msgstr "Desative o login do root por senha no SSH (PermitRootLogin) ou desligue o servidor SSH se não usa."
+
+msgid "Abrir Serviços"
+msgstr "Abrir Serviços"
+
+msgid "Prefira entrar no SSH com chave em vez de senha (PasswordAuthentication no)."
+msgstr "Prefira entrar no SSH com chave em vez de senha (PasswordAuthentication no)."
+
+msgid "Feche a porta se não usa esse serviço a partir de outros computadores."
+msgstr "Feche a porta se não usa esse serviço a partir de outros computadores."
+
+msgid "Abrir Firewall"
+msgstr "Abrir Firewall"
+
+msgid "Defina uma senha para essas contas, ou remova-as."
+msgstr "Defina uma senha para essas contas, ou remova-as."
+
+msgid "Abrir Usuários"
+msgstr "Abrir Usuários"
+
+msgid "Só administradores (grupo wheel) devem usar sudo. Revise as contas."
+msgstr "Só administradores (grupo wheel) devem usar sudo. Revise as contas."
+
+msgid "A criptografia do disco se escolhe na instalação; para ativá-la, faça backup e reinstale com a opção de criptografar."
+msgstr "A criptografia do disco se escolhe na instalação; para ativá-la, faça backup e reinstale com a opção de criptografar."
+
+msgid "O SELinux reforça o isolamento dos serviços. A política do Lyra para ele ainda está em definição."
+msgstr "O SELinux reforça o isolamento dos serviços. A política do Lyra para ele ainda está em definição."
+
+msgid "Reinicie quando puder para concluir a atualização."
+msgstr "Reinicie quando puder para concluir a atualização."
+
+msgid "Programa desconhecido"
+msgstr "Programa desconhecido"
+
+msgid "Só esta máquina"
+msgstr "Só esta máquina"
+
+msgid "Rede local virtual"
+msgstr "Rede local virtual"
+
+msgid "Exposta na rede"
+msgstr "Exposta na rede"
+
+msgid "Bloqueada pelo firewall"
+msgstr "Bloqueada pelo firewall"
+
+msgid "Remover a regra {port}/{protocol} do firewall"
+msgstr "Remover a regra {port}/{protocol} do firewall"
+
+msgid "Parar o serviço {unit}"
+msgstr "Parar o serviço {unit}"
+
+msgid "A porta é liberada por um serviço do firewall. Desative-o na lista abaixo, ou feche o programa {program}."
+msgstr "A porta é liberada por um serviço do firewall. Desative-o na lista abaixo, ou feche o programa {program}."
+
+msgid "Fechar a porta {port}/{protocol}?"
+msgstr "Fechar a porta {port}/{protocol}?"
+
+msgid "{program} aceita conexões de outros computadores da rede. O Vega vai:"
+msgstr "{program} aceita conexões de outros computadores da rede. O Vega vai:"
+
+msgid "Porta fechada"
+msgstr "Porta fechada"
+
+msgid "Portas abertas"
+msgstr "Portas abertas"
+
+msgid "{count} serviço(s) aceitam conexões da rede"
+msgstr "{count} serviço(s) aceitam conexões da rede"
+
+msgid "Outros computadores da rede podem acessar estas portas. Feche o que você não usa."
+msgstr "Outros computadores da rede podem acessar estas portas. Feche o que você não usa."
+
+msgid "Nada exposto à rede"
+msgstr "Nada exposto à rede"
+
+msgid "Os programas abaixo só aceitam conexões desta máquina ou estão bloqueados pelo firewall."
+msgstr "Os programas abaixo só aceitam conexões desta máquina ou estão bloqueados pelo firewall."
+
+msgid "Nenhum programa escutando na rede"
+msgstr "Nenhum programa escutando na rede"
+
+msgid "zona"
+msgstr "zona"
