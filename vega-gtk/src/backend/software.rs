@@ -192,6 +192,7 @@ pub enum Action {
         id: String,
     },
     UpdateAll,
+    UpdateAllNative,
     ClearCache,
     AddRepo {
         name: String,
@@ -249,6 +250,13 @@ pub enum TransactionEvent {
 /// transação numa tarefa própria até o fim.
 #[tauri::command]
 pub async fn software_run(app: AppHandle, state: State<'_>, action: Action) -> CmdResult<u32> {
+    // Flatpak se atualiza pela sessão do usuário: o polkit do Flatpak libera
+    // sem senha e o Vega não pede a ação administrativa própria.
+    if let Action::UpdatePackage { origin, id } = &action
+        && origin == "flathub"
+    {
+        return super::flatpak_update::start(app, id.clone());
+    }
     let dbus = state.dbus().await?;
     let software = dbus.software();
     let events = software.subscribe().await.map_err(err)?;
@@ -257,6 +265,7 @@ pub async fn software_run(app: AppHandle, state: State<'_>, action: Action) -> C
         Action::Remove { origin, id } => software.remove(origin, id).await,
         Action::UpdatePackage { origin, id } => software.update_package(origin, id).await,
         Action::UpdateAll => software.update_all().await,
+        Action::UpdateAllNative => software.update_all_native().await,
         Action::ClearCache => software.clear_cache().await,
         Action::AddRepo { name, url } => software.add_repo(name, url).await,
         Action::TrustRepoKey { repo, key_id } => software.trust_repo_key(repo, key_id).await,

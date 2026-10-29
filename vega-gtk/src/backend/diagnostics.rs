@@ -209,6 +209,24 @@ pub async fn diagnostics_start(
     Ok(job)
 }
 
+/// Aplica os consertos seguros que o relatório de `job` propõe. O vegad lê
+/// os detalhes no relatório que gravou; daqui vão só os ids.
+#[tauri::command]
+pub async fn diagnostics_repair(
+    app: AppHandle,
+    state: State<'_>,
+    job: u32,
+    remedies: Vec<String>,
+) -> CmdResult<u32> {
+    let diagnostics = state.dbus().await?.diagnostics();
+    let events = diagnostics.subscribe().await.map_err(err)?;
+    let repair = diagnostics.repair(job, &remedies).await.map_err(err)?;
+    if claim(repair) {
+        tauri::async_runtime::spawn(follow(app, events, repair));
+    }
+    Ok(repair)
+}
+
 /// Volta a acompanhar um job que começou antes desta janela abrir.
 #[tauri::command]
 pub async fn diagnostics_follow(app: AppHandle, state: State<'_>, job: u32) -> CmdResult<()> {

@@ -80,6 +80,7 @@ fn main() -> ExitCode {
             diagnostics::diagnostics_start,
             diagnostics::diagnostics_follow,
             diagnostics::diagnostics_cancel,
+            diagnostics::diagnostics_repair,
             diagnostics::diagnostics_report,
             diagnostics::diagnostics_export,
             gpu_bench::gpu_bench,

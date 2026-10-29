@@ -53,6 +53,70 @@ function reasonText(reason) {
   return t("Indisponível neste sistema");
 }
 
+// ---------- O que fazer com cada achado ----------
+
+// Consertos que o vegad aplica (diagnostics-v2), na ordem do contrato.
+const REMEDY_ORDER = ["reinstall-packages", "verify-dependencies", "restart-units", "enable-ntp"];
+
+function remedyText(remedy, args = []) {
+  switch (remedy) {
+    case "reinstall-packages": return t("Reinstalar os pacotes: {packages}", { packages: args.join(", ") });
+    case "verify-dependencies": return t("Instalar as dependências que faltam");
+    case "restart-units": return t("Reiniciar os serviços: {units}", { units: args.join(", ") });
+    case "enable-ntp": return t("Ligar a sincronização de hora pela rede");
+    default: return remedy;
+  }
+}
+
+const REPAIR_STAGES = {
+  "repair:reinstall-packages": N_("Reinstalando pacotes"),
+  "repair:verify-dependencies": N_("Corrigindo dependências"),
+  "repair:restart-units": N_("Reiniciando serviços"),
+  "repair:enable-ntp": N_("Ligando a sincronização de hora"),
+};
+const stageName = (id) => t(NAMES[id] ?? REPAIR_STAGES[id] ?? id);
+
+const BACKUP_NOW = { text: N_("Faça backup dos seus arquivos agora e planeje a troca do disco. O Vega não tenta consertar disco com defeito."), go: ["backup"], label: N_("Abrir Backup") };
+const COOLING = { text: N_("Limpe as saídas de ar, use o computador sobre uma superfície rígida e evite deixá-lo no colo durante tarefas pesadas.") };
+const RETRY = { text: N_("Tente de novo. Se voltar a acontecer, exporte o relatório e abra uma issue.") };
+
+// Orientação para achados sem conserto automático, por código.
+const GUIDE = {
+  "smart.failed": BACKUP_NOW, "smart.critical-warning": BACKUP_NOW, "smart.spare-low": BACKUP_NOW,
+  "smart.media-errors": BACKUP_NOW, "smart.sectors": BACKUP_NOW, "smart.prefail": BACKUP_NOW,
+  "smart.self-test-errors": BACKUP_NOW, "smart.error-log": BACKUP_NOW, "btrfs.device-errors": BACKUP_NOW,
+  "scrub.errors": BACKUP_NOW,
+  "smart.worn": { text: N_("O disco está chegando ao fim da vida útil. Mantenha backups em dia e planeje a troca."), go: ["backup"], label: N_("Abrir Backup") },
+  "smart.hot": COOLING, "platform.hot-idle": COOLING, "cpu.slow-under-load": COOLING, "thermal.abort": COOLING,
+  "platform.battery-worn": { text: N_("A bateria guarda bem menos carga do que quando era nova. Considere trocá-la.") },
+  "platform.firmware-updates": { text: N_("Há atualizações de firmware. Instale-as pela central de software do GNOME e reinicie quando pedir.") },
+  "platform.ntp": { text: N_("A sincronização está ligada, mas sem resposta. Confira a conexão com a internet."), go: ["datetime"], label: N_("Abrir Data e hora") },
+  "platform.secure-boot-off": { text: N_("Se quiser essa proteção, ative o Secure Boot nas configurações de firmware (UEFI) do computador.") },
+  "platform.kernel-tainted": { text: N_("O kernel registrou uma falha. Reinicie o computador; se voltar a acontecer, veja os logs."), go: ["logs"], label: N_("Abrir Logs") },
+  "logs.coredumps": { text: N_("Os dados brutos mostram quais programas falharam. Manter o sistema atualizado costuma resolver."), go: ["software", "updates"], label: N_("Ver atualizações") },
+  "gpu.rtd3-awake": { text: N_("Algum programa está usando a NVIDIA. Feche-o para economizar bateria."), go: ["monitor"], label: N_("Abrir Monitor") },
+  "gpu.bench-failed": { text: N_("Confira o estado do driver da GPU."), go: ["hardware", "nvidia"], label: N_("Ver NVIDIA") },
+  "power.abort": { text: N_("Conecte o carregador e execute o teste de novo.") },
+  "memory.insufficient": { text: N_("Feche alguns programas para liberar memória e execute o teste de novo.") },
+  "bench.insufficient-space": { text: N_("Libere ao menos 10 GiB no disco e execute o teste de novo."), go: ["storage"], label: N_("Abrir Armazenamento") },
+  "stage.timeout": RETRY, "stage.tool-failed": RETRY, "bench.failed": RETRY, "stress.incomplete": RETRY, "scrub.incomplete": RETRY,
+  "repair.failed": RETRY, "repair.unit-failed": { text: N_("O serviço continua falhando. Veja o log dele para entender o motivo."), go: ["logs"], label: N_("Abrir Logs") },
+};
+
+/** Consertos propostos pelo relatório: id → argumentos somados. */
+function reportRemedies(report) {
+  const found = new Map();
+  for (const stage of report.stages ?? []) {
+    for (const finding of stage.findings ?? []) {
+      if (!finding.remedy) continue;
+      const args = found.get(finding.remedy) ?? [];
+      for (const arg of finding.remedyArgs ?? []) if (!args.includes(arg)) args.push(arg);
+      found.set(finding.remedy, args);
+    }
+  }
+  return REMEDY_ORDER.filter((id) => found.has(id)).map((id) => ({ id, args: found.get(id) }));
+}
+
 // ---------- Últimos resultados (local, sem senha) ----------
 
 const STORE_KEY = "vega.diagnostics";
@@ -93,7 +157,7 @@ function groups(report) {
   return { healthy, attention, info };
 }
 
-function findingRow({ stage, finding }) {
+function findingRow({ stage, finding }, actions = {}) {
   const raw = finding.raw?.trim();
   const tone = finding.severity === "fail" ? "red" : finding.severity === "attention" ? "yellow" : "";
   const copy = raw && button(t("Copiar"), {
@@ -103,30 +167,44 @@ function findingRow({ stage, finding }) {
       toast(t("Copiado"));
     },
   });
+  const guide = finding.severity !== "info" || finding.code === "platform.firmware-updates" ? GUIDE[finding.code] : null;
+  const fix = finding.remedy && actions.repair
+    ? button(t("Resolver"), { kind: "primary", size: "sm", icon: "zap", onClick: () => actions.repair([{ id: finding.remedy, args: finding.remedyArgs ?? [] }]) })
+    : null;
+  const shortcut = !fix && guide?.go && actions.go && button(t(guide.label), { size: "sm", icon: "chevron-right", onClick: () => actions.go(...guide.go) });
   return h("div", { class: "diag-finding" },
     row({
       icon: finding.severity === "info" ? "info" : "alert",
       tint: tone,
       title: finding.text,
-      subtitle: t(NAMES[stage.id] ?? stage.id),
+      subtitle: stageName(stage.id),
       wrap: true,
+      suffix: fix || shortcut || null,
     }),
+    finding.remedy && h("p", { class: "diag-guide small" }, icon("zap", 14), remedyText(finding.remedy, finding.remedyArgs)),
+    !finding.remedy && guide && h("p", { class: "diag-guide small" }, icon("info", 14), t(guide.text)),
     raw && h("details", { class: "diag-raw" }, h("summary", {}, t("Dados brutos")), h("pre", { class: "mono selectable" }, raw), h("div", { class: "row-flex" }, copy)));
 }
 
-function reportView(report) {
+function reportView(report, actions = {}) {
   const { healthy, attention, info } = groups(report);
+  const remedies = reportRemedies(report);
   const block = (title, ic, tone, items, render) => items.length > 0 && h("div", { class: "diag-group" },
     h("h4", {}, icon(ic, 16, `ic ${tone}`), title, h("span", { class: "n" }, items.length)),
     list(items.map(render)));
+  const render = (entry) => findingRow(entry, actions);
   return h("div", { class: "diag-report" },
     h("p", { class: "small muted" }, t("Resultado: {result} · {date}", {
       result: t(VERDICTS[report.result]?.label ?? N_("Em andamento")),
       date: report.finished ? dateTime(report.finished) : dateTime(report.started),
     })),
-    block(t("Atenção"), "alert", "yellow", attention, findingRow),
-    block(t("Saudável"), "check-circle", "green", healthy, (stage) => row({ icon: "check", tint: "green", title: t(NAMES[stage.id] ?? stage.id), subtitle: stage.summary, wrap: true })),
-    block(t("Informações e ruído conhecido"), "info", "", info, findingRow));
+    remedies.length > 0 && actions.repair && banner("info", "zap",
+      t("O Vega pode corrigir {count} problema(s) com segurança", { count: remedies.length }),
+      t("Antes ele cria um snapshot e, depois, roda de novo os testes afetados."),
+      button(t("Resolver tudo o que for seguro"), { kind: "primary", icon: "zap", onClick: () => actions.repair(remedies) })),
+    block(t("Atenção"), "alert", "yellow", attention, render),
+    block(t("Saudável"), "check-circle", "green", healthy, (stage) => row({ icon: "check", tint: "green", title: stageName(stage.id), subtitle: stage.summary, wrap: true })),
+    block(t("Informações e ruído conhecido"), "info", "", info, render));
 }
 
 function markdown(report) {
@@ -136,7 +214,7 @@ function markdown(report) {
   lines.push(`- ${t("Início")}: ${report.started ?? ""}`);
   for (const key of ["product", "bios", "os", "kernel", "vegad", "hostname"]) if (host[key]) lines.push(`- ${key}: ${host[key]}`);
   for (const stage of report.stages) {
-    lines.push("", `## ${t(NAMES[stage.id] ?? stage.id)}: ${t(VERDICTS[stage.verdict]?.label ?? stage.verdict)}`, "", stage.summary || "");
+    lines.push("", `## ${stageName(stage.id)}: ${t(VERDICTS[stage.verdict]?.label ?? stage.verdict)}`, "", stage.summary || "");
     for (const finding of stage.findings ?? []) {
       lines.push("", `- **${finding.severity}** \`${finding.code}\`: ${finding.text}`);
       if (finding.raw?.trim()) lines.push("", "```", finding.raw.trim(), "```");
@@ -171,6 +249,7 @@ export function diagnosticsCard(ctx) {
         case "stage":
           last.stages[event.stage] = { verdict: event.verdict, summary: event.summary, at: Date.now() };
           saveLast(last);
+          (running.done ??= new Set()).add(event.stage);
           break;
         case "finished":
           last.job = event.job;
@@ -230,6 +309,12 @@ export function diagnosticsCard(ctx) {
 
   function afterDaemon(event) {
     if (running?.gpu) return runGpu(event);
+    if (running?.repair) {
+      running = null;
+      paint();
+      toast(event.result === "ok" ? t("Problemas resolvidos") : t("Correção concluída; veja o relatório"), { action: t("Ver relatório"), onAction: openReport });
+      return;
+    }
     finish(event.result);
   }
 
@@ -240,6 +325,7 @@ export function diagnosticsCard(ctx) {
     try {
       const stage = await call("gpu_bench");
       last.stages.gpu = { verdict: stage.verdict, summary: stage.summary, at: Date.now() };
+      (running.done ??= new Set()).add("gpu");
       last.gpu = { ...stage, job: last.job };
       saveLast(last);
     } catch (e) {
@@ -289,8 +375,15 @@ export function diagnosticsCard(ctx) {
           toast(e.message, { ic: "alert-circle" });
         }
       };
-      sheet(t("Relatório do diagnóstico"), h("div", {},
-        reportView(report),
+      let close = null;
+      const actions = {
+        go: (page, sub) => { close?.(); ctx.navigate?.(page, sub); },
+        repair: hasCapability("diagnostics-v2") && !running ? async (remedies) => {
+          if (await repair(report.jobId, remedies)) close?.();
+        } : null,
+      };
+      close = sheet(t("Relatório do diagnóstico"), h("div", {},
+        reportView(report, actions),
         h("div", { class: "card pad diag-export" },
           h("label", { class: "row-flex small" }, includeSensitive, t("Incluir número de série, endereço MAC e nome do computador")),
           h("div", { class: "row-flex" },
@@ -298,6 +391,33 @@ export function diagnosticsCard(ctx) {
             button(t("Exportar texto (Markdown)"), { icon: "download", onClick: () => exportAs("md") })))));
     } catch (e) {
       toast(e.message, { ic: "alert-circle" });
+    }
+  }
+
+  /** Confirma e pede ao vegad os consertos; devolve true se começou. */
+  async function repair(job, remedies) {
+    const ok = await confirm({
+      title: t("Resolver os problemas encontrados?"),
+      text: t("O Vega vai fazer o seguinte. A senha de administrador será pedida."),
+      ic: "zap",
+      facts: [
+        ...remedies.map((remedy) => ({ icon: "check", text: remedyText(remedy.id, remedy.args) })),
+        { icon: "history", text: t("Antes, um snapshot permite desfazer tudo.") },
+        { icon: "refresh", text: t("Depois, os testes afetados rodam de novo para confirmar.") },
+      ],
+      confirmLabel: t("Resolver"),
+      required: true,
+    });
+    if (!ok) return false;
+    error = null;
+    try {
+      const id = await call("diagnostics_repair", { job, remedies: remedies.map((remedy) => remedy.id) });
+      running = { job: id, tests: [], gpu: false, repair: true, stage: `repair:${remedies[0].id}`, percent: 0, message: t("Iniciando…") };
+      paint();
+      return true;
+    } catch (e) {
+      toast(e.message, { ic: "alert-circle" });
+      return false;
     }
   }
 
@@ -347,8 +467,10 @@ export function diagnosticsCard(ctx) {
     const info = tests.find((item) => item.id === test.id);
     const isAvailable = available(test.id);
     const result = last.stages[test.id];
-    const active = running?.stage === test.id;
-    const queued = running && running.tests.includes(test.id) && !active;
+    // Um item que já terminou neste job mostra o resultado, não "Na fila".
+    const finished = running?.done?.has(test.id);
+    const active = running?.stage === test.id && !finished;
+    const queued = running && running.tests.includes(test.id) && !active && !finished;
     const subtitle = !isAvailable && info ? reasonText(info.reason) : result?.summary ? `${t(test.desc)} · ${result.summary}` : t(test.desc);
     let suffix;
     if (active) {
@@ -376,7 +498,7 @@ export function diagnosticsCard(ctx) {
       !running && last.job > 0 && button(t("Ver relatório"), { icon: "logs", onClick: openReport }));
     const progress = running && h("div", { class: "diag-running" },
       h("div", { class: "row-flex" },
-        h("span", { class: "spacer small" }, `${t(NAMES[running.stage] ?? running.stage)} · ${running.message || ""}`),
+        h("span", { class: "spacer small" }, `${stageName(running.stage)} · ${running.message || ""}`),
         button(t("Cancelar"), { size: "sm", icon: "stop", onClick: cancel })),
       meter((running.percent ?? 0) / 100, { warnAt: 2, critAt: 2 }),
       telemetry(running.sample));

@@ -160,15 +160,29 @@ export default {
       }
     }
 
+    // Os Flatpaks se atualizam pela sessão do usuário, sem senha; só os
+    // pacotes do sistema passam pelo vegad e pedem autorização.
     async function updateAll() {
+      const pending = updates ?? [];
+      const flatpaks = pending.filter((pkg) => pkg.origin === "flathub");
+      const native = pending.some((pkg) => pkg.origin !== "flathub");
       const ok = await confirm({
         title: t("Atualizar tudo?"),
-        text: t("Executar a atualização completa do sistema e dos Flatpaks agora?"),
+        text: native
+          ? t("Atualizar os pacotes do sistema e os Flatpaks agora? Os pacotes do sistema pedem a senha de administrador; os Flatpaks, não.")
+          : t("Atualizar os Flatpaks agora? Não é preciso senha."),
         ic: "download",
         confirmLabel: t("Atualizar"),
         required: false,
       });
-      if (ok) await transact({ kind: "update-all" }, t("Atualizar tudo"));
+      if (!ok) return;
+      for (const [index, pkg] of flatpaks.entries()) {
+        const result = await transact({ kind: "update-package", origin: pkg.origin, id: pkg.id },
+          t("Atualizando {name} ({current}/{total})…", { name: pkg.name, current: index + 1, total: flatpaks.length }), { reload: false });
+        if (!result) break;
+      }
+      if (native) await transact({ kind: "update-all-native" }, t("Atualizar pacotes do sistema"));
+      else load();
     }
 
     async function clearCache() {
