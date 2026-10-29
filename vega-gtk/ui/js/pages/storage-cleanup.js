@@ -4,6 +4,7 @@
 import { call, on } from "../api.js";
 import { N_, t } from "../i18n.js";
 import { hasCapability } from "../store.js";
+import { refreshDisk } from "../health.js";
 import { h, icon, clear, button, badge, section, banner, bytes, confirm, sheet, toast, skeletonRows } from "../ui.js";
 
 const CATEGORIES = {
@@ -134,6 +135,7 @@ export function cleanupSection(ctx, refreshVolumes) {
     }
     await load();
     refreshVolumes?.();
+    refreshDisk();
   }
 
   function chooseCache(category) {
