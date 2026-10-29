@@ -9,6 +9,8 @@
 pub mod backup;
 pub mod bluetooth;
 pub mod datetime;
+pub mod diagnostics;
+pub mod gpu_bench;
 pub mod hardware;
 pub mod kernel;
 pub mod logs;

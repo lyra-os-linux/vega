@@ -1,0 +1,24 @@
+=======================================================
+    glmark2 2023.01
+=======================================================
+    OpenGL Information
+    GL_VENDOR:      NVIDIA Corporation
+    GL_RENDERER:    NVIDIA GeForce GTX 1650/PCIe/SSE2
+    GL_VERSION:     OpenGL ES 3.2 NVIDIA 615.71.09
+    Surface Config: buf=32 r=8 g=8 b=8 a=8 depth=24 stencil=0 samples=0
+    Surface Size:   1280x720 windowed
+=======================================================
+[build] use-vbo=false: FPS: 2749 FrameTime: 0.364 ms
+[build] use-vbo=true: FPS: 3132 FrameTime: 0.319 ms
+Error: Failed to add fragment shader from file None:
+Error:   0(24) : error C7101: Macro HIGHP_OR_DEFAULT redefined
+--
+Error: Failed to add fragment shader from file None:
+Error:   0(24) : error C7101: Macro HIGHP_OR_DEFAULT redefined
+--
+Error: Failed to add fragment shader from file None:
+Error:   0(24) : error C7101: Macro HIGHP_OR_DEFAULT redefined
+[loop] fragment-steps=5:fragment-uniform=true:vertex-steps=5: Set up failed
+=======================================================
+                                  glmark2 Score: 2648 
+=======================================================

@@ -4253,3 +4253,213 @@ msgstr "A supervised account cannot be an administrator."
 
 msgid "Controle Parental"
 msgstr "Parental Controls"
+
+msgid "Conecte o computador à tomada para testar a GPU."
+msgstr "Plug the computer in to test the GPU."
+
+msgid "Indisponível neste sistema"
+msgstr "Not available on this system"
+
+msgid "Detectando as GPUs"
+msgstr "Detecting the GPUs"
+
+msgid "Medindo {gpu}"
+msgstr "Measuring {gpu}"
+
+msgid "Não foi possível medir {gpu}"
+msgstr "Could not measure {gpu}"
+
+msgid "{count} cenas do glmark2 não rodam no compilador da NVIDIA (incompatibilidade conhecida, não é defeito)"
+msgstr "{count} glmark2 scenes do not run on the NVIDIA shader compiler (known incompatibility, not a defect)"
+
+msgid "Conferindo se a NVIDIA volta a dormir"
+msgstr "Checking that the NVIDIA GPU goes back to sleep"
+
+msgid "A NVIDIA não voltou a economizar energia 30 s depois do teste; algum programa pode estar usando a GPU"
+msgstr "The NVIDIA GPU did not return to power saving 30 s after the test; a program may be using it"
+
+msgid "Cancelado"
+msgstr "Cancelled"
+
+msgid "Integridade de pacotes"
+msgstr "Package integrity"
+
+msgid "Arquivos alterados e dependências quebradas"
+msgstr "Changed files and broken dependencies"
+
+msgid "Saúde do disco"
+msgstr "Disk health"
+
+msgid "SMART e contadores de erro do btrfs"
+msgstr "SMART and Btrfs error counters"
+
+msgid "Sistema de arquivos"
+msgstr "File system"
+
+msgid "Confere as somas de verificação do btrfs, sem alterar nada"
+msgstr "Checks the Btrfs checksums without changing anything"
+
+msgid "Processador sob carga"
+msgstr "Processor under load"
+
+msgid "Erros de cálculo, temperatura e redução de velocidade"
+msgstr "Calculation errors, temperature and throttling"
+
+msgid "Memória sob carga"
+msgstr "Memory under load"
+
+msgid "Procura dados corrompidos na RAM"
+msgstr "Looks for corrupted data in RAM"
+
+msgid "Desempenho do disco"
+msgstr "Disk performance"
+
+msgid "Leitura e escrita; grava cerca de 5 GiB"
+msgstr "Read and write; writes about 5 GiB"
+
+msgid "GPUs"
+msgstr "GPUs"
+
+msgid "Drivers, renderização e pontuação de cada GPU"
+msgstr "Drivers, rendering and score of each GPU"
+
+msgid "Logs e falhas"
+msgstr "Logs and failures"
+
+msgid "Erros por boot, falhas de programas e serviços com problema"
+msgstr "Errors per boot, program crashes and failing services"
+
+msgid "Estado da plataforma"
+msgstr "Platform state"
+
+msgid "Temperaturas, bateria, firmware, relógio e Secure Boot"
+msgstr "Temperatures, battery, firmware, clock and Secure Boot"
+
+msgid "Saudável"
+msgstr "Healthy"
+
+msgid "Atenção"
+msgstr "Attention"
+
+msgid "Falha"
+msgstr "Failure"
+
+msgid "Indisponível"
+msgstr "Unavailable"
+
+msgid "Interrompido"
+msgstr "Stopped"
+
+msgid "Instale o pacote {package}."
+msgstr "Install the {package} package."
+
+msgid "A raiz do sistema não usa btrfs."
+msgstr "The system root does not use Btrfs."
+
+msgid "Atualize o vegad para usar este teste."
+msgstr "Update vegad to use this test."
+
+msgid "Dados brutos"
+msgstr "Raw data"
+
+msgid "Resultado: {result} · {date}"
+msgstr "Result: {result} · {date}"
+
+msgid "Informações e ruído conhecido"
+msgstr "Information and known noise"
+
+msgid "Diagnóstico de saúde do Lyra OS"
+msgstr "Lyra OS health diagnostics"
+
+msgid "Resultado"
+msgstr "Result"
+
+msgid "Diagnóstico"
+msgstr "Diagnostics"
+
+msgid "Atualize o vegad para usar o diagnóstico de saúde."
+msgstr "Update vegad to use the health diagnostics."
+
+msgid "Diagnóstico concluído"
+msgstr "Diagnostics finished"
+
+msgid "Cancelando…"
+msgstr "Cancelling…"
+
+msgid "Relatório salvo"
+msgstr "Report saved"
+
+msgid "Relatório do diagnóstico"
+msgstr "Diagnostics report"
+
+msgid "Incluir número de série, endereço MAC e nome do computador"
+msgstr "Include serial numbers, MAC addresses and the computer name"
+
+msgid "Exportar JSON"
+msgstr "Export JSON"
+
+msgid "Exportar texto (Markdown)"
+msgstr "Export text (Markdown)"
+
+msgid "Executar {test}?"
+msgstr "Run {test}?"
+
+msgid "O teste grava cerca de 5 GiB no disco e apaga tudo no fim. Mantenha o computador na tomada."
+msgstr "The test writes about 5 GiB to the disk and deletes it all at the end. Keep the computer plugged in."
+
+msgid "O teste deixa o computador lento e quente por alguns minutos. Mantenha o computador na tomada; ele para sozinho se esquentar demais."
+msgstr "The test makes the computer slow and hot for a few minutes. Keep it plugged in; it stops by itself if it gets too hot."
+
+msgid "Executar o diagnóstico rápido?"
+msgstr "Run the quick diagnostics?"
+
+msgid "Executar o diagnóstico completo?"
+msgstr "Run the full diagnostics?"
+
+msgid "Cerca de 3 minutos: pacotes, disco, logs, plataforma e 1 minuto de carga no processador e na memória."
+msgstr "About 3 minutes: packages, disk, logs, platform and 1 minute of load on the processor and memory."
+
+msgid "Cerca de 15 minutos: todos os testes, com 4 minutos de carga no processador e na memória, verificação do sistema de arquivos e desempenho do disco (grava cerca de 5 GiB)."
+msgstr "About 15 minutes: every test, with 4 minutes of load on the processor and memory, a file system check and disk performance (writes about 5 GiB)."
+
+msgid "CPU {temp} °C"
+msgstr "CPU {temp} °C"
+
+msgid "{ghz} GHz"
+msgstr "{ghz} GHz"
+
+msgid "SSD {temp} °C"
+msgstr "SSD {temp} °C"
+
+msgid "{count} reduções de velocidade"
+msgstr "{count} throttling events"
+
+msgid "Na fila"
+msgstr "Queued"
+
+msgid "Diagnóstico de saúde"
+msgstr "Health diagnostics"
+
+msgid "Última execução: {date}"
+msgstr "Last run: {date}"
+
+msgid "Testa disco, memória, processador, GPU e sistema sem alterar nada."
+msgstr "Tests disk, memory, processor, GPU and system without changing anything."
+
+msgid "Rápido"
+msgstr "Quick"
+
+msgid "Completo"
+msgstr "Full"
+
+msgid "Executar todos"
+msgstr "Run all"
+
+msgid "Ver relatório"
+msgstr "View report"
+
+msgid "O diagnóstico não foi concluído"
+msgstr "The diagnostics did not finish"
+
+msgid "Executar só os testes sem carga"
+msgstr "Run only the tests without load"

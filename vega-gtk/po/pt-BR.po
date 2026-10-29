@@ -4252,3 +4252,213 @@ msgstr "Uma conta supervisionada não pode ser administradora."
 
 msgid "Controle Parental"
 msgstr "Controle Parental"
+
+msgid "Conecte o computador à tomada para testar a GPU."
+msgstr "Conecte o computador à tomada para testar a GPU."
+
+msgid "Indisponível neste sistema"
+msgstr "Indisponível neste sistema"
+
+msgid "Detectando as GPUs"
+msgstr "Detectando as GPUs"
+
+msgid "Medindo {gpu}"
+msgstr "Medindo {gpu}"
+
+msgid "Não foi possível medir {gpu}"
+msgstr "Não foi possível medir {gpu}"
+
+msgid "{count} cenas do glmark2 não rodam no compilador da NVIDIA (incompatibilidade conhecida, não é defeito)"
+msgstr "{count} cenas do glmark2 não rodam no compilador da NVIDIA (incompatibilidade conhecida, não é defeito)"
+
+msgid "Conferindo se a NVIDIA volta a dormir"
+msgstr "Conferindo se a NVIDIA volta a dormir"
+
+msgid "A NVIDIA não voltou a economizar energia 30 s depois do teste; algum programa pode estar usando a GPU"
+msgstr "A NVIDIA não voltou a economizar energia 30 s depois do teste; algum programa pode estar usando a GPU"
+
+msgid "Cancelado"
+msgstr "Cancelado"
+
+msgid "Integridade de pacotes"
+msgstr "Integridade de pacotes"
+
+msgid "Arquivos alterados e dependências quebradas"
+msgstr "Arquivos alterados e dependências quebradas"
+
+msgid "Saúde do disco"
+msgstr "Saúde do disco"
+
+msgid "SMART e contadores de erro do btrfs"
+msgstr "SMART e contadores de erro do btrfs"
+
+msgid "Sistema de arquivos"
+msgstr "Sistema de arquivos"
+
+msgid "Confere as somas de verificação do btrfs, sem alterar nada"
+msgstr "Confere as somas de verificação do btrfs, sem alterar nada"
+
+msgid "Processador sob carga"
+msgstr "Processador sob carga"
+
+msgid "Erros de cálculo, temperatura e redução de velocidade"
+msgstr "Erros de cálculo, temperatura e redução de velocidade"
+
+msgid "Memória sob carga"
+msgstr "Memória sob carga"
+
+msgid "Procura dados corrompidos na RAM"
+msgstr "Procura dados corrompidos na RAM"
+
+msgid "Desempenho do disco"
+msgstr "Desempenho do disco"
+
+msgid "Leitura e escrita; grava cerca de 5 GiB"
+msgstr "Leitura e escrita; grava cerca de 5 GiB"
+
+msgid "GPUs"
+msgstr "GPUs"
+
+msgid "Drivers, renderização e pontuação de cada GPU"
+msgstr "Drivers, renderização e pontuação de cada GPU"
+
+msgid "Logs e falhas"
+msgstr "Logs e falhas"
+
+msgid "Erros por boot, falhas de programas e serviços com problema"
+msgstr "Erros por boot, falhas de programas e serviços com problema"
+
+msgid "Estado da plataforma"
+msgstr "Estado da plataforma"
+
+msgid "Temperaturas, bateria, firmware, relógio e Secure Boot"
+msgstr "Temperaturas, bateria, firmware, relógio e Secure Boot"
+
+msgid "Saudável"
+msgstr "Saudável"
+
+msgid "Atenção"
+msgstr "Atenção"
+
+msgid "Falha"
+msgstr "Falha"
+
+msgid "Indisponível"
+msgstr "Indisponível"
+
+msgid "Interrompido"
+msgstr "Interrompido"
+
+msgid "Instale o pacote {package}."
+msgstr "Instale o pacote {package}."
+
+msgid "A raiz do sistema não usa btrfs."
+msgstr "A raiz do sistema não usa btrfs."
+
+msgid "Atualize o vegad para usar este teste."
+msgstr "Atualize o vegad para usar este teste."
+
+msgid "Dados brutos"
+msgstr "Dados brutos"
+
+msgid "Resultado: {result} · {date}"
+msgstr "Resultado: {result} · {date}"
+
+msgid "Informações e ruído conhecido"
+msgstr "Informações e ruído conhecido"
+
+msgid "Diagnóstico de saúde do Lyra OS"
+msgstr "Diagnóstico de saúde do Lyra OS"
+
+msgid "Resultado"
+msgstr "Resultado"
+
+msgid "Diagnóstico"
+msgstr "Diagnóstico"
+
+msgid "Atualize o vegad para usar o diagnóstico de saúde."
+msgstr "Atualize o vegad para usar o diagnóstico de saúde."
+
+msgid "Diagnóstico concluído"
+msgstr "Diagnóstico concluído"
+
+msgid "Cancelando…"
+msgstr "Cancelando…"
+
+msgid "Relatório salvo"
+msgstr "Relatório salvo"
+
+msgid "Relatório do diagnóstico"
+msgstr "Relatório do diagnóstico"
+
+msgid "Incluir número de série, endereço MAC e nome do computador"
+msgstr "Incluir número de série, endereço MAC e nome do computador"
+
+msgid "Exportar JSON"
+msgstr "Exportar JSON"
+
+msgid "Exportar texto (Markdown)"
+msgstr "Exportar texto (Markdown)"
+
+msgid "Executar {test}?"
+msgstr "Executar {test}?"
+
+msgid "O teste grava cerca de 5 GiB no disco e apaga tudo no fim. Mantenha o computador na tomada."
+msgstr "O teste grava cerca de 5 GiB no disco e apaga tudo no fim. Mantenha o computador na tomada."
+
+msgid "O teste deixa o computador lento e quente por alguns minutos. Mantenha o computador na tomada; ele para sozinho se esquentar demais."
+msgstr "O teste deixa o computador lento e quente por alguns minutos. Mantenha o computador na tomada; ele para sozinho se esquentar demais."
+
+msgid "Executar o diagnóstico rápido?"
+msgstr "Executar o diagnóstico rápido?"
+
+msgid "Executar o diagnóstico completo?"
+msgstr "Executar o diagnóstico completo?"
+
+msgid "Cerca de 3 minutos: pacotes, disco, logs, plataforma e 1 minuto de carga no processador e na memória."
+msgstr "Cerca de 3 minutos: pacotes, disco, logs, plataforma e 1 minuto de carga no processador e na memória."
+
+msgid "Cerca de 15 minutos: todos os testes, com 4 minutos de carga no processador e na memória, verificação do sistema de arquivos e desempenho do disco (grava cerca de 5 GiB)."
+msgstr "Cerca de 15 minutos: todos os testes, com 4 minutos de carga no processador e na memória, verificação do sistema de arquivos e desempenho do disco (grava cerca de 5 GiB)."
+
+msgid "CPU {temp} °C"
+msgstr "CPU {temp} °C"
+
+msgid "{ghz} GHz"
+msgstr "{ghz} GHz"
+
+msgid "SSD {temp} °C"
+msgstr "SSD {temp} °C"
+
+msgid "{count} reduções de velocidade"
+msgstr "{count} reduções de velocidade"
+
+msgid "Na fila"
+msgstr "Na fila"
+
+msgid "Diagnóstico de saúde"
+msgstr "Diagnóstico de saúde"
+
+msgid "Última execução: {date}"
+msgstr "Última execução: {date}"
+
+msgid "Testa disco, memória, processador, GPU e sistema sem alterar nada."
+msgstr "Testa disco, memória, processador, GPU e sistema sem alterar nada."
+
+msgid "Rápido"
+msgstr "Rápido"
+
+msgid "Completo"
+msgstr "Completo"
+
+msgid "Executar todos"
+msgstr "Executar todos"
+
+msgid "Ver relatório"
+msgstr "Ver relatório"
+
+msgid "O diagnóstico não foi concluído"
+msgstr "O diagnóstico não foi concluído"
+
+msgid "Executar só os testes sem carga"
+msgstr "Executar só os testes sem carga"

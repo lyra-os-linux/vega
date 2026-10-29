@@ -2,6 +2,7 @@ import { call } from "../api.js";
 import { N_, t } from "../i18n.js";
 import { hasCapability } from "../store.js";
 import { runSoftware, transactionPanel } from "../tasks.js";
+import { diagnosticsCard, diagnosticsSection } from "./hardware-diagnostics.js";
 import { h, icon, clear, button, badge, segmented, row, list, section, banner, skeletonRows, confirm, toast } from "../ui.js";
 
 // ---------- Componentes ----------
@@ -270,9 +271,10 @@ export default {
   title: N_("Hardware e Kernel"),
   icon: "cpu",
   group: "system",
-  keywords: ["placa de video", "gpu", "driver", "nvidia", "processador", "memoria", "firmware", "kernel", "boot", "grub"],
+  keywords: ["placa de video", "gpu", "driver", "nvidia", "processador", "memoria", "firmware", "kernel", "boot", "grub", "diagnostico", "saude", "teste"],
   sections: [
     { id: "nvidia", label: N_("NVIDIA"), icon: "monitor", keywords: ["nvidia", "driver", "gpu", "placa de video"] },
+    diagnosticsSection,
     { id: "kernel", label: N_("Kernel"), icon: "terminal", keywords: ["kernel", "linux"] },
     { id: "boot", label: N_("Bootloader"), icon: "power", keywords: ["boot", "grub", "systemd-boot", "inicializacao"] },
   ],
@@ -294,7 +296,7 @@ export default {
       }
       const host = h("div", {}, skeletonRows(2));
       const nvidia = nvidiaCard(ctx);
-      clear(body, section(t("Componentes"), {}, host), section(t("NVIDIA"), {}, nvidia));
+      clear(body, section(t("Componentes"), {}, host), section(t("NVIDIA"), {}, nvidia), section(t("Diagnóstico"), {}, diagnosticsCard(ctx)));
       hardwareTab().then(({ inventory, firmware }) => clear(host, components(inventory, firmware)));
     }
 
