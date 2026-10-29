@@ -19,7 +19,7 @@ BuildRequires:  pkgconfig(javascriptcoregtk-4.1)
 BuildRequires:  pkgconfig(libsoup-3.0)
 BuildRequires:  pkgconfig(libvirt)
 BuildRequires:  gettext-tools
-Requires:       vegad >= 5.1.45
+Requires:       vegad >= 5.2.0
 Requires:       secret-tool
 Requires:       python3-gobject
 Requires:       typelib-1_0-Atspi-2_0
@@ -45,6 +45,14 @@ Requires:       sheliak >= 2.0.0
 # O flatpak deixou de ser recomendado: ele é habilitado na página Software,
 # com aviso para contas supervisionadas.
 Requires:       lyra-parental-controls
+# Diagnóstico de saúde (vega#165): os testes do vegad (SMART, stress, fio)
+# e o de GPU, que o Vega roda na sessão do usuário.
+Requires:       smartmontools
+Requires:       stress-ng
+Requires:       fio
+Requires:       glmark2
+Requires:       vulkan-tools
+Requires:       Mesa-demo-egl
 
 %description
 Interface do Vega, construída com Rust e Tauri (WebKitGTK).

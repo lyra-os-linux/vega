@@ -27,4 +27,4 @@ futures-util = "0.3.32"
 async-io = "2.6.0"
 async-lock = "3.4.2"
 zbus = "5.17.0"
-lyra-vega-dbus = { git = "https://github.com/lyra-os-linux/lyra-vega-dbus", rev = "65ff73aa671845ec74c32c3b943676b114ba9b16" }
+lyra-vega-dbus = { git = "https://github.com/lyra-os-linux/lyra-vega-dbus", rev = "1375233718df1c6e2f62aee5ef5313eb4f3579ea" }
