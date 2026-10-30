@@ -68,6 +68,8 @@
 .cleanup-entries { max-height: 50vh; overflow: auto; margin: 12px 0; border: 1px solid var(--line); border-radius: var(--radius-s); }
 .cleanup-entry { display: flex; align-items: center; gap: 10px; padding: 7px 14px; cursor: pointer; }
 .cleanup-entry:hover { background: var(--card-hover); }
+.cleanup-entry.in-use { cursor: default; opacity: .7; }
+.cleanup-in-use { display: block; }
 .cleanup-all { position: sticky; top: 0; background: var(--card); border-bottom: 1px solid var(--line); }
 .cleanup-sheet-actions { gap: 10px; }
 .volume-row .title { display: flex; align-items: baseline; gap: 10px; }

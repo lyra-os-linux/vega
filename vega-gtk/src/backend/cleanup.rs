@@ -7,7 +7,7 @@
 //! Nada aqui segue links simbólicos: um link dentro de uma categoria é
 //! apagado como link, e o destino fica intacto.
 
-use std::collections::HashSet;
+use std::collections::{BTreeMap, BTreeSet, HashSet};
 use std::fs;
 use std::io;
 use std::os::unix::fs::MetadataExt;
@@ -134,6 +134,9 @@ async fn follow(app: AppHandle, mut events: CleanupEventStream, job: u32) {
 pub struct UserEntry {
     name: String,
     bytes: u64,
+    /// Programas com arquivos abertos na pasta: apagá-la com eles rodando
+    /// os quebra (o localsearch, com `tracker3` apagado, em 30/10/2026).
+    in_use_by: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
@@ -151,6 +154,8 @@ pub struct UserCategory {
 struct Home {
     data: PathBuf,
     cache: PathBuf,
+    /// `/proc`, trocado nos testes.
+    proc: PathBuf,
 }
 
 impl Home {
@@ -165,6 +170,7 @@ impl Home {
         Some(Self {
             data: xdg("XDG_DATA_HOME", ".local/share"),
             cache: xdg("XDG_CACHE_HOME", ".cache"),
+            proc: PathBuf::from("/proc"),
         })
     }
 
@@ -265,6 +271,47 @@ fn trash_dirs(home: &Home) -> Vec<PathBuf> {
         .collect()
 }
 
+/// Para cada subpasta de `~/.cache`, os programas do usuário que têm um
+/// arquivo aberto nela ou estão dentro dela (`/proc/<pid>/fd` e `cwd`). Só
+/// os processos do próprio usuário são legíveis, e são os que importam.
+fn cache_users(home: &Home) -> BTreeMap<String, BTreeSet<String>> {
+    let mut users: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    let Ok(processes) = fs::read_dir(&home.proc) else {
+        return users;
+    };
+    for process in processes.flatten() {
+        let pid = process.file_name().to_string_lossy().into_owned();
+        if pid.is_empty() || !pid.bytes().all(|b| b.is_ascii_digit()) {
+            continue;
+        }
+        let dir = process.path();
+        let mut targets: Vec<PathBuf> = fs::read_dir(dir.join("fd"))
+            .map(|fds| {
+                fds.flatten()
+                    .filter_map(|fd| fs::read_link(fd.path()).ok())
+                    .collect()
+            })
+            .unwrap_or_default();
+        targets.extend(fs::read_link(dir.join("cwd")).ok());
+        let names: BTreeSet<String> = targets
+            .iter()
+            .filter_map(|target| target.strip_prefix(&home.cache).ok())
+            .filter_map(|rest| rest.components().next())
+            .map(|first| first.as_os_str().to_string_lossy().into_owned())
+            .collect();
+        if names.is_empty() {
+            continue;
+        }
+        let comm = fs::read_to_string(dir.join("comm"))
+            .map(|comm| comm.trim().to_owned())
+            .unwrap_or(pid);
+        for name in names {
+            users.entry(name).or_default().insert(comm.clone());
+        }
+    }
+    users
+}
+
 /// Subpastas de `~/.cache`, sem as miniaturas, que têm a própria categoria.
 fn cache_entries(home: &Home) -> Vec<UserEntry> {
     if is_link(&home.cache) {
@@ -273,6 +320,7 @@ fn cache_entries(home: &Home) -> Vec<UserEntry> {
     let Ok(entries) = fs::read_dir(&home.cache) else {
         return Vec::new();
     };
+    let users = cache_users(home);
     let mut seen = HashSet::new();
     let mut list: Vec<UserEntry> = entries
         .flatten()
@@ -287,7 +335,15 @@ fn cache_entries(home: &Home) -> Vec<UserEntry> {
             } else {
                 tree_size(&path, &mut seen).0
             };
-            Some(UserEntry { name, bytes })
+            let in_use_by = users
+                .get(&name)
+                .map(|set| set.iter().cloned().collect())
+                .unwrap_or_default();
+            Some(UserEntry {
+                name,
+                bytes,
+                in_use_by,
+            })
         })
         .collect();
     list.sort_by(|a, b| b.bytes.cmp(&a.bytes).then_with(|| a.name.cmp(&b.name)));
@@ -425,6 +481,22 @@ fn clean_user(home: &Home, id: &str, entries: &[String]) -> Result<(), String> {
                     "A pasta do cache é um link simbólico; nada foi apagado.",
                 ));
             }
+            // Conferido de novo na hora: o programa pode ter aberto depois da lista.
+            let users = cache_users(home);
+            let busy: Vec<String> = entries
+                .iter()
+                .filter_map(|name| {
+                    let set = users.get(name)?;
+                    Some(format!(
+                        "{name} ({})",
+                        set.iter().cloned().collect::<Vec<_>>().join(", ")
+                    ))
+                })
+                .collect();
+            if !busy.is_empty() {
+                return Err(gettext("Em uso; feche o programa e tente de novo: {list}")
+                    .replace("{list}", &busy.join("; ")));
+            }
             entries
                 .iter()
                 .try_for_each(|name| match remove_entry(&home.cache.join(name)) {
@@ -526,6 +598,7 @@ mod tests {
         let home = Home {
             data: dir.path().join("data"),
             cache: dir.path().join("cache"),
+            proc: dir.path().join("proc"),
         };
         (dir, home)
     }
@@ -580,7 +653,8 @@ mod tests {
             entries,
             [UserEntry {
                 name: "app".into(),
-                bytes: 0
+                bytes: 0,
+                in_use_by: Vec::new()
             }]
         );
 
@@ -605,6 +679,40 @@ mod tests {
         assert_eq!(fs::read_dir(home.trash().join("info")).unwrap().count(), 0);
         assert!(documents.join("tese.odt").exists());
         assert_eq!(scan_user(&home, false)[0].bytes, 0);
+    }
+
+    #[test]
+    fn a_cache_folder_open_by_a_program_is_marked_and_refused() {
+        let (dir, home) = home();
+        write(&home.cache.join("tracker3/files/meta.db"), 4 << 10);
+        write(&home.cache.join("mozilla/cache2/entry"), 4 << 10);
+        // Um localsearch falso com o banco aberto.
+        let process = dir.path().join("proc/4242");
+        fs::create_dir_all(process.join("fd")).unwrap();
+        fs::write(process.join("comm"), "localsearch-3\n").unwrap();
+        std::os::unix::fs::symlink(
+            home.cache.join("tracker3/files/meta.db"),
+            process.join("fd/7"),
+        )
+        .unwrap();
+        std::os::unix::fs::symlink("/dev/null", process.join("fd/0")).unwrap();
+
+        let entries = cache_entries(&home);
+        let tracker = entries.iter().find(|e| e.name == "tracker3").unwrap();
+        let mozilla = entries.iter().find(|e| e.name == "mozilla").unwrap();
+        assert_eq!(tracker.in_use_by, ["localsearch-3"]);
+        assert!(mozilla.in_use_by.is_empty());
+
+        let error =
+            clean_user(&home, "user-cache", &["tracker3".into(), "mozilla".into()]).unwrap_err();
+        assert!(error.contains("tracker3 (localsearch-3)"), "{error}");
+        assert!(home.cache.join("tracker3/files/meta.db").exists());
+        assert!(
+            home.cache.join("mozilla/cache2/entry").exists(),
+            "nada sai se algo está em uso"
+        );
+        clean_user(&home, "user-cache", &["mozilla".into()]).unwrap();
+        assert!(!home.cache.join("mozilla").exists());
     }
 
     #[test]

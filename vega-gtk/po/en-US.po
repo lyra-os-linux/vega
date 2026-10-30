@@ -4898,3 +4898,15 @@ msgstr "Errors, program crashes and failed services recorded so far stop countin
 
 msgid "Ver o que fazer"
 msgstr "See what to do"
+
+msgid "Em uso; feche o programa e tente de novo: {list}"
+msgstr "In use; close the program and try again: {list}"
+
+msgid "Feche o programa para poder apagar"
+msgstr "Close the program to be able to delete"
+
+msgid "em uso por {programs}"
+msgstr "in use by {programs}"
+
+msgid "{count} pasta(s) estão em uso e ficam de fora até o programa ser fechado."
+msgstr "{count} folder(s) are in use and stay out until the program is closed."

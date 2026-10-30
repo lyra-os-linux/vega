@@ -4897,3 +4897,15 @@ msgstr "Os erros, falhas de programas e serviços com falha registrados até ago
 
 msgid "Ver o que fazer"
 msgstr "Ver o que fazer"
+
+msgid "Em uso; feche o programa e tente de novo: {list}"
+msgstr "Em uso; feche o programa e tente de novo: {list}"
+
+msgid "Feche o programa para poder apagar"
+msgstr "Feche o programa para poder apagar"
+
+msgid "em uso por {programs}"
+msgstr "em uso por {programs}"
+
+msgid "{count} pasta(s) estão em uso e ficam de fora até o programa ser fechado."
+msgstr "{count} pasta(s) estão em uso e ficam de fora até o programa ser fechado."

@@ -4898,3 +4898,15 @@ msgstr "Los errores, fallos de programas y servicios con fallos registrados hast
 
 msgid "Ver o que fazer"
 msgstr "Ver qué hacer"
+
+msgid "Em uso; feche o programa e tente de novo: {list}"
+msgstr "En uso; cierre el programa e inténtelo de nuevo: {list}"
+
+msgid "Feche o programa para poder apagar"
+msgstr "Cierre el programa para poder borrar"
+
+msgid "em uso por {programs}"
+msgstr "en uso por {programs}"
+
+msgid "{count} pasta(s) estão em uso e ficam de fora até o programa ser fechado."
+msgstr "{count} carpeta(s) están en uso y quedan fuera hasta que se cierre el programa."
