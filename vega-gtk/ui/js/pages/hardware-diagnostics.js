@@ -399,6 +399,8 @@ export function diagnosticsCard(ctx) {
   let error = null;
   // Achados com conserto por teste (diagnostics-actions-v1): id → [{ job, finding_index, remedy }].
   let remedies = new Map();
+  // Última verificação semanal (diagnostics-periodic-v1).
+  let periodic = null;
   // "Já vi" num relatório antigo: roda os logs, marca e roda de novo.
   let pendingSeen = false;
   const actionsOn = () => hasCapability("diagnostics-actions-v1");
@@ -525,8 +527,38 @@ export function diagnosticsCard(ctx) {
     } catch (e) {
       error = e.message;
     }
+    await loadPeriodic();
     paint();
     loadRemedies();
+    // Aberto pela notificação da verificação periódica: direto no relatório.
+    if (ctx.sub === "health" && periodic?.job) {
+      root.scrollIntoView({ block: "start" });
+      openReport(periodic.job);
+    }
+  }
+
+  /** O resultado da verificação semanal entra na lista quando é mais novo. */
+  async function loadPeriodic() {
+    if (!hasCapability("diagnostics-periodic-v1")) return;
+    try {
+      const run = await call("diagnostics_last_periodic");
+      if (!run.job) return;
+      periodic = run;
+      const at = run.finished * 1000;
+      let changed = false;
+      for (const [id, verdict, summary] of run.stages) {
+        if ((last.stages[id]?.at ?? 0) < at) {
+          last.stages[id] = { verdict, summary, at, job: run.job };
+          changed = true;
+        }
+      }
+      if (changed) {
+        last.job = Math.max(last.job || 0, run.job);
+        saveLast(last);
+      }
+    } catch {
+      // Sem a verificação periódica, a lista fica com os resultados locais.
+    }
   }
 
   const available = (id) => id === "gpu" || tests.find((test) => test.id === id)?.available;
@@ -773,7 +805,10 @@ export function diagnosticsCard(ctx) {
         h("strong", {}, t("Diagnóstico de saúde")),
         h("div", { class: "small muted" }, last.job
           ? t("Última execução: {date}", { date: dateTime(Math.max(...Object.values(last.stages).map((stage) => stage.at ?? 0))) })
-          : t("Testa disco, memória, processador, GPU e sistema sem alterar nada."))),
+          : t("Testa disco, memória, processador, GPU e sistema sem alterar nada.")),
+        periodic?.job > 0 && h("div", { class: "small muted" }, periodic.novelties
+          ? t("Verificação periódica em {date}: {count} novidade(s)", { date: dateTime(periodic.finished * 1000), count: periodic.novelties })
+          : t("Verificação periódica em {date}: nada novo", { date: dateTime(periodic.finished * 1000) }))),
       !running && segmented([{ id: "quick", label: t("Rápido") }, { id: "full", label: t("Completo") }], mode, (id) => { mode = id; }),
       !running && button(t("Executar todos"), { kind: "primary", icon: "play", onClick: runAll }),
       !running && last.job > 0 && button(t("Ver relatório"), { icon: "logs", onClick: () => openReport() }));

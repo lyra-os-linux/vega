@@ -12,13 +12,16 @@ pub struct Startup {
     pub started: Instant,
 }
 
-/// Página pedida na linha de comando: `--virtual-machines` (atalho das VMs)
-/// ou `--open-updates` (notificador de atualizações).
+/// Página pedida na linha de comando: `--virtual-machines` (atalho das VMs),
+/// `--open-updates` ou `--open-health` (notificador).
 pub fn requested_page(argv: &[String]) -> Option<&'static str> {
     if argv.iter().any(|arg| arg == "--virtual-machines") {
         Some("virtualization")
     } else if argv.iter().any(|arg| arg == "--open-updates") {
         Some("software/updates")
+    } else if argv.iter().any(|arg| arg == "--open-health") {
+        // Notificação da verificação periódica: o relatório no Diagnóstico.
+        Some("hardware/health")
     } else {
         None
     }

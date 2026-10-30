@@ -5144,3 +5144,27 @@ msgstr "Tests"
 
 msgid "Achados"
 msgstr "Findings"
+
+msgid "O Vega encontrou {count} novidade(s) na saúde do sistema"
+msgstr "Vega found {count} new item(s) in the system health"
+
+msgid "Saúde do sistema"
+msgstr "System health"
+
+msgid "Verificação periódica"
+msgstr "Periodic check"
+
+msgid "Diária"
+msgstr "Daily"
+
+msgid "Confere disco, logs, plataforma e segurança em segundo plano e avisa só quando algo muda."
+msgstr "Checks disk, logs, platform and security in the background and only tells you when something changes."
+
+msgid "Novidades na saúde do sistema"
+msgstr "News in the system health"
+
+msgid "Verificação periódica em {date}: {count} novidade(s)"
+msgstr "Periodic check on {date}: {count} new item(s)"
+
+msgid "Verificação periódica em {date}: nada novo"
+msgstr "Periodic check on {date}: nothing new"

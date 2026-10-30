@@ -78,6 +78,8 @@ pub enum Event {
         result: String,
         message: String,
     },
+    /// A verificação periódica achou novidades (o notificador avisa).
+    Novelties { job: u32, count: u32 },
 }
 
 impl Event {
@@ -109,6 +111,7 @@ impl Event {
                 result: f.result.as_str().to_owned(),
                 message: f.message,
             },
+            DiagnosticsEvent::Novelties { job_id, count } => Self::Novelties { job: job_id, count },
         }
     }
 
@@ -117,7 +120,8 @@ impl Event {
             Self::Progress { job, .. }
             | Self::Sample { job, .. }
             | Self::Stage { job, .. }
-            | Self::Finished { job, .. } => *job,
+            | Self::Finished { job, .. }
+            | Self::Novelties { job, .. } => *job,
         }
     }
 }
@@ -275,6 +279,68 @@ pub async fn diagnostics_mark_logs_seen(state: State<'_>, job: u32) -> CmdResult
         .await?
         .diagnostics()
         .mark_logs_seen(job)
+        .await
+        .map_err(err)
+}
+
+/// Resultado da última verificação periódica (`diagnostics-periodic-v1`).
+#[derive(Debug, Clone, Serialize)]
+pub struct Periodic {
+    job: u32,
+    finished: i64,
+    novelties: u32,
+    stages: Vec<(String, String, String)>,
+    texts: Vec<String>,
+}
+
+#[tauri::command]
+pub async fn diagnostics_last_periodic(state: State<'_>) -> CmdResult<Periodic> {
+    let run = state
+        .dbus()
+        .await?
+        .diagnostics()
+        .last_periodic()
+        .await
+        .map_err(err)?;
+    Ok(Periodic {
+        job: run.job_id,
+        finished: run.finished,
+        novelties: run.novelties,
+        stages: run.stages,
+        texts: run.novelty_texts,
+    })
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct PeriodicSettings {
+    enabled: bool,
+    frequency: String,
+}
+
+#[tauri::command]
+pub async fn diagnostics_get_periodic(state: State<'_>) -> CmdResult<PeriodicSettings> {
+    let (enabled, frequency) = state
+        .dbus()
+        .await?
+        .diagnostics()
+        .get_periodic()
+        .await
+        .map_err(err)?;
+    Ok(PeriodicSettings { enabled, frequency })
+}
+
+/// Liga, desliga ou muda a frequência para o sistema todo (pede senha).
+#[tauri::command]
+pub async fn diagnostics_set_periodic(
+    state: State<'_>,
+    enabled: bool,
+    frequency: String,
+) -> CmdResult<()> {
+    state
+        .dbus()
+        .await?
+        .diagnostics()
+        .set_periodic(enabled, &frequency)
         .await
         .map_err(err)
 }
