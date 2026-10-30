@@ -5099,3 +5099,48 @@ msgstr "Último arranque"
 
 msgid "O que mais demorou antes do login"
 msgstr "Lo que más tardó antes del inicio de sesión"
+
+msgid "(Texto encurtado; o completo está na área de transferência.)"
+msgstr "(Texto acortado; el completo está en el portapapeles.)"
+
+msgid "Ex.: desde ontem o Wi-Fi cai a cada poucos minutos"
+msgstr "Ej.: desde ayer el Wi-Fi se cae cada pocos minutos"
+
+msgid "{count} caracteres"
+msgstr "{count} caracteres"
+
+msgid "Ajuda com o diagnóstico do Lyra OS"
+msgstr "Ayuda con el diagnóstico de Lyra OS"
+
+msgid "Pedir ajuda"
+msgstr "Pedir ayuda"
+
+msgid "O que está acontecendo?"
+msgstr "¿Qué está pasando?"
+
+msgid "O que será compartilhado (pode editar)"
+msgstr "Lo que se compartirá (puede editarlo)"
+
+msgid "Número de série, endereços MAC, nome da rede, nome do computador e das contas já foram trocados por [redacted]. Nada sai daqui sem você clicar."
+msgstr "El número de serie, las direcciones MAC, el nombre de la red, del equipo y de las cuentas ya se cambiaron por [redacted]. Nada sale de aquí sin que usted haga clic."
+
+msgid "Abrir uma issue no GitHub"
+msgstr "Abrir una issue en GitHub"
+
+msgid "Abrir no fórum"
+msgstr "Abrir en el foro"
+
+msgid "O que está acontecendo"
+msgstr "Qué está pasando"
+
+msgid "(sem descrição)"
+msgstr "(sin descripción)"
+
+msgid "Computador"
+msgstr "Equipo"
+
+msgid "Testes"
+msgstr "Pruebas"
+
+msgid "Achados"
+msgstr "Hallazgos"

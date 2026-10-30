@@ -20,6 +20,7 @@ ui/js/pages/bluetooth.js
 ui/js/pages/dashboard.js
 ui/js/pages/datetime.js
 ui/js/pages/hardware-diagnostics.js
+ui/js/pages/help-text.js
 ui/js/pages/hardware.js
 ui/js/pages/index.js
 ui/js/pages/logs.js

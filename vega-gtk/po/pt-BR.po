@@ -5098,3 +5098,48 @@ msgstr "Último boot"
 
 msgid "O que mais demorou antes do login"
 msgstr "O que mais demorou antes do login"
+
+msgid "(Texto encurtado; o completo está na área de transferência.)"
+msgstr "(Texto encurtado; o completo está na área de transferência.)"
+
+msgid "Ex.: desde ontem o Wi-Fi cai a cada poucos minutos"
+msgstr "Ex.: desde ontem o Wi-Fi cai a cada poucos minutos"
+
+msgid "{count} caracteres"
+msgstr "{count} caracteres"
+
+msgid "Ajuda com o diagnóstico do Lyra OS"
+msgstr "Ajuda com o diagnóstico do Lyra OS"
+
+msgid "Pedir ajuda"
+msgstr "Pedir ajuda"
+
+msgid "O que está acontecendo?"
+msgstr "O que está acontecendo?"
+
+msgid "O que será compartilhado (pode editar)"
+msgstr "O que será compartilhado (pode editar)"
+
+msgid "Número de série, endereços MAC, nome da rede, nome do computador e das contas já foram trocados por [redacted]. Nada sai daqui sem você clicar."
+msgstr "Número de série, endereços MAC, nome da rede, nome do computador e das contas já foram trocados por [redacted]. Nada sai daqui sem você clicar."
+
+msgid "Abrir uma issue no GitHub"
+msgstr "Abrir uma issue no GitHub"
+
+msgid "Abrir no fórum"
+msgstr "Abrir no fórum"
+
+msgid "O que está acontecendo"
+msgstr "O que está acontecendo"
+
+msgid "(sem descrição)"
+msgstr "(sem descrição)"
+
+msgid "Computador"
+msgstr "Computador"
+
+msgid "Testes"
+msgstr "Testes"
+
+msgid "Achados"
+msgstr "Achados"

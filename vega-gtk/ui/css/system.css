@@ -105,3 +105,9 @@
 .diag-boot .s3 { background: var(--yellow); }
 .diag-boot .s4 { background: var(--green); }
 .diag-boot-slow { display: flex; flex-direction: column; gap: 4px; }
+
+/* Pedir ajuda (add-help-report) */
+.help-panel { display: flex; flex-direction: column; gap: 8px; }
+.help-panel textarea { width: 100%; resize: vertical; }
+.help-preview { font-size: 12px; min-height: 220px; }
+.help-actions { gap: 8px; margin-top: 6px; flex-wrap: wrap; }

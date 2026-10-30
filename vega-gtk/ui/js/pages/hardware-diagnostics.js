@@ -8,6 +8,7 @@
 
 import { call, on } from "../api.js";
 import { runSoftware } from "../tasks.js";
+import { buildHelpText, cut } from "./help-text.js";
 import { N_, t, locale } from "../i18n.js";
 import { hasCapability } from "../store.js";
 import { h, icon, clear, button, badge, segmented, row, list, banner, meter, toast, dateTime, duration, confirm, sheet } from "../ui.js";
@@ -313,6 +314,80 @@ function markdown(report) {
   return lines.join("\n") + "\n";
 }
 
+// ---------- Pedir ajuda ----------
+
+const HELP_REPO = "https://github.com/lyra-os-linux/lyraos-desktop";
+// Acima disso o GitHub recusa a URL; o texto inteiro vai para a área de
+// transferência e a página recebe uma versão encurtada.
+const URL_LIMIT = 7800;
+
+function helpUrl(kind, title, body) {
+  const base = kind === "issue"
+    ? `${HELP_REPO}/issues/new?template=help.md&title=`
+    : `${HELP_REPO}/discussions/new?category=q-a&title=`;
+  const note = `\n\n${t("(Texto encurtado; o completo está na área de transferência.)")}`;
+  let text = body;
+  let url = `${base}${encodeURIComponent(title)}&body=${encodeURIComponent(text)}`;
+  while (url.length > URL_LIMIT && text.length > 200) {
+    text = cut(body, Math.floor(text.length * 0.85)) + note;
+    url = `${base}${encodeURIComponent(title)}&body=${encodeURIComponent(text)}`;
+  }
+  return url;
+}
+
+/** Painel do "Pedir ajuda": sempre com o relatório redigido, editável. */
+async function openHelp(report) {
+  let vega = "";
+  try {
+    vega = (await call("app_info")).version;
+  } catch {
+    // Sem a versão do Vega, o texto segue com as outras.
+  }
+  const opts = { t, vega, stageName: (id) => stageName(id), verdictLabel: (verdict) => t(VERDICTS[verdict]?.label ?? verdict) };
+  const description = h("textarea", { class: "input help-description", rows: 4, placeholder: t("Ex.: desde ontem o Wi-Fi cai a cada poucos minutos") });
+  const preview = h("textarea", { class: "input mono help-preview", rows: 14, spellcheck: "false" });
+  const counter = h("span", { class: "small muted" });
+  let edited = false;
+  const refresh = () => {
+    if (!edited) preview.value = buildHelpText(report, { ...opts, description: description.value });
+    counter.textContent = t("{count} caracteres", { count: preview.value.length });
+  };
+  description.addEventListener("input", refresh);
+  preview.addEventListener("input", () => {
+    edited = true;
+    counter.textContent = t("{count} caracteres", { count: preview.value.length });
+  });
+  refresh();
+  const title = () => {
+    const first = description.value.trim().split("\n")[0];
+    return cut(first || t("Ajuda com o diagnóstico do Lyra OS"), 80);
+  };
+  const copy = async () => {
+    await navigator.clipboard?.writeText(preview.value);
+    toast(t("Copiado"));
+  };
+  const open = async (kind) => {
+    // O texto completo também vai para a área de transferência.
+    await navigator.clipboard?.writeText(preview.value).catch(() => {});
+    try {
+      await call("open_uri", { uri: helpUrl(kind, title(), preview.value) });
+    } catch (e) {
+      toast(e.message, { ic: "alert-circle" });
+    }
+  };
+  sheet(t("Pedir ajuda"), h("div", { class: "help-panel" },
+    h("label", { class: "small muted" }, t("O que está acontecendo?")),
+    description,
+    h("div", { class: "row-flex" }, h("label", { class: "small muted spacer" }, t("O que será compartilhado (pode editar)")), counter),
+    preview,
+    h("p", { class: "small muted" }, icon("lock", 14), " ", t("Número de série, endereços MAC, nome da rede, nome do computador e das contas já foram trocados por [redacted]. Nada sai daqui sem você clicar.")),
+    h("div", { class: "row-flex help-actions" },
+      button(t("Copiar"), { icon: "copy", onClick: copy }),
+      h("span", { class: "spacer" }),
+      button(t("Abrir uma issue no GitHub"), { icon: "external", onClick: () => open("issue") }),
+      button(t("Abrir no fórum"), { kind: "primary", icon: "external", onClick: () => open("forum") }))));
+}
+
 // ---------- Cartão ----------
 
 export function diagnosticsCard(ctx) {
@@ -575,6 +650,15 @@ export function diagnosticsCard(ctx) {
         h("div", { class: "card pad diag-export" },
           h("label", { class: "row-flex small" }, includeSensitive, t("Incluir número de série, endereço MAC e nome do computador")),
           h("div", { class: "row-flex" },
+            button(t("Pedir ajuda"), { kind: "primary", icon: "users", onClick: async () => {
+              try {
+                const redacted = await fetchReport(true, job);
+                close?.();
+                openHelp(redacted);
+              } catch (e) {
+                toast(e.message, { ic: "alert-circle" });
+              }
+            } }),
             button(t("Exportar JSON"), { icon: "download", onClick: () => exportAs("json") }),
             button(t("Exportar texto (Markdown)"), { icon: "download", onClick: () => exportAs("md") })))));
     } catch (e) {
