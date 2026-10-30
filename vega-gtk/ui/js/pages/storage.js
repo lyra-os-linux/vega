@@ -1,6 +1,7 @@
 import { call } from "../api.js";
 import { N_, t } from "../i18n.js";
 import { h, icon, clear, button, badge, section, banner, skeletonRows, empty, confirm, meter, ring } from "../ui.js";
+import { cleanupSection } from "./storage-cleanup.js";
 
 /** Partições e volumes agrupados sob o disco ao qual pertencem (`nvme0n1p2` → `nvme0n1`). */
 function groupByDisk(volumes) {
@@ -34,7 +35,7 @@ export default {
   title: N_("Armazenamento"),
   icon: "disk",
   group: "system",
-  keywords: ["disco", "ssd", "particao", "montar", "desmontar", "pendrive", "volume", "espaco"],
+  keywords: ["disco", "ssd", "particao", "montar", "desmontar", "pendrive", "volume", "espaco", "liberar", "limpar", "lixeira", "cache", "limpeza"],
 
   render(ctx) {
     const body = h("div", {}, skeletonRows(4));
@@ -114,8 +115,9 @@ export default {
     }
 
     load();
+    const cleanup = cleanupSection(ctx, load);
     return {
-      el: h("div", {}, h("div", { class: "page-hero" }, h("div", {}, h("h2", {}, t("Armazenamento")), h("p", {}, t("Volumes e pontos de montagem detectados pelo vegad")))), body),
+      el: h("div", {}, h("div", { class: "page-hero" }, h("div", {}, h("h2", {}, t("Armazenamento")), h("p", {}, t("Volumes e pontos de montagem detectados pelo vegad")))), body, cleanup),
       actions: [h("button", { class: "icon-btn", "aria-label": t("Atualizar"), title: t("Atualizar"), onclick: () => { clear(body, skeletonRows(4)); load(); } }, icon("refresh", 17))],
     };
   },

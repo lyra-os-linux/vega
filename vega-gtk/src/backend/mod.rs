@@ -8,6 +8,7 @@
 
 pub mod backup;
 pub mod bluetooth;
+pub mod cleanup;
 pub mod datetime;
 pub mod diagnostics;
 pub mod flatpak_update;

@@ -1,5 +1,6 @@
 src/assistant/commands.rs
 src/assistant.rs
+src/backend/cleanup.rs
 src/backend/users.rs
 src/bin/vega-update-notifier.rs
 src/dock.rs
@@ -27,6 +28,7 @@ ui/js/pages/personalization.js
 ui/js/pages/services.js
 ui/js/pages/software.js
 ui/js/pages/software/preparation.js
+ui/js/pages/storage-cleanup.js
 ui/js/pages/storage.js
 ui/js/pages/users.js
 ui/js/pages/virtualization.js

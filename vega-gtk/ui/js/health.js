@@ -62,6 +62,12 @@ async function refreshSnapshots() {
   return { available, count: list.filter((s) => s.id !== 0).length };
 }
 
+/** Depois de liberar espaço: o uso do disco e a contagem de snapshots mudam. */
+export async function refreshDisk() {
+  await Promise.all([settle("disk", call("system_disk_usage")), settle("snapshots", refreshSnapshots())]);
+  emit();
+}
+
 // Uma atualização em voo e no máximo uma pendente (refresh.rs do vega-gtk).
 let inFlight = null;
 let pending = false;

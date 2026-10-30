@@ -4715,3 +4715,159 @@ msgstr "No program listening on the network"
 
 msgid "zona"
 msgstr "zone"
+
+msgid "Escolha as pastas do cache que serão apagadas."
+msgstr "Choose the cache folders to delete."
+
+msgid "A pasta do cache é um link simbólico; nada foi apagado."
+msgstr "The cache folder is a symbolic link; nothing was deleted."
+
+msgid "Categoria de limpeza desconhecida."
+msgstr "Unknown cleanup category."
+
+msgid "HOME não definido."
+msgstr "HOME is not set."
+
+msgid "Pouco espaço livre faz atualizações e snapshots falharem. Veja o que dá para apagar com segurança."
+msgstr "Low free space makes updates and snapshots fail. See what can be safely deleted."
+
+msgid "Abrir Liberar espaço"
+msgstr "Open Free up space"
+
+msgid "Relatórios de falha (core dumps)"
+msgstr "Crash reports (core dumps)"
+
+msgid "Cópias da memória de programas que travaram. Servem para depurar; podem ser apagadas."
+msgstr "Memory copies of programs that crashed. They help debugging; they can be deleted."
+
+msgid "Logs antigos do sistema"
+msgstr "Old system logs"
+
+msgid "O journal fica em até 500 MB. O boot atual e o anterior são sempre mantidos."
+msgstr "The journal is kept to 500 MB. The current and the previous boot are always kept."
+
+msgid "Pacotes baixados"
+msgstr "Downloaded packages"
+
+msgid "Cópias de pacotes que o Zypper já instalou. São baixados de novo se precisar."
+msgstr "Copies of packages Zypper already installed. They are downloaded again if needed."
+
+msgid "Runtimes Flatpak sem uso (sistema)"
+msgstr "Unused Flatpak runtimes (system)"
+
+msgid "Bibliotecas que nenhum aplicativo instalado usa mais."
+msgstr "Libraries no installed application uses anymore."
+
+msgid "Kernels antigos"
+msgstr "Old kernels"
+
+msgid "Segue a regra do openSUSE: o kernel em uso e o mais novo ficam. Um snapshot é criado antes."
+msgstr "Follows the openSUSE rule: the running and the newest kernel stay. A snapshot is taken first."
+
+msgid "Snapshots fora da política"
+msgstr "Snapshots beyond the policy"
+
+msgid "Aplica a limpeza automática do Snapper, que respeita a retenção configurada."
+msgstr "Runs Snapper's automatic cleanup, which follows the configured retention."
+
+msgid "Arquivos que você já mandou para a lixeira."
+msgstr "Files you already moved to the trash."
+
+msgid "Miniaturas"
+msgstr "Thumbnails"
+
+msgid "Prévias de imagens e vídeos; são recriadas quando necessário."
+msgstr "Previews of images and videos; they are recreated when needed."
+
+msgid "Cache dos aplicativos"
+msgstr "Application cache"
+
+msgid "Arquivos temporários por aplicativo, em ~/.cache. Escolha quais apagar."
+msgstr "Temporary files per application, in ~/.cache. Choose which to delete."
+
+msgid "Runtimes Flatpak sem uso (usuário)"
+msgstr "Unused Flatpak runtimes (user)"
+
+msgid "Bibliotecas da sua instalação Flatpak que nenhum aplicativo usa mais."
+msgstr "Libraries of your Flatpak installation no application uses anymore."
+
+msgid "Nada para limpar"
+msgstr "Nothing to clean"
+
+msgid "Outra operação do sistema está em andamento"
+msgstr "Another system operation is running"
+
+msgid "O Snapper não está configurado"
+msgstr "Snapper is not configured"
+
+msgid "Bloqueado: a remoção tiraria o kernel em uso ou o mais novo"
+msgstr "Blocked: the removal would take the running or the newest kernel"
+
+msgid "Não foi possível medir"
+msgstr "Could not measure"
+
+msgid "Requer o pacote {package}"
+msgstr "Requires the {package} package"
+
+msgid "pelo menos {count} • tamanho desconhecido"
+msgstr "at least {count} • size unknown"
+
+msgid "tamanho desconhecido"
+msgstr "size unknown"
+
+msgid "Limpando: {name}…"
+msgstr "Cleaning: {name}…"
+
+msgid "Liberar espaço?"
+msgstr "Free up space?"
+
+msgid "Os itens abaixo serão apagados. Não é possível desfazer."
+msgstr "The items below will be deleted. This cannot be undone."
+
+msgid "Falhou: {list}"
+msgstr "Failed: {list}"
+
+msgid "{size} liberados"
+msgstr "{size} freed"
+
+msgid "O espaço dos kernels volta ao disco quando os snapshots antigos forem limpos."
+msgstr "The kernels' space returns to the disk when the old snapshots are cleaned."
+
+msgid "Limpar selecionados"
+msgstr "Clean selected"
+
+msgid "{count} pasta(s) • {size}"
+msgstr "{count} folder(s) • {size}"
+
+msgid "Feche os aplicativos antes"
+msgstr "Close the applications first"
+
+msgid "Um aplicativo aberto pode recriar o cache ou perder dados temporários."
+msgstr "An open application may recreate the cache or lose temporary data."
+
+msgid "Nenhuma pasta em ~/.cache"
+msgstr "No folder in ~/.cache"
+
+msgid "{count} arquivo(s)"
+msgstr "{count} file(s)"
+
+msgid "Escolher…"
+msgstr "Choose…"
+
+msgid "Vazio"
+msgstr "Empty"
+
+msgid "Recuperável: {total}. O seguro sem escolher: {safe}."
+msgstr "Recoverable: {total}. Safe without choosing: {safe}."
+
+msgid "Limpar tudo o que for seguro"
+msgstr "Clean everything that is safe"
+
+msgid "Liberar espaço"
+msgstr "Free up space"
+
+msgid "Medir de novo"
+msgstr "Measure again"
+
+msgid "Selecionar todos"
+msgstr "Select all"
