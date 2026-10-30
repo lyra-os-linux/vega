@@ -65,7 +65,7 @@ function openTroubleshooter() {
   });
 
   // Fechar o painel desliga o ouvinte.
-  const close = sheet(t("Minha internet não funciona"), body, { wide: false, onClose: () => off() });
+  const close = sheet(t("Minha internet não funciona"), body, { onClose: () => off() });
 
   function handle(event) {
     if (event.job !== job) return;

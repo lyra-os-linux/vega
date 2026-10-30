@@ -49,7 +49,7 @@
 }
 
 /* Minha internet não funciona (add-network-troubleshooter) */
-.net-check { display: flex; flex-direction: column; gap: 12px; min-width: min(520px, 80vw); }
+.net-check { display: flex; flex-direction: column; gap: 12px; }
 .net-steps { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius-s); }
 .net-step { display: flex; align-items: center; gap: 12px; padding: 10px 14px; }
 .net-step + .net-step { border-top: 1px solid var(--line); }
