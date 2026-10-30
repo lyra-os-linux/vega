@@ -2,7 +2,7 @@ import { call, on, personalization, win } from "./api.js";
 import { svg } from "./icons.js";
 import { loadCatalog, t } from "./i18n.js";
 import { pages, groups } from "./pages/index.js";
-import { badges, loadMetadata, loadPrefs, local, onBadges, prefs, saveLocal, savePrefs } from "./store.js";
+import { badges, hasCapability, loadMetadata, loadPrefs, local, onBadges, prefs, saveLocal, savePrefs } from "./store.js";
 import { mountTasksButton } from "./tasks.js";
 import { startHealth } from "./health.js";
 import { h, icon, clear, overlay, popover, menuItem, sheet, segmented, normalize, toggle, row, list, fail } from "./ui.js";
@@ -213,6 +213,32 @@ function openPreferences() {
   });
   const sw = (key, label) => toggle(prefs[key], (on) => save({ [key]: on }), label);
 
+  // Verificação periódica (diagnostics-periodic-v1): vale para o sistema todo
+  // e mudar pede a senha de administrador.
+  const health = hasCapability("diagnostics-periodic-v1") && h("div", { class: "pref-group" }, h("h4", {}, t("Saúde do sistema")), list(row({ title: t("Carregando…") })));
+  if (health) {
+    call("diagnostics_get_periodic").then((current) => {
+      const state = { ...current };
+      let frequency;
+      const apply = async (changes, revert) => {
+        try {
+          await call("diagnostics_set_periodic", { ...state, ...changes });
+          Object.assign(state, changes);
+        } catch (error) {
+          revert();
+          fail(error);
+        }
+        frequency.disabled = !state.enabled;
+      };
+      const enabled = toggle(state.enabled, (on, input) => apply({ enabled: on }, () => { input.checked = !on; }), t("Verificação periódica"));
+      frequency = select(state.frequency, [["weekly", t("Semanal")], ["daily", t("Diária")]], (value) => apply({ frequency: value }, () => { frequency.value = state.frequency; }), t("Frequência"));
+      frequency.disabled = !state.enabled;
+      health.replaceChildren(h("h4", {}, t("Saúde do sistema")), list(
+        row({ title: t("Verificação periódica"), subtitle: t("Confere disco, logs, plataforma e segurança em segundo plano e avisa só quando algo muda."), wrap: true, suffix: enabled }),
+        row({ title: t("Frequência"), suffix: frequency })));
+    }).catch(() => health.remove());
+  }
+
   sheet(t("Configurações"), [
     h("div", { class: "pref-group" }, h("h4", {}, t("Geral")), list(
       row({ title: t("Página inicial"), suffix: select(prefs.start_page, pages.map((p) => [p.id, t(p.title)]), (v) => save({ start_page: v }), t("Página inicial")) }),
@@ -224,7 +250,9 @@ function openPreferences() {
       row({ title: t("Atualizações disponíveis"), suffix: sw("notify_updates", t("Atualizações disponíveis")) }),
       row({ title: t("Falhas em serviços"), suffix: sw("notify_service_failures", t("Falhas em serviços")) }),
       row({ title: t("Conclusão de backups"), suffix: sw("notify_backups", t("Conclusão de backups")) }),
+      hasCapability("diagnostics-periodic-v1") && row({ title: t("Novidades na saúde do sistema"), suffix: sw("notify_health", t("Novidades na saúde do sistema")) }),
     )),
+    health,
     h("div", { class: "pref-group" }, h("h4", {}, t("Privacidade da IA")), list(
       row({ title: t("Ocultar dados sensíveis"), subtitle: t("Remove credenciais e identificadores antes do envio"), wrap: true, suffix: sw("redact_ai_data", t("Ocultar dados sensíveis")) }),
       row({ title: t("Salvar histórico local"), subtitle: t("Mantém as conversas da IA neste dispositivo"), wrap: true, suffix: sw("save_ai_history", t("Salvar histórico local")) }),

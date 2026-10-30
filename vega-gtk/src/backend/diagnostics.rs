@@ -10,8 +10,8 @@ use std::collections::HashSet;
 use std::sync::Mutex;
 
 use lyra_vega_dbus::{
-    DiagnosticJob, DiagnosticOptions, DiagnosticTest, DiagnosticsClient, DiagnosticsEvent,
-    DiagnosticsEventStream,
+    DiagnosticJob, DiagnosticOptions, DiagnosticRemedy, DiagnosticTest, DiagnosticsClient,
+    DiagnosticsEvent, DiagnosticsEventStream,
 };
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Emitter};
@@ -25,6 +25,12 @@ dto!(Test from DiagnosticTest {
     reason: String,
     estimated_seconds: u32,
     requires_ac: bool,
+});
+
+dto!(Remedy from DiagnosticRemedy {
+    stage: String,
+    finding_index: u32,
+    remedy: String,
 });
 
 dto!(Job from DiagnosticJob {
@@ -72,6 +78,8 @@ pub enum Event {
         result: String,
         message: String,
     },
+    /// A verificação periódica achou novidades (o notificador avisa).
+    Novelties { job: u32, count: u32 },
 }
 
 impl Event {
@@ -103,6 +111,7 @@ impl Event {
                 result: f.result.as_str().to_owned(),
                 message: f.message,
             },
+            DiagnosticsEvent::Novelties { job_id, count } => Self::Novelties { job: job_id, count },
         }
     }
 
@@ -111,7 +120,8 @@ impl Event {
             Self::Progress { job, .. }
             | Self::Sample { job, .. }
             | Self::Stage { job, .. }
-            | Self::Finished { job, .. } => *job,
+            | Self::Finished { job, .. }
+            | Self::Novelties { job, .. } => *job,
         }
     }
 }
@@ -225,6 +235,114 @@ pub async fn diagnostics_repair(
         tauri::async_runtime::spawn(follow(app, events, repair));
     }
     Ok(repair)
+}
+
+/// Achados com conserto do relatório `job` (0 = o mais recente), sem senha:
+/// a lista de testes usa para mostrar Corrigir (`diagnostics-actions-v1`).
+#[tauri::command]
+pub async fn diagnostics_remedies(state: State<'_>, job: u32) -> CmdResult<Vec<Remedy>> {
+    state
+        .dbus()
+        .await?
+        .diagnostics()
+        .remedies(job)
+        .await
+        .map(list)
+        .map_err(err)
+}
+
+/// Conserta só os achados `(etapa, índice)` escolhidos.
+#[tauri::command]
+pub async fn diagnostics_repair_findings(
+    app: AppHandle,
+    state: State<'_>,
+    job: u32,
+    findings: Vec<(String, u32)>,
+) -> CmdResult<u32> {
+    let diagnostics = state.dbus().await?.diagnostics();
+    let events = diagnostics.subscribe().await.map_err(err)?;
+    let repair = diagnostics
+        .repair_findings(job, &findings)
+        .await
+        .map_err(err)?;
+    if claim(repair) {
+        tauri::async_runtime::spawn(follow(app, events, repair));
+    }
+    Ok(repair)
+}
+
+/// "Já vi": os próximos testes de logs ignoram o que veio antes.
+#[tauri::command]
+pub async fn diagnostics_mark_logs_seen(state: State<'_>, job: u32) -> CmdResult<()> {
+    state
+        .dbus()
+        .await?
+        .diagnostics()
+        .mark_logs_seen(job)
+        .await
+        .map_err(err)
+}
+
+/// Resultado da última verificação periódica (`diagnostics-periodic-v1`).
+#[derive(Debug, Clone, Serialize)]
+pub struct Periodic {
+    job: u32,
+    finished: i64,
+    novelties: u32,
+    stages: Vec<(String, String, String)>,
+    texts: Vec<String>,
+}
+
+#[tauri::command]
+pub async fn diagnostics_last_periodic(state: State<'_>) -> CmdResult<Periodic> {
+    let run = state
+        .dbus()
+        .await?
+        .diagnostics()
+        .last_periodic()
+        .await
+        .map_err(err)?;
+    Ok(Periodic {
+        job: run.job_id,
+        finished: run.finished,
+        novelties: run.novelties,
+        stages: run.stages,
+        texts: run.novelty_texts,
+    })
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct PeriodicSettings {
+    enabled: bool,
+    frequency: String,
+}
+
+#[tauri::command]
+pub async fn diagnostics_get_periodic(state: State<'_>) -> CmdResult<PeriodicSettings> {
+    let (enabled, frequency) = state
+        .dbus()
+        .await?
+        .diagnostics()
+        .get_periodic()
+        .await
+        .map_err(err)?;
+    Ok(PeriodicSettings { enabled, frequency })
+}
+
+/// Liga, desliga ou muda a frequência para o sistema todo (pede senha).
+#[tauri::command]
+pub async fn diagnostics_set_periodic(
+    state: State<'_>,
+    enabled: bool,
+    frequency: String,
+) -> CmdResult<()> {
+    state
+        .dbus()
+        .await?
+        .diagnostics()
+        .set_periodic(enabled, &frequency)
+        .await
+        .map_err(err)
 }
 
 /// Volta a acompanhar um job que começou antes desta janela abrir.

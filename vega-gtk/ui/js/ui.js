@@ -351,7 +351,7 @@ export function confirm({ title, text, ic = "info", tone = "", facts = [], confi
   });
 }
 
-export function sheet(title, body, { wide = true } = {}) {
+export function sheet(title, body, { wide = true, onClose } = {}) {
   let close;
   const dialog = h(
     "div",
@@ -359,7 +359,7 @@ export function sheet(title, body, { wide = true } = {}) {
     h("div", { class: "sheet-head" }, h("h2", {}, title), h("button", { class: "icon-btn", "aria-label": t("Fechar"), onclick: () => close() }, icon("x", 17))),
     h("div", { class: "sheet-body" }, body),
   );
-  close = overlay(dialog);
+  close = overlay(dialog, { onClose });
   return close;
 }
 

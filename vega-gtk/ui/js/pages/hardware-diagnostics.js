@@ -7,6 +7,8 @@
 // pede para vê-lo ou exportá-lo.
 
 import { call, on } from "../api.js";
+import { runSoftware } from "../tasks.js";
+import { buildHelpText, cut } from "./help-text.js";
 import { N_, t, locale } from "../i18n.js";
 import { hasCapability } from "../store.js";
 import { h, icon, clear, button, badge, segmented, row, list, banner, meter, toast, dateTime, duration, confirm, sheet } from "../ui.js";
@@ -22,13 +24,15 @@ const TESTS = [
   { id: "logs", icon: "logs", name: N_("Logs e falhas"), desc: N_("Erros por boot, falhas de programas e serviços com problema") },
   { id: "platform", icon: "activity", name: N_("Estado da plataforma"), desc: N_("Temperaturas, bateria, firmware, relógio e Secure Boot") },
   { id: "security", icon: "shield", name: N_("Segurança"), desc: N_("Firewall, portas expostas, correções de segurança, SSH, criptografia e contas") },
+  { id: "boot", icon: "power", name: N_("Tempo de boot"), desc: N_("Quanto o computador leva para ligar e o que atrasa") },
+  { id: "network", icon: "wifi", name: N_("Rede e internet"), desc: N_("Cabo ou Wi-Fi, endereço, roteador, DNS e acesso à internet") },
 ];
 const NAMES = Object.fromEntries(TESTS.map((test) => [test.id, test.name]));
 
 // Ordem de execução do vegad: leituras rápidas primeiro.
-const DAEMON_ORDER = ["packages", "disk-health", "logs", "platform", "security", "fs-scrub", "cpu-stress", "memory-stress", "disk-bench"];
+const DAEMON_ORDER = ["packages", "disk-health", "logs", "platform", "security", "boot", "network", "fs-scrub", "cpu-stress", "memory-stress", "disk-bench"];
 const MODES = {
-  quick: { tests: ["packages", "disk-health", "logs", "platform", "security", "cpu-stress", "memory-stress"], gpu: false, duration: 60 },
+  quick: { tests: ["packages", "disk-health", "logs", "platform", "security", "boot", "network", "cpu-stress", "memory-stress"], gpu: false, duration: 60 },
   full: { tests: DAEMON_ORDER, gpu: true, duration: 240 },
 };
 const LOAD_TESTS = new Set(["cpu-stress", "memory-stress", "disk-bench"]);
@@ -57,9 +61,17 @@ function reasonText(reason) {
 // ---------- O que fazer com cada achado ----------
 
 // Consertos que o vegad aplica (diagnostics-v2), na ordem do contrato.
-const REMEDY_ORDER = ["reinstall-packages", "verify-dependencies", "restart-units", "enable-ntp", "enable-firewall", "close-port", "apply-security-patches"];
+const REMEDY_ORDER = ["reinstall-packages", "verify-dependencies", "restart-units", "enable-ntp", "enable-firewall", "close-port", "apply-security-patches", "reconnect", "renew-dhcp", "temporary-dns", "disable-wait-online", "disable-service"];
 
 function remedyText(remedy, args = []) {
+  if (!args.length) {
+    // A lista de testes só conhece os ids (Remedies), sem os argumentos.
+    switch (remedy) {
+      case "reinstall-packages": return t("Reinstalar os pacotes alterados");
+      case "restart-units": return t("Reiniciar os serviços que falharam");
+      case "close-port": return t("Fechar as portas expostas no firewall");
+    }
+  }
   switch (remedy) {
     case "reinstall-packages": return t("Reinstalar os pacotes: {packages}", { packages: args.join(", ") });
     case "verify-dependencies": return t("Instalar as dependências que faltam");
@@ -68,6 +80,11 @@ function remedyText(remedy, args = []) {
     case "enable-firewall": return t("Ligar o firewall");
     case "close-port": return t("Fechar no firewall: {ports}", { ports: args.map((arg) => arg.replace("|service:", ": serviço ").replace("|port:", ": porta ")).join(", ") });
     case "apply-security-patches": return t("Instalar as correções de segurança");
+    case "disable-wait-online": return t("Não esperar pela rede para terminar o boot");
+    case "disable-service": return args.length ? t("Desabilitar no boot: {units}", { units: args.join(", ") }) : t("Desabilitar os serviços lentos que você habilitou");
+    case "reconnect": return t("Reconectar a rede ({device})", { device: args.join(", ") || "Wi-Fi" });
+    case "renew-dhcp": return t("Pedir um novo endereço IP ({device})", { device: args.join(", ") || "rede" });
+    case "temporary-dns": return t("Usar DNS público só nesta conexão ({device})", { device: args.join(", ") || "rede" });
     default: return remedy;
   }
 }
@@ -80,6 +97,11 @@ const REPAIR_STAGES = {
   "repair:enable-firewall": N_("Ligando o firewall"),
   "repair:close-port": N_("Fechando portas"),
   "repair:apply-security-patches": N_("Instalando correções de segurança"),
+  "repair:disable-wait-online": N_("Desligando a espera pela rede no boot"),
+  "repair:disable-service": N_("Desabilitando serviços"),
+  "repair:reconnect": N_("Reconectando a rede"),
+  "repair:renew-dhcp": N_("Pedindo um novo endereço"),
+  "repair:temporary-dns": N_("Usando DNS público"),
 };
 const stageName = (id) => t(NAMES[id] ?? REPAIR_STAGES[id] ?? id);
 
@@ -96,7 +118,9 @@ const GUIDE = {
   "smart.worn": { text: N_("O disco está chegando ao fim da vida útil. Mantenha backups em dia e planeje a troca."), go: ["backup"], label: N_("Abrir Backup") },
   "smart.hot": COOLING, "platform.hot-idle": COOLING, "cpu.slow-under-load": COOLING, "thermal.abort": COOLING,
   "platform.battery-worn": { text: N_("A bateria guarda bem menos carga do que quando era nova. Considere trocá-la.") },
-  "platform.firmware-updates": { text: N_("Há atualizações de firmware. Instale-as pela central de software do GNOME e reinicie quando pedir.") },
+  "platform.firmware-updates": { text: N_("Há atualizações de firmware. O Vega instala pelo fwupd e avisa se for preciso reiniciar.") },
+  "backup.stale": { text: N_("Faça um backup agora, com o disco de backup conectado."), go: ["backup"], label: N_("Abrir Backup") },
+  "backup.none": { text: N_("Configure um backup para não perder seus arquivos se o disco falhar."), go: ["backup"], label: N_("Abrir Backup") },
   "storage.low-space": { text: N_("Pouco espaço livre faz atualizações e snapshots falharem. Veja o que dá para apagar com segurança."), go: ["storage", "cleanup"], label: N_("Abrir Liberar espaço") },
   "platform.ntp": { text: N_("A sincronização está ligada, mas sem resposta. Confira a conexão com a internet."), go: ["datetime"], label: N_("Abrir Data e hora") },
   "platform.secure-boot-off": { text: N_("Se quiser essa proteção, ative o Secure Boot nas configurações de firmware (UEFI) do computador.") },
@@ -108,6 +132,15 @@ const GUIDE = {
   "memory.insufficient": { text: N_("Feche alguns programas para liberar memória e execute o teste de novo.") },
   "bench.insufficient-space": { text: N_("Libere ao menos 10 GiB no disco e execute o teste de novo."), go: ["storage"], label: N_("Abrir Armazenamento") },
   "stage.timeout": RETRY, "stage.tool-failed": RETRY, "bench.failed": RETRY, "stress.incomplete": RETRY, "scrub.incomplete": RETRY,
+  "boot.slow": { text: N_("Veja abaixo quais serviços atrasam o boot. Desabilitar o que você não usa acelera a inicialização.") },
+  "boot.wait-online": { text: N_("Algum programa precisa da rede logo no boot, por isso a espera fica. Se não usa esse programa, desabilite-o em Serviços."), go: ["services"], label: N_("Abrir Serviços") },
+  "boot.missing-device": { text: N_("O /etc/fstab ainda monta um disco que foi removido. Tire a linha dele do fstab ou marque-a com nofail."), go: ["storage"], label: N_("Abrir Armazenamento") },
+  "boot.slow-service": { text: N_("Este serviço faz parte do sistema. Se o atraso continuar, veja o log dele."), go: ["logs"], label: N_("Abrir Logs") },
+  "network.no-link": { text: N_("Confira o cabo ou ligue o Wi-Fi e escolha uma rede."), go: ["network"], label: N_("Abrir Rede") },
+  "network.wifi-weak": { text: N_("Aproxime-se do roteador ou tire obstáculos do caminho.") },
+  "network.gateway-unreachable": { text: N_("Desligue o roteador da tomada, espere 30 segundos e ligue de novo.") },
+  "network.no-internet": { text: N_("O roteador responde, mas a internet não chega até ele. Verifique o modem ou fale com o provedor.") },
+  "network.captive-portal": { text: N_("Abra a página de login da rede em Rede → Minha internet não funciona."), go: ["network"], label: N_("Abrir Rede") },
   "security.ssh-root-password": { text: N_("Desative o login do root por senha no SSH (PermitRootLogin) ou desligue o servidor SSH se não usa."), go: ["services"], label: N_("Abrir Serviços") },
   "security.ssh-password": { text: N_("Prefira entrar no SSH com chave em vez de senha (PasswordAuthentication no)."), go: ["services"], label: N_("Abrir Serviços") },
   "security.exposed-port": { text: N_("Feche a porta se não usa esse serviço a partir de outros computadores."), go: ["network", "firewall"], label: N_("Abrir Firewall") },
@@ -120,7 +153,7 @@ const GUIDE = {
 };
 
 // Informações que também merecem uma orientação.
-const INFO_GUIDE = new Set(["platform.firmware-updates", "security.disk-unencrypted", "security.selinux", "repair.restart-needed"]);
+const INFO_GUIDE = new Set(["platform.firmware-updates", "backup.none", "security.disk-unencrypted", "security.selinux", "repair.restart-needed"]);
 
 /** Consertos propostos pelo relatório: id → argumentos somados. */
 function reportRemedies(report) {
@@ -187,10 +220,20 @@ function findingRow({ stage, finding }, actions = {}) {
     },
   });
   const guide = finding.severity !== "info" || INFO_GUIDE.has(finding.code) ? GUIDE[finding.code] : null;
-  const fix = finding.remedy && actions.repair
-    ? button(t("Resolver"), { kind: "primary", size: "sm", icon: "zap", onClick: () => actions.repair([{ id: finding.remedy, args: finding.remedyArgs ?? [] }]) })
+  const index = (stage.findings ?? []).indexOf(finding);
+  // Com diagnostics-actions-v1, o conserto vale só para este achado.
+  const fix = finding.remedy && actions.repairFinding && index >= 0
+    ? button(t("Corrigir"), { kind: "primary", size: "sm", icon: "zap", onClick: () => actions.repairFinding(stage.id, index, finding) })
+    : finding.remedy && actions.repair
+      ? button(t("Resolver"), { kind: "primary", size: "sm", icon: "zap", onClick: () => actions.repair([{ id: finding.remedy, args: finding.remedyArgs ?? [] }]) })
+      : null;
+  const seen = stage.id === "logs" && finding.severity !== "info" && actions.markSeen
+    ? button(t("Já vi"), { size: "sm", icon: "check", title: t("Os registros até agora deixam de contar"), onClick: () => actions.markSeen(stage) })
     : null;
-  const shortcut = !fix && guide?.go && actions.go && button(t(guide.label), { size: "sm", icon: "chevron-right", onClick: () => actions.go(...guide.go) });
+  const firmware = finding.code === "platform.firmware-updates" && actions.updateFirmware
+    ? button(t("Atualizar"), { kind: "primary", size: "sm", icon: "download", onClick: () => actions.updateFirmware() })
+    : null;
+  const shortcut = firmware || (!fix && guide?.go && actions.go && button(t(guide.label), { size: "sm", icon: "chevron-right", onClick: () => actions.go(...guide.go) }));
   return h("div", { class: "diag-finding" },
     row({
       icon: finding.severity === "info" ? "info" : "alert",
@@ -198,11 +241,38 @@ function findingRow({ stage, finding }, actions = {}) {
       title: finding.text,
       subtitle: stageName(stage.id),
       wrap: true,
-      suffix: fix || shortcut || null,
+      suffix: (fix || shortcut || seen) ? h("span", { class: "row-flex" }, seen, fix || shortcut) : null,
     }),
     finding.remedy && h("p", { class: "diag-guide small" }, icon("zap", 14), remedyText(finding.remedy, finding.remedyArgs)),
     !finding.remedy && guide && h("p", { class: "diag-guide small" }, icon("info", 14), t(guide.text)),
     raw && h("details", { class: "diag-raw" }, h("summary", {}, t("Dados brutos")), h("pre", { class: "mono selectable" }, raw), h("div", { class: "row-flex" }, copy)));
+}
+
+const BOOT_PHASES = [
+  ["firmware", N_("Firmware")],
+  ["loader", N_("Carregador")],
+  ["kernel", N_("Kernel")],
+  ["initrd", N_("initrd")],
+  ["userspace", N_("Sistema")],
+];
+
+/** Barra das fases do último boot e os serviços mais lentos. */
+function bootView(stage) {
+  const phases = stage.metrics?.phases;
+  if (!phases) return null;
+  const present = BOOT_PHASES.filter(([id]) => phases[id] > 0);
+  const total = present.reduce((sum, [id]) => sum + phases[id], 0) || 1;
+  const secs = (value) => t("{seconds} s", { seconds: value.toLocaleString(locale, { maximumFractionDigits: 1 }) });
+  const slowest = stage.metrics.slowest ?? [];
+  return h("div", { class: "card pad diag-boot" },
+    h("h4", {}, icon("power", 16), t("Último boot"), h("span", { class: "n" }, secs(stage.metrics.totalSeconds ?? total))),
+    h("div", { class: "diag-boot-bar" }, present.map(([id], i) =>
+      h("span", { class: `seg s${i}`, style: { flex: `${phases[id]} 0 0` }, title: `${t(BOOT_PHASES.find((p) => p[0] === id)[1])}: ${secs(phases[id])}` }))),
+    h("div", { class: "diag-boot-legend small" }, present.map(([id, label], i) =>
+      h("span", {}, h("i", { class: `dot s${i}` }), `${t(label)} ${secs(phases[id])}`))),
+    slowest.length > 0 && h("div", { class: "diag-boot-slow" },
+      h("div", { class: "small muted" }, t("O que mais demorou antes do login")),
+      slowest.map((unit) => h("div", { class: "row-flex small" }, h("span", { class: "mono spacer selectable" }, unit.unit), h("span", { class: "muted" }, secs(unit.seconds))))));
 }
 
 function reportView(report, actions = {}) {
@@ -222,6 +292,7 @@ function reportView(report, actions = {}) {
       t("Antes ele cria um snapshot e, depois, roda de novo os testes afetados."),
       button(t("Resolver tudo o que for seguro"), { kind: "primary", icon: "zap", onClick: () => actions.repair(remedies) })),
     block(t("Atenção"), "alert", "yellow", attention, render),
+    bootView((report.stages ?? []).filter((stage) => stage.id === "boot").pop() ?? {}),
     block(t("Saudável"), "check-circle", "green", healthy, (stage) => row({ icon: "check", tint: "green", title: stageName(stage.id), subtitle: stage.summary, wrap: true })),
     block(t("Informações e ruído conhecido"), "info", "", info, render));
 }
@@ -243,6 +314,80 @@ function markdown(report) {
   return lines.join("\n") + "\n";
 }
 
+// ---------- Pedir ajuda ----------
+
+const HELP_REPO = "https://github.com/lyra-os-linux/lyraos-desktop";
+// Acima disso o GitHub recusa a URL; o texto inteiro vai para a área de
+// transferência e a página recebe uma versão encurtada.
+const URL_LIMIT = 7800;
+
+function helpUrl(kind, title, body) {
+  const base = kind === "issue"
+    ? `${HELP_REPO}/issues/new?template=help.md&title=`
+    : `${HELP_REPO}/discussions/new?category=q-a&title=`;
+  const note = `\n\n${t("(Texto encurtado; o completo está na área de transferência.)")}`;
+  let text = body;
+  let url = `${base}${encodeURIComponent(title)}&body=${encodeURIComponent(text)}`;
+  while (url.length > URL_LIMIT && text.length > 200) {
+    text = cut(body, Math.floor(text.length * 0.85)) + note;
+    url = `${base}${encodeURIComponent(title)}&body=${encodeURIComponent(text)}`;
+  }
+  return url;
+}
+
+/** Painel do "Pedir ajuda": sempre com o relatório redigido, editável. */
+async function openHelp(report) {
+  let vega = "";
+  try {
+    vega = (await call("app_info")).version;
+  } catch {
+    // Sem a versão do Vega, o texto segue com as outras.
+  }
+  const opts = { t, vega, stageName: (id) => stageName(id), verdictLabel: (verdict) => t(VERDICTS[verdict]?.label ?? verdict) };
+  const description = h("textarea", { class: "input help-description", rows: 4, placeholder: t("Ex.: desde ontem o Wi-Fi cai a cada poucos minutos") });
+  const preview = h("textarea", { class: "input mono help-preview", rows: 14, spellcheck: "false" });
+  const counter = h("span", { class: "small muted" });
+  let edited = false;
+  const refresh = () => {
+    if (!edited) preview.value = buildHelpText(report, { ...opts, description: description.value });
+    counter.textContent = t("{count} caracteres", { count: preview.value.length });
+  };
+  description.addEventListener("input", refresh);
+  preview.addEventListener("input", () => {
+    edited = true;
+    counter.textContent = t("{count} caracteres", { count: preview.value.length });
+  });
+  refresh();
+  const title = () => {
+    const first = description.value.trim().split("\n")[0];
+    return cut(first || t("Ajuda com o diagnóstico do Lyra OS"), 80);
+  };
+  const copy = async () => {
+    await navigator.clipboard?.writeText(preview.value);
+    toast(t("Copiado"));
+  };
+  const open = async (kind) => {
+    // O texto completo também vai para a área de transferência.
+    await navigator.clipboard?.writeText(preview.value).catch(() => {});
+    try {
+      await call("open_uri", { uri: helpUrl(kind, title(), preview.value) });
+    } catch (e) {
+      toast(e.message, { ic: "alert-circle" });
+    }
+  };
+  sheet(t("Pedir ajuda"), h("div", { class: "help-panel" },
+    h("label", { class: "small muted" }, t("O que está acontecendo?")),
+    description,
+    h("div", { class: "row-flex" }, h("label", { class: "small muted spacer" }, t("O que será compartilhado (pode editar)")), counter),
+    preview,
+    h("p", { class: "small muted" }, icon("lock", 14), " ", t("Número de série, endereços MAC, nome da rede, nome do computador e das contas já foram trocados por [redacted]. Nada sai daqui sem você clicar.")),
+    h("div", { class: "row-flex help-actions" },
+      button(t("Copiar"), { icon: "copy", onClick: copy }),
+      h("span", { class: "spacer" }),
+      button(t("Abrir uma issue no GitHub"), { icon: "external", onClick: () => open("issue") }),
+      button(t("Abrir no fórum"), { kind: "primary", icon: "external", onClick: () => open("forum") }))));
+}
+
 // ---------- Cartão ----------
 
 export function diagnosticsCard(ctx) {
@@ -252,31 +397,109 @@ export function diagnosticsCard(ctx) {
   let mode = "quick";
   let running = null; // { job, tests, gpu, stage, percent, message, sample, error }
   let error = null;
+  // Achados com conserto por teste (diagnostics-actions-v1): id → [{ job, finding_index, remedy }].
+  let remedies = new Map();
+  // Última verificação semanal (diagnostics-periodic-v1).
+  let periodic = null;
+  // "Já vi" num relatório antigo: roda os logs, marca e roda de novo.
+  let pendingSeen = false;
+  const actionsOn = () => hasCapability("diagnostics-actions-v1");
+  const jobOf = (id) => last.stages[id]?.job || last.job;
+  const needsFix = (id) => ["attention", "fail"].includes(last.stages[id]?.verdict);
+
+  async function loadRemedies() {
+    if (!actionsOn()) return;
+    const jobs = new Set(Object.keys(last.stages).filter(needsFix).map(jobOf).filter(Boolean));
+    const found = new Map();
+    for (const job of jobs) {
+      try {
+        for (const item of await call("diagnostics_remedies", { job })) {
+          if (jobOf(item.stage) !== job) continue;
+          if (!found.has(item.stage)) found.set(item.stage, []);
+          found.get(item.stage).push({ job, finding_index: item.finding_index, remedy: item.remedy });
+        }
+      } catch {
+        // Relatório apagado ou vegad antigo: o item fica com "Ver o que fazer".
+      }
+    }
+    remedies = found;
+    if (!running) paint();
+  }
+
+  /** Corrigir de um teste inteiro, a partir da lista. */
+  async function fixStage(id) {
+    const items = remedies.get(id) ?? [];
+    if (!items.length) return;
+    const ids = [...new Set(items.map((item) => item.remedy))];
+    await repair(items[0].job, ids.map((remedy) => ({ id: remedy, args: [] })), items.map((item) => [id, item.finding_index]));
+  }
+
+  /** "Já vi" nos logs: os registros até agora deixam de contar. */
+  async function markSeen(job) {
+    const ok = await confirm({
+      title: t("Marcar os logs como vistos?"),
+      text: t("Os erros, falhas de programas e serviços com falha registrados até agora deixam de contar. O que acontecer depois volta a aparecer."),
+      ic: "check",
+      confirmLabel: t("Já vi"),
+      required: false,
+    });
+    if (!ok) return false;
+    try {
+      await call("diagnostics_mark_logs_seen", { job });
+    } catch (e) {
+      // Só o relatório de um vegad anterior, sem o ponto de corte, segue em
+      // frente (lê os logs agora e marca depois). Senha errada ou cancelada
+      // para aqui, com o erro na tela.
+      if (!/etapa logs/.test(e.message)) {
+        toast(e.message, { ic: "alert-circle" });
+        return false;
+      }
+      pendingSeen = true;
+    }
+    start(["logs"], { gpu: false });
+    return true;
+  }
+
+  // Eventos que chegam antes de o Vega saber o id do job: um teste rápido
+  // (logs com "Já vi") pode terminar antes de a chamada responder.
+  const early = [];
+  function adopt(job) {
+    const mine = early.splice(0).filter((event) => event.job === job);
+    for (const event of mine) if (running?.job === job) handle(event);
+  }
+
+  function handle(event) {
+    switch (event.type) {
+      case "progress":
+        running.stage = event.stage;
+        running.percent = event.percent;
+        if (event.message) running.message = event.message;
+        break;
+      case "sample":
+        running.sample = event;
+        break;
+      case "stage":
+        last.stages[event.stage] = { verdict: event.verdict, summary: event.summary, at: Date.now(), job: event.job };
+        saveLast(last);
+        (running.done ??= new Set()).add(event.stage);
+        break;
+      case "finished":
+        last.job = event.job;
+        saveLast(last);
+        afterDaemon(event);
+        return;
+    }
+    paint();
+  }
 
   const unlisten = [
     on("diagnostics-event", (event) => {
-      if (!running || event.job !== running.job) return;
-      switch (event.type) {
-        case "progress":
-          running.stage = event.stage;
-          running.percent = event.percent;
-          if (event.message) running.message = event.message;
-          break;
-        case "sample":
-          running.sample = event;
-          break;
-        case "stage":
-          last.stages[event.stage] = { verdict: event.verdict, summary: event.summary, at: Date.now() };
-          saveLast(last);
-          (running.done ??= new Set()).add(event.stage);
-          break;
-        case "finished":
-          last.job = event.job;
-          saveLast(last);
-          afterDaemon(event);
-          return;
+      if (!running || event.job !== running.job) {
+        early.push(event);
+        if (early.length > 200) early.shift();
+        return;
       }
-      paint();
+      handle(event);
     }),
     on("diagnostics-gpu", (event) => {
       if (!running) return;
@@ -304,7 +527,38 @@ export function diagnosticsCard(ctx) {
     } catch (e) {
       error = e.message;
     }
+    await loadPeriodic();
     paint();
+    loadRemedies();
+    // Aberto pela notificação da verificação periódica: direto no relatório.
+    if (ctx.sub === "health" && periodic?.job) {
+      root.scrollIntoView({ block: "start" });
+      openReport(periodic.job);
+    }
+  }
+
+  /** O resultado da verificação semanal entra na lista quando é mais novo. */
+  async function loadPeriodic() {
+    if (!hasCapability("diagnostics-periodic-v1")) return;
+    try {
+      const run = await call("diagnostics_last_periodic");
+      if (!run.job) return;
+      periodic = run;
+      const at = run.finished * 1000;
+      let changed = false;
+      for (const [id, verdict, summary] of run.stages) {
+        if ((last.stages[id]?.at ?? 0) < at) {
+          last.stages[id] = { verdict, summary, at, job: run.job };
+          changed = true;
+        }
+      }
+      if (changed) {
+        last.job = Math.max(last.job || 0, run.job);
+        saveLast(last);
+      }
+    } catch {
+      // Sem a verificação periódica, a lista fica com os resultados locais.
+    }
   }
 
   const available = (id) => id === "gpu" || tests.find((test) => test.id === id)?.available;
@@ -319,6 +573,7 @@ export function diagnosticsCard(ctx) {
     try {
       running.job = await call("diagnostics_start", { tests: wanted, options: { durationSeconds } });
       paint();
+      adopt(running.job);
     } catch (e) {
       running = null;
       error = e.message;
@@ -331,7 +586,8 @@ export function diagnosticsCard(ctx) {
     if (running?.repair) {
       running = null;
       paint();
-      toast(event.result === "ok" ? t("Problemas resolvidos") : t("Correção concluída; veja o relatório"), { action: t("Ver relatório"), onAction: openReport });
+      toast(event.result === "ok" ? t("Problemas resolvidos") : t("Correção concluída; veja o relatório"), { action: t("Ver relatório"), onAction: () => openReport() });
+      loadRemedies();
       return;
     }
     finish(event.result);
@@ -355,6 +611,14 @@ export function diagnosticsCard(ctx) {
 
   function finish() {
     running = null;
+    if (pendingSeen && last.stages.logs?.job) {
+      pendingSeen = false;
+      call("diagnostics_mark_logs_seen", { job: last.stages.logs.job })
+        .then(() => start(["logs"], { gpu: false }))
+        .catch((e) => toast(e.message, { ic: "alert-circle" }));
+      return;
+    }
+    loadRemedies();
     if (!ctx.visible()) return;
     paint();
     toast(t("Diagnóstico concluído"));
@@ -372,19 +636,19 @@ export function diagnosticsCard(ctx) {
     }
   }
 
-  async function fetchReport(redact) {
-    const raw = await call("diagnostics_report", { job: last.job || 0, redact });
+  async function fetchReport(redact, job = last.job) {
+    const raw = await call("diagnostics_report", { job: job || 0, redact });
     const report = JSON.parse(raw);
     return mergeReport(report, last.gpu?.job === report.jobId ? last.gpu : null);
   }
 
-  async function openReport() {
+  async function openReport(job = last.job) {
     try {
-      const report = await fetchReport(false);
+      const report = await fetchReport(false, job);
       const includeSensitive = h("input", { type: "checkbox" });
       const exportAs = async (format) => {
         try {
-          const data = includeSensitive.checked ? report : await fetchReport(true);
+          const data = includeSensitive.checked ? report : await fetchReport(true, job);
           const stamp = (data.started ?? "").slice(0, 10) || "diagnostico";
           const ok = format === "json"
             ? await call("diagnostics_export", { fileName: `vega-diagnostico-${stamp}.json`, content: JSON.stringify(data, null, 2) })
@@ -400,12 +664,33 @@ export function diagnosticsCard(ctx) {
         repair: hasCapability("diagnostics-v2") && !running ? async (remedies) => {
           if (await repair(report.jobId, remedies)) close?.();
         } : null,
+        repairFinding: actionsOn() && !running ? async (stageId, index, finding) => {
+          if (await repair(report.jobId, [{ id: finding.remedy, args: finding.remedyArgs ?? [] }], [[stageId, index]])) close?.();
+        } : null,
+        updateFirmware: async () => {
+          close?.();
+          const { done } = await runSoftware({ kind: "update-firmware" }, t("Atualizar firmware"));
+          const result = await done;
+          toast(result.message || (result.success ? t("Firmware atualizado.") : t("A atualização de firmware falhou.")), { ic: result.success ? "check-circle" : "alert-circle" });
+        },
+        markSeen: actionsOn() && !running ? async () => {
+          if (await markSeen(report.jobId)) close?.();
+        } : null,
       };
       close = sheet(t("Relatório do diagnóstico"), h("div", {},
         reportView(report, actions),
         h("div", { class: "card pad diag-export" },
           h("label", { class: "row-flex small" }, includeSensitive, t("Incluir número de série, endereço MAC e nome do computador")),
           h("div", { class: "row-flex" },
+            button(t("Pedir ajuda"), { kind: "primary", icon: "users", onClick: async () => {
+              try {
+                const redacted = await fetchReport(true, job);
+                close?.();
+                openHelp(redacted);
+              } catch (e) {
+                toast(e.message, { ic: "alert-circle" });
+              }
+            } }),
             button(t("Exportar JSON"), { icon: "download", onClick: () => exportAs("json") }),
             button(t("Exportar texto (Markdown)"), { icon: "download", onClick: () => exportAs("md") })))));
     } catch (e) {
@@ -414,7 +699,7 @@ export function diagnosticsCard(ctx) {
   }
 
   /** Confirma e pede ao vegad os consertos; devolve true se começou. */
-  async function repair(job, remedies) {
+  async function repair(job, remedies, findings = null) {
     const ok = await confirm({
       title: t("Resolver os problemas encontrados?"),
       text: t("O Vega vai fazer o seguinte. A senha de administrador será pedida."),
@@ -430,9 +715,12 @@ export function diagnosticsCard(ctx) {
     if (!ok) return false;
     error = null;
     try {
-      const id = await call("diagnostics_repair", { job, remedies: remedies.map((remedy) => remedy.id) });
+      const id = findings
+        ? await call("diagnostics_repair_findings", { job, findings })
+        : await call("diagnostics_repair", { job, remedies: remedies.map((remedy) => remedy.id) });
       running = { job: id, tests: [], gpu: false, repair: true, stage: `repair:${remedies[0].id}`, percent: 0, message: t("Iniciando…") };
       paint();
+      adopt(id);
       return true;
     } catch (e) {
       toast(e.message, { ic: "alert-circle" });
@@ -497,8 +785,14 @@ export function diagnosticsCard(ctx) {
     } else if (queued) {
       suffix = badge(t("Na fila"), "");
     } else {
+      const broken = actionsOn() && needsFix(test.id) && test.id !== "gpu";
+      const fixes = broken && remedies.get(test.id);
       suffix = h("span", { class: "row-flex" },
         result && verdictBadge(result.verdict),
+        broken && test.id === "logs" && button(t("Já vi"), { size: "sm", icon: "check", disabled: Boolean(running), onClick: () => markSeen(jobOf("logs")) }),
+        broken && (fixes?.length
+          ? button(t("Corrigir"), { size: "sm", kind: "primary", icon: "zap", disabled: Boolean(running), onClick: () => fixStage(test.id) })
+          : button(t("Ver o que fazer"), { size: "sm", icon: "info", disabled: Boolean(running), onClick: () => openReport(jobOf(test.id)) })),
         h("span", { class: "small faint" }, duration(estimate(test.id))),
         button(t("Executar"), { size: "sm", icon: "play", disabled: !isAvailable || Boolean(running), onClick: () => runOne(test.id) }));
     }
@@ -511,10 +805,13 @@ export function diagnosticsCard(ctx) {
         h("strong", {}, t("Diagnóstico de saúde")),
         h("div", { class: "small muted" }, last.job
           ? t("Última execução: {date}", { date: dateTime(Math.max(...Object.values(last.stages).map((stage) => stage.at ?? 0))) })
-          : t("Testa disco, memória, processador, GPU e sistema sem alterar nada."))),
+          : t("Testa disco, memória, processador, GPU e sistema sem alterar nada.")),
+        periodic?.job > 0 && h("div", { class: "small muted" }, periodic.novelties
+          ? t("Verificação periódica em {date}: {count} novidade(s)", { date: dateTime(periodic.finished * 1000), count: periodic.novelties })
+          : t("Verificação periódica em {date}: nada novo", { date: dateTime(periodic.finished * 1000) }))),
       !running && segmented([{ id: "quick", label: t("Rápido") }, { id: "full", label: t("Completo") }], mode, (id) => { mode = id; }),
       !running && button(t("Executar todos"), { kind: "primary", icon: "play", onClick: runAll }),
-      !running && last.job > 0 && button(t("Ver relatório"), { icon: "logs", onClick: openReport }));
+      !running && last.job > 0 && button(t("Ver relatório"), { icon: "logs", onClick: () => openReport() }));
     const progress = running && h("div", { class: "diag-running" },
       h("div", { class: "row-flex" },
         h("span", { class: "spacer small" }, `${stageName(running.stage)} · ${running.message || ""}`),
@@ -525,7 +822,8 @@ export function diagnosticsCard(ctx) {
       header,
       error && banner("danger", "alert-circle", t("O diagnóstico não foi concluído"), error, retryWithout && button(t("Executar só os testes sem carga"), { size: "sm", onClick: retryWithout })),
       progress,
-      list(TESTS.map(testRow)));
+      // Testes que este vegad não tem (o `network` antes do diagnostics-v4) ficam de fora.
+      list(TESTS.filter((test) => test.id === "gpu" || !tests.length || tests.some((item) => item.id === test.id)).map(testRow)));
   }
 
   load();

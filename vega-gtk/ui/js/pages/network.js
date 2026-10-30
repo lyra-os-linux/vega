@@ -2,6 +2,7 @@ import { call, pick } from "../api.js";
 import { registerIcons } from "../icons.js";
 import { N_, t } from "../i18n.js";
 import { hasCapability } from "../store.js";
+import { troubleshootButton } from "./network-troubleshoot.js";
 import { h, icon, clear, button, badge, toggle, row, list, section, banner, empty, skeletonRows, confirm, toast, fail, busy, segmented } from "../ui.js";
 
 registerIcons({
@@ -567,7 +568,7 @@ export default {
 
     return {
       el: h("div", { class: "net-page" },
-        h("div", { class: "page-hero" }, h("div", {}, h("h2", {}, t("Rede e Firewall")), h("p", {}, t("Interfaces, Wi‑Fi, proxy e proteção da rede")))),
+        h("div", { class: "page-hero" }, h("div", {}, h("h2", {}, t("Rede e Firewall")), h("p", {}, t("Interfaces, Wi‑Fi, proxy e proteção da rede"))), troubleshootButton()),
         heroHost,
         h("div", { class: "net-tabs" }, tabs),
         body),

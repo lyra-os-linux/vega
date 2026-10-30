@@ -68,6 +68,8 @@
 .cleanup-entries { max-height: 50vh; overflow: auto; margin: 12px 0; border: 1px solid var(--line); border-radius: var(--radius-s); }
 .cleanup-entry { display: flex; align-items: center; gap: 10px; padding: 7px 14px; cursor: pointer; }
 .cleanup-entry:hover { background: var(--card-hover); }
+.cleanup-entry.in-use { cursor: default; opacity: .7; }
+.cleanup-in-use { display: block; }
 .cleanup-all { position: sticky; top: 0; background: var(--card); border-bottom: 1px solid var(--line); }
 .cleanup-sheet-actions { gap: 10px; }
 .volume-row .title { display: flex; align-items: baseline; gap: 10px; }
@@ -88,3 +90,24 @@
   .boot-fields { grid-template-columns: minmax(0, 1fr); }
   .dt-select { width: 190px; }
 }
+
+/* Análise do boot (add-boot-analysis) */
+.diag-boot { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.diag-boot h4 { display: flex; align-items: center; gap: 8px; }
+.diag-boot h4 .n { margin-left: auto; font-weight: 600; color: var(--fg-2); }
+.diag-boot-bar { display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: var(--fill); }
+.diag-boot-bar .seg { min-width: 3px; }
+.diag-boot-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; color: var(--fg-2); }
+.diag-boot-legend .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
+.diag-boot .s0 { background: var(--purple); }
+.diag-boot .s1 { background: var(--blue); }
+.diag-boot .s2 { background: var(--orange); }
+.diag-boot .s3 { background: var(--yellow); }
+.diag-boot .s4 { background: var(--green); }
+.diag-boot-slow { display: flex; flex-direction: column; gap: 4px; }
+
+/* Pedir ajuda (add-help-report) */
+.help-panel { display: flex; flex-direction: column; gap: 8px; }
+.help-panel textarea { width: 100%; resize: vertical; }
+.help-preview { font-size: 12px; min-height: 220px; }
+.help-actions { gap: 8px; margin-top: 6px; flex-wrap: wrap; }

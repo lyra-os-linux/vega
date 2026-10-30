@@ -11,6 +11,7 @@ pub struct Settings {
     pub notify_updates: bool,
     pub notify_service_failures: bool,
     pub notify_backups: bool,
+    pub notify_health: bool,
     pub redact_ai_data: bool,
     pub save_ai_history: bool,
 }
@@ -25,6 +26,7 @@ impl Default for Settings {
             notify_updates: true,
             notify_service_failures: true,
             notify_backups: true,
+            notify_health: true,
             redact_ai_data: true,
             save_ai_history: true,
         }

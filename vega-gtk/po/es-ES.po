@@ -4871,3 +4871,300 @@ msgstr "Medir de nuevo"
 
 msgid "Selecionar todos"
 msgstr "Seleccionar todo"
+
+msgid "Reinstalar os pacotes alterados"
+msgstr "Reinstalar los paquetes modificados"
+
+msgid "Reiniciar os serviços que falharam"
+msgstr "Reiniciar los servicios que fallaron"
+
+msgid "Fechar as portas expostas no firewall"
+msgstr "Cerrar los puertos expuestos en el cortafuegos"
+
+msgid "Corrigir"
+msgstr "Corregir"
+
+msgid "Já vi"
+msgstr "Ya lo vi"
+
+msgid "Os registros até agora deixam de contar"
+msgstr "Los registros hasta ahora dejan de contar"
+
+msgid "Marcar os logs como vistos?"
+msgstr "¿Marcar los registros como vistos?"
+
+msgid "Os erros, falhas de programas e serviços com falha registrados até agora deixam de contar. O que acontecer depois volta a aparecer."
+msgstr "Los errores, fallos de programas y servicios con fallos registrados hasta ahora dejan de contar. Lo que ocurra después vuelve a aparecer."
+
+msgid "Ver o que fazer"
+msgstr "Ver qué hacer"
+
+msgid "Em uso; feche o programa e tente de novo: {list}"
+msgstr "En uso; cierre el programa e inténtelo de nuevo: {list}"
+
+msgid "Feche o programa para poder apagar"
+msgstr "Cierre el programa para poder borrar"
+
+msgid "em uso por {programs}"
+msgstr "en uso por {programs}"
+
+msgid "{count} pasta(s) estão em uso e ficam de fora até o programa ser fechado."
+msgstr "{count} carpeta(s) están en uso y quedan fuera hasta que se cierre el programa."
+
+msgid "Rede e internet"
+msgstr "Red e internet"
+
+msgid "Cabo ou Wi-Fi, endereço, roteador, DNS e acesso à internet"
+msgstr "Cable o Wi-Fi, dirección, router, DNS y acceso a internet"
+
+msgid "Reconectar a rede ({device})"
+msgstr "Reconectar la red ({device})"
+
+msgid "Pedir um novo endereço IP ({device})"
+msgstr "Pedir una nueva dirección IP ({device})"
+
+msgid "Usar DNS público só nesta conexão ({device})"
+msgstr "Usar DNS público solo en esta conexión ({device})"
+
+msgid "Reconectando a rede"
+msgstr "Reconectando la red"
+
+msgid "Pedindo um novo endereço"
+msgstr "Pidiendo una nueva dirección"
+
+msgid "Usando DNS público"
+msgstr "Usando DNS público"
+
+msgid "Confira o cabo ou ligue o Wi-Fi e escolha uma rede."
+msgstr "Revise el cable o encienda el Wi-Fi y elija una red."
+
+msgid "Abrir Rede"
+msgstr "Abrir Red"
+
+msgid "Aproxime-se do roteador ou tire obstáculos do caminho."
+msgstr "Acérquese al router o quite obstáculos del camino."
+
+msgid "Desligue o roteador da tomada, espere 30 segundos e ligue de novo."
+msgstr "Desenchufe el router, espere 30 segundos y vuelva a enchufarlo."
+
+msgid "O roteador responde, mas a internet não chega até ele. Verifique o modem ou fale com o provedor."
+msgstr "El router responde, pero internet no llega hasta él. Revise el módem o hable con su proveedor."
+
+msgid "Abra a página de login da rede em Rede → Minha internet não funciona."
+msgstr "Abra la página de inicio de sesión de la red en Red → Mi internet no funciona."
+
+msgid "Cabo ou Wi-Fi"
+msgstr "Cable o Wi-Fi"
+
+msgid "Endereço IP"
+msgstr "Dirección IP"
+
+msgid "Roteador"
+msgstr "Router"
+
+msgid "DNS (nomes dos sites)"
+msgstr "DNS (nombres de los sitios)"
+
+msgid "Internet"
+msgstr "Internet"
+
+msgid "Funcionando"
+msgstr "Funcionando"
+
+msgid "Aqui está o problema"
+msgstr "Aquí está el problema"
+
+msgid "Não testado"
+msgstr "No probado"
+
+msgid "Confira se o cabo está bem encaixado ou se o Wi-Fi está ligado e conectado a uma rede conhecida."
+msgstr "Compruebe que el cable esté bien conectado o que el Wi-Fi esté encendido y conectado a una red conocida."
+
+msgid "O sinal está fraco. Aproxime-se do roteador ou tire obstáculos do caminho."
+msgstr "La señal es débil. Acérquese al router o quite obstáculos del camino."
+
+msgid "O roteador não entregou um endereço. Pedir de novo costuma resolver; se não, reinicie o roteador."
+msgstr "El router no entregó una dirección. Pedirla de nuevo suele resolverlo; si no, reinicie el router."
+
+msgid "O computador está conectado, mas o roteador não responde. Desligue o roteador da tomada, espere 30 segundos e ligue de novo."
+msgstr "El equipo está conectado, pero el router no responde. Desenchufe el router, espere 30 segundos y vuelva a enchufarlo."
+
+msgid "A conexão funciona, mas os nomes dos sites não são traduzidos. Um DNS público resolve até a próxima conexão."
+msgstr "La conexión funciona, pero los nombres de los sitios no se traducen. Un DNS público lo resuelve hasta la próxima conexión."
+
+msgid "Esta rede exige login numa página antes de liberar a internet."
+msgstr "Esta red exige iniciar sesión en una página antes de dar acceso a internet."
+
+msgid "Se a internet só falha com a VPN ligada, o problema está nela."
+msgstr "Si internet solo falla con la VPN activa, el problema está en ella."
+
+msgid "Reconectar"
+msgstr "Reconectar"
+
+msgid "Pedir um novo endereço"
+msgstr "Pedir una nueva dirección"
+
+msgid "Usar DNS público nesta conexão"
+msgstr "Usar DNS público en esta conexión"
+
+msgid "Minha internet não funciona"
+msgstr "Mi internet no funciona"
+
+msgid "Não foi possível verificar a rede"
+msgstr "No se pudo comprobar la red"
+
+msgid "Abrir página de login"
+msgstr "Abrir página de inicio de sesión"
+
+msgid "A conexão está funcionando"
+msgstr "La conexión funciona"
+
+msgid "Cabo ou Wi-Fi, endereço, roteador, DNS e internet responderam. Se um site específico não abre, o problema pode ser nele."
+msgstr "Cable o Wi-Fi, dirección, router, DNS e internet respondieron. Si un sitio concreto no abre, el problema puede estar en él."
+
+msgid "Verificar de novo"
+msgstr "Comprobar de nuevo"
+
+msgid "Atualizando o firmware…"
+msgstr "Actualizando el firmware…"
+
+msgid "Firmware atualizado. Reinicie para concluir."
+msgstr "Firmware actualizado. Reinicie para terminar."
+
+msgid "Firmware atualizado."
+msgstr "Firmware actualizado."
+
+msgid "Nenhuma atualização de firmware pendente."
+msgstr "No hay actualizaciones de firmware pendientes."
+
+msgid "A atualização de firmware falhou."
+msgstr "La actualización de firmware falló."
+
+msgid "Há atualizações de firmware. O Vega instala pelo fwupd e avisa se for preciso reiniciar."
+msgstr "Hay actualizaciones de firmware. Vega las instala con fwupd y avisa si hace falta reiniciar."
+
+msgid "Faça um backup agora, com o disco de backup conectado."
+msgstr "Haga una copia ahora, con el disco de copias conectado."
+
+msgid "Configure um backup para não perder seus arquivos se o disco falhar."
+msgstr "Configure una copia de seguridad para no perder sus archivos si el disco falla."
+
+msgid "Atualizar firmware"
+msgstr "Actualizar firmware"
+
+msgid "Tempo de boot"
+msgstr "Tiempo de arranque"
+
+msgid "Quanto o computador leva para ligar e o que atrasa"
+msgstr "Cuánto tarda el equipo en encender y qué lo retrasa"
+
+msgid "Não esperar pela rede para terminar o boot"
+msgstr "No esperar a la red para terminar el arranque"
+
+msgid "Desabilitar no boot: {units}"
+msgstr "Deshabilitar en el arranque: {units}"
+
+msgid "Desabilitar os serviços lentos que você habilitou"
+msgstr "Deshabilitar los servicios lentos que usted habilitó"
+
+msgid "Desligando a espera pela rede no boot"
+msgstr "Desactivando la espera de la red en el arranque"
+
+msgid "Desabilitando serviços"
+msgstr "Deshabilitando servicios"
+
+msgid "Veja abaixo quais serviços atrasam o boot. Desabilitar o que você não usa acelera a inicialização."
+msgstr "Vea abajo qué servicios retrasan el arranque. Deshabilitar lo que no usa acelera el inicio."
+
+msgid "Algum programa precisa da rede logo no boot, por isso a espera fica. Se não usa esse programa, desabilite-o em Serviços."
+msgstr "Algún programa necesita la red al inicio del arranque, por eso la espera se mantiene. Si no usa ese programa, deshabilítelo en Servicios."
+
+msgid "O /etc/fstab ainda monta um disco que foi removido. Tire a linha dele do fstab ou marque-a com nofail."
+msgstr "/etc/fstab todavía monta un disco que se quitó. Quite su línea del fstab o márquela con nofail."
+
+msgid "Este serviço faz parte do sistema. Se o atraso continuar, veja o log dele."
+msgstr "Este servicio es parte del sistema. Si el retraso continúa, revise su registro."
+
+msgid "Carregador"
+msgstr "Cargador"
+
+msgid "initrd"
+msgstr "initrd"
+
+msgid "{seconds} s"
+msgstr "{seconds} s"
+
+msgid "Último boot"
+msgstr "Último arranque"
+
+msgid "O que mais demorou antes do login"
+msgstr "Lo que más tardó antes del inicio de sesión"
+
+msgid "(Texto encurtado; o completo está na área de transferência.)"
+msgstr "(Texto acortado; el completo está en el portapapeles.)"
+
+msgid "Ex.: desde ontem o Wi-Fi cai a cada poucos minutos"
+msgstr "Ej.: desde ayer el Wi-Fi se cae cada pocos minutos"
+
+msgid "{count} caracteres"
+msgstr "{count} caracteres"
+
+msgid "Ajuda com o diagnóstico do Lyra OS"
+msgstr "Ayuda con el diagnóstico de Lyra OS"
+
+msgid "Pedir ajuda"
+msgstr "Pedir ayuda"
+
+msgid "O que está acontecendo?"
+msgstr "¿Qué está pasando?"
+
+msgid "O que será compartilhado (pode editar)"
+msgstr "Lo que se compartirá (puede editarlo)"
+
+msgid "Número de série, endereços MAC, nome da rede, nome do computador e das contas já foram trocados por [redacted]. Nada sai daqui sem você clicar."
+msgstr "El número de serie, las direcciones MAC, el nombre de la red, del equipo y de las cuentas ya se cambiaron por [redacted]. Nada sale de aquí sin que usted haga clic."
+
+msgid "Abrir uma issue no GitHub"
+msgstr "Abrir una issue en GitHub"
+
+msgid "Abrir no fórum"
+msgstr "Abrir en el foro"
+
+msgid "O que está acontecendo"
+msgstr "Qué está pasando"
+
+msgid "(sem descrição)"
+msgstr "(sin descripción)"
+
+msgid "Computador"
+msgstr "Equipo"
+
+msgid "Testes"
+msgstr "Pruebas"
+
+msgid "Achados"
+msgstr "Hallazgos"
+
+msgid "O Vega encontrou {count} novidade(s) na saúde do sistema"
+msgstr "Vega encontró {count} novedad(es) en la salud del sistema"
+
+msgid "Saúde do sistema"
+msgstr "Salud del sistema"
+
+msgid "Verificação periódica"
+msgstr "Comprobación periódica"
+
+msgid "Diária"
+msgstr "Diaria"
+
+msgid "Confere disco, logs, plataforma e segurança em segundo plano e avisa só quando algo muda."
+msgstr "Revisa disco, registros, plataforma y seguridad en segundo plano y solo avisa cuando algo cambia."
+
+msgid "Novidades na saúde do sistema"
+msgstr "Novedades en la salud del sistema"
+
+msgid "Verificação periódica em {date}: {count} novidade(s)"
+msgstr "Comprobación periódica el {date}: {count} novedad(es)"
+
+msgid "Verificação periódica em {date}: nada novo"
+msgstr "Comprobación periódica el {date}: nada nuevo"

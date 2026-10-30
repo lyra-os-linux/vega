@@ -140,36 +140,46 @@ export function cleanupSection(ctx, refreshVolumes) {
 
   function chooseCache(category) {
     const chosen = new Set();
+    // Pastas abertas por um programa não podem ser apagadas agora.
+    const free = category.entries.filter((e) => !e.in_use_by?.length);
     const total = h("span", { class: "small muted" });
     const go = button(t("Limpar selecionados"), { kind: "danger", icon: "trash", disabled: true });
+    const all = h("input", { type: "checkbox", class: "check", disabled: !free.length });
     const paintTotal = () => {
       const size = category.entries.filter((e) => chosen.has(e.name)).reduce((sum, e) => sum + e.bytes, 0);
       total.textContent = t("{count} pasta(s) • {size}", { count: chosen.size, size: bytes(size) });
       go.disabled = !chosen.size || busy;
       // "Selecionar todos" acompanha as escolhas uma a uma.
-      all.checked = chosen.size > 0 && chosen.size === category.entries.length;
-      all.indeterminate = chosen.size > 0 && chosen.size < category.entries.length;
+      all.checked = chosen.size > 0 && chosen.size === free.length;
+      all.indeterminate = chosen.size > 0 && chosen.size < free.length;
     };
-    const all = h("input", { type: "checkbox", class: "check" });
-    const checks = category.entries.map((entry) => {
-      const check = h("input", { type: "checkbox", class: "check" });
+    const checks = new Map();
+    const rows = category.entries.map((entry) => {
+      const inUse = entry.in_use_by?.length > 0;
+      const check = h("input", { type: "checkbox", class: "check", disabled: inUse });
       check.addEventListener("change", () => { check.checked ? chosen.add(entry.name) : chosen.delete(entry.name); paintTotal(); });
-      return check;
+      checks.set(entry.name, check);
+      return h("label", { class: `cleanup-entry ${inUse ? "in-use" : ""}`.trim(), title: inUse ? t("Feche o programa para poder apagar") : "" },
+        check,
+        h("span", { class: "spacer" }, h("span", { class: "mono selectable" }, entry.name),
+          inUse && h("span", { class: "small muted cleanup-in-use" }, t("em uso por {programs}", { programs: entry.in_use_by.join(", ") }))),
+        h("span", { class: "small muted" }, bytes(entry.bytes)));
     });
     all.addEventListener("change", () => {
-      category.entries.forEach((entry, i) => {
-        checks[i].checked = all.checked;
+      for (const entry of free) {
+        checks.get(entry.name).checked = all.checked;
         all.checked ? chosen.add(entry.name) : chosen.delete(entry.name);
-      });
+      }
       paintTotal();
     });
-    const rows = category.entries.map((entry, i) =>
-      h("label", { class: "cleanup-entry" }, checks[i], h("span", { class: "mono selectable spacer" }, entry.name), h("span", { class: "small muted" }, bytes(entry.bytes))));
     const header = rows.length > 0 && h("label", { class: "cleanup-entry cleanup-all" }, all, h("strong", { class: "spacer" }, t("Selecionar todos")),
-      h("span", { class: "small muted" }, bytes(category.entries.reduce((sum, e) => sum + e.bytes, 0))));
+      h("span", { class: "small muted" }, bytes(free.reduce((sum, e) => sum + e.bytes, 0))));
     paintTotal();
+    const busyCount = category.entries.length - free.length;
     const close = sheet(t("Cache dos aplicativos"), h("div", {},
-      banner("warning", "alert", t("Feche os aplicativos antes"), t("Um aplicativo aberto pode recriar o cache ou perder dados temporários.")),
+      banner("warning", "alert", t("Feche os aplicativos antes"),
+        busyCount ? t("{count} pasta(s) estão em uso e ficam de fora até o programa ser fechado.", { count: busyCount })
+          : t("Um aplicativo aberto pode recriar o cache ou perder dados temporários.")),
       h("div", { class: "cleanup-entries" }, header, rows.length ? rows : h("p", { class: "muted" }, t("Nenhuma pasta em ~/.cache"))),
       h("div", { class: "row-flex cleanup-sheet-actions" }, total, h("span", { class: "spacer" }), go)));
     go.onclick = () => {

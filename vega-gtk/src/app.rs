@@ -12,13 +12,16 @@ pub struct Startup {
     pub started: Instant,
 }
 
-/// Página pedida na linha de comando: `--virtual-machines` (atalho das VMs)
-/// ou `--open-updates` (notificador de atualizações).
+/// Página pedida na linha de comando: `--virtual-machines` (atalho das VMs),
+/// `--open-updates` ou `--open-health` (notificador).
 pub fn requested_page(argv: &[String]) -> Option<&'static str> {
     if argv.iter().any(|arg| arg == "--virtual-machines") {
         Some("virtualization")
     } else if argv.iter().any(|arg| arg == "--open-updates") {
         Some("software/updates")
+    } else if argv.iter().any(|arg| arg == "--open-health") {
+        // Notificação da verificação periódica: o relatório no Diagnóstico.
+        Some("hardware/health")
     } else {
         None
     }
@@ -88,6 +91,31 @@ pub fn prefs_set(settings: preferences::Settings) -> Result<(), String> {
 }
 
 /// Abre um endereço no aplicativo padrão (site, issues).
+/// Abre a página de login de uma rede com portal cativo: só `http://host/`,
+/// o endereço de checagem do NetworkManager que o teste `network` informa.
+/// O portal só intercepta HTTP sem TLS, por isso o `open_uri` não serve.
+#[tauri::command]
+pub fn open_portal(uri: String) -> Result<(), String> {
+    if !valid_portal_uri(&uri) {
+        return Err("endereço não permitido".into());
+    }
+    let context = gio::AppLaunchContext::new();
+    crate::webkit_env::clean_launch_context(&context);
+    gio::AppInfo::launch_default_for_uri(&uri, Some(&context)).map_err(|e| e.to_string())
+}
+
+fn valid_portal_uri(uri: &str) -> bool {
+    let Some(rest) = uri.strip_prefix("http://") else {
+        return false;
+    };
+    let host = rest.strip_suffix('/').unwrap_or(rest);
+    !host.is_empty()
+        && host.len() <= 253
+        && host
+            .bytes()
+            .all(|b| b.is_ascii_alphanumeric() || b == b'.' || b == b'-')
+}
+
 #[tauri::command]
 pub fn open_uri(uri: String) -> Result<(), String> {
     if !(uri.starts_with("https://") || uri.starts_with("file://")) {
@@ -102,4 +130,25 @@ pub fn open_uri(uri: String) -> Result<(), String> {
 #[tauri::command]
 pub fn app_log(message: String) {
     eprintln!("vega-ui: {message}");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn portal_uris_are_plain_hosts_only() {
+        assert!(valid_portal_uri("http://conncheck.opensuse.org"));
+        assert!(valid_portal_uri("http://conncheck.opensuse.org/"));
+        for bad in [
+            "https://x.org",
+            "http://x.org/path",
+            "http://user@x.org",
+            "file:///etc",
+            "http://",
+            "javascript:alert(1)",
+        ] {
+            assert!(!valid_portal_uri(bad), "{bad}");
+        }
+    }
 }

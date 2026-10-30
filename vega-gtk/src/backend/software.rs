@@ -203,6 +203,8 @@ pub enum Action {
         key_id: String,
     },
     InstallNvidia,
+    /// Firmware pelo fwupd, na sessão do usuário (nunca chega ao vegad).
+    UpdateFirmware,
     ApprovePreparationKey {
         repo: String,
         fingerprint: String,
@@ -257,6 +259,9 @@ pub async fn software_run(app: AppHandle, state: State<'_>, action: Action) -> C
     {
         return super::flatpak_update::start(app, id.clone());
     }
+    if let Action::UpdateFirmware = &action {
+        return super::fwupd_update::start(app);
+    }
     let dbus = state.dbus().await?;
     let software = dbus.software();
     let events = software.subscribe().await.map_err(err)?;
@@ -270,6 +275,7 @@ pub async fn software_run(app: AppHandle, state: State<'_>, action: Action) -> C
         Action::AddRepo { name, url } => software.add_repo(name, url).await,
         Action::TrustRepoKey { repo, key_id } => software.trust_repo_key(repo, key_id).await,
         Action::InstallNvidia => software.install_nvidia(true).await,
+        Action::UpdateFirmware => unreachable!("o firmware é atualizado na sessão"),
         Action::ApprovePreparationKey {
             repo,
             fingerprint,

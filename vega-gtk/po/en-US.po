@@ -4871,3 +4871,300 @@ msgstr "Measure again"
 
 msgid "Selecionar todos"
 msgstr "Select all"
+
+msgid "Reinstalar os pacotes alterados"
+msgstr "Reinstall the changed packages"
+
+msgid "Reiniciar os serviços que falharam"
+msgstr "Restart the failed services"
+
+msgid "Fechar as portas expostas no firewall"
+msgstr "Close the exposed ports in the firewall"
+
+msgid "Corrigir"
+msgstr "Fix"
+
+msgid "Já vi"
+msgstr "Seen"
+
+msgid "Os registros até agora deixam de contar"
+msgstr "Records up to now stop counting"
+
+msgid "Marcar os logs como vistos?"
+msgstr "Mark the logs as seen?"
+
+msgid "Os erros, falhas de programas e serviços com falha registrados até agora deixam de contar. O que acontecer depois volta a aparecer."
+msgstr "Errors, program crashes and failed services recorded so far stop counting. Anything that happens afterwards shows up again."
+
+msgid "Ver o que fazer"
+msgstr "See what to do"
+
+msgid "Em uso; feche o programa e tente de novo: {list}"
+msgstr "In use; close the program and try again: {list}"
+
+msgid "Feche o programa para poder apagar"
+msgstr "Close the program to be able to delete"
+
+msgid "em uso por {programs}"
+msgstr "in use by {programs}"
+
+msgid "{count} pasta(s) estão em uso e ficam de fora até o programa ser fechado."
+msgstr "{count} folder(s) are in use and stay out until the program is closed."
+
+msgid "Rede e internet"
+msgstr "Network and internet"
+
+msgid "Cabo ou Wi-Fi, endereço, roteador, DNS e acesso à internet"
+msgstr "Cable or Wi-Fi, address, router, DNS and internet access"
+
+msgid "Reconectar a rede ({device})"
+msgstr "Reconnect the network ({device})"
+
+msgid "Pedir um novo endereço IP ({device})"
+msgstr "Request a new IP address ({device})"
+
+msgid "Usar DNS público só nesta conexão ({device})"
+msgstr "Use public DNS for this connection only ({device})"
+
+msgid "Reconectando a rede"
+msgstr "Reconnecting the network"
+
+msgid "Pedindo um novo endereço"
+msgstr "Requesting a new address"
+
+msgid "Usando DNS público"
+msgstr "Using public DNS"
+
+msgid "Confira o cabo ou ligue o Wi-Fi e escolha uma rede."
+msgstr "Check the cable or turn Wi-Fi on and pick a network."
+
+msgid "Abrir Rede"
+msgstr "Open Network"
+
+msgid "Aproxime-se do roteador ou tire obstáculos do caminho."
+msgstr "Move closer to the router or remove obstacles in between."
+
+msgid "Desligue o roteador da tomada, espere 30 segundos e ligue de novo."
+msgstr "Unplug the router, wait 30 seconds and plug it back in."
+
+msgid "O roteador responde, mas a internet não chega até ele. Verifique o modem ou fale com o provedor."
+msgstr "The router answers, but the internet does not reach it. Check the modem or contact your provider."
+
+msgid "Abra a página de login da rede em Rede → Minha internet não funciona."
+msgstr "Open the network's login page in Network → My internet does not work."
+
+msgid "Cabo ou Wi-Fi"
+msgstr "Cable or Wi-Fi"
+
+msgid "Endereço IP"
+msgstr "IP address"
+
+msgid "Roteador"
+msgstr "Router"
+
+msgid "DNS (nomes dos sites)"
+msgstr "DNS (website names)"
+
+msgid "Internet"
+msgstr "Internet"
+
+msgid "Funcionando"
+msgstr "Working"
+
+msgid "Aqui está o problema"
+msgstr "Here is the problem"
+
+msgid "Não testado"
+msgstr "Not tested"
+
+msgid "Confira se o cabo está bem encaixado ou se o Wi-Fi está ligado e conectado a uma rede conhecida."
+msgstr "Check that the cable is firmly plugged in, or that Wi-Fi is on and connected to a known network."
+
+msgid "O sinal está fraco. Aproxime-se do roteador ou tire obstáculos do caminho."
+msgstr "The signal is weak. Move closer to the router or remove obstacles in between."
+
+msgid "O roteador não entregou um endereço. Pedir de novo costuma resolver; se não, reinicie o roteador."
+msgstr "The router did not hand out an address. Asking again usually fixes it; if not, restart the router."
+
+msgid "O computador está conectado, mas o roteador não responde. Desligue o roteador da tomada, espere 30 segundos e ligue de novo."
+msgstr "The computer is connected, but the router does not answer. Unplug the router, wait 30 seconds and plug it back in."
+
+msgid "A conexão funciona, mas os nomes dos sites não são traduzidos. Um DNS público resolve até a próxima conexão."
+msgstr "The connection works, but website names are not resolved. A public DNS fixes it until the next connection."
+
+msgid "Esta rede exige login numa página antes de liberar a internet."
+msgstr "This network requires logging in on a page before allowing internet access."
+
+msgid "Se a internet só falha com a VPN ligada, o problema está nela."
+msgstr "If the internet only fails with the VPN on, the problem is the VPN."
+
+msgid "Reconectar"
+msgstr "Reconnect"
+
+msgid "Pedir um novo endereço"
+msgstr "Request a new address"
+
+msgid "Usar DNS público nesta conexão"
+msgstr "Use public DNS on this connection"
+
+msgid "Minha internet não funciona"
+msgstr "My internet does not work"
+
+msgid "Não foi possível verificar a rede"
+msgstr "Could not check the network"
+
+msgid "Abrir página de login"
+msgstr "Open login page"
+
+msgid "A conexão está funcionando"
+msgstr "The connection is working"
+
+msgid "Cabo ou Wi-Fi, endereço, roteador, DNS e internet responderam. Se um site específico não abre, o problema pode ser nele."
+msgstr "Cable or Wi-Fi, address, router, DNS and internet all answered. If one specific website does not open, the problem may be on its side."
+
+msgid "Verificar de novo"
+msgstr "Check again"
+
+msgid "Atualizando o firmware…"
+msgstr "Updating the firmware…"
+
+msgid "Firmware atualizado. Reinicie para concluir."
+msgstr "Firmware updated. Restart to finish."
+
+msgid "Firmware atualizado."
+msgstr "Firmware updated."
+
+msgid "Nenhuma atualização de firmware pendente."
+msgstr "No pending firmware update."
+
+msgid "A atualização de firmware falhou."
+msgstr "The firmware update failed."
+
+msgid "Há atualizações de firmware. O Vega instala pelo fwupd e avisa se for preciso reiniciar."
+msgstr "Firmware updates are available. Vega installs them through fwupd and tells you if a restart is needed."
+
+msgid "Faça um backup agora, com o disco de backup conectado."
+msgstr "Back up now, with the backup disk connected."
+
+msgid "Configure um backup para não perder seus arquivos se o disco falhar."
+msgstr "Set up a backup so you do not lose your files if the disk fails."
+
+msgid "Atualizar firmware"
+msgstr "Update firmware"
+
+msgid "Tempo de boot"
+msgstr "Boot time"
+
+msgid "Quanto o computador leva para ligar e o que atrasa"
+msgstr "How long the computer takes to start and what slows it down"
+
+msgid "Não esperar pela rede para terminar o boot"
+msgstr "Do not wait for the network to finish booting"
+
+msgid "Desabilitar no boot: {units}"
+msgstr "Disable at boot: {units}"
+
+msgid "Desabilitar os serviços lentos que você habilitou"
+msgstr "Disable the slow services you enabled"
+
+msgid "Desligando a espera pela rede no boot"
+msgstr "Turning off the wait for the network at boot"
+
+msgid "Desabilitando serviços"
+msgstr "Disabling services"
+
+msgid "Veja abaixo quais serviços atrasam o boot. Desabilitar o que você não usa acelera a inicialização."
+msgstr "See below which services slow the boot. Disabling what you do not use speeds up startup."
+
+msgid "Algum programa precisa da rede logo no boot, por isso a espera fica. Se não usa esse programa, desabilite-o em Serviços."
+msgstr "A program needs the network early in the boot, so the wait stays. If you do not use that program, disable it in Services."
+
+msgid "O /etc/fstab ainda monta um disco que foi removido. Tire a linha dele do fstab ou marque-a com nofail."
+msgstr "/etc/fstab still mounts a disk that was removed. Remove its line from fstab or mark it nofail."
+
+msgid "Este serviço faz parte do sistema. Se o atraso continuar, veja o log dele."
+msgstr "This service is part of the system. If the delay continues, check its log."
+
+msgid "Carregador"
+msgstr "Boot loader"
+
+msgid "initrd"
+msgstr "initrd"
+
+msgid "{seconds} s"
+msgstr "{seconds} s"
+
+msgid "Último boot"
+msgstr "Last boot"
+
+msgid "O que mais demorou antes do login"
+msgstr "What took longest before the login"
+
+msgid "(Texto encurtado; o completo está na área de transferência.)"
+msgstr "(Text shortened; the full text is on the clipboard.)"
+
+msgid "Ex.: desde ontem o Wi-Fi cai a cada poucos minutos"
+msgstr "E.g.: since yesterday the Wi-Fi drops every few minutes"
+
+msgid "{count} caracteres"
+msgstr "{count} characters"
+
+msgid "Ajuda com o diagnóstico do Lyra OS"
+msgstr "Help with the Lyra OS diagnostics"
+
+msgid "Pedir ajuda"
+msgstr "Ask for help"
+
+msgid "O que está acontecendo?"
+msgstr "What is happening?"
+
+msgid "O que será compartilhado (pode editar)"
+msgstr "What will be shared (you can edit it)"
+
+msgid "Número de série, endereços MAC, nome da rede, nome do computador e das contas já foram trocados por [redacted]. Nada sai daqui sem você clicar."
+msgstr "Serial numbers, MAC addresses, network name, computer name and account names were already replaced with [redacted]. Nothing leaves this computer until you click."
+
+msgid "Abrir uma issue no GitHub"
+msgstr "Open a GitHub issue"
+
+msgid "Abrir no fórum"
+msgstr "Open in the forum"
+
+msgid "O que está acontecendo"
+msgstr "What is happening"
+
+msgid "(sem descrição)"
+msgstr "(no description)"
+
+msgid "Computador"
+msgstr "Computer"
+
+msgid "Testes"
+msgstr "Tests"
+
+msgid "Achados"
+msgstr "Findings"
+
+msgid "O Vega encontrou {count} novidade(s) na saúde do sistema"
+msgstr "Vega found {count} new item(s) in the system health"
+
+msgid "Saúde do sistema"
+msgstr "System health"
+
+msgid "Verificação periódica"
+msgstr "Periodic check"
+
+msgid "Diária"
+msgstr "Daily"
+
+msgid "Confere disco, logs, plataforma e segurança em segundo plano e avisa só quando algo muda."
+msgstr "Checks disk, logs, platform and security in the background and only tells you when something changes."
+
+msgid "Novidades na saúde do sistema"
+msgstr "News in the system health"
+
+msgid "Verificação periódica em {date}: {count} novidade(s)"
+msgstr "Periodic check on {date}: {count} new item(s)"
+
+msgid "Verificação periódica em {date}: nada novo"
+msgstr "Periodic check on {date}: nothing new"
