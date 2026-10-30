@@ -12,6 +12,7 @@ pub mod cleanup;
 pub mod datetime;
 pub mod diagnostics;
 pub mod flatpak_update;
+pub mod fwupd_update;
 pub mod gpu_bench;
 pub mod hardware;
 pub mod kernel;

@@ -5024,3 +5024,30 @@ msgstr "Cable or Wi-Fi, address, router, DNS and internet all answered. If one s
 
 msgid "Verificar de novo"
 msgstr "Check again"
+
+msgid "Atualizando o firmware…"
+msgstr "Updating the firmware…"
+
+msgid "Firmware atualizado. Reinicie para concluir."
+msgstr "Firmware updated. Restart to finish."
+
+msgid "Firmware atualizado."
+msgstr "Firmware updated."
+
+msgid "Nenhuma atualização de firmware pendente."
+msgstr "No pending firmware update."
+
+msgid "A atualização de firmware falhou."
+msgstr "The firmware update failed."
+
+msgid "Há atualizações de firmware. O Vega instala pelo fwupd e avisa se for preciso reiniciar."
+msgstr "Firmware updates are available. Vega installs them through fwupd and tells you if a restart is needed."
+
+msgid "Faça um backup agora, com o disco de backup conectado."
+msgstr "Back up now, with the backup disk connected."
+
+msgid "Configure um backup para não perder seus arquivos se o disco falhar."
+msgstr "Set up a backup so you do not lose your files if the disk fails."
+
+msgid "Atualizar firmware"
+msgstr "Update firmware"

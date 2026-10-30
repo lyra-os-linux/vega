@@ -7,6 +7,7 @@
 // pede para vê-lo ou exportá-lo.
 
 import { call, on } from "../api.js";
+import { runSoftware } from "../tasks.js";
 import { N_, t, locale } from "../i18n.js";
 import { hasCapability } from "../store.js";
 import { h, icon, clear, button, badge, segmented, row, list, banner, meter, toast, dateTime, duration, confirm, sheet } from "../ui.js";
@@ -111,7 +112,9 @@ const GUIDE = {
   "smart.worn": { text: N_("O disco está chegando ao fim da vida útil. Mantenha backups em dia e planeje a troca."), go: ["backup"], label: N_("Abrir Backup") },
   "smart.hot": COOLING, "platform.hot-idle": COOLING, "cpu.slow-under-load": COOLING, "thermal.abort": COOLING,
   "platform.battery-worn": { text: N_("A bateria guarda bem menos carga do que quando era nova. Considere trocá-la.") },
-  "platform.firmware-updates": { text: N_("Há atualizações de firmware. Instale-as pela central de software do GNOME e reinicie quando pedir.") },
+  "platform.firmware-updates": { text: N_("Há atualizações de firmware. O Vega instala pelo fwupd e avisa se for preciso reiniciar.") },
+  "backup.stale": { text: N_("Faça um backup agora, com o disco de backup conectado."), go: ["backup"], label: N_("Abrir Backup") },
+  "backup.none": { text: N_("Configure um backup para não perder seus arquivos se o disco falhar."), go: ["backup"], label: N_("Abrir Backup") },
   "storage.low-space": { text: N_("Pouco espaço livre faz atualizações e snapshots falharem. Veja o que dá para apagar com segurança."), go: ["storage", "cleanup"], label: N_("Abrir Liberar espaço") },
   "platform.ntp": { text: N_("A sincronização está ligada, mas sem resposta. Confira a conexão com a internet."), go: ["datetime"], label: N_("Abrir Data e hora") },
   "platform.secure-boot-off": { text: N_("Se quiser essa proteção, ative o Secure Boot nas configurações de firmware (UEFI) do computador.") },
@@ -140,7 +143,7 @@ const GUIDE = {
 };
 
 // Informações que também merecem uma orientação.
-const INFO_GUIDE = new Set(["platform.firmware-updates", "security.disk-unencrypted", "security.selinux", "repair.restart-needed"]);
+const INFO_GUIDE = new Set(["platform.firmware-updates", "backup.none", "security.disk-unencrypted", "security.selinux", "repair.restart-needed"]);
 
 /** Consertos propostos pelo relatório: id → argumentos somados. */
 function reportRemedies(report) {
@@ -217,7 +220,10 @@ function findingRow({ stage, finding }, actions = {}) {
   const seen = stage.id === "logs" && finding.severity !== "info" && actions.markSeen
     ? button(t("Já vi"), { size: "sm", icon: "check", title: t("Os registros até agora deixam de contar"), onClick: () => actions.markSeen(stage) })
     : null;
-  const shortcut = !fix && guide?.go && actions.go && button(t(guide.label), { size: "sm", icon: "chevron-right", onClick: () => actions.go(...guide.go) });
+  const firmware = finding.code === "platform.firmware-updates" && actions.updateFirmware
+    ? button(t("Atualizar"), { kind: "primary", size: "sm", icon: "download", onClick: () => actions.updateFirmware() })
+    : null;
+  const shortcut = firmware || (!fix && guide?.go && actions.go && button(t(guide.label), { size: "sm", icon: "chevron-right", onClick: () => actions.go(...guide.go) }));
   return h("div", { class: "diag-finding" },
     row({
       icon: finding.severity === "info" ? "info" : "alert",
@@ -517,6 +523,12 @@ export function diagnosticsCard(ctx) {
         repairFinding: actionsOn() && !running ? async (stageId, index, finding) => {
           if (await repair(report.jobId, [{ id: finding.remedy, args: finding.remedyArgs ?? [] }], [[stageId, index]])) close?.();
         } : null,
+        updateFirmware: async () => {
+          close?.();
+          const { done } = await runSoftware({ kind: "update-firmware" }, t("Atualizar firmware"));
+          const result = await done;
+          toast(result.message || (result.success ? t("Firmware atualizado.") : t("A atualização de firmware falhou.")), { ic: result.success ? "check-circle" : "alert-circle" });
+        },
         markSeen: actionsOn() && !running ? async () => {
           if (await markSeen(report.jobId)) close?.();
         } : null,

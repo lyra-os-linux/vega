@@ -1,6 +1,7 @@
 src/assistant/commands.rs
 src/assistant.rs
 src/backend/cleanup.rs
+src/backend/fwupd_update.rs
 src/backend/users.rs
 src/bin/vega-update-notifier.rs
 src/dock.rs
