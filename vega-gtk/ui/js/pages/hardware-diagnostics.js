@@ -60,6 +60,14 @@ function reasonText(reason) {
 const REMEDY_ORDER = ["reinstall-packages", "verify-dependencies", "restart-units", "enable-ntp", "enable-firewall", "close-port", "apply-security-patches"];
 
 function remedyText(remedy, args = []) {
+  if (!args.length) {
+    // A lista de testes só conhece os ids (Remedies), sem os argumentos.
+    switch (remedy) {
+      case "reinstall-packages": return t("Reinstalar os pacotes alterados");
+      case "restart-units": return t("Reiniciar os serviços que falharam");
+      case "close-port": return t("Fechar as portas expostas no firewall");
+    }
+  }
   switch (remedy) {
     case "reinstall-packages": return t("Reinstalar os pacotes: {packages}", { packages: args.join(", ") });
     case "verify-dependencies": return t("Instalar as dependências que faltam");
@@ -187,8 +195,15 @@ function findingRow({ stage, finding }, actions = {}) {
     },
   });
   const guide = finding.severity !== "info" || INFO_GUIDE.has(finding.code) ? GUIDE[finding.code] : null;
-  const fix = finding.remedy && actions.repair
-    ? button(t("Resolver"), { kind: "primary", size: "sm", icon: "zap", onClick: () => actions.repair([{ id: finding.remedy, args: finding.remedyArgs ?? [] }]) })
+  const index = (stage.findings ?? []).indexOf(finding);
+  // Com diagnostics-actions-v1, o conserto vale só para este achado.
+  const fix = finding.remedy && actions.repairFinding && index >= 0
+    ? button(t("Corrigir"), { kind: "primary", size: "sm", icon: "zap", onClick: () => actions.repairFinding(stage.id, index, finding) })
+    : finding.remedy && actions.repair
+      ? button(t("Resolver"), { kind: "primary", size: "sm", icon: "zap", onClick: () => actions.repair([{ id: finding.remedy, args: finding.remedyArgs ?? [] }]) })
+      : null;
+  const seen = stage.id === "logs" && finding.severity !== "info" && actions.markSeen
+    ? button(t("Já vi"), { size: "sm", icon: "check", title: t("Os registros até agora deixam de contar"), onClick: () => actions.markSeen(stage) })
     : null;
   const shortcut = !fix && guide?.go && actions.go && button(t(guide.label), { size: "sm", icon: "chevron-right", onClick: () => actions.go(...guide.go) });
   return h("div", { class: "diag-finding" },
@@ -198,7 +213,7 @@ function findingRow({ stage, finding }, actions = {}) {
       title: finding.text,
       subtitle: stageName(stage.id),
       wrap: true,
-      suffix: fix || shortcut || null,
+      suffix: (fix || shortcut || seen) ? h("span", { class: "row-flex" }, seen, fix || shortcut) : null,
     }),
     finding.remedy && h("p", { class: "diag-guide small" }, icon("zap", 14), remedyText(finding.remedy, finding.remedyArgs)),
     !finding.remedy && guide && h("p", { class: "diag-guide small" }, icon("info", 14), t(guide.text)),
@@ -252,6 +267,60 @@ export function diagnosticsCard(ctx) {
   let mode = "quick";
   let running = null; // { job, tests, gpu, stage, percent, message, sample, error }
   let error = null;
+  // Achados com conserto por teste (diagnostics-actions-v1): id → [{ job, finding_index, remedy }].
+  let remedies = new Map();
+  // "Já vi" num relatório antigo: roda os logs, marca e roda de novo.
+  let pendingSeen = false;
+  const actionsOn = () => hasCapability("diagnostics-actions-v1");
+  const jobOf = (id) => last.stages[id]?.job || last.job;
+  const needsFix = (id) => ["attention", "fail"].includes(last.stages[id]?.verdict);
+
+  async function loadRemedies() {
+    if (!actionsOn()) return;
+    const jobs = new Set(Object.keys(last.stages).filter(needsFix).map(jobOf).filter(Boolean));
+    const found = new Map();
+    for (const job of jobs) {
+      try {
+        for (const item of await call("diagnostics_remedies", { job })) {
+          if (jobOf(item.stage) !== job) continue;
+          if (!found.has(item.stage)) found.set(item.stage, []);
+          found.get(item.stage).push({ job, finding_index: item.finding_index, remedy: item.remedy });
+        }
+      } catch {
+        // Relatório apagado ou vegad antigo: o item fica com "Ver o que fazer".
+      }
+    }
+    remedies = found;
+    if (!running) paint();
+  }
+
+  /** Corrigir de um teste inteiro, a partir da lista. */
+  async function fixStage(id) {
+    const items = remedies.get(id) ?? [];
+    if (!items.length) return;
+    const ids = [...new Set(items.map((item) => item.remedy))];
+    await repair(items[0].job, ids.map((remedy) => ({ id: remedy, args: [] })), items.map((item) => [id, item.finding_index]));
+  }
+
+  /** "Já vi" nos logs: os registros até agora deixam de contar. */
+  async function markSeen(job) {
+    const ok = await confirm({
+      title: t("Marcar os logs como vistos?"),
+      text: t("Os erros, falhas de programas e serviços com falha registrados até agora deixam de contar. O que acontecer depois volta a aparecer."),
+      ic: "check",
+      confirmLabel: t("Já vi"),
+      required: false,
+    });
+    if (!ok) return false;
+    try {
+      await call("diagnostics_mark_logs_seen", { job });
+    } catch {
+      // Relatório de um vegad anterior, sem o ponto de corte: lê os logs agora.
+      pendingSeen = true;
+    }
+    start(["logs"], { gpu: false });
+    return true;
+  }
 
   const unlisten = [
     on("diagnostics-event", (event) => {
@@ -266,7 +335,7 @@ export function diagnosticsCard(ctx) {
           running.sample = event;
           break;
         case "stage":
-          last.stages[event.stage] = { verdict: event.verdict, summary: event.summary, at: Date.now() };
+          last.stages[event.stage] = { verdict: event.verdict, summary: event.summary, at: Date.now(), job: event.job };
           saveLast(last);
           (running.done ??= new Set()).add(event.stage);
           break;
@@ -305,6 +374,7 @@ export function diagnosticsCard(ctx) {
       error = e.message;
     }
     paint();
+    loadRemedies();
   }
 
   const available = (id) => id === "gpu" || tests.find((test) => test.id === id)?.available;
@@ -331,7 +401,8 @@ export function diagnosticsCard(ctx) {
     if (running?.repair) {
       running = null;
       paint();
-      toast(event.result === "ok" ? t("Problemas resolvidos") : t("Correção concluída; veja o relatório"), { action: t("Ver relatório"), onAction: openReport });
+      toast(event.result === "ok" ? t("Problemas resolvidos") : t("Correção concluída; veja o relatório"), { action: t("Ver relatório"), onAction: () => openReport() });
+      loadRemedies();
       return;
     }
     finish(event.result);
@@ -355,6 +426,14 @@ export function diagnosticsCard(ctx) {
 
   function finish() {
     running = null;
+    if (pendingSeen && last.stages.logs?.job) {
+      pendingSeen = false;
+      call("diagnostics_mark_logs_seen", { job: last.stages.logs.job })
+        .then(() => start(["logs"], { gpu: false }))
+        .catch((e) => toast(e.message, { ic: "alert-circle" }));
+      return;
+    }
+    loadRemedies();
     if (!ctx.visible()) return;
     paint();
     toast(t("Diagnóstico concluído"));
@@ -372,19 +451,19 @@ export function diagnosticsCard(ctx) {
     }
   }
 
-  async function fetchReport(redact) {
-    const raw = await call("diagnostics_report", { job: last.job || 0, redact });
+  async function fetchReport(redact, job = last.job) {
+    const raw = await call("diagnostics_report", { job: job || 0, redact });
     const report = JSON.parse(raw);
     return mergeReport(report, last.gpu?.job === report.jobId ? last.gpu : null);
   }
 
-  async function openReport() {
+  async function openReport(job = last.job) {
     try {
-      const report = await fetchReport(false);
+      const report = await fetchReport(false, job);
       const includeSensitive = h("input", { type: "checkbox" });
       const exportAs = async (format) => {
         try {
-          const data = includeSensitive.checked ? report : await fetchReport(true);
+          const data = includeSensitive.checked ? report : await fetchReport(true, job);
           const stamp = (data.started ?? "").slice(0, 10) || "diagnostico";
           const ok = format === "json"
             ? await call("diagnostics_export", { fileName: `vega-diagnostico-${stamp}.json`, content: JSON.stringify(data, null, 2) })
@@ -400,6 +479,12 @@ export function diagnosticsCard(ctx) {
         repair: hasCapability("diagnostics-v2") && !running ? async (remedies) => {
           if (await repair(report.jobId, remedies)) close?.();
         } : null,
+        repairFinding: actionsOn() && !running ? async (stageId, index, finding) => {
+          if (await repair(report.jobId, [{ id: finding.remedy, args: finding.remedyArgs ?? [] }], [[stageId, index]])) close?.();
+        } : null,
+        markSeen: actionsOn() && !running ? async () => {
+          if (await markSeen(report.jobId)) close?.();
+        } : null,
       };
       close = sheet(t("Relatório do diagnóstico"), h("div", {},
         reportView(report, actions),
@@ -414,7 +499,7 @@ export function diagnosticsCard(ctx) {
   }
 
   /** Confirma e pede ao vegad os consertos; devolve true se começou. */
-  async function repair(job, remedies) {
+  async function repair(job, remedies, findings = null) {
     const ok = await confirm({
       title: t("Resolver os problemas encontrados?"),
       text: t("O Vega vai fazer o seguinte. A senha de administrador será pedida."),
@@ -430,7 +515,9 @@ export function diagnosticsCard(ctx) {
     if (!ok) return false;
     error = null;
     try {
-      const id = await call("diagnostics_repair", { job, remedies: remedies.map((remedy) => remedy.id) });
+      const id = findings
+        ? await call("diagnostics_repair_findings", { job, findings })
+        : await call("diagnostics_repair", { job, remedies: remedies.map((remedy) => remedy.id) });
       running = { job: id, tests: [], gpu: false, repair: true, stage: `repair:${remedies[0].id}`, percent: 0, message: t("Iniciando…") };
       paint();
       return true;
@@ -497,8 +584,14 @@ export function diagnosticsCard(ctx) {
     } else if (queued) {
       suffix = badge(t("Na fila"), "");
     } else {
+      const broken = actionsOn() && needsFix(test.id) && test.id !== "gpu";
+      const fixes = broken && remedies.get(test.id);
       suffix = h("span", { class: "row-flex" },
         result && verdictBadge(result.verdict),
+        broken && test.id === "logs" && button(t("Já vi"), { size: "sm", icon: "check", disabled: Boolean(running), onClick: () => markSeen(jobOf("logs")) }),
+        broken && (fixes?.length
+          ? button(t("Corrigir"), { size: "sm", kind: "primary", icon: "zap", disabled: Boolean(running), onClick: () => fixStage(test.id) })
+          : button(t("Ver o que fazer"), { size: "sm", icon: "info", disabled: Boolean(running), onClick: () => openReport(jobOf(test.id)) })),
         h("span", { class: "small faint" }, duration(estimate(test.id))),
         button(t("Executar"), { size: "sm", icon: "play", disabled: !isAvailable || Boolean(running), onClick: () => runOne(test.id) }));
     }
@@ -514,7 +607,7 @@ export function diagnosticsCard(ctx) {
           : t("Testa disco, memória, processador, GPU e sistema sem alterar nada."))),
       !running && segmented([{ id: "quick", label: t("Rápido") }, { id: "full", label: t("Completo") }], mode, (id) => { mode = id; }),
       !running && button(t("Executar todos"), { kind: "primary", icon: "play", onClick: runAll }),
-      !running && last.job > 0 && button(t("Ver relatório"), { icon: "logs", onClick: openReport }));
+      !running && last.job > 0 && button(t("Ver relatório"), { icon: "logs", onClick: () => openReport() }));
     const progress = running && h("div", { class: "diag-running" },
       h("div", { class: "row-flex" },
         h("span", { class: "spacer small" }, `${stageName(running.stage)} · ${running.message || ""}`),

@@ -10,8 +10,8 @@ use std::collections::HashSet;
 use std::sync::Mutex;
 
 use lyra_vega_dbus::{
-    DiagnosticJob, DiagnosticOptions, DiagnosticTest, DiagnosticsClient, DiagnosticsEvent,
-    DiagnosticsEventStream,
+    DiagnosticJob, DiagnosticOptions, DiagnosticRemedy, DiagnosticTest, DiagnosticsClient,
+    DiagnosticsEvent, DiagnosticsEventStream,
 };
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Emitter};
@@ -25,6 +25,12 @@ dto!(Test from DiagnosticTest {
     reason: String,
     estimated_seconds: u32,
     requires_ac: bool,
+});
+
+dto!(Remedy from DiagnosticRemedy {
+    stage: String,
+    finding_index: u32,
+    remedy: String,
 });
 
 dto!(Job from DiagnosticJob {
@@ -225,6 +231,52 @@ pub async fn diagnostics_repair(
         tauri::async_runtime::spawn(follow(app, events, repair));
     }
     Ok(repair)
+}
+
+/// Achados com conserto do relatório `job` (0 = o mais recente), sem senha:
+/// a lista de testes usa para mostrar Corrigir (`diagnostics-actions-v1`).
+#[tauri::command]
+pub async fn diagnostics_remedies(state: State<'_>, job: u32) -> CmdResult<Vec<Remedy>> {
+    state
+        .dbus()
+        .await?
+        .diagnostics()
+        .remedies(job)
+        .await
+        .map(list)
+        .map_err(err)
+}
+
+/// Conserta só os achados `(etapa, índice)` escolhidos.
+#[tauri::command]
+pub async fn diagnostics_repair_findings(
+    app: AppHandle,
+    state: State<'_>,
+    job: u32,
+    findings: Vec<(String, u32)>,
+) -> CmdResult<u32> {
+    let diagnostics = state.dbus().await?.diagnostics();
+    let events = diagnostics.subscribe().await.map_err(err)?;
+    let repair = diagnostics
+        .repair_findings(job, &findings)
+        .await
+        .map_err(err)?;
+    if claim(repair) {
+        tauri::async_runtime::spawn(follow(app, events, repair));
+    }
+    Ok(repair)
+}
+
+/// "Já vi": os próximos testes de logs ignoram o que veio antes.
+#[tauri::command]
+pub async fn diagnostics_mark_logs_seen(state: State<'_>, job: u32) -> CmdResult<()> {
+    state
+        .dbus()
+        .await?
+        .diagnostics()
+        .mark_logs_seen(job)
+        .await
+        .map_err(err)
 }
 
 /// Volta a acompanhar um job que começou antes desta janela abrir.

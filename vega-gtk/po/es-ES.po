@@ -4871,3 +4871,30 @@ msgstr "Medir de nuevo"
 
 msgid "Selecionar todos"
 msgstr "Seleccionar todo"
+
+msgid "Reinstalar os pacotes alterados"
+msgstr "Reinstalar los paquetes modificados"
+
+msgid "Reiniciar os serviços que falharam"
+msgstr "Reiniciar los servicios que fallaron"
+
+msgid "Fechar as portas expostas no firewall"
+msgstr "Cerrar los puertos expuestos en el cortafuegos"
+
+msgid "Corrigir"
+msgstr "Corregir"
+
+msgid "Já vi"
+msgstr "Ya lo vi"
+
+msgid "Os registros até agora deixam de contar"
+msgstr "Los registros hasta ahora dejan de contar"
+
+msgid "Marcar os logs como vistos?"
+msgstr "¿Marcar los registros como vistos?"
+
+msgid "Os erros, falhas de programas e serviços com falha registrados até agora deixam de contar. O que acontecer depois volta a aparecer."
+msgstr "Los errores, fallos de programas y servicios con fallos registrados hasta ahora dejan de contar. Lo que ocurra después vuelve a aparecer."
+
+msgid "Ver o que fazer"
+msgstr "Ver qué hacer"

@@ -4871,3 +4871,30 @@ msgstr "Measure again"
 
 msgid "Selecionar todos"
 msgstr "Select all"
+
+msgid "Reinstalar os pacotes alterados"
+msgstr "Reinstall the changed packages"
+
+msgid "Reiniciar os serviços que falharam"
+msgstr "Restart the failed services"
+
+msgid "Fechar as portas expostas no firewall"
+msgstr "Close the exposed ports in the firewall"
+
+msgid "Corrigir"
+msgstr "Fix"
+
+msgid "Já vi"
+msgstr "Seen"
+
+msgid "Os registros até agora deixam de contar"
+msgstr "Records up to now stop counting"
+
+msgid "Marcar os logs como vistos?"
+msgstr "Mark the logs as seen?"
+
+msgid "Os erros, falhas de programas e serviços com falha registrados até agora deixam de contar. O que acontecer depois volta a aparecer."
+msgstr "Errors, program crashes and failed services recorded so far stop counting. Anything that happens afterwards shows up again."
+
+msgid "Ver o que fazer"
+msgstr "See what to do"
