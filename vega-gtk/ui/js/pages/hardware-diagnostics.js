@@ -314,8 +314,14 @@ export function diagnosticsCard(ctx) {
     if (!ok) return false;
     try {
       await call("diagnostics_mark_logs_seen", { job });
-    } catch {
-      // Relatório de um vegad anterior, sem o ponto de corte: lê os logs agora.
+    } catch (e) {
+      // Só o relatório de um vegad anterior, sem o ponto de corte, segue em
+      // frente (lê os logs agora e marca depois). Senha errada ou cancelada
+      // para aqui, com o erro na tela.
+      if (!/etapa logs/.test(e.message)) {
+        toast(e.message, { ic: "alert-circle" });
+        return false;
+      }
       pendingSeen = true;
     }
     start(["logs"], { gpu: false });
