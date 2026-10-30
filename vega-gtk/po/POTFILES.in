@@ -23,6 +23,7 @@ ui/js/pages/hardware.js
 ui/js/pages/index.js
 ui/js/pages/logs.js
 ui/js/pages/monitor.js
+ui/js/pages/network-troubleshoot.js
 ui/js/pages/network.js
 ui/js/pages/personalization.js
 ui/js/pages/services.js

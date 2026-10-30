@@ -22,13 +22,14 @@ const TESTS = [
   { id: "logs", icon: "logs", name: N_("Logs e falhas"), desc: N_("Erros por boot, falhas de programas e serviços com problema") },
   { id: "platform", icon: "activity", name: N_("Estado da plataforma"), desc: N_("Temperaturas, bateria, firmware, relógio e Secure Boot") },
   { id: "security", icon: "shield", name: N_("Segurança"), desc: N_("Firewall, portas expostas, correções de segurança, SSH, criptografia e contas") },
+  { id: "network", icon: "wifi", name: N_("Rede e internet"), desc: N_("Cabo ou Wi-Fi, endereço, roteador, DNS e acesso à internet") },
 ];
 const NAMES = Object.fromEntries(TESTS.map((test) => [test.id, test.name]));
 
 // Ordem de execução do vegad: leituras rápidas primeiro.
-const DAEMON_ORDER = ["packages", "disk-health", "logs", "platform", "security", "fs-scrub", "cpu-stress", "memory-stress", "disk-bench"];
+const DAEMON_ORDER = ["packages", "disk-health", "logs", "platform", "security", "network", "fs-scrub", "cpu-stress", "memory-stress", "disk-bench"];
 const MODES = {
-  quick: { tests: ["packages", "disk-health", "logs", "platform", "security", "cpu-stress", "memory-stress"], gpu: false, duration: 60 },
+  quick: { tests: ["packages", "disk-health", "logs", "platform", "security", "network", "cpu-stress", "memory-stress"], gpu: false, duration: 60 },
   full: { tests: DAEMON_ORDER, gpu: true, duration: 240 },
 };
 const LOAD_TESTS = new Set(["cpu-stress", "memory-stress", "disk-bench"]);
@@ -57,7 +58,7 @@ function reasonText(reason) {
 // ---------- O que fazer com cada achado ----------
 
 // Consertos que o vegad aplica (diagnostics-v2), na ordem do contrato.
-const REMEDY_ORDER = ["reinstall-packages", "verify-dependencies", "restart-units", "enable-ntp", "enable-firewall", "close-port", "apply-security-patches"];
+const REMEDY_ORDER = ["reinstall-packages", "verify-dependencies", "restart-units", "enable-ntp", "enable-firewall", "close-port", "apply-security-patches", "reconnect", "renew-dhcp", "temporary-dns"];
 
 function remedyText(remedy, args = []) {
   if (!args.length) {
@@ -76,6 +77,9 @@ function remedyText(remedy, args = []) {
     case "enable-firewall": return t("Ligar o firewall");
     case "close-port": return t("Fechar no firewall: {ports}", { ports: args.map((arg) => arg.replace("|service:", ": serviço ").replace("|port:", ": porta ")).join(", ") });
     case "apply-security-patches": return t("Instalar as correções de segurança");
+    case "reconnect": return t("Reconectar a rede ({device})", { device: args.join(", ") || "Wi-Fi" });
+    case "renew-dhcp": return t("Pedir um novo endereço IP ({device})", { device: args.join(", ") || "rede" });
+    case "temporary-dns": return t("Usar DNS público só nesta conexão ({device})", { device: args.join(", ") || "rede" });
     default: return remedy;
   }
 }
@@ -88,6 +92,9 @@ const REPAIR_STAGES = {
   "repair:enable-firewall": N_("Ligando o firewall"),
   "repair:close-port": N_("Fechando portas"),
   "repair:apply-security-patches": N_("Instalando correções de segurança"),
+  "repair:reconnect": N_("Reconectando a rede"),
+  "repair:renew-dhcp": N_("Pedindo um novo endereço"),
+  "repair:temporary-dns": N_("Usando DNS público"),
 };
 const stageName = (id) => t(NAMES[id] ?? REPAIR_STAGES[id] ?? id);
 
@@ -116,6 +123,11 @@ const GUIDE = {
   "memory.insufficient": { text: N_("Feche alguns programas para liberar memória e execute o teste de novo.") },
   "bench.insufficient-space": { text: N_("Libere ao menos 10 GiB no disco e execute o teste de novo."), go: ["storage"], label: N_("Abrir Armazenamento") },
   "stage.timeout": RETRY, "stage.tool-failed": RETRY, "bench.failed": RETRY, "stress.incomplete": RETRY, "scrub.incomplete": RETRY,
+  "network.no-link": { text: N_("Confira o cabo ou ligue o Wi-Fi e escolha uma rede."), go: ["network"], label: N_("Abrir Rede") },
+  "network.wifi-weak": { text: N_("Aproxime-se do roteador ou tire obstáculos do caminho.") },
+  "network.gateway-unreachable": { text: N_("Desligue o roteador da tomada, espere 30 segundos e ligue de novo.") },
+  "network.no-internet": { text: N_("O roteador responde, mas a internet não chega até ele. Verifique o modem ou fale com o provedor.") },
+  "network.captive-portal": { text: N_("Abra a página de login da rede em Rede → Minha internet não funciona."), go: ["network"], label: N_("Abrir Rede") },
   "security.ssh-root-password": { text: N_("Desative o login do root por senha no SSH (PermitRootLogin) ou desligue o servidor SSH se não usa."), go: ["services"], label: N_("Abrir Serviços") },
   "security.ssh-password": { text: N_("Prefira entrar no SSH com chave em vez de senha (PasswordAuthentication no)."), go: ["services"], label: N_("Abrir Serviços") },
   "security.exposed-port": { text: N_("Feche a porta se não usa esse serviço a partir de outros computadores."), go: ["network", "firewall"], label: N_("Abrir Firewall") },
@@ -642,7 +654,8 @@ export function diagnosticsCard(ctx) {
       header,
       error && banner("danger", "alert-circle", t("O diagnóstico não foi concluído"), error, retryWithout && button(t("Executar só os testes sem carga"), { size: "sm", onClick: retryWithout })),
       progress,
-      list(TESTS.map(testRow)));
+      // Testes que este vegad não tem (o `network` antes do diagnostics-v4) ficam de fora.
+      list(TESTS.filter((test) => test.id === "gpu" || !tests.length || tests.some((item) => item.id === test.id)).map(testRow)));
   }
 
   load();

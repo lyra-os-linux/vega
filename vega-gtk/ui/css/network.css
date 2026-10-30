@@ -47,3 +47,17 @@
   .net-form { grid-template-columns: minmax(0, 1fr); }
   .net-form label { display: flex; flex-direction: column; gap: 4px; }
 }
+
+/* Minha internet não funciona (add-network-troubleshooter) */
+.net-check { display: flex; flex-direction: column; gap: 12px; min-width: min(520px, 80vw); }
+.net-steps { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius-s); }
+.net-step { display: flex; align-items: center; gap: 12px; padding: 10px 14px; }
+.net-step + .net-step { border-top: 1px solid var(--line); }
+.net-step .body { flex: 1; min-width: 0; }
+.net-step .title { font-weight: 600; }
+.net-step.skipped { opacity: .55; }
+.net-step.fail { background: var(--red-bg); }
+.net-step .green { color: var(--green); }
+.net-step .yellow { color: var(--yellow); }
+.net-step .red { color: var(--red); }
+.net-check-actions { gap: 8px; }

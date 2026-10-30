@@ -4910,3 +4910,117 @@ msgstr "in use by {programs}"
 
 msgid "{count} pasta(s) estão em uso e ficam de fora até o programa ser fechado."
 msgstr "{count} folder(s) are in use and stay out until the program is closed."
+
+msgid "Rede e internet"
+msgstr "Network and internet"
+
+msgid "Cabo ou Wi-Fi, endereço, roteador, DNS e acesso à internet"
+msgstr "Cable or Wi-Fi, address, router, DNS and internet access"
+
+msgid "Reconectar a rede ({device})"
+msgstr "Reconnect the network ({device})"
+
+msgid "Pedir um novo endereço IP ({device})"
+msgstr "Request a new IP address ({device})"
+
+msgid "Usar DNS público só nesta conexão ({device})"
+msgstr "Use public DNS for this connection only ({device})"
+
+msgid "Reconectando a rede"
+msgstr "Reconnecting the network"
+
+msgid "Pedindo um novo endereço"
+msgstr "Requesting a new address"
+
+msgid "Usando DNS público"
+msgstr "Using public DNS"
+
+msgid "Confira o cabo ou ligue o Wi-Fi e escolha uma rede."
+msgstr "Check the cable or turn Wi-Fi on and pick a network."
+
+msgid "Abrir Rede"
+msgstr "Open Network"
+
+msgid "Aproxime-se do roteador ou tire obstáculos do caminho."
+msgstr "Move closer to the router or remove obstacles in between."
+
+msgid "Desligue o roteador da tomada, espere 30 segundos e ligue de novo."
+msgstr "Unplug the router, wait 30 seconds and plug it back in."
+
+msgid "O roteador responde, mas a internet não chega até ele. Verifique o modem ou fale com o provedor."
+msgstr "The router answers, but the internet does not reach it. Check the modem or contact your provider."
+
+msgid "Abra a página de login da rede em Rede → Minha internet não funciona."
+msgstr "Open the network's login page in Network → My internet does not work."
+
+msgid "Cabo ou Wi-Fi"
+msgstr "Cable or Wi-Fi"
+
+msgid "Endereço IP"
+msgstr "IP address"
+
+msgid "Roteador"
+msgstr "Router"
+
+msgid "DNS (nomes dos sites)"
+msgstr "DNS (website names)"
+
+msgid "Internet"
+msgstr "Internet"
+
+msgid "Funcionando"
+msgstr "Working"
+
+msgid "Aqui está o problema"
+msgstr "Here is the problem"
+
+msgid "Não testado"
+msgstr "Not tested"
+
+msgid "Confira se o cabo está bem encaixado ou se o Wi-Fi está ligado e conectado a uma rede conhecida."
+msgstr "Check that the cable is firmly plugged in, or that Wi-Fi is on and connected to a known network."
+
+msgid "O sinal está fraco. Aproxime-se do roteador ou tire obstáculos do caminho."
+msgstr "The signal is weak. Move closer to the router or remove obstacles in between."
+
+msgid "O roteador não entregou um endereço. Pedir de novo costuma resolver; se não, reinicie o roteador."
+msgstr "The router did not hand out an address. Asking again usually fixes it; if not, restart the router."
+
+msgid "O computador está conectado, mas o roteador não responde. Desligue o roteador da tomada, espere 30 segundos e ligue de novo."
+msgstr "The computer is connected, but the router does not answer. Unplug the router, wait 30 seconds and plug it back in."
+
+msgid "A conexão funciona, mas os nomes dos sites não são traduzidos. Um DNS público resolve até a próxima conexão."
+msgstr "The connection works, but website names are not resolved. A public DNS fixes it until the next connection."
+
+msgid "Esta rede exige login numa página antes de liberar a internet."
+msgstr "This network requires logging in on a page before allowing internet access."
+
+msgid "Se a internet só falha com a VPN ligada, o problema está nela."
+msgstr "If the internet only fails with the VPN on, the problem is the VPN."
+
+msgid "Reconectar"
+msgstr "Reconnect"
+
+msgid "Pedir um novo endereço"
+msgstr "Request a new address"
+
+msgid "Usar DNS público nesta conexão"
+msgstr "Use public DNS on this connection"
+
+msgid "Minha internet não funciona"
+msgstr "My internet does not work"
+
+msgid "Não foi possível verificar a rede"
+msgstr "Could not check the network"
+
+msgid "Abrir página de login"
+msgstr "Open login page"
+
+msgid "A conexão está funcionando"
+msgstr "The connection is working"
+
+msgid "Cabo ou Wi-Fi, endereço, roteador, DNS e internet responderam. Se um site específico não abre, o problema pode ser nele."
+msgstr "Cable or Wi-Fi, address, router, DNS and internet all answered. If one specific website does not open, the problem may be on its side."
+
+msgid "Verificar de novo"
+msgstr "Check again"

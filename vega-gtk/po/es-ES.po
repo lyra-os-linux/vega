@@ -4910,3 +4910,117 @@ msgstr "en uso por {programs}"
 
 msgid "{count} pasta(s) estão em uso e ficam de fora até o programa ser fechado."
 msgstr "{count} carpeta(s) están en uso y quedan fuera hasta que se cierre el programa."
+
+msgid "Rede e internet"
+msgstr "Red e internet"
+
+msgid "Cabo ou Wi-Fi, endereço, roteador, DNS e acesso à internet"
+msgstr "Cable o Wi-Fi, dirección, router, DNS y acceso a internet"
+
+msgid "Reconectar a rede ({device})"
+msgstr "Reconectar la red ({device})"
+
+msgid "Pedir um novo endereço IP ({device})"
+msgstr "Pedir una nueva dirección IP ({device})"
+
+msgid "Usar DNS público só nesta conexão ({device})"
+msgstr "Usar DNS público solo en esta conexión ({device})"
+
+msgid "Reconectando a rede"
+msgstr "Reconectando la red"
+
+msgid "Pedindo um novo endereço"
+msgstr "Pidiendo una nueva dirección"
+
+msgid "Usando DNS público"
+msgstr "Usando DNS público"
+
+msgid "Confira o cabo ou ligue o Wi-Fi e escolha uma rede."
+msgstr "Revise el cable o encienda el Wi-Fi y elija una red."
+
+msgid "Abrir Rede"
+msgstr "Abrir Red"
+
+msgid "Aproxime-se do roteador ou tire obstáculos do caminho."
+msgstr "Acérquese al router o quite obstáculos del camino."
+
+msgid "Desligue o roteador da tomada, espere 30 segundos e ligue de novo."
+msgstr "Desenchufe el router, espere 30 segundos y vuelva a enchufarlo."
+
+msgid "O roteador responde, mas a internet não chega até ele. Verifique o modem ou fale com o provedor."
+msgstr "El router responde, pero internet no llega hasta él. Revise el módem o hable con su proveedor."
+
+msgid "Abra a página de login da rede em Rede → Minha internet não funciona."
+msgstr "Abra la página de inicio de sesión de la red en Red → Mi internet no funciona."
+
+msgid "Cabo ou Wi-Fi"
+msgstr "Cable o Wi-Fi"
+
+msgid "Endereço IP"
+msgstr "Dirección IP"
+
+msgid "Roteador"
+msgstr "Router"
+
+msgid "DNS (nomes dos sites)"
+msgstr "DNS (nombres de los sitios)"
+
+msgid "Internet"
+msgstr "Internet"
+
+msgid "Funcionando"
+msgstr "Funcionando"
+
+msgid "Aqui está o problema"
+msgstr "Aquí está el problema"
+
+msgid "Não testado"
+msgstr "No probado"
+
+msgid "Confira se o cabo está bem encaixado ou se o Wi-Fi está ligado e conectado a uma rede conhecida."
+msgstr "Compruebe que el cable esté bien conectado o que el Wi-Fi esté encendido y conectado a una red conocida."
+
+msgid "O sinal está fraco. Aproxime-se do roteador ou tire obstáculos do caminho."
+msgstr "La señal es débil. Acérquese al router o quite obstáculos del camino."
+
+msgid "O roteador não entregou um endereço. Pedir de novo costuma resolver; se não, reinicie o roteador."
+msgstr "El router no entregó una dirección. Pedirla de nuevo suele resolverlo; si no, reinicie el router."
+
+msgid "O computador está conectado, mas o roteador não responde. Desligue o roteador da tomada, espere 30 segundos e ligue de novo."
+msgstr "El equipo está conectado, pero el router no responde. Desenchufe el router, espere 30 segundos y vuelva a enchufarlo."
+
+msgid "A conexão funciona, mas os nomes dos sites não são traduzidos. Um DNS público resolve até a próxima conexão."
+msgstr "La conexión funciona, pero los nombres de los sitios no se traducen. Un DNS público lo resuelve hasta la próxima conexión."
+
+msgid "Esta rede exige login numa página antes de liberar a internet."
+msgstr "Esta red exige iniciar sesión en una página antes de dar acceso a internet."
+
+msgid "Se a internet só falha com a VPN ligada, o problema está nela."
+msgstr "Si internet solo falla con la VPN activa, el problema está en ella."
+
+msgid "Reconectar"
+msgstr "Reconectar"
+
+msgid "Pedir um novo endereço"
+msgstr "Pedir una nueva dirección"
+
+msgid "Usar DNS público nesta conexão"
+msgstr "Usar DNS público en esta conexión"
+
+msgid "Minha internet não funciona"
+msgstr "Mi internet no funciona"
+
+msgid "Não foi possível verificar a rede"
+msgstr "No se pudo comprobar la red"
+
+msgid "Abrir página de login"
+msgstr "Abrir página de inicio de sesión"
+
+msgid "A conexão está funcionando"
+msgstr "La conexión funciona"
+
+msgid "Cabo ou Wi-Fi, endereço, roteador, DNS e internet responderam. Se um site específico não abre, o problema pode ser nele."
+msgstr "Cable o Wi-Fi, dirección, router, DNS e internet respondieron. Si un sitio concreto no abre, el problema puede estar en él."
+
+msgid "Verificar de novo"
+msgstr "Comprobar de nuevo"

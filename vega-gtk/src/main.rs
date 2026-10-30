@@ -73,6 +73,7 @@ fn main() -> ExitCode {
             app::prefs_get,
             app::prefs_set,
             app::open_uri,
+            app::open_portal,
             notify::notify,
             system::system_status,
             diagnostics::diagnostics_tests,
