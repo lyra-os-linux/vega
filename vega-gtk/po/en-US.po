@@ -5051,3 +5051,51 @@ msgstr "Set up a backup so you do not lose your files if the disk fails."
 
 msgid "Atualizar firmware"
 msgstr "Update firmware"
+
+msgid "Tempo de boot"
+msgstr "Boot time"
+
+msgid "Quanto o computador leva para ligar e o que atrasa"
+msgstr "How long the computer takes to start and what slows it down"
+
+msgid "Não esperar pela rede para terminar o boot"
+msgstr "Do not wait for the network to finish booting"
+
+msgid "Desabilitar no boot: {units}"
+msgstr "Disable at boot: {units}"
+
+msgid "Desabilitar os serviços lentos que você habilitou"
+msgstr "Disable the slow services you enabled"
+
+msgid "Desligando a espera pela rede no boot"
+msgstr "Turning off the wait for the network at boot"
+
+msgid "Desabilitando serviços"
+msgstr "Disabling services"
+
+msgid "Veja abaixo quais serviços atrasam o boot. Desabilitar o que você não usa acelera a inicialização."
+msgstr "See below which services slow the boot. Disabling what you do not use speeds up startup."
+
+msgid "Algum programa precisa da rede logo no boot, por isso a espera fica. Se não usa esse programa, desabilite-o em Serviços."
+msgstr "A program needs the network early in the boot, so the wait stays. If you do not use that program, disable it in Services."
+
+msgid "O /etc/fstab ainda monta um disco que foi removido. Tire a linha dele do fstab ou marque-a com nofail."
+msgstr "/etc/fstab still mounts a disk that was removed. Remove its line from fstab or mark it nofail."
+
+msgid "Este serviço faz parte do sistema. Se o atraso continuar, veja o log dele."
+msgstr "This service is part of the system. If the delay continues, check its log."
+
+msgid "Carregador"
+msgstr "Boot loader"
+
+msgid "initrd"
+msgstr "initrd"
+
+msgid "{seconds} s"
+msgstr "{seconds} s"
+
+msgid "Último boot"
+msgstr "Last boot"
+
+msgid "O que mais demorou antes do login"
+msgstr "What took longest before the login"

@@ -23,14 +23,15 @@ const TESTS = [
   { id: "logs", icon: "logs", name: N_("Logs e falhas"), desc: N_("Erros por boot, falhas de programas e serviços com problema") },
   { id: "platform", icon: "activity", name: N_("Estado da plataforma"), desc: N_("Temperaturas, bateria, firmware, relógio e Secure Boot") },
   { id: "security", icon: "shield", name: N_("Segurança"), desc: N_("Firewall, portas expostas, correções de segurança, SSH, criptografia e contas") },
+  { id: "boot", icon: "power", name: N_("Tempo de boot"), desc: N_("Quanto o computador leva para ligar e o que atrasa") },
   { id: "network", icon: "wifi", name: N_("Rede e internet"), desc: N_("Cabo ou Wi-Fi, endereço, roteador, DNS e acesso à internet") },
 ];
 const NAMES = Object.fromEntries(TESTS.map((test) => [test.id, test.name]));
 
 // Ordem de execução do vegad: leituras rápidas primeiro.
-const DAEMON_ORDER = ["packages", "disk-health", "logs", "platform", "security", "network", "fs-scrub", "cpu-stress", "memory-stress", "disk-bench"];
+const DAEMON_ORDER = ["packages", "disk-health", "logs", "platform", "security", "boot", "network", "fs-scrub", "cpu-stress", "memory-stress", "disk-bench"];
 const MODES = {
-  quick: { tests: ["packages", "disk-health", "logs", "platform", "security", "network", "cpu-stress", "memory-stress"], gpu: false, duration: 60 },
+  quick: { tests: ["packages", "disk-health", "logs", "platform", "security", "boot", "network", "cpu-stress", "memory-stress"], gpu: false, duration: 60 },
   full: { tests: DAEMON_ORDER, gpu: true, duration: 240 },
 };
 const LOAD_TESTS = new Set(["cpu-stress", "memory-stress", "disk-bench"]);
@@ -59,7 +60,7 @@ function reasonText(reason) {
 // ---------- O que fazer com cada achado ----------
 
 // Consertos que o vegad aplica (diagnostics-v2), na ordem do contrato.
-const REMEDY_ORDER = ["reinstall-packages", "verify-dependencies", "restart-units", "enable-ntp", "enable-firewall", "close-port", "apply-security-patches", "reconnect", "renew-dhcp", "temporary-dns"];
+const REMEDY_ORDER = ["reinstall-packages", "verify-dependencies", "restart-units", "enable-ntp", "enable-firewall", "close-port", "apply-security-patches", "reconnect", "renew-dhcp", "temporary-dns", "disable-wait-online", "disable-service"];
 
 function remedyText(remedy, args = []) {
   if (!args.length) {
@@ -78,6 +79,8 @@ function remedyText(remedy, args = []) {
     case "enable-firewall": return t("Ligar o firewall");
     case "close-port": return t("Fechar no firewall: {ports}", { ports: args.map((arg) => arg.replace("|service:", ": serviço ").replace("|port:", ": porta ")).join(", ") });
     case "apply-security-patches": return t("Instalar as correções de segurança");
+    case "disable-wait-online": return t("Não esperar pela rede para terminar o boot");
+    case "disable-service": return args.length ? t("Desabilitar no boot: {units}", { units: args.join(", ") }) : t("Desabilitar os serviços lentos que você habilitou");
     case "reconnect": return t("Reconectar a rede ({device})", { device: args.join(", ") || "Wi-Fi" });
     case "renew-dhcp": return t("Pedir um novo endereço IP ({device})", { device: args.join(", ") || "rede" });
     case "temporary-dns": return t("Usar DNS público só nesta conexão ({device})", { device: args.join(", ") || "rede" });
@@ -93,6 +96,8 @@ const REPAIR_STAGES = {
   "repair:enable-firewall": N_("Ligando o firewall"),
   "repair:close-port": N_("Fechando portas"),
   "repair:apply-security-patches": N_("Instalando correções de segurança"),
+  "repair:disable-wait-online": N_("Desligando a espera pela rede no boot"),
+  "repair:disable-service": N_("Desabilitando serviços"),
   "repair:reconnect": N_("Reconectando a rede"),
   "repair:renew-dhcp": N_("Pedindo um novo endereço"),
   "repair:temporary-dns": N_("Usando DNS público"),
@@ -126,6 +131,10 @@ const GUIDE = {
   "memory.insufficient": { text: N_("Feche alguns programas para liberar memória e execute o teste de novo.") },
   "bench.insufficient-space": { text: N_("Libere ao menos 10 GiB no disco e execute o teste de novo."), go: ["storage"], label: N_("Abrir Armazenamento") },
   "stage.timeout": RETRY, "stage.tool-failed": RETRY, "bench.failed": RETRY, "stress.incomplete": RETRY, "scrub.incomplete": RETRY,
+  "boot.slow": { text: N_("Veja abaixo quais serviços atrasam o boot. Desabilitar o que você não usa acelera a inicialização.") },
+  "boot.wait-online": { text: N_("Algum programa precisa da rede logo no boot, por isso a espera fica. Se não usa esse programa, desabilite-o em Serviços."), go: ["services"], label: N_("Abrir Serviços") },
+  "boot.missing-device": { text: N_("O /etc/fstab ainda monta um disco que foi removido. Tire a linha dele do fstab ou marque-a com nofail."), go: ["storage"], label: N_("Abrir Armazenamento") },
+  "boot.slow-service": { text: N_("Este serviço faz parte do sistema. Se o atraso continuar, veja o log dele."), go: ["logs"], label: N_("Abrir Logs") },
   "network.no-link": { text: N_("Confira o cabo ou ligue o Wi-Fi e escolha uma rede."), go: ["network"], label: N_("Abrir Rede") },
   "network.wifi-weak": { text: N_("Aproxime-se do roteador ou tire obstáculos do caminho.") },
   "network.gateway-unreachable": { text: N_("Desligue o roteador da tomada, espere 30 segundos e ligue de novo.") },
@@ -238,6 +247,33 @@ function findingRow({ stage, finding }, actions = {}) {
     raw && h("details", { class: "diag-raw" }, h("summary", {}, t("Dados brutos")), h("pre", { class: "mono selectable" }, raw), h("div", { class: "row-flex" }, copy)));
 }
 
+const BOOT_PHASES = [
+  ["firmware", N_("Firmware")],
+  ["loader", N_("Carregador")],
+  ["kernel", N_("Kernel")],
+  ["initrd", N_("initrd")],
+  ["userspace", N_("Sistema")],
+];
+
+/** Barra das fases do último boot e os serviços mais lentos. */
+function bootView(stage) {
+  const phases = stage.metrics?.phases;
+  if (!phases) return null;
+  const present = BOOT_PHASES.filter(([id]) => phases[id] > 0);
+  const total = present.reduce((sum, [id]) => sum + phases[id], 0) || 1;
+  const secs = (value) => t("{seconds} s", { seconds: value.toLocaleString(locale, { maximumFractionDigits: 1 }) });
+  const slowest = stage.metrics.slowest ?? [];
+  return h("div", { class: "card pad diag-boot" },
+    h("h4", {}, icon("power", 16), t("Último boot"), h("span", { class: "n" }, secs(stage.metrics.totalSeconds ?? total))),
+    h("div", { class: "diag-boot-bar" }, present.map(([id], i) =>
+      h("span", { class: `seg s${i}`, style: { flex: `${phases[id]} 0 0` }, title: `${t(BOOT_PHASES.find((p) => p[0] === id)[1])}: ${secs(phases[id])}` }))),
+    h("div", { class: "diag-boot-legend small" }, present.map(([id, label], i) =>
+      h("span", {}, h("i", { class: `dot s${i}` }), `${t(label)} ${secs(phases[id])}`))),
+    slowest.length > 0 && h("div", { class: "diag-boot-slow" },
+      h("div", { class: "small muted" }, t("O que mais demorou antes do login")),
+      slowest.map((unit) => h("div", { class: "row-flex small" }, h("span", { class: "mono spacer selectable" }, unit.unit), h("span", { class: "muted" }, secs(unit.seconds))))));
+}
+
 function reportView(report, actions = {}) {
   const { healthy, attention, info } = groups(report);
   const remedies = reportRemedies(report);
@@ -255,6 +291,7 @@ function reportView(report, actions = {}) {
       t("Antes ele cria um snapshot e, depois, roda de novo os testes afetados."),
       button(t("Resolver tudo o que for seguro"), { kind: "primary", icon: "zap", onClick: () => actions.repair(remedies) })),
     block(t("Atenção"), "alert", "yellow", attention, render),
+    bootView((report.stages ?? []).filter((stage) => stage.id === "boot").pop() ?? {}),
     block(t("Saudável"), "check-circle", "green", healthy, (stage) => row({ icon: "check", tint: "green", title: stageName(stage.id), subtitle: stage.summary, wrap: true })),
     block(t("Informações e ruído conhecido"), "info", "", info, render));
 }
