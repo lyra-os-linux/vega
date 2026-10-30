@@ -328,30 +328,46 @@ export function diagnosticsCard(ctx) {
     return true;
   }
 
+  // Eventos que chegam antes de o Vega saber o id do job: um teste rápido
+  // (logs com "Já vi") pode terminar antes de a chamada responder.
+  const early = [];
+  function adopt(job) {
+    const mine = early.splice(0).filter((event) => event.job === job);
+    for (const event of mine) if (running?.job === job) handle(event);
+  }
+
+  function handle(event) {
+    switch (event.type) {
+      case "progress":
+        running.stage = event.stage;
+        running.percent = event.percent;
+        if (event.message) running.message = event.message;
+        break;
+      case "sample":
+        running.sample = event;
+        break;
+      case "stage":
+        last.stages[event.stage] = { verdict: event.verdict, summary: event.summary, at: Date.now(), job: event.job };
+        saveLast(last);
+        (running.done ??= new Set()).add(event.stage);
+        break;
+      case "finished":
+        last.job = event.job;
+        saveLast(last);
+        afterDaemon(event);
+        return;
+    }
+    paint();
+  }
+
   const unlisten = [
     on("diagnostics-event", (event) => {
-      if (!running || event.job !== running.job) return;
-      switch (event.type) {
-        case "progress":
-          running.stage = event.stage;
-          running.percent = event.percent;
-          if (event.message) running.message = event.message;
-          break;
-        case "sample":
-          running.sample = event;
-          break;
-        case "stage":
-          last.stages[event.stage] = { verdict: event.verdict, summary: event.summary, at: Date.now(), job: event.job };
-          saveLast(last);
-          (running.done ??= new Set()).add(event.stage);
-          break;
-        case "finished":
-          last.job = event.job;
-          saveLast(last);
-          afterDaemon(event);
-          return;
+      if (!running || event.job !== running.job) {
+        early.push(event);
+        if (early.length > 200) early.shift();
+        return;
       }
-      paint();
+      handle(event);
     }),
     on("diagnostics-gpu", (event) => {
       if (!running) return;
@@ -395,6 +411,7 @@ export function diagnosticsCard(ctx) {
     try {
       running.job = await call("diagnostics_start", { tests: wanted, options: { durationSeconds } });
       paint();
+      adopt(running.job);
     } catch (e) {
       running = null;
       error = e.message;
@@ -526,6 +543,7 @@ export function diagnosticsCard(ctx) {
         : await call("diagnostics_repair", { job, remedies: remedies.map((remedy) => remedy.id) });
       running = { job: id, tests: [], gpu: false, repair: true, stage: `repair:${remedies[0].id}`, percent: 0, message: t("Iniciando…") };
       paint();
+      adopt(id);
       return true;
     } catch (e) {
       toast(e.message, { ic: "alert-circle" });
