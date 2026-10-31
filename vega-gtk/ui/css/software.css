@@ -67,3 +67,16 @@
 
 /* Painel "Habilitar Flatpak" (controle parental): separa da barra de busca. */
 .sw-flatpak .banner { margin-bottom: 14px; }
+
+/* Populares: cartões curados; os do Flathub ficam esmaecidos até habilitar o Flatpak. */
+.sw-popular .sw-icon { width: 48px; height: 48px; }
+.sw-popular { min-height: 200px; }
+.sw-popular.interactive { cursor: pointer; }
+.sw-popular.locked { opacity: .55; filter: grayscale(.6); }
+.sw-popular.locked .sw-icon { filter: grayscale(1); }
+.sw-locked-note { display: flex; align-items: center; gap: 6px; margin: 0; color: var(--fg-2); font-weight: 600; }
+.sw-popular.installed { opacity: .7; }
+.sw-popular.installed .btn:disabled { color: var(--green, #1a7f37); }
+.sw-card-progress { width: 100%; max-width: none; margin-top: 0; }
+.sw-run-exe .row-flex { align-items: center; gap: 14px; flex-wrap: wrap; }
+.sw-run-exe p { margin: 4px 0 0; }

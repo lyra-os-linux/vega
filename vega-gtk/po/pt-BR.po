@@ -5067,3 +5067,702 @@ msgstr "Verificação periódica em {date}: {count} novidade(s)"
 
 msgid "Verificação periódica em {date}: nada novo"
 msgstr "Verificação periódica em {date}: nada novo"
+
+# Software → Populares
+msgid "Conversa e e-mail"
+msgstr "Conversa e e-mail"
+
+msgid "Mensagens rápidas, grupos e canais"
+msgstr "Mensagens rápidas, grupos e canais"
+
+msgid "Voz, vídeo e texto para comunidades"
+msgstr "Voz, vídeo e texto para comunidades"
+
+msgid "Mensagens com criptografia de ponta a ponta"
+msgstr "Mensagens com criptografia de ponta a ponta"
+
+msgid "WhatsApp Web num aplicativo (da comunidade)"
+msgstr "WhatsApp Web num aplicativo (da comunidade)"
+
+msgid "Reuniões por vídeo"
+msgstr "Reuniões por vídeo"
+
+msgid "Conversa para equipes de trabalho"
+msgstr "Conversa para equipes de trabalho"
+
+msgid "E-mail, calendário e contatos"
+msgstr "E-mail, calendário e contatos"
+
+msgid "Música e vídeo"
+msgstr "Música e vídeo"
+
+msgid "Streaming de música e podcasts"
+msgstr "Streaming de música e podcasts"
+
+msgid "Central de filmes e séries"
+msgstr "Central de filmes e séries"
+
+msgid "Player de vídeo simples, baseado no mpv"
+msgstr "Player de vídeo simples, baseado no mpv"
+
+msgid "Biblioteca de músicas, rádios e podcasts"
+msgstr "Biblioteca de músicas, rádios e podcasts"
+
+msgid "Player para coleções grandes de músicas"
+msgstr "Player para coleções grandes de músicas"
+
+msgid "Toca uma pasta ou um álbum, sem biblioteca"
+msgstr "Toca uma pasta ou um álbum, sem biblioteca"
+
+msgid "Equalizador e efeitos para o som e o microfone"
+msgstr "Equalizador e efeitos para o som e o microfone"
+
+msgid "Vídeo, áudio e gravação"
+msgstr "Vídeo, áudio e gravação"
+
+msgid "Gravação de tela e transmissão ao vivo"
+msgstr "Gravação de tela e transmissão ao vivo"
+
+msgid "Edição de vídeo"
+msgstr "Edição de vídeo"
+
+msgid "Gravação e edição de áudio"
+msgstr "Gravação e edição de áudio"
+
+msgid "Converte vídeos e reduz o tamanho"
+msgstr "Converte vídeos e reduz o tamanho"
+
+msgid "Imagem, fotos e 3D"
+msgstr "Imagem, fotos e 3D"
+
+msgid "Edição de imagens"
+msgstr "Edição de imagens"
+
+msgid "Desenho vetorial"
+msgstr "Desenho vetorial"
+
+msgid "Pintura digital e ilustração"
+msgstr "Pintura digital e ilustração"
+
+msgid "Modelagem 3D, animação e renderização"
+msgstr "Modelagem 3D, animação e renderização"
+
+msgid "Revelação de fotos RAW"
+msgstr "Revelação de fotos RAW"
+
+msgid "Organiza fotos por data, com ajustes rápidos"
+msgstr "Organiza fotos por data, com ajustes rápidos"
+
+msgid "Coleções grandes de fotos, com etiquetas e rostos"
+msgstr "Coleções grandes de fotos, com etiquetas e rostos"
+
+msgid "Modelagem 3D paramétrica"
+msgstr "Modelagem 3D paramétrica"
+
+msgid "Projeto de circuitos eletrônicos"
+msgstr "Projeto de circuitos eletrônicos"
+
+msgid "Escritório e anotações"
+msgstr "Escritório e anotações"
+
+msgid "Documentos, planilhas e apresentações"
+msgstr "Documentos, planilhas e apresentações"
+
+msgid "Anotações em Markdown, com links entre as notas"
+msgstr "Anotações em Markdown, com links entre as notas"
+
+msgid "Tarefas, lembretes e projetos"
+msgstr "Tarefas, lembretes e projetos"
+
+msgid "Biblioteca e conversão de e-books"
+msgstr "Biblioteca e conversão de e-books"
+
+msgid "Leitor de PDF com anotações"
+msgstr "Leitor de PDF com anotações"
+
+msgid "Diagramação de revistas e folhetos"
+msgstr "Diagramação de revistas e folhetos"
+
+msgid "Jogos"
+msgstr "Jogos"
+
+msgid "Loja e biblioteca de jogos"
+msgstr "Loja e biblioteca de jogos"
+
+msgid "Jogos da Epic Games e da GOG"
+msgstr "Jogos da Epic Games e da GOG"
+
+msgid "Vários lançadores e emuladores num só lugar"
+msgstr "Vários lançadores e emuladores num só lugar"
+
+msgid "Programas e jogos do Windows"
+msgstr "Programas e jogos do Windows"
+
+msgid "Minecraft"
+msgstr "Minecraft"
+
+msgid "Versões extras do Proton e do Wine"
+msgstr "Versões extras do Proton e do Wine"
+
+msgid "Utilitários"
+msgstr "Utilitários"
+
+msgid "Navegador de código aberto"
+msgstr "Navegador de código aberto"
+
+msgid "Navegador personalizável"
+msgstr "Navegador personalizável"
+
+msgid "Gerenciador de senhas"
+msgstr "Gerenciador de senhas"
+
+msgid "Cofre de senhas offline"
+msgstr "Cofre de senhas offline"
+
+msgid "Sincroniza arquivos com a nuvem"
+msgstr "Sincroniza arquivos com a nuvem"
+
+msgid "Cliente de sincronização do Nextcloud"
+msgstr "Cliente de sincronização do Nextcloud"
+
+msgid "Downloads por torrent"
+msgstr "Downloads por torrent"
+
+msgid "Acesso remoto"
+msgstr "Acesso remoto"
+
+msgid "Acesso remoto de código aberto"
+msgstr "Acesso remoto de código aberto"
+
+msgid "Máquinas virtuais simples"
+msgstr "Máquinas virtuais simples"
+
+msgid "Monitor de CPU, memória, disco e GPU"
+msgstr "Monitor de CPU, memória, disco e GPU"
+
+msgid "Busca e instala extensões do GNOME"
+msgstr "Busca e instala extensões do GNOME"
+
+msgid "Permissões dos aplicativos Flatpak"
+msgstr "Permissões dos aplicativos Flatpak"
+
+msgid "Populares"
+msgstr "Populares"
+
+msgid "Habilite o Flatpak para instalar"
+msgstr "Habilite o Flatpak para instalar"
+
+msgid "Habilite o Flatpak primeiro para instalar este app."
+msgstr "Habilite o Flatpak primeiro para instalar este app."
+
+msgid "Carregando aplicativos populares…"
+msgstr "Carregando aplicativos populares…"
+
+msgid "Aplicativos que mais procuram no Lyra OS. Instale com um clique."
+msgstr "Aplicativos que mais procuram no Lyra OS. Instale com um clique."
+
+msgid "Aplicativos que mais procuram no Lyra OS. Os do Flathub ficam disponíveis depois de habilitar o Flatpak."
+msgstr "Aplicativos que mais procuram no Lyra OS. Os do Flathub ficam disponíveis depois de habilitar o Flatpak."
+
+# Software → Desenvolvedores
+msgid "Linguagens"
+msgstr "Linguagens"
+
+msgid "Compiladores GCC de C e C++"
+msgstr "Compiladores GCC de C e C++"
+
+msgid "Compilador C e C++ do LLVM"
+msgstr "Compilador C e C++ do LLVM"
+
+msgid "Versão mais nova, ao lado do Python 3.13 do sistema"
+msgstr "Versão mais nova, ao lado do Python 3.13 do sistema"
+
+msgid "Instala e atualiza o Rust e o cargo"
+msgstr "Instala e atualiza o Rust e o cargo"
+
+msgid "Linguagem e ferramentas do Go"
+msgstr "Linguagem e ferramentas do Go"
+
+msgid "Node.js do sistema; o nvm já vem instalado"
+msgstr "Node.js do sistema; o nvm já vem instalado"
+
+msgid "JDK com suporte longo (LTS)"
+msgstr "JDK com suporte longo (LTS)"
+
+msgid "JDK mais recente com suporte longo (LTS)"
+msgstr "JDK mais recente com suporte longo (LTS)"
+
+msgid "Ruby com os cabeçalhos para compilar gems"
+msgstr "Ruby com os cabeçalhos para compilar gems"
+
+msgid "PHP pela linha de comando"
+msgstr "PHP pela linha de comando"
+
+msgid "Linguagem funcional sobre a máquina do Erlang"
+msgstr "Linguagem funcional sobre a máquina do Erlang"
+
+msgid "Linguagem e plataforma OTP"
+msgstr "Linguagem e plataforma OTP"
+
+msgid "Compilador Glasgow Haskell"
+msgstr "Compilador Glasgow Haskell"
+
+msgid "Linguagem de sistemas e compilador C"
+msgstr "Linguagem de sistemas e compilador C"
+
+msgid "Linguagem de script leve"
+msgstr "Linguagem de script leve"
+
+msgid "Compilação e depuração"
+msgstr "Compilação e depuração"
+
+msgid "Gera os arquivos de compilação de projetos C e C++"
+msgstr "Gera os arquivos de compilação de projetos C e C++"
+
+msgid "Sistema de compilação rápido"
+msgstr "Sistema de compilação rápido"
+
+msgid "Executor de compilação usado pelo CMake e pelo Meson"
+msgstr "Executor de compilação usado pelo CMake e pelo Meson"
+
+msgid "Depurador"
+msgstr "Depurador"
+
+msgid "Encontra vazamentos e erros de memória"
+msgstr "Encontra vazamentos e erros de memória"
+
+msgid "Autocompletar de C e C++ no Zed e no VS Code"
+msgstr "Autocompletar de C e C++ no Zed e no VS Code"
+
+msgid "Instalador de pacotes do Python"
+msgstr "Instalador de pacotes do Python"
+
+msgid "Ferramentas de Python isoladas (uv, poetry, ruff)"
+msgstr "Ferramentas de Python isoladas (uv, poetry, ruff)"
+
+msgid "Compilação e dependências de projetos Java"
+msgstr "Compilação e dependências de projetos Java"
+
+msgid "Dependências de projetos PHP"
+msgstr "Dependências de projetos PHP"
+
+msgid "Editores e IDEs"
+msgstr "Editores e IDEs"
+
+msgid "Editor de código rápido; já vem no Lyra"
+msgstr "Editor de código rápido; já vem no Lyra"
+
+msgid "Registra o repositório da Microsoft; depois instale o pacote code"
+msgstr "Registra o repositório da Microsoft; depois instale o pacote code"
+
+msgid "IDE para Java"
+msgstr "IDE para Java"
+
+msgid "Compara arquivos e pastas lado a lado"
+msgstr "Compara arquivos e pastas lado a lado"
+
+msgid "Git"
+msgstr "Git"
+
+msgid "Pull requests, issues e repositórios pelo terminal"
+msgstr "Pull requests, issues e repositórios pelo terminal"
+
+msgid "Arquivos grandes em repositórios Git"
+msgstr "Arquivos grandes em repositórios Git"
+
+msgid "Contêineres"
+msgstr "Contêineres"
+
+msgid "Contêineres sem serviço nem acesso de administrador"
+msgstr "Contêineres sem serviço nem acesso de administrador"
+
+msgid "Ferramentas de outras distribuições num contêiner"
+msgstr "Ferramentas de outras distribuições num contêiner"
+
+msgid "Motor de contêineres Docker"
+msgstr "Motor de contêineres Docker"
+
+msgid "Vários contêineres descritos num arquivo"
+msgstr "Vários contêineres descritos num arquivo"
+
+msgid "Builds de imagens multiplataforma"
+msgstr "Builds de imagens multiplataforma"
+
+msgid "Bancos de dados e APIs"
+msgstr "Bancos de dados e APIs"
+
+msgid "Servidor PostgreSQL"
+msgstr "Servidor PostgreSQL"
+
+msgid "Servidor compatível com o MySQL"
+msgstr "Servidor compatível com o MySQL"
+
+msgid "Banco em memória compatível com o Redis"
+msgstr "Banco em memória compatível com o Redis"
+
+msgid "Banco de dados num arquivo, pelo terminal"
+msgstr "Banco de dados num arquivo, pelo terminal"
+
+msgid "Cliente gráfico para vários bancos de dados"
+msgstr "Cliente gráfico para vários bancos de dados"
+
+msgid "Testa e documenta APIs"
+msgstr "Testa e documenta APIs"
+
+msgid "Android"
+msgstr "Android"
+
+msgid "IDE e SDK para apps Android"
+msgstr "IDE e SDK para apps Android"
+
+msgid "adb e fastboot para o celular por USB"
+msgstr "adb e fastboot para o celular por USB"
+
+msgid "Carregando ferramentas de desenvolvimento…"
+msgstr "Carregando ferramentas de desenvolvimento…"
+
+msgid "Linguagens e ferramentas de programação. Instale com um clique."
+msgstr "Linguagens e ferramentas de programação. Instale com um clique."
+
+msgid "Linguagens e ferramentas de programação. As do Flathub ficam disponíveis depois de habilitar o Flatpak."
+msgstr "Linguagens e ferramentas de programação. As do Flathub ficam disponíveis depois de habilitar o Flatpak."
+
+msgid "Desenvolvedores"
+msgstr "Desenvolvedores"
+
+msgid "Instalando…"
+msgstr "Instalando…"
+
+msgid "Instalando… {percent}%"
+msgstr "Instalando… {percent}%"
+
+msgid "Cliente PostgreSQL nativo, com editor SQL, diagrama ER e administração"
+msgstr "Cliente PostgreSQL nativo, com editor SQL, diagrama ER e administração"
+
+msgid "IDE para Java e Kotlin, de código aberto"
+msgstr "IDE para Java e Kotlin, de código aberto"
+
+msgid "IDE para .NET e C#; grátis para uso não comercial"
+msgstr "IDE para .NET e C#; grátis para uso não comercial"
+
+msgid "C# e .NET com suporte longo (LTS), do repositório da Microsoft"
+msgstr "C# e .NET com suporte longo (LTS), do repositório da Microsoft"
+
+msgid "C# e .NET mais recente (LTS), do repositório da Microsoft"
+msgstr "C# e .NET mais recente (LTS), do repositório da Microsoft"
+
+msgid "Compilador Pascal e Object Pascal"
+msgstr "Compilador Pascal e Object Pascal"
+
+msgid "IDE visual para Free Pascal, parecida com o Delphi"
+msgstr "IDE visual para Free Pascal, parecida com o Delphi"
+
+msgid "Instalar {name}?"
+msgstr "Instalar {name}?"
+
+msgid "O pacote vem do repositório oficial do fabricante ({repo}). Se ele ainda não estiver no sistema, o Vega o adiciona e mostra a chave de assinatura para você aprovar."
+msgstr "O pacote vem do repositório oficial do fabricante ({repo}). Se ele ainda não estiver no sistema, o Vega o adiciona e mostra a chave de assinatura para você aprovar."
+
+msgid "Instalando {app}…"
+msgstr "Instalando {app}…"
+
+msgid "Removendo {app}…"
+msgstr "Removendo {app}…"
+
+msgid "A instalação do Flatpak falhou."
+msgstr "A instalação do Flatpak falhou."
+
+msgid "A remoção do Flatpak falhou."
+msgstr "A remoção do Flatpak falhou."
+
+msgid "Ajustes e instaladores prontos para o Linux, num só lugar"
+msgstr "Ajustes e instaladores prontos para o Linux, num só lugar"
+
+# Software → Apps do Windows
+msgid "Aplicativo do Windows desconhecido."
+msgstr "Aplicativo do Windows desconhecido."
+
+msgid "Pasta pessoal não encontrada."
+msgstr "Pasta pessoal não encontrada."
+
+msgid "A instalação do aplicativo do Windows falhou."
+msgstr "A instalação do aplicativo do Windows falhou."
+
+msgid "Roda programas do Windows no Linux"
+msgstr "Roda programas do Windows no Linux"
+
+msgid "Suporte a programas .NET no Wine"
+msgstr "Suporte a programas .NET no Wine"
+
+msgid "Suporte a páginas web dentro de programas do Windows"
+msgstr "Suporte a páginas web dentro de programas do Windows"
+
+msgid "Instala programas e bibliotecas do Windows no Wine"
+msgstr "Instala programas e bibliotecas do Windows no Wine"
+
+msgid "Base"
+msgstr "Base"
+
+msgid "Organiza programas e jogos do Windows em garrafas separadas"
+msgstr "Organiza programas e jogos do Windows em garrafas separadas"
+
+msgid "Compactador de arquivos"
+msgstr "Compactador de arquivos"
+
+msgid "Compactador de arquivos RAR e ZIP"
+msgstr "Compactador de arquivos RAR e ZIP"
+
+msgid "Editor de texto e código"
+msgstr "Editor de texto e código"
+
+msgid "Atalhos e automações de teclado"
+msgstr "Atalhos e automações de teclado"
+
+msgid "Leitura"
+msgstr "Leitura"
+
+msgid "Leitor de e-books da Amazon"
+msgstr "Leitor de e-books da Amazon"
+
+msgid "E-books com DRM de bibliotecas e livrarias"
+msgstr "E-books com DRM de bibliotecas e livrarias"
+
+msgid "Leitor de e-books da Kobo"
+msgstr "Leitor de e-books da Kobo"
+
+msgid "Música, jogos e finanças"
+msgstr "Música, jogos e finanças"
+
+msgid "Player de música clássico"
+msgstr "Player de música clássico"
+
+msgid "Loja e biblioteca de jogos da Ubisoft"
+msgstr "Loja e biblioteca de jogos da Ubisoft"
+
+msgid "Plataforma de negociação no mercado financeiro"
+msgstr "Plataforma de negociação no mercado financeiro"
+
+msgid "Carregando apps do Windows…"
+msgstr "Carregando apps do Windows…"
+
+msgid "Programas do Windows que rodam no Lyra OS pelo Wine. Instale com um clique, sem senha."
+msgstr "Programas do Windows que rodam no Lyra OS pelo Wine. Instale com um clique, sem senha."
+
+msgid "Programas do Windows que rodam no Lyra OS pelo Wine. O Bottles fica disponível depois de habilitar o Flatpak."
+msgstr "Programas do Windows que rodam no Lyra OS pelo Wine. O Bottles fica disponível depois de habilitar o Flatpak."
+
+msgid "Apps do Windows"
+msgstr "Apps do Windows"
+
+msgid "Habilite os apps do Windows para instalar"
+msgstr "Habilite os apps do Windows para instalar"
+
+msgid "Habilite os apps do Windows primeiro para instalar este app."
+msgstr "Habilite os apps do Windows primeiro para instalar este app."
+
+msgid "Apps do Windows desabilitados"
+msgstr "Apps do Windows desabilitados"
+
+msgid "Para instalar programas do Windows, o Vega precisa do Wine e do Winetricks (e do Bottles, se o Flatpak estiver habilitado)."
+msgstr "Para instalar programas do Windows, o Vega precisa do Wine e do Winetricks (e do Bottles, se o Flatpak estiver habilitado)."
+
+msgid "Habilitar apps do Windows"
+msgstr "Habilitar apps do Windows"
+
+msgid "Habilitar apps do Windows?"
+msgstr "Habilitar apps do Windows?"
+
+msgid "Serão instalados: {names}. Os pacotes do sistema pedem a senha de administrador; o Bottles, não."
+msgstr "Serão instalados: {names}. Os pacotes do sistema pedem a senha de administrador; o Bottles, não."
+
+msgid "O instalador é baixado do site do fabricante e roda pelo Wine, na sua conta, sem senha. O app aparece no menu de aplicativos."
+msgstr "O instalador é baixado do site do fabricante e roda pelo Wine, na sua conta, sem senha. O app aparece no menu de aplicativos."
+
+msgid "Instalando {name}…"
+msgstr "Instalando {name}…"
+
+msgid "Navegadores"
+msgstr "Navegadores"
+
+msgid "Navegador da Mozilla; já vem no Lyra"
+msgstr "Navegador da Mozilla; já vem no Lyra"
+
+msgid "Navegador do Google"
+msgstr "Navegador do Google"
+
+msgid "Navegador da Microsoft, do repositório da Microsoft"
+msgstr "Navegador da Microsoft, do repositório da Microsoft"
+
+msgid "Navegador com bloqueio de anúncios"
+msgstr "Navegador com bloqueio de anúncios"
+
+msgid "Navegador com VPN e mensageiros na barra lateral"
+msgstr "Navegador com VPN e mensageiros na barra lateral"
+
+msgid "Flatpak habilitado. Saia da sessão e entre de novo para os apps do Flathub aparecerem no menu."
+msgstr "Flatpak habilitado. Saia da sessão e entre de novo para os apps do Flathub aparecerem no menu."
+
+msgid "Reinicie o computador para instalar este app."
+msgstr "Reinicie o computador para instalar este app."
+
+msgid "Reinicie o computador para concluir"
+msgstr "Reinicie o computador para concluir"
+
+msgid "O suporte a programas de 32 bits já está nos parâmetros de boot e passa a valer depois de reiniciar."
+msgstr "O suporte a programas de 32 bits já está nos parâmetros de boot e passa a valer depois de reiniciar."
+
+msgid "Ative o suporte a programas de 32 bits primeiro."
+msgstr "Ative o suporte a programas de 32 bits primeiro."
+
+msgid "Suporte a programas de 32 bits desligado"
+msgstr "Suporte a programas de 32 bits desligado"
+
+msgid "Quase todos os programas do Windows são de 32 bits, e o kernel do Lyra OS vem com esse suporte desligado. Sem ele, o Wine não consegue abrir os instaladores."
+msgstr "Quase todos os programas do Windows são de 32 bits, e o kernel do Lyra OS vem com esse suporte desligado. Sem ele, o Wine não consegue abrir os instaladores."
+
+msgid "Ativando…"
+msgstr "Ativando…"
+
+msgid "Ativar suporte a 32 bits"
+msgstr "Ativar suporte a 32 bits"
+
+msgid "Ativar suporte a programas de 32 bits?"
+msgstr "Ativar suporte a programas de 32 bits?"
+
+msgid "O Vega vai acrescentar ia32_emulation=1 aos parâmetros de boot, com snapshot, e pedir a senha de administrador. O openSUSE desliga esse suporte por padrão para reduzir a superfície de ataque do kernel; ligado, programas de 32 bits voltam a rodar. Vale depois de reiniciar o computador."
+msgstr "O Vega vai acrescentar ia32_emulation=1 aos parâmetros de boot, com snapshot, e pedir a senha de administrador. O openSUSE desliga esse suporte por padrão para reduzir a superfície de ataque do kernel; ligado, programas de 32 bits voltam a rodar. Vale depois de reiniciar o computador."
+
+msgid "Suporte a 32 bits ativado. Reinicie o computador para concluir."
+msgstr "Suporte a 32 bits ativado. Reinicie o computador para concluir."
+
+msgid "Não foi possível recriar o ambiente do Wine"
+msgstr "Não foi possível recriar o ambiente do Wine"
+
+msgid "Extrai os instaladores compactados para o Winetricks"
+msgstr "Extrai os instaladores compactados para o Winetricks"
+
+msgid "O instalador baixado não confere com o checksum esperado; nada foi instalado."
+msgstr "O instalador baixado não confere com o checksum esperado; nada foi instalado."
+
+msgid "Programa do Windows"
+msgstr "Programa do Windows"
+
+msgid "Baixando {file}…"
+msgstr "Baixando {file}…"
+
+msgid "Instalando {file}…"
+msgstr "Instalando {file}…"
+
+msgid "Escolha um arquivo .exe ou .msi."
+msgstr "Escolha um arquivo .exe ou .msi."
+
+msgid "O programa do Windows terminou com erro."
+msgstr "O programa do Windows terminou com erro."
+
+msgid "Leitura e PDF"
+msgstr "Leitura e PDF"
+
+msgid "Leitor leve de PDF, e-books e quadrinhos"
+msgstr "Leitor leve de PDF, e-books e quadrinhos"
+
+msgid "Imagem e desenho"
+msgstr "Imagem e desenho"
+
+msgid "Visualizador e editor rápido de imagens"
+msgstr "Visualizador e editor rápido de imagens"
+
+msgid "O Paint clássico do Windows"
+msgstr "O Paint clássico do Windows"
+
+msgid "Modelagem 3D (versão gratuita de 2012)"
+msgstr "Modelagem 3D (versão gratuita de 2012)"
+
+msgid "Redes e TI"
+msgstr "Redes e TI"
+
+msgid "Administra roteadores MikroTik"
+msgstr "Administra roteadores MikroTik"
+
+msgid "Cliente de MySQL, MariaDB, PostgreSQL e SQL Server"
+msgstr "Cliente de MySQL, MariaDB, PostgreSQL e SQL Server"
+
+msgid "Outro programa"
+msgstr "Outro programa"
+
+msgid "Rodar um programa do Windows"
+msgstr "Rodar um programa do Windows"
+
+msgid "Escolha o instalador (.exe ou .msi) que você baixou do site do fabricante. Ele roda pelo Wine, na sua conta, sem senha."
+msgstr "Escolha o instalador (.exe ou .msi) que você baixou do site do fabricante. Ele roda pelo Wine, na sua conta, sem senha."
+
+msgid "Escolher arquivo…"
+msgstr "Escolher arquivo…"
+
+msgid "Escolha o programa do Windows"
+msgstr "Escolha o programa do Windows"
+
+msgid "Programas do Windows"
+msgstr "Programas do Windows"
+
+msgid "Rodar {name}?"
+msgstr "Rodar {name}?"
+
+msgid "Rode só programas de fontes confiáveis, como o site do fabricante. Nem todo programa do Windows funciona no Wine; se a instalação terminar, o programa aparece no menu de aplicativos."
+msgstr "Rode só programas de fontes confiáveis, como o site do fabricante. Nem todo programa do Windows funciona no Wine; se a instalação terminar, o programa aparece no menu de aplicativos."
+
+msgid "Rodar"
+msgstr "Rodar"
+
+msgid "Rodando {name}…"
+msgstr "Rodando {name}…"
+
+msgid "{name} terminou."
+msgstr "{name} terminou."
+
+msgid "Não foi possível reiniciar o computador."
+msgstr "Não foi possível reiniciar o computador."
+
+msgid "Flatpak habilitado."
+msgstr "Flatpak habilitado."
+
+msgid "os apps do Flathub aparecerem no menu"
+msgstr "os apps do Flathub aparecerem no menu"
+
+msgid "os programas de 32 bits do Windows funcionarem"
+msgstr "os programas de 32 bits do Windows funcionarem"
+
+msgid " e "
+msgstr " e "
+
+msgid "É preciso reiniciar para {reasons}."
+msgstr "É preciso reiniciar para {reasons}."
+
+msgid "Reiniciar agora"
+msgstr "Reiniciar agora"
+
+msgid "Reiniciar o computador agora?"
+msgstr "Reiniciar o computador agora?"
+
+msgid "É preciso reiniciar para {reasons}. Salve o que estiver aberto antes de continuar."
+msgstr "É preciso reiniciar para {reasons}. Salve o que estiver aberto antes de continuar."
+
+msgid "Esta versão do winetricks não pôde ser preparada para conferir os downloads; nada foi instalado."
+msgstr "Esta versão do winetricks não pôde ser preparada para conferir os downloads; nada foi instalado."
+
+msgid "A remoção do aplicativo do Windows falhou."
+msgstr "A remoção do aplicativo do Windows falhou."
+
+msgid "Removendo… {percent}%"
+msgstr "Removendo… {percent}%"
+
+msgid "Removendo…"
+msgstr "Removendo…"
+
+msgid "Remover {name}?"
+msgstr "Remover {name}?"
+
+msgid "O desinstalador do programa roda pelo Wine, na sua conta, sem senha. Arquivos que você salvou com ele, como documentos, não são apagados."
+msgstr "O desinstalador do programa roda pelo Wine, na sua conta, sem senha. Arquivos que você salvou com ele, como documentos, não são apagados."
+
+msgid "Removendo {name}…"
+msgstr "Removendo {name}…"

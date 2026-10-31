@@ -97,7 +97,34 @@ on("backup-transaction", (event) => {
  */
 export async function runSoftware(action, title) {
   const id = await call("software_run", { action });
-  return track(`software:${id}`, title, "software");
+  const started = track(`software:${id}`, title, "software");
+  // Guarda a ação para as vitrines acharem a instalação do próprio cartão.
+  started.task.action = action;
+  return started;
+}
+
+/** App do Windows (verbo do winetricks), instalado na sessão do usuário. */
+export async function runWindows(verb, title) {
+  const id = await call("windows_install", { verb });
+  const started = track(`software:${id}`, title, "software");
+  started.task.action = { kind: "install", origin: "windows", id: verb };
+  return started;
+}
+
+/** Remove um app do Windows da vitrine (desinstalador silencioso). */
+export async function runWindowsRemove(id, title) {
+  const callId = await call("windows_remove", { id });
+  const started = track(`software:${callId}`, title, "software");
+  started.task.action = { kind: "remove", origin: "windows", id };
+  return started;
+}
+
+/** Programa do Windows escolhido pelo usuário, rodado na sessão. */
+export async function runWindowsFile(path, title) {
+  const id = await call("windows_run_file", { path });
+  const started = track(`software:${id}`, title, "software");
+  started.task.action = { kind: "run", origin: "windows", id: path };
+  return started;
 }
 
 export async function runBackup(action, title) {

@@ -3,7 +3,7 @@
 //! dispositivos internos confiáveis para a sessão local ativa
 //! (`org.freedesktop.fwupd.update-internal-trusted`); o polkit dele decide se
 //! pede senha, não a ação administrativa do Vega. Mesmo padrão do
-//! `flatpak_update`: eventos `software-transaction`, tarefa e console.
+//! `flatpak_session`: eventos `software-transaction`, tarefa e console.
 
 use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};

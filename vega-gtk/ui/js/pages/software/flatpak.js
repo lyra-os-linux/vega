@@ -6,6 +6,7 @@
 import { call } from "../../api.js";
 import { t } from "../../i18n.js";
 import { runSoftware } from "../../tasks.js";
+import { requireRestart } from "../../restart.js";
 import { h, clear, button, banner, confirm, toast, fail } from "../../ui.js";
 
 const SUPERVISED_GROUP = "lyra-supervised";
@@ -52,8 +53,12 @@ export function flatpakPanel(onEnabled) {
       running = false;
       if (result.success) {
         clear(host);
-        toast(t("Flatpak habilitado. Os aplicativos do Flathub já aparecem na busca."));
+        // O GNOME Shell só lê /var/lib/flatpak/exports/share a partir do
+        // próximo login (/etc/profile.d/flatpak.sh): até lá, apps do Flathub
+        // instalados não aparecem no menu.
+        toast(t("Flatpak habilitado."));
         onEnabled?.();
+        await requireRestart("flatpak");
         return;
       }
       fail(new Error(result.message || t("Não foi possível habilitar o Flatpak.")));
