@@ -1,7 +1,5 @@
 import { call } from "../api.js";
 import { N_, t } from "../i18n.js";
-import { hasCapability } from "../store.js";
-import { runSoftware, transactionPanel } from "../tasks.js";
 import { diagnosticsCard, diagnosticsSection } from "./hardware-diagnostics.js";
 import { h, icon, clear, button, badge, segmented, row, list, section, banner, skeletonRows, confirm, toast } from "../ui.js";
 
@@ -31,127 +29,6 @@ function components(inventory, firmware) {
     componentCard("monitor", t("Vídeo"), gpus.map(gpuName), gpus),
     componentCard("layers", t("Memória"), [inventory.value.ram]),
     componentCard("shield", t("Firmware"), [firmware.error ?? firmware.value]));
-}
-
-// ---------- NVIDIA ----------
-
-const NVIDIA_STATES = {
-  "no-gpu": N_("Nenhuma GPU NVIDIA detectada."),
-  "unsupported-gpu": N_("Esta GPU não está na lista de suporte do driver NVIDIA qualificado."),
-  "unsupported-system": N_("Esta integração requer Lyra OS ou openSUSE Leap 16.1, em x86_64."),
-  "unknown-secure-boot": N_("Não foi possível verificar o Secure Boot. A instalação está bloqueada."),
-  "unknown-boot-kernel": N_("Não foi possível identificar o kernel padrão. Revise a configuração de inicialização."),
-  conflict: N_("Há outro driver NVIDIA instalado. A migração precisa ser revisada antes de continuar."),
-  inconsistent: N_("Os pacotes NVIDIA estão incompletos ou com versões incompatíveis. Revise a instalação antes de reiniciar."),
-  "kernel-missing": N_("O módulo NVIDIA correspondente não está disponível para o kernel em uso ou para o kernel padrão."),
-  "unsigned-module": N_("O módulo encontrado não corresponde ao pacote assinado pela SUSE."),
-  available: N_("O driver NVIDIA qualificado está disponível para instalação opcional."),
-  unmanaged: N_("Driver oficial instalado. Ative a integração Lyra para manter bibliotecas e módulo em versões correspondentes."),
-  "reboot-required": N_("Driver instalado. Reinicie para carregar o módulo e conferir o funcionamento."),
-  active: N_("Driver NVIDIA ativo; bibliotecas, módulo e integração Lyra correspondem."),
-};
-const UPDATE_VEGAD = N_("Atualize o vegad para usar a integração NVIDIA atual.");
-
-const SECURE_BOOT = {
-  enabled: N_("Habilitado"),
-  disabled: N_("Desabilitado"),
-  "not-applicable": N_("Não se aplica (BIOS)"),
-};
-
-const stateMessage = (state) => t(NVIDIA_STATES[state] ?? UPDATE_VEGAD);
-const installable = (status) => status.supported && (status.state === "available" || status.state === "unmanaged");
-
-/** Tom visual do estado: verde ativo, destaque quando há ação, amarelo para revisão. */
-function stateTone(state) {
-  if (state === "active") return "green";
-  if (state === "available" || state === "unmanaged") return "tint";
-  if (state === "reboot-required") return "yellow";
-  if (state === "no-gpu" || state === "unsupported-gpu" || state === "unsupported-system") return "";
-  return "red";
-}
-
-function nvidiaCard(ctx) {
-  const root = h("div", { class: "card nv-card", id: "sec-nvidia" });
-  let installing = null; // { task }
-  let lastError = null;
-
-  async function refresh() {
-    clear(root, h("div", { class: "nv-head" }, h("span", { class: "nv-logo" }, icon("monitor", 22)), h("div", { class: "spacer" }, h("strong", {}, t("NVIDIA")), h("div", { class: "small muted" }, t("Carregando…"))), h("span", { class: "spinner" })));
-    if (!hasCapability("nvidia-official-v1")) return paintUnavailable(t(UPDATE_VEGAD));
-    try {
-      paint(await call("software_nvidia_status"));
-    } catch (error) {
-      paintUnavailable(error.message);
-    }
-  }
-
-  function header(title, subtitle, tone, badgeEl) {
-    return h("div", { class: "nv-head" },
-      h("span", { class: `nv-logo ${tone}`.trim() }, icon("monitor", 22)),
-      h("div", { class: "spacer" }, h("strong", {}, title), subtitle && h("div", { class: "small muted selectable" }, subtitle)),
-      badgeEl);
-  }
-
-  function refreshButton() {
-    return button(t("Atualizar diagnóstico"), { icon: "refresh", size: "sm", disabled: Boolean(installing), onClick: refresh });
-  }
-
-  function paintUnavailable(detail) {
-    clear(root,
-      header(t("NVIDIA"), t("Diagnóstico NVIDIA indisponível"), "", null),
-      h("p", { class: "small muted selectable nv-detail" }, detail),
-      h("div", { class: "row-flex" }, refreshButton()));
-  }
-
-  function paint(status) {
-    const tone = stateTone(status.state);
-    const secure = t(SECURE_BOOT[status.secure_boot] ?? N_("Desconhecido"));
-    const facts = [
-      h("li", {}, icon(status.secure_boot === "enabled" ? "shield-check" : "shield", 16), t("Secure Boot: {state}", { state: secure })),
-      status.recovery_snapshot > 0 && h("li", {}, icon("history", 16), t("Snapshot de recuperação: {id}", { id: status.recovery_snapshot })),
-    ];
-    const canInstall = installable(status);
-    const showInstall = status.state === "available" || status.state === "unmanaged";
-    const label = status.state === "unmanaged" ? t("Ativar integração Lyra") : t("Instalar driver NVIDIA");
-    clear(root,
-      header(status.gpu ? gpuName(status.gpu) : t("NVIDIA"), stateMessage(status.state), tone,
-        status.installed ? badge(t("Instalado"), status.state === "active" ? "green" : "yellow", "check") : null),
-      status.detail && h("p", { class: "small muted selectable nv-detail" }, status.detail),
-      h("ul", { class: "nv-facts" }, facts),
-      lastError && banner("danger", "alert-circle", t("A instalação não foi concluída. Consulte os detalhes antes de reiniciar."), lastError),
-      installing && transactionPanel(installing.task),
-      h("div", { class: "row-flex" },
-        showInstall && !installing && button(label, { kind: "primary", icon: "download", disabled: !canInstall, onClick: () => install(status) }),
-        refreshButton()));
-  }
-
-  async function install(status) {
-    // Revisa repositórios, confiança e recuperação: sempre obrigatório.
-    const ok = await confirm({
-      title: t("Instalar a integração NVIDIA?"),
-      text: t("O Vega usará os repositórios Lyra no OBS, NVIDIA oficial e openSUSE Leap 16.1. Serão instalados apenas os RPMs qualificados, com verificação de assinaturas e módulo assinado pela SUSE.\n\nÉ necessário criar um snapshot de recuperação. O Vega não remove drivers conflitantes nem troca o kernel automaticamente. Uma falha pode exigir recuperação pelo snapshot. Reinicie somente após uma instalação concluída e verificada.\n\nA autorização de administrador será solicitada ao continuar."),
-      ic: "monitor",
-      confirmLabel: t("Continuar"),
-      required: true,
-    });
-    if (!ok) return;
-    lastError = null;
-    try {
-      const { task, done } = await runSoftware({ kind: "install-nvidia" }, t("Instalando a integração NVIDIA…"));
-      installing = { task };
-      paint(status);
-      const result = await done;
-      if (!result.success) lastError = result.message;
-    } catch (error) {
-      lastError = error.message;
-    }
-    installing = null;
-    if (!ctx.visible()) return;
-    await refresh();
-  }
-
-  refresh();
-  return root;
 }
 
 // ---------- Kernel e bootloader ----------
@@ -271,9 +148,8 @@ export default {
   title: N_("Hardware e Kernel"),
   icon: "cpu",
   group: "system",
-  keywords: ["placa de video", "gpu", "driver", "nvidia", "processador", "memoria", "firmware", "kernel", "boot", "grub", "diagnostico", "saude", "teste"],
+  keywords: ["placa de video", "gpu", "driver", "processador", "memoria", "firmware", "kernel", "boot", "grub", "diagnostico", "saude", "teste"],
   sections: [
-    { id: "nvidia", label: N_("NVIDIA"), icon: "monitor", keywords: ["nvidia", "driver", "gpu", "placa de video"] },
     diagnosticsSection,
     { id: "kernel", label: N_("Kernel"), icon: "terminal", keywords: ["kernel", "linux"] },
     { id: "boot", label: N_("Bootloader"), icon: "power", keywords: ["boot", "grub", "systemd-boot", "inicializacao"] },
@@ -295,8 +171,7 @@ export default {
         return;
       }
       const host = h("div", {}, skeletonRows(2));
-      const nvidia = nvidiaCard(ctx);
-      clear(body, section(t("Componentes"), {}, host), section(t("NVIDIA"), {}, nvidia), section(t("Diagnóstico"), {}, diagnosticsCard(ctx)));
+      clear(body, section(t("Componentes"), {}, host), section(t("Diagnóstico"), {}, diagnosticsCard(ctx)));
       hardwareTab().then(({ inventory, firmware }) => clear(host, components(inventory, firmware)));
     }
 

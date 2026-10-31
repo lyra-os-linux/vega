@@ -19,7 +19,7 @@ Marque cada item ao portar. A referência é o vega-gtk antes da migração
 - [x] Navegação: dashboard, software, backup (Backups | Pontos de restauração), virtualization, assistant, hardware (Hardware | Kernel), datetime, screen (Personalização), monitor, storage, network, desktop (Bluetooth), services, users, logs. Busca filtra a navegação.
 - [x] Página inicial configurável (qualquer id).
 - [x] Menu: Configurações; Sobre (versão `VEGA_VERSION`, site, issues, GPL-3.0, "Rodrigo Brito").
-- [x] Política de confirmação: `required` sempre; `confirm` pulado se `confirm_actions=false`, exceto quando há formulário/revisão; ações de pacote, NVIDIA, rollback, chave de repositório e preparação sempre perguntam.
+- [x] Política de confirmação: `required` sempre; `confirm` pulado se `confirm_actions=false`, exceto quando há formulário/revisão; ações de pacote, rollback, chave de repositório e preparação sempre perguntam.
 - [x] i18n gettext domínio `vega-gtk` (pt-BR, en-US, es-ES), msgids em português, resolução de locale de `i18n.rs`, idioma da preferência.
 
 ## Preferências (`$XDG_CONFIG_HOME/vega-gtk/preferences.json`)
@@ -47,7 +47,7 @@ Marque cada item ao portar. A referência é o vega-gtk antes da migração
 
 ## Hardware e Kernel
 - [x] Processador, vídeo, memória, firmware.
-- [x] NVIDIA: capacidade `nvidia-official-v1`, `nvidia_status`, mensagens por estado, Secure Boot, snapshot de recuperação, "Atualizar diagnóstico", instalar/ativar integração com diálogo obrigatório (`install_nvidia(true)`).
+- NVIDIA: removida na 5.9.0 (lyra-ecosystem#50); o Vega não instala nem diagnostica o driver, mesmo com um `vegad` que ainda anuncie `nvidia-official-v1`.
 - [x] Kernel: instalados, disponíveis não instalados, bootloader (entrada padrão, timeout 0–120, cmdline) com `apply_boot_config`.
 
 ## Armazenamento

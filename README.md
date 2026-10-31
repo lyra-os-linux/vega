@@ -27,13 +27,10 @@ repository — see [Architecture](#architecture) below.
 - users, services, logs, and live process monitoring;
 - wallpaper, screen-lock preferences, and a multi-provider AI assistant.
 
-Generic driver switching and optional hardware firmware installation are no
-longer offered by Vega. The Hardware page offers an optional, qualified
-installation of the official NVIDIA driver (SUSE-signed module, mandatory
-recovery snapshot) when `vegad` advertises the `nvidia-official-v1` capability;
-see `docs/nvidia.md` in the
-[vegad](https://github.com/lyra-os-linux/vegad) repository. Hardware inventory
-and GPU monitoring remain available.
+Vega does not install or switch drivers and does not install optional
+hardware firmware. The NVIDIA driver is installed following the openSUSE
+procedure; see the [Lyra OS documentation](https://lyraos.com.br/docs/).
+Hardware inventory and GPU monitoring remain available.
 
 Features backed by optional programs are shown as unavailable when their
 dependency is missing without preventing the other pages from working.

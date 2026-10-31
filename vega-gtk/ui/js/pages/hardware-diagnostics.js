@@ -127,7 +127,7 @@ const GUIDE = {
   "platform.kernel-tainted": { text: N_("O kernel registrou uma falha. Reinicie o computador; se voltar a acontecer, veja os logs."), go: ["logs"], label: N_("Abrir Logs") },
   "logs.coredumps": { text: N_("Os dados brutos mostram quais programas falharam. Manter o sistema atualizado costuma resolver."), go: ["software", "updates"], label: N_("Ver atualizações") },
   "gpu.rtd3-awake": { text: N_("Algum programa está usando a NVIDIA. Feche-o para economizar bateria."), go: ["monitor"], label: N_("Abrir Monitor") },
-  "gpu.bench-failed": { text: N_("Confira o estado do driver da GPU."), go: ["hardware", "nvidia"], label: N_("Ver NVIDIA") },
+  "gpu.bench-failed": { text: N_("Confira o estado do driver da GPU.") },
   "power.abort": { text: N_("Conecte o carregador e execute o teste de novo.") },
   "memory.insufficient": { text: N_("Feche alguns programas para liberar memória e execute o teste de novo.") },
   "bench.insufficient-space": { text: N_("Libere ao menos 10 GiB no disco e execute o teste de novo."), go: ["storage"], label: N_("Abrir Armazenamento") },

@@ -1,6 +1,6 @@
 use lyra_vega_dbus::{
-    NvidiaStatus, PackageDetails, PackageRef, PreparationClient, PreparationKey, RepositoryRef,
-    SoftwareClient, SoftwareEvent, UpdateStatus, ZbusSoftwareClient,
+    PackageDetails, PackageRef, PreparationClient, PreparationKey, RepositoryRef, SoftwareClient,
+    SoftwareEvent, UpdateStatus, ZbusSoftwareClient,
 };
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Emitter};
@@ -72,10 +72,6 @@ dto!(Details from PackageDetails {
 dto!(Status from UpdateStatus {
     checked_at: String, profile: String, native_count: u32, flatpak_count: u32,
     total_count: u32, security_count: u32, in_progress: bool, error: String,
-});
-dto!(Nvidia from NvidiaStatus {
-    supported: bool, installed: bool, reboot_required: bool, gpu: String,
-    secure_boot: String, state: String, detail: String, recovery_snapshot: u32,
 });
 
 async fn client(state: &State<'_>) -> CmdResult<ZbusSoftwareClient> {
@@ -165,16 +161,6 @@ pub async fn software_set_repo_enabled(
         .map_err(err)
 }
 
-#[tauri::command]
-pub async fn software_nvidia_status(state: State<'_>) -> CmdResult<Nvidia> {
-    client(&state)
-        .await?
-        .nvidia_status()
-        .await
-        .map(Into::into)
-        .map_err(err)
-}
-
 /// Operações que viram transação no vegad.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(tag = "kind", rename_all = "kebab-case")]
@@ -202,7 +188,6 @@ pub enum Action {
         repo: String,
         key_id: String,
     },
-    InstallNvidia,
     /// Firmware pelo fwupd, na sessão do usuário (nunca chega ao vegad).
     UpdateFirmware,
     ApprovePreparationKey {
@@ -274,7 +259,6 @@ pub async fn software_run(app: AppHandle, state: State<'_>, action: Action) -> C
         Action::ClearCache => software.clear_cache().await,
         Action::AddRepo { name, url } => software.add_repo(name, url).await,
         Action::TrustRepoKey { repo, key_id } => software.trust_repo_key(repo, key_id).await,
-        Action::InstallNvidia => software.install_nvidia(true).await,
         Action::UpdateFirmware => unreachable!("o firmware é atualizado na sessão"),
         Action::ApprovePreparationKey {
             repo,

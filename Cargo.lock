@@ -2166,8 +2166,8 @@ checksum = "112b39cec0b298b6c1999fee3e31427f74f676e4cb9879ed1a121b43661a4154"
 
 [[package]]
 name = "lyra-vega-dbus"
-version = "5.1.22"
-source = "git+https://github.com/lyra-os-linux/lyra-vega-dbus?rev=7333f576c36fd7657125f7d72d8386a5186aea85#7333f576c36fd7657125f7d72d8386a5186aea85"
+version = "5.2.0"
+source = "git+https://github.com/lyra-os-linux/lyra-vega-dbus?rev=63cfb0c1f231dfce287fc143cac330f0276d2adc#63cfb0c1f231dfce287fc143cac330f0276d2adc"
 dependencies = [
  "async-io",
  "async-lock",
@@ -4557,7 +4557,7 @@ dependencies = [
 
 [[package]]
 name = "vega-gtk"
-version = "5.8.0"
+version = "5.9.0"
 dependencies = [
  "async-io",
  "async-lock",

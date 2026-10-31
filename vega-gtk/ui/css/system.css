@@ -1,7 +1,5 @@
 /* Hardware e Kernel, Armazenamento, Data/Hora/Idioma. */
 
-/* Textos longos de diálogos (ex.: instalação NVIDIA) mantêm os parágrafos. */
-
 .hw-status { margin: 18px 4px 0; }
 
 /* Componentes */
@@ -11,20 +9,6 @@
 .hw-label { font-size: 13px; font-weight: 700; color: var(--fg-2); }
 .hw-value { font-size: 16px; font-weight: 700; line-height: 1.35; overflow-wrap: anywhere; }
 .hw-value.secondary { font-size: 14px; font-weight: 600; color: var(--fg-2); }
-
-/* NVIDIA */
-.nv-card { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
-.nv-head { display: flex; align-items: center; gap: 14px; }
-.nv-head strong { font-size: 15.5px; }
-.nv-logo { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; flex: none; background: rgb(118 185 0 / 0.14); color: #5e9400; }
-:root[data-theme="dark"] .nv-logo { color: #8fd11f; }
-.nv-logo.green { background: var(--green-bg); color: var(--green); }
-.nv-logo.yellow { background: var(--yellow-bg); color: var(--yellow); }
-.nv-logo.red { background: var(--red-bg); color: var(--red); }
-.nv-detail { margin: 0; padding: 10px 12px; border-radius: var(--radius-s); background: var(--fill); white-space: pre-line; }
-.nv-facts { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 13.5px; color: var(--fg-2); }
-.nv-facts li { display: flex; align-items: center; gap: 7px; }
-.nv-facts .ic { display: flex; color: var(--fg-3); }
 
 /* Diagnóstico de saúde */
 .diag-card { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
