@@ -14,6 +14,7 @@
 .net-hero-signal { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--fg-2); }
 
 .net-tabs { margin: 4px 0 16px; overflow-x: auto; scrollbar-width: none; }
+.net-tabs.page-tabs { margin: 0 -32px 16px; }
 .net-tabs .seg { flex-wrap: nowrap; }
 
 /* Barras de sinal Wi-Fi */

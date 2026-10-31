@@ -2,6 +2,7 @@ import { call, on, personalization, win } from "./api.js";
 import { svg } from "./icons.js";
 import { loadCatalog, t } from "./i18n.js";
 import { pages, groups } from "./pages/index.js";
+import { initRestart, restartBanner } from "./restart.js";
 import { badges, hasCapability, loadMetadata, loadPrefs, local, onBadges, prefs, saveLocal, savePrefs } from "./store.js";
 import { mountTasksButton } from "./tasks.js";
 import { startHealth } from "./health.js";
@@ -84,7 +85,8 @@ function route() {
     console.error(error);
     view = { el: h("div", { class: "empty" }, h("h3", {}, t("Não foi possível abrir esta página")), h("p", {}, String(error))) };
   }
-  clear(host, view.el);
+  clear(host, restartBanner(), view.el);
+  pinTabs(view.el);
   clear($("header-actions"), view.actions ?? []);
   void host.offsetWidth;
   host.classList.add("enter");
@@ -93,6 +95,23 @@ function route() {
   closeSidebar();
 }
 window.addEventListener("hashchange", route);
+
+/**
+ * Abas da página (o `segmented` com role="tablist" no cabeçalho, ou a faixa
+ * `.net-tabs` da Rede) ficam numa faixa própria, presa no topo do conteúdo
+ * ao rolar. O cabeçalho continua com o título e a descrição, que rolam.
+ */
+function pinTabs(root) {
+  if (!(root instanceof Element)) return;
+  const band = root.querySelector(":scope > .net-tabs");
+  if (band) {
+    band.classList.add("page-tabs");
+    return;
+  }
+  const tabs = root.querySelector(":scope > .page-hero > [role=tablist]");
+  if (!tabs) return;
+  tabs.closest(".page-hero").after(h("div", { class: "page-tabs" }, tabs));
+}
 
 // ---------- Barra lateral adaptativa ----------
 
@@ -391,6 +410,7 @@ async function start() {
   setupWindow();
   loadHost();
   await loadMetadata();
+  await initRestart();
   startHealth();
 
   const [id, sub] = appInfo.start.split("/");

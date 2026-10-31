@@ -1,22 +1,48 @@
-// Software: buscar, instalados, atualizações e repositórios (ui/software.rs e
+// Software: populares, desenvolvedores, buscar, instalados, atualizações e repositórios (ui/software.rs e
 // application.rs do vega-gtk). Toda ação vira transação do vegad, acompanhada
 // pelo painel de transação e pelo botão de tarefas do cabeçalho.
 
-import { call } from "../api.js";
+import { call, pick } from "../api.js";
 import { refreshUpdates } from "../health.js";
 import { N_, t } from "../i18n.js";
 import { local, saveLocal } from "../store.js";
-import { runSoftware, runningTasks, onTasks, transactionPanel } from "../tasks.js";
-import { h, icon, clear, button, badge, segmented, list, section, empty, skeletonRows, confirm, sheet, toast, fail, tile, normalize, meter } from "../ui.js";
+import { runSoftware, runWindows, runWindowsFile, runWindowsRemove, runningTasks, onTasks, transactionPanel } from "../tasks.js";
+import { h, icon, clear, button, badge, segmented, list, section, empty, skeletonRows, confirm, sheet, toast, fail, tile, normalize, meter, banner } from "../ui.js";
 import { preparationPanel } from "./software/preparation.js";
+import { requireRestart } from "../restart.js";
 import { flatpakPanel } from "./software/flatpak.js";
+import { POPULAR } from "./software/popular-catalog.js";
+import { DEVELOPER } from "./software/developer-catalog.js";
+import { WINDOWS, WINDOWS_BASE } from "./software/windows-catalog.js";
 
-const TABS = ["search", "installed", "updates", "repos"];
+const TABS = ["popular", "developers", "windows", "search", "installed", "updates", "repos"];
+// Vitrines curadas (Populares e Desenvolvedores): mesmo cartão, catálogos diferentes.
+const SHOWCASES = {
+  popular: {
+    catalog: POPULAR,
+    loading: N_("Carregando aplicativos populares…"),
+    intro: N_("Aplicativos que mais procuram no Lyra OS. Instale com um clique."),
+    introLocked: N_("Aplicativos que mais procuram no Lyra OS. Os do Flathub ficam disponíveis depois de habilitar o Flatpak."),
+  },
+  developers: {
+    catalog: DEVELOPER,
+    loading: N_("Carregando ferramentas de desenvolvimento…"),
+    intro: N_("Linguagens e ferramentas de programação. Instale com um clique."),
+    introLocked: N_("Linguagens e ferramentas de programação. As do Flathub ficam disponíveis depois de habilitar o Flatpak."),
+  },
+  windows: {
+    catalog: WINDOWS,
+    base: WINDOWS_BASE,
+    loading: N_("Carregando apps do Windows…"),
+    intro: N_("Programas do Windows que rodam no Lyra OS pelo Wine. Instale com um clique, sem senha."),
+    introLocked: N_("Programas do Windows que rodam no Lyra OS pelo Wine. O Bottles fica disponível depois de habilitar o Flatpak."),
+  },
+};
 const ORIGIN_RANK = { official: 0, flathub: 1 };
 
 // Estado que sobrevive à troca de página, como os widgets do vega-gtk.
 const memory = {
-  tab: "search",
+  tab: "popular",
   query: "",
   results: null,
   queue: new Map(), // "origem\u0000id" → pacote
@@ -25,7 +51,7 @@ const memory = {
 };
 
 const queueKey = (pkg) => `${pkg.origin}\u0000${pkg.id}`;
-const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin);
+const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin);
 const rankOrigin = (a, b) => (ORIGIN_RANK[a.origin] ?? 2) - (ORIGIN_RANK[b.origin] ?? 2);
 
 function packageIcon(pkg, size = 40) {
@@ -65,8 +91,11 @@ export default {
   title: N_("Software"),
   icon: "package",
   group: "main",
-  keywords: ["pacotes", "zypper", "flatpak", "programas", "aplicativos", "instalar", "remover", "atualizar", "repositorio"],
+  keywords: ["pacotes", "zypper", "flatpak", "programas", "aplicativos", "instalar", "remover", "atualizar", "repositorio", "populares", "desenvolvedores"],
   sections: [
+    { id: "popular", label: N_("Populares"), icon: "star", keywords: ["populares", "recomendados", "spotify", "steam", "discord", "obs", "gimp"] },
+    { id: "windows", label: N_("Apps do Windows"), icon: "layers", keywords: ["windows", "wine", "bottles", "exe", "winetricks"] },
+    { id: "developers", label: N_("Desenvolvedores"), icon: "terminal", keywords: ["programar", "programacao", "linguagens", "python", "rust", "java", "node", "docker", "podman", "ide", "compilador"] },
     { id: "search", label: N_("Buscar aplicativos e pacotes"), icon: "search", keywords: ["buscar", "instalar", "flathub"] },
     { id: "installed", label: N_("Instalados"), icon: "box", keywords: ["remover", "desinstalar"] },
     { id: "updates", label: N_("Atualizações"), icon: "download", keywords: ["update", "atualizar"] },
@@ -82,6 +111,14 @@ export default {
     let updates = null;
     let repos = null;
     let loadError = null;
+    // Vitrines: chaves "origem\u0000id" instaladas e se o Flatpak está ativo.
+    let popularInstalled = null;
+    let flatpakEnabled = null;
+    let enablingWindows = false;
+    // Kernel em execução roda 32 bits? E a configuração de boot (para saber
+    // se ia32_emulation=1 já foi aplicado e só falta reiniciar).
+    let windowsIa32 = null;
+    let bootStatus = null;
     let searching = false;
     let searchStatus = "";
     let updatingOne = false;
@@ -116,6 +153,7 @@ export default {
         // As atualizações são limpas mesmo em falha: o estado pode ter mudado.
         if (tab === "updates") updates = null;
         if (tab === "installed") installed = null;
+        if (SHOWCASES[tab]) popularInstalled = null;
         if (tab === "search" && memory.query) runSearch();
         load();
       }
@@ -235,8 +273,10 @@ export default {
       else toast(t("{count} pacote(s) instalado(s) com sucesso", { count: installedCount }));
       if (memory.query) runSearch();
       installed = null;
+      popularInstalled = null;
       refreshUpdates();
       paint();
+      load();
     }
 
     // ---------- Detalhes ----------
@@ -336,6 +376,296 @@ export default {
 
     const collection = (items) => (view === "cards" ? h("div", { class: "grid auto sw-cards" }, items) : list(items));
 
+    // ---------- Vitrines (Populares e Desenvolvedores) ----------
+    /** Instalação em andamento do cartão: progresso do pacote (zypper) ou da transação. */
+    function cardProgress(app) {
+      const task = runningTasks().find((item) => item.kind === "software" && ["install", "remove"].includes(item.action?.kind)
+        && item.action.origin === app.origin && item.action.id === app.id);
+      if (!task) return null;
+      const percent = task.packages?.[app.id]?.percent ?? task.percent;
+      const removing = task.action.kind === "remove";
+      const label = removing
+        ? (percent != null ? t("Removendo… {percent}%", { percent }) : t("Removendo…"))
+        : (percent != null ? t("Instalando… {percent}%", { percent }) : t("Instalando…"));
+      return h("div", { class: "sw-pkg-progress sw-card-progress" },
+        h("span", { class: "small muted" }, label),
+        percent != null
+          ? meter(percent / 100)
+          : h("div", { class: "meter indeterminate" }, h("i", { style: { width: "30%" } })));
+    }
+
+    /** Cartão de vitrine: Instalar, "Instalado" ou bloqueado até habilitar o Flatpak. */
+    /** `gateNote`: motivo de a seção estar bloqueada (base do Windows ou suporte a 32 bits). */
+    function popularCard(app, { gateNote = null } = {}) {
+      // `alternatives`: pacotes que já entregam a mesma ferramenta (o Rust do
+      // sistema no lugar do rustup). Se um deles está instalado, o cartão
+      // fica desabilitado como "Instalado".
+      const installedId = [app.id, ...(app.alternatives ?? [])]
+        .find((id) => popularInstalled.has(queueKey({ origin: app.origin, id })));
+      const pkg = { origin: app.origin, id: app.id, name: app.name, installed: false };
+      const installed = Boolean(installedId);
+      const needsFlatpak = !installed && app.origin === "flathub" && !flatpakEnabled;
+      const locked = needsFlatpak || (!installed && Boolean(gateNote));
+      // Instalado ou bloqueado: o cartão não abre detalhes nem instala.
+      const disabled = installed || locked;
+      const busy = runningTasks().some((task) => task.kind === "software");
+      // Sem `logo` (marca registrada): ícone genérico com a inicial.
+      const logo = app.logo
+        ? h("img", { class: "sw-icon", src: `img/popular/${app.logo}.png`, alt: "", loading: "lazy", width: "48", height: "48" })
+        : packageIcon(app, 48);
+      const progress = cardProgress(app);
+      let action;
+      if (progress) action = progress;
+      // Apps do Windows instalados podem ser removidos aqui mesmo: não
+      // aparecem na aba Instalados, que lista pacotes e Flatpaks.
+      else if (installed && app.origin === "windows") action = [
+        badge(t("Instalado"), "green", "check"),
+        button(t("Remover"), { size: "sm", icon: "trash", kind: "danger", disabled: busy, onClick: (e) => { e.stopPropagation(); removeWindows(app); } }),
+      ];
+      else if (installed) action = button(t("Instalado"), { size: "sm", icon: "check", disabled: true });
+      else if (locked) action = button(t("Instalar"), { size: "sm", icon: "download", disabled: true, title: needsFlatpak ? t("Habilite o Flatpak para instalar") : gateNote });
+      else action = button(t("Instalar"), { kind: "primary", size: "sm", icon: "download", disabled: busy, onClick: (e) => {
+        e.stopPropagation();
+        if (app.origin === "windows") installWindows(app);
+        else if (app.repo) installFromRepo(app);
+        else packageAction(pkg);
+      } });
+      // Apps do Windows não têm detalhes no vegad.
+      const open = disabled || app.origin === "windows" ? undefined : () => openDetails(pkg);
+      // div, e não button: o cartão contém o botão Instalar.
+      return h("div", {
+        class: `card sw-card sw-popular ${locked ? "locked" : installed ? "installed" : "interactive"}`,
+        role: disabled ? undefined : "button",
+        tabindex: disabled ? undefined : "0",
+        "aria-disabled": disabled ? "true" : undefined,
+        onclick: open,
+        onkeydown: open && ((e) => { if (e.key === "Enter" && e.target === e.currentTarget) open(); }),
+      },
+        h("div", { class: "sw-card-top" }, logo, h("div", { class: "spacer" }), badge(originLabel(app.origin), app.origin === "official" ? "accent" : "outline")),
+        h("strong", { class: "sw-card-name" }, app.name),
+        h("p", { class: "sw-card-desc" }, t(app.text)),
+        locked && h("p", { class: "sw-locked-note small" }, icon("lock", 13), needsFlatpak
+          ? t("Habilite o Flatpak primeiro para instalar este app.")
+          : gateNote),
+        h("div", { class: "sw-card-foot" }, action));
+    }
+
+    const isInstalled = (app) => popularInstalled.has(queueKey(app));
+
+    const IA32_ON = /(^|\s)ia32_emulation=(1|y|yes|on|true)(\s|$)/i;
+    /** ia32_emulation=1 já está no boot, mas o kernel em execução ainda é o antigo. */
+    const ia32AwaitsReboot = () => !windowsIa32 && IA32_ON.test(bootStatus?.cmdline ?? "");
+
+    /** Bloqueio dos apps do Windows: base faltando, 32 bits desligado ou reinício pendente. */
+    function windowsGate(base) {
+      const busy = runningTasks().some((task) => task.kind === "software");
+      if (!base.every(isInstalled)) {
+        return {
+          note: t("Habilite os apps do Windows primeiro para instalar este app."),
+          banner: banner("info", "layers", t("Apps do Windows desabilitados"),
+            t("Para instalar programas do Windows, o Vega precisa do Wine e do Winetricks (e do Bottles, se o Flatpak estiver habilitado)."),
+            button(enablingWindows ? t("Habilitando…") : t("Habilitar apps do Windows"), { kind: "primary", disabled: busy || enablingWindows, onClick: enableWindows })),
+        };
+      }
+      if (windowsIa32) return null;
+      if (ia32AwaitsReboot()) {
+        return {
+          note: t("Reinicie o computador para instalar este app."),
+          banner: banner("warn", "restart", t("Reinicie o computador para concluir"),
+            t("O suporte a programas de 32 bits já está nos parâmetros de boot e passa a valer depois de reiniciar.")),
+        };
+      }
+      return {
+        note: t("Ative o suporte a programas de 32 bits primeiro."),
+        banner: banner("warn", "cpu", t("Suporte a programas de 32 bits desligado"),
+          t("Quase todos os programas do Windows são de 32 bits, e o kernel do Lyra OS vem com esse suporte desligado. Sem ele, o Wine não consegue abrir os instaladores."),
+          button(enablingWindows ? t("Ativando…") : t("Ativar suporte a 32 bits"), { kind: "primary", disabled: busy || enablingWindows || !bootStatus, onClick: enableIa32 })),
+      };
+    }
+
+    function drawShowcase({ catalog, base, loading, intro, introLocked }) {
+      if (loadError) return empty("alert-circle", t("Falha: {message}", { message: loadError }));
+      if (!popularInstalled || flatpakEnabled == null) return h("div", {}, h("p", { class: "sw-status" }, t(loading)), skeletonRows(5));
+      const gate = base ? windowsGate(base) : null;
+      const busy = runningTasks().some((task) => task.kind === "software");
+      return h("div", {},
+        gate && h("div", { class: "sw-flatpak" }, gate.banner),
+        h("p", { class: "sw-status" }, t(flatpakEnabled ? intro : introLocked)),
+        base && !gate && section(t("Outro programa"), {},
+          h("div", { class: "card pad sw-run-exe" },
+            h("div", { class: "row-flex" }, icon("play", 20),
+              h("div", { class: "spacer" },
+                h("strong", {}, t("Rodar um programa do Windows")),
+                h("p", { class: "small muted" }, t("Escolha o instalador (.exe ou .msi) que você baixou do site do fabricante. Ele roda pelo Wine, na sua conta, sem senha."))),
+              button(t("Escolher arquivo…"), { kind: "primary", icon: "folder", disabled: busy, onClick: runExe })))),
+        catalog.map((category) => section(t(category.title), { sub: String(category.apps.length) },
+          h("div", { class: "grid auto sw-cards" }, category.apps.map((app) => popularCard(app, { gateNote: category.gated ? gate?.note : null }))))));
+    }
+
+    /**
+     * Acrescenta ia32_emulation=1 aos parâmetros de boot pelo vegad (polkit e
+     * snapshot), mantendo a entrada padrão e o tempo de espera atuais.
+     */
+    async function enableIa32() {
+      if (!bootStatus) return false;
+      const ok = await confirm({
+        title: t("Ativar suporte a programas de 32 bits?"),
+        text: t("O Vega vai acrescentar ia32_emulation=1 aos parâmetros de boot, com snapshot, e pedir a senha de administrador. O openSUSE desliga esse suporte por padrão para reduzir a superfície de ataque do kernel; ligado, programas de 32 bits voltam a rodar. Vale depois de reiniciar o computador."),
+        ic: "cpu",
+        tone: "warn",
+        confirmLabel: t("Ativar"),
+        required: true,
+      });
+      if (!ok) return false;
+      enablingWindows = true;
+      paint();
+      const cmdline = [...bootStatus.cmdline.split(/\s+/).filter((arg) => arg && !arg.startsWith("ia32_emulation=")), "ia32_emulation=1"].join(" ");
+      let done = false;
+      try {
+        await call("kernel_apply_boot", { entry: bootStatus.default_entry, timeout: bootStatus.timeout, cmdline });
+        done = true;
+      } catch (error) {
+        fail(error, t("Não foi possível concluir a operação"));
+      }
+      enablingWindows = false;
+      popularInstalled = null;
+      paint();
+      load();
+      if (done) await requireRestart("ia32");
+      return done;
+    }
+
+    /** Instala o que falta da base do Windows: Flatpak (Bottles) primeiro, depois um pacote por vez. */
+    async function enableWindows() {
+      const missing = WINDOWS.find((category) => category.id === "base").apps
+        .filter((app) => !isInstalled(app) && (app.origin !== "flathub" || flatpakEnabled))
+        .sort((a, b) => (a.origin === "flathub" ? 0 : 1) - (b.origin === "flathub" ? 0 : 1));
+      if (!missing.length) return;
+      const ok = await confirm({
+        title: t("Habilitar apps do Windows?"),
+        text: t("Serão instalados: {names}. Os pacotes do sistema pedem a senha de administrador; o Bottles, não.", { names: missing.map((app) => app.name).join(", ") }),
+        ic: "layers",
+        confirmLabel: t("Habilitar"),
+        required: true,
+      });
+      if (!ok) return;
+      enablingWindows = true;
+      paint();
+      try {
+        for (const [index, app] of missing.entries()) {
+          const result = await transact({ kind: "install", origin: app.origin, id: app.id },
+            t("Instalando {name} ({current}/{total})…", { name: app.name, current: index + 1, total: missing.length }), { reload: false });
+          if (!result?.success) break;
+        }
+      } finally {
+        enablingWindows = false;
+        popularInstalled = null;
+        paint();
+      }
+      // Base pronta: o próximo passo é o suporte a 32 bits do kernel.
+      await load();
+      if (WINDOWS_BASE.every(isInstalled) && !windowsIa32 && !ia32AwaitsReboot()) await enableIa32();
+    }
+
+    /** Escolhe um .exe/.msi e roda no prefixo do Vega. */
+    async function runExe() {
+      let path;
+      try {
+        path = await pick({ title: t("Escolha o programa do Windows"), filters: [{ name: t("Programas do Windows"), extensions: ["exe", "msi", "EXE", "MSI"] }] });
+      } catch (error) {
+        return fail(error);
+      }
+      if (!path || Array.isArray(path)) return;
+      const name = String(path).split("/").pop();
+      const ok = await confirm({
+        title: t("Rodar {name}?", { name }),
+        text: t("Rode só programas de fontes confiáveis, como o site do fabricante. Nem todo programa do Windows funciona no Wine; se a instalação terminar, o programa aparece no menu de aplicativos."),
+        ic: "play",
+        tone: "warn",
+        confirmLabel: t("Rodar"),
+        required: true,
+      });
+      if (!ok) return;
+      let started;
+      try {
+        started = await runWindowsFile(path, t("Rodando {name}…", { name }));
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      showTask(started.task);
+      paint();
+      const result = await started.done;
+      if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
+      else toast(t("{name} terminou.", { name }));
+      popularInstalled = null;
+      load();
+    }
+
+    async function removeWindows(app) {
+      const ok = await confirm({
+        title: t("Remover {name}?", { name: app.name }),
+        text: t("O desinstalador do programa roda pelo Wine, na sua conta, sem senha. Arquivos que você salvou com ele, como documentos, não são apagados."),
+        ic: "trash",
+        tone: "danger",
+        confirmLabel: t("Remover"),
+        confirmKind: "danger",
+        required: true,
+      });
+      if (!ok) return;
+      let started;
+      try {
+        started = await runWindowsRemove(app.id, t("Removendo {name}…", { name: app.name }));
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      showTask(started.task);
+      paint();
+      const result = await started.done;
+      if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
+      popularInstalled = null;
+      load();
+    }
+
+    async function installWindows(app) {
+      const ok = await confirm({
+        title: t("Instalar {name}?", { name: app.name }),
+        text: t("O instalador é baixado do site do fabricante e roda pelo Wine, na sua conta, sem senha. O app aparece no menu de aplicativos."),
+        ic: "download",
+        confirmLabel: t("Instalar"),
+        required: true,
+      });
+      if (!ok) return;
+      let started;
+      try {
+        started = await runWindows(app.id, t("Instalando {name}…", { name: app.name }));
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      showTask(started.task);
+      paint();
+      const result = await started.done;
+      if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
+      popularInstalled = null;
+      load();
+    }
+
+    async function loadPopular() {
+      const [details, packages, windows, ia32, boot] = await Promise.all([
+        call("software_details", { origin: "official", id: "flatpak" }).catch(() => null),
+        call("software_installed"),
+        call("windows_installed").catch(() => []),
+        call("windows_ia32").catch(() => true),
+        call("kernel_boot_status").catch(() => null),
+      ]);
+      windowsIa32 = ia32;
+      bootStatus = boot;
+      flatpakEnabled = Boolean(details?.installed);
+      popularInstalled = new Set([
+        ...packages.map(queueKey),
+        ...windows.map((id) => queueKey({ origin: "windows", id })),
+      ]);
+    }
+
     // ---------- Abas ----------
     function drawSearch() {
       if (searching) return h("div", {}, h("p", { class: "sw-status" }, t("Consultando as origens disponíveis…")), skeletonRows(5));
@@ -421,12 +751,15 @@ export default {
       load();
     }
 
+    /** Adiciona o repositório (aprovando a chave, se pedir); devolve se ficou pronto para uso. */
     async function addRepo(name, url) {
       let started;
+      let ready = false;
       try {
         started = await runSoftware({ kind: "add-repo", name, url }, t("Adicionando {name}…", { name }));
       } catch (error) {
-        return fail(error, t("Não foi possível concluir a operação"));
+        fail(error, t("Não foi possível concluir a operação"));
+        return false;
       }
       showTask(started.task);
       const result = await started.done;
@@ -444,12 +777,48 @@ export default {
           confirmLabel: t("Confiar"),
           required: true,
         });
-        if (trust) await transact({ kind: "trust-repo-key", repo: key.repo, key_id: key.key_id }, t("Confiando na chave…"));
+        if (trust) ready = Boolean((await transact({ kind: "trust-repo-key", repo: key.repo, key_id: key.key_id }, t("Confiando na chave…")))?.success);
       } else if (!result.success) {
         fail(result.message, t("Não foi possível concluir a operação"));
+      } else {
+        ready = true;
       }
       repos = null;
       load();
+      return ready;
+    }
+
+    /**
+     * Cartão com `repo` (pacote só no repositório do fabricante, como o .NET da
+     * Microsoft): adiciona o repositório se faltar (ou o reativa), com a chave
+     * aprovada pelo usuário, e então instala o pacote.
+     */
+    async function installFromRepo(app) {
+      const ok = await confirm({
+        title: t("Instalar {name}?", { name: app.name }),
+        text: t("O pacote vem do repositório oficial do fabricante ({repo}). Se ele ainda não estiver no sistema, o Vega o adiciona e mostra a chave de assinatura para você aprovar.", { repo: app.repo.url }),
+        ic: "download",
+        confirmLabel: t("Instalar"),
+        required: true,
+      });
+      if (!ok) return;
+      let current;
+      try {
+        current = await call("software_repos");
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      const existing = current.find((repo) => repo.name === app.repo.name);
+      if (!existing) {
+        if (!(await addRepo(app.repo.name, app.repo.url))) return;
+      } else if (!existing.enabled) {
+        try {
+          await call("software_set_repo_enabled", { repo: existing.name, enabled: true });
+        } catch (error) {
+          return fail(error, t("Não foi possível concluir a operação"));
+        }
+      }
+      await transact({ kind: "install", origin: app.origin, id: app.id }, t("{verb} {name}", { verb: t("Instalar"), name: app.name }));
     }
 
     async function runSearch() {
@@ -477,6 +846,9 @@ export default {
     // ---------- Barra de ferramentas ----------
     const tabs = segmented(
       [
+        { id: "popular", label: t("Populares"), icon: "star" },
+        { id: "developers", label: t("Desenvolvedores"), icon: "terminal" },
+        { id: "windows", label: t("Apps do Windows"), icon: "layers" },
         { id: "search", label: t("Buscar"), icon: "search" },
         { id: "installed", label: t("Instalados"), icon: "box" },
         { id: "updates", label: t("Atualizações"), icon: "download" },
@@ -521,13 +893,14 @@ export default {
     }
 
     function paint() {
-      clear(body, tab === "search" ? drawSearch() : tab === "installed" ? drawInstalled() : tab === "updates" ? drawUpdates() : drawRepos());
+      clear(body, SHOWCASES[tab] ? drawShowcase(SHOWCASES[tab]) : tab === "search" ? drawSearch() : tab === "installed" ? drawInstalled() : tab === "updates" ? drawUpdates() : drawRepos());
     }
 
     async function load() {
       const current = tab;
       try {
-        if (current === "installed" && !installed) installed = await call("software_installed");
+        if (SHOWCASES[current] && !popularInstalled) await loadPopular();
+        else if (current === "installed" && !installed) installed = await call("software_installed");
         else if (current === "updates" && !updates) updates = await call("software_updates");
         else if (current === "repos" && !repos) repos = await call("software_repos");
         else return;
@@ -558,6 +931,9 @@ export default {
       if (tab === "installed") installed = null;
       if (tab === "updates") updates = null;
       if (tab === "repos") repos = null;
+      // O Flatpak pode ter sido habilitado agora (painel acima).
+      popularInstalled = null;
+      flatpakEnabled = null;
       if (tab === "search" && memory.query) runSearch();
       paintToolbar();
       paint();

@@ -5,6 +5,7 @@ use lyra_vega_dbus::{
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Emitter};
 
+use super::flatpak_session::Operation;
 use super::{CmdResult, State, dto, err, list};
 
 /// Pacote com o ícone já embutido (`icon_data`, data URL): a webview não lê
@@ -237,12 +238,19 @@ pub enum TransactionEvent {
 /// transação numa tarefa própria até o fim.
 #[tauri::command]
 pub async fn software_run(app: AppHandle, state: State<'_>, action: Action) -> CmdResult<u32> {
-    // Flatpak se atualiza pela sessão do usuário: o polkit do Flatpak libera
-    // sem senha e o Vega não pede a ação administrativa própria.
-    if let Action::UpdatePackage { origin, id } = &action
-        && origin == "flathub"
-    {
-        return super::flatpak_update::start(app, id.clone());
+    // Flatpak se instala, atualiza e remove pela sessão do usuário: o polkit
+    // do Flatpak libera sem senha (grupo wheel, sessão local ativa) e o Vega
+    // não pede a ação administrativa própria.
+    let session = match &action {
+        Action::Install { origin, id } if origin == "flathub" => Some((Operation::Install, id)),
+        Action::UpdatePackage { origin, id } if origin == "flathub" => {
+            Some((Operation::Update, id))
+        }
+        Action::Remove { origin, id } if origin == "flathub" => Some((Operation::Remove, id)),
+        _ => None,
+    };
+    if let Some((operation, id)) = session {
+        return super::flatpak_session::start(app, operation, id.clone());
     }
     if let Action::UpdateFirmware = &action {
         return super::fwupd_update::start(app);
