@@ -621,7 +621,10 @@ export function diagnosticsCard(ctx) {
     loadRemedies();
     if (!ctx.visible()) return;
     paint();
-    toast(t("Diagnóstico concluído"));
+    // Um teste recusado ou com falha (a GPU na bateria, por exemplo) não é
+    // "concluído": o toast repete o motivo que o banner mostra (vega#178).
+    if (error) toast(error, { ic: "alert-circle" });
+    else toast(t("Diagnóstico concluído"));
   }
 
   async function cancel() {
