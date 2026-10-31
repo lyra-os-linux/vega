@@ -326,7 +326,8 @@ fn prepare_prefix(prefix: &Path) {
 }
 
 /// Atalho acessório que não precisa ficar no menu: desinstalador, "o que há
-/// de novo", modo de segurança, leia-me, licença, site do fabricante.
+/// de novo", modo de segurança, leia-me, licença, site do fabricante, guia
+/// do usuário, documentação e ajuda.
 pub fn is_accessory(name: &str) -> bool {
     const WORDS: &[&str] = &[
         "desinstal",
@@ -348,6 +349,14 @@ pub fn is_accessory(name: &str) -> bool {
         "website",
         "web site",
         "on the web",
+        "guia do usu",
+        "user guide",
+        "user's guide",
+        "manual do usu",
+        "user manual",
+        "documenta",
+        "ajuda",
+        "help",
     ];
     let name = name.to_lowercase();
     WORDS.iter().any(|word| name.contains(word))
@@ -1259,6 +1268,9 @@ mod tests {
             "Leia-me",
             "README",
             "License",
+            "Guia do Usuário",
+            "WinMerge Help",
+            "Documentação",
         ] {
             assert!(is_accessory(name), "{name}");
         }
