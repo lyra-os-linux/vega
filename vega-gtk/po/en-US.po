@@ -4163,6 +4163,24 @@ msgstr "Checking that the NVIDIA GPU goes back to sleep"
 msgid "A NVIDIA não voltou a economizar energia 30 s depois do teste; algum programa pode estar usando a GPU"
 msgstr "The NVIDIA GPU did not return to power saving 30 s after the test; a program may be using it"
 
+msgid "A NVIDIA não voltou a economizar energia 30 s depois do teste; os programas listados estão com a placa aberta"
+msgstr "The NVIDIA GPU did not return to power saving 30 s after the test; the listed programs have it open"
+
+msgid "A NVIDIA não voltou a economizar energia 30 s depois do teste, sem nenhum programa identificado usando a placa"
+msgstr "The NVIDIA GPU did not return to power saving 30 s after the test, and no program was found using it"
+
+msgid "A NVIDIA só desliga quando nenhum programa a mantém aberta, e o ambiente gráfico a mantém; ela fica em modo de economia. Não é defeito"
+msgstr "The NVIDIA GPU only powers off when no program keeps it open, and the desktop keeps it open; it stays in power-saving mode. This is not a defect"
+
+msgid "O driver instalado não desliga esta placa NVIDIA quando ociosa; ela fica em modo de economia, o que reduz um pouco a duração da bateria. Não é defeito"
+msgstr "The installed driver does not power off this NVIDIA GPU when idle; it stays in power-saving mode, which slightly reduces battery life. This is not a defect"
+
+msgid "O desligamento automático da NVIDIA está desativado no driver; a placa fica em modo de economia quando ociosa. Não é defeito"
+msgstr "Automatic power-off of the NVIDIA GPU is disabled in the driver; the GPU stays in power-saving mode when idle. This is not a defect"
+
+msgid "Não foi possível ler o estado de economia de energia da NVIDIA informado pelo driver"
+msgstr "Could not read the NVIDIA power-saving state reported by the driver"
+
 msgid "Cancelado"
 msgstr "Cancelled"
 

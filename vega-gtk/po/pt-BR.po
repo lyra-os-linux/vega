@@ -4162,6 +4162,24 @@ msgstr "Conferindo se a NVIDIA volta a dormir"
 msgid "A NVIDIA não voltou a economizar energia 30 s depois do teste; algum programa pode estar usando a GPU"
 msgstr "A NVIDIA não voltou a economizar energia 30 s depois do teste; algum programa pode estar usando a GPU"
 
+msgid "A NVIDIA não voltou a economizar energia 30 s depois do teste; os programas listados estão com a placa aberta"
+msgstr "A NVIDIA não voltou a economizar energia 30 s depois do teste; os programas listados estão com a placa aberta"
+
+msgid "A NVIDIA não voltou a economizar energia 30 s depois do teste, sem nenhum programa identificado usando a placa"
+msgstr "A NVIDIA não voltou a economizar energia 30 s depois do teste, sem nenhum programa identificado usando a placa"
+
+msgid "A NVIDIA só desliga quando nenhum programa a mantém aberta, e o ambiente gráfico a mantém; ela fica em modo de economia. Não é defeito"
+msgstr "A NVIDIA só desliga quando nenhum programa a mantém aberta, e o ambiente gráfico a mantém; ela fica em modo de economia. Não é defeito"
+
+msgid "O driver instalado não desliga esta placa NVIDIA quando ociosa; ela fica em modo de economia, o que reduz um pouco a duração da bateria. Não é defeito"
+msgstr "O driver instalado não desliga esta placa NVIDIA quando ociosa; ela fica em modo de economia, o que reduz um pouco a duração da bateria. Não é defeito"
+
+msgid "O desligamento automático da NVIDIA está desativado no driver; a placa fica em modo de economia quando ociosa. Não é defeito"
+msgstr "O desligamento automático da NVIDIA está desativado no driver; a placa fica em modo de economia quando ociosa. Não é defeito"
+
+msgid "Não foi possível ler o estado de economia de energia da NVIDIA informado pelo driver"
+msgstr "Não foi possível ler o estado de economia de energia da NVIDIA informado pelo driver"
+
 msgid "Cancelado"
 msgstr "Cancelado"
 
