@@ -105,7 +105,6 @@ fn main() -> ExitCode {
             software::software_request_check,
             software::software_repos,
             software::software_set_repo_enabled,
-            software::software_nvidia_status,
             software::software_run,
             backup::backup_configs,
             backup::backup_create_config,

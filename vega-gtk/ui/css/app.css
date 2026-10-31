@@ -746,5 +746,5 @@ mark { background: color-mix(in srgb, var(--accent) 30%, transparent); color: in
 
 /* O WebKit desenha um botão de limpar próprio em type=search. */
 .input::-webkit-search-cancel-button { display: none; }
-/* Textos longos de diálogo (ex.: NVIDIA) usam quebras de linha explícitas. */
+/* Textos longos de diálogo usam quebras de linha explícitas. */
 .dialog-body > p { white-space: pre-line; }
