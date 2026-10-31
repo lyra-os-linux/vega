@@ -12,9 +12,8 @@ Os RPMs são publicados manualmente no OBS e, quando necessário, em GitHub
 Releases (um por repositório de componente). Também podem ser compilados
 localmente — `packaging/opensuse/install.sh` (neste repo) builda e instala
 o `vega-gtk`; o `vegad` tem seu próprio script equivalente. O backend
-Zypper/hardware NVIDIA do `vegad` ainda não foi validado ponta a ponta num
-Leap real — trate os nomes de pacote abaixo como ponto de partida, não
-garantia.
+Zypper do `vegad` ainda não foi validado ponta a ponta num Leap real — trate
+os nomes de pacote abaixo como ponto de partida, não garantia.
 
 ### Necessários só para compilar o vega-gtk (o script verifica e aborta se faltar)
 
