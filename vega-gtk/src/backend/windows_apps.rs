@@ -39,7 +39,6 @@ use super::software::TransactionEvent;
 pub const VERBS: &[&str] = &[
     "7zip",
     "winamp",
-    "autohotkey",
     "mt4",
     "kindle",
     "adobe_diged4",
@@ -54,6 +53,8 @@ pub const VERBS: &[&str] = &[
 pub enum Kind {
     /// Instalador rodado pelo Wine com estes parâmetros silenciosos.
     Installer(&'static [&'static str]),
+    /// Pacote do Windows Installer, rodado com `msiexec /i … /qn`.
+    Msi,
     /// Programa portátil: copiado para `C:\Program Files\<dir>` e ganha um
     /// atalho no menu com o nome `name`.
     Portable {
@@ -71,6 +72,15 @@ pub struct Recipe {
     pub file: &'static str,
     pub kind: Kind,
 }
+
+/// WinSCP: Inno Setup instalando só para o usuário do prefixo.
+const WINSCP: &[&str] = &[
+    "/VERYSILENT",
+    "/SUPPRESSMSGBOXES",
+    "/NORESTART",
+    "/SP-",
+    "/CURRENTUSER",
+];
 
 /// Parâmetros silenciosos dos instaladores Inno Setup.
 const INNO: &[&str] = &["/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/SP-"];
@@ -126,6 +136,120 @@ pub const RECIPES: &[Recipe] = &[
             dir: "MikroTik Winbox",
             name: "Winbox",
         },
+    },
+    // Lote de 01/11/2026. Todos conferidos antes de fixar o SHA-256:
+    // assinatura Authenticode válida do fabricante (FastStone, foobar2000,
+    // Mp3tag, Total Commander, Everything, WinSCP, Inno Setup, The Dude,
+    // Hercules, Tftpd64), hash publicado pelo projeto (AutoHotkey,
+    // WinDirStat) ou digest do release no GitHub (MPC-HC, eMule). O Dev-C++
+    // vem do GitHub oficial da Embarcadero, sem assinatura nem hash publicado.
+    Recipe {
+        id: "faststone",
+        url: "https://www.faststone.org/DN/FSViewerSetup85.exe",
+        sha256: "5679d7b5cbc5bf6e222230eba6f38f52798de830a89de9aaea409ac55f5f6c38",
+        file: "FSViewerSetup85.exe",
+        kind: Kind::Installer(NSIS),
+    },
+    Recipe {
+        id: "foobar2000",
+        url: "https://www.foobar2000.org/files/foobar2000-x64_v2.26.2.exe",
+        sha256: "ffa739f87d9c374cb030426a2ab4bfb37959d0dbb892fdc742654c14d127f795",
+        file: "foobar2000-x64_v2.26.2.exe",
+        kind: Kind::Installer(NSIS),
+    },
+    Recipe {
+        id: "mp3tag",
+        url: "https://download.mp3tag.de/mp3tag-v3.36.1-x64-setup.exe",
+        sha256: "a977861003a87b1f00f2e0c91263c61bf12d457c6d457b367ce5f69de28fbea0",
+        file: "mp3tag-v3.36.1-x64-setup.exe",
+        kind: Kind::Installer(NSIS),
+    },
+    Recipe {
+        id: "mpchc",
+        url: "https://github.com/clsid2/mpc-hc/releases/download/2.8.4/MPC-HC.2.8.4.x64.exe",
+        sha256: "8340eb8847006ee1efe154e3172e324565f05659439e31579ce9dff9bb6816b8",
+        file: "MPC-HC.2.8.4.x64.exe",
+        kind: Kind::Installer(INNO),
+    },
+    Recipe {
+        id: "totalcmd",
+        url: "https://totalcommander.ch/115801/tcmd115801x64.exe",
+        sha256: "e1b86b14d473af6168b7328ea62268cce4b0da8b3a5582baaaf8653927d91f86",
+        file: "tcmd115801x64.exe",
+        kind: Kind::Installer(&["/AHMGDU"]),
+    },
+    Recipe {
+        id: "everything",
+        url: "https://www.voidtools.com/Everything-1.4.1.1032.x64-Setup.exe",
+        sha256: "c42efad041d4c0bb4d4ac97ae7cbe89f153ec1fe078772392e749c7f5d5282d3",
+        file: "Everything-1.4.1.1032.x64-Setup.exe",
+        kind: Kind::Installer(NSIS),
+    },
+    Recipe {
+        id: "winscp",
+        url: "https://downloads.sourceforge.net/project/winscp/WinSCP/6.7/WinSCP-6.7-Setup.exe",
+        sha256: "c8e603088b608b6620ca8e06846486cfed48969b76b111f05a83a386a829207c",
+        file: "WinSCP-6.7-Setup.exe",
+        kind: Kind::Installer(WINSCP),
+    },
+    Recipe {
+        id: "emule",
+        url: "https://github.com/irwir/eMule/releases/download/eMule_v0.72a-community/eMule0.72a-Installer64.exe",
+        sha256: "1959102296bd5c495d280b0971d7d99c7dd5129ed10a8c91634748700840cedd",
+        file: "eMule0.72a-Installer64.exe",
+        kind: Kind::Installer(NSIS),
+    },
+    Recipe {
+        id: "devcpp",
+        url: "https://github.com/Embarcadero/Dev-Cpp/releases/download/v6.3/Embarcadero_Dev-Cpp_6.3_TDM-GCC_9.2_Setup.exe",
+        sha256: "9ea2f0237e5c72d485f9fa29def3f0a11c51f8b252f650be533e09a5e2ada247",
+        file: "Embarcadero_Dev-Cpp_6.3_TDM-GCC_9.2_Setup.exe",
+        kind: Kind::Installer(NSIS),
+    },
+    Recipe {
+        id: "innosetup",
+        url: "https://github.com/jrsoftware/issrc/releases/download/is-7_1_1/innosetup-7.1.1-x64.exe",
+        sha256: "8a5a6711c3766a6e5fb74f280ba0e3551e719ce94538d901fdbd1f8f9920b3f0",
+        file: "innosetup-7.1.1-x64.exe",
+        kind: Kind::Installer(INNO),
+    },
+    Recipe {
+        id: "autohotkey",
+        url: "https://github.com/AutoHotkey/AutoHotkey/releases/download/v2.0.31/AutoHotkey_2.0.31_setup.exe",
+        sha256: "9224a3bd1757088320bf04c51efa43511160766bfee8d6555168293cd54b4c16",
+        file: "AutoHotkey_2.0.31_setup.exe",
+        kind: Kind::Installer(&["/silent"]),
+    },
+    Recipe {
+        id: "windirstat",
+        url: "https://github.com/windirstat/windirstat/releases/download/release/v2.9.3/WinDirStat-x64.msi",
+        sha256: "96c4c4beb63c7c5ad6b1a206f96560d7a9a2b6063f3cd175a82f392977a9af5d",
+        file: "WinDirStat-x64.msi",
+        kind: Kind::Msi,
+    },
+    Recipe {
+        id: "dude",
+        url: "https://download.mikrotik.com/routeros/7.25/dude-install-7.25.exe",
+        sha256: "acfff947b7e536722d564f25f0bc2263956e5af3d6e6b17f196fbddc73a51ad1",
+        file: "dude-install-7.25.exe",
+        kind: Kind::Installer(NSIS),
+    },
+    Recipe {
+        id: "hercules",
+        url: "https://www.hw-group.com/files/download/sw/version/hercules_3-2-8.exe",
+        sha256: "ac3a503e94f241344f10f178fe378ac1f945ccd71a88c575622d91b376e3b6ec",
+        file: "hercules_3-2-8.exe",
+        kind: Kind::Portable {
+            dir: "Hercules",
+            name: "Hercules",
+        },
+    },
+    Recipe {
+        id: "tftpd64",
+        url: "https://github.com/PJO2/tftpd64/releases/download/v4.74/--Recommended--Tftpd64_Installer_v4.74.exe",
+        sha256: "a79c58d6a0546b5c7a7fcb2c8444d24fbd20c9c62225d93251a2102fc14d597d",
+        file: "--Recommended--Tftpd64_Installer_v4.74.exe",
+        kind: Kind::Installer(NSIS),
     },
 ];
 
@@ -627,6 +751,23 @@ fn run_recipe(app: &AppHandle, tx: u32, recipe: &Recipe, prefix: &Path) {
                 after_install(prefix);
             });
         }
+        Kind::Msi => {
+            let mut command = Command::new("wine");
+            command
+                .arg("msiexec")
+                .arg("/i")
+                .arg(&file)
+                .arg("/qn")
+                .env("WINEPREFIX", prefix)
+                .env("WINEDEBUG", "-all");
+            crate::webkit_env::clean_command(&mut command);
+            follow_then(app, tx, command, "wine", failed, |success| {
+                if success {
+                    record_installed(prefix, recipe.id);
+                }
+                after_install(prefix);
+            });
+        }
         Kind::Portable { dir, name } => {
             let result = install_portable(prefix, recipe, dir, name, &file);
             let success = result.is_ok();
@@ -833,6 +974,101 @@ pub const REMOVALS: &[(&str, Removal)] = &[
             display: "MetaTrader",
             args: NSIS,
         },
+    ),
+    (
+        "faststone",
+        Removal::Uninstaller {
+            display: "FastStone Image Viewer",
+            args: NSIS,
+        },
+    ),
+    (
+        "foobar2000",
+        Removal::Uninstaller {
+            display: "foobar2000",
+            args: NSIS,
+        },
+    ),
+    (
+        "mp3tag",
+        Removal::Uninstaller {
+            display: "Mp3tag",
+            args: NSIS,
+        },
+    ),
+    (
+        "mpchc",
+        Removal::Uninstaller {
+            display: "MPC-HC",
+            args: INNO,
+        },
+    ),
+    (
+        "totalcmd",
+        Removal::Uninstaller {
+            display: "Total Commander",
+            args: &[],
+        },
+    ),
+    (
+        "everything",
+        Removal::Uninstaller {
+            display: "Everything",
+            args: NSIS,
+        },
+    ),
+    (
+        "winscp",
+        Removal::Uninstaller {
+            display: "WinSCP",
+            args: INNO,
+        },
+    ),
+    (
+        "emule",
+        Removal::Uninstaller {
+            display: "eMule",
+            args: NSIS,
+        },
+    ),
+    (
+        "devcpp",
+        Removal::Uninstaller {
+            display: "Dev-C++",
+            args: NSIS,
+        },
+    ),
+    (
+        "innosetup",
+        Removal::Uninstaller {
+            display: "Inno Setup",
+            args: INNO,
+        },
+    ),
+    (
+        "windirstat",
+        Removal::Uninstaller {
+            display: "WinDirStat",
+            args: &[],
+        },
+    ),
+    (
+        "dude",
+        Removal::Uninstaller {
+            display: "Dude",
+            args: NSIS,
+        },
+    ),
+    (
+        "tftpd64",
+        Removal::Uninstaller {
+            display: "Tftpd64",
+            args: NSIS,
+        },
+    ),
+    (
+        "hercules",
+        Removal::Files(&["drive_c/Program Files/Hercules"]),
     ),
 ];
 

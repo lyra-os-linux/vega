@@ -6136,3 +6136,48 @@ msgstr "Ferramentas para administrar redes e dar suporte técnico. As do Flathub
 
 msgid "Já instalado fora do Vega"
 msgstr "Já instalado fora do Vega"
+
+msgid "Gerenciador de arquivos em dois painéis (shareware)"
+msgstr "Gerenciador de arquivos em dois painéis (shareware)"
+
+msgid "Busca instantânea de arquivos pelo nome"
+msgstr "Busca instantânea de arquivos pelo nome"
+
+msgid "Mostra o que ocupa espaço no disco"
+msgstr "Mostra o que ocupa espaço no disco"
+
+msgid "Visualizador, conversor e editor rápido de imagens"
+msgstr "Visualizador, conversor e editor rápido de imagens"
+
+msgid "Transferência de arquivos por SFTP, SCP e FTP"
+msgstr "Transferência de arquivos por SFTP, SCP e FTP"
+
+msgid "Monitora e mapeia a rede, da MikroTik"
+msgstr "Monitora e mapeia a rede, da MikroTik"
+
+msgid "Terminal serial, TCP e UDP para testar equipamentos"
+msgstr "Terminal serial, TCP e UDP para testar equipamentos"
+
+msgid "Servidor TFTP, DHCP e syslog para atualizar equipamentos"
+msgstr "Servidor TFTP, DHCP e syslog para atualizar equipamentos"
+
+msgid "Compartilhamento de arquivos nas redes eD2k e Kad"
+msgstr "Compartilhamento de arquivos nas redes eD2k e Kad"
+
+msgid "Programação"
+msgstr "Programação"
+
+msgid "IDE de C e C++ usada no ensino, com o compilador GCC"
+msgstr "IDE de C e C++ usada no ensino, com o compilador GCC"
+
+msgid "Cria instaladores para programas do Windows"
+msgstr "Cria instaladores para programas do Windows"
+
+msgid "Player de música leve e personalizável"
+msgstr "Player de música leve e personalizável"
+
+msgid "Edita as etiquetas e capas das músicas"
+msgstr "Edita as etiquetas e capas das músicas"
+
+msgid "Player de vídeo leve e clássico"
+msgstr "Player de vídeo leve e clássico"

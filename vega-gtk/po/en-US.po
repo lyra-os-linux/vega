@@ -6137,3 +6137,48 @@ msgstr "Tools for network administration and technical support. The Flathub ones
 
 msgid "Já instalado fora do Vega"
 msgstr "Already installed outside Vega"
+
+msgid "Gerenciador de arquivos em dois painéis (shareware)"
+msgstr "Two-pane file manager (shareware)"
+
+msgid "Busca instantânea de arquivos pelo nome"
+msgstr "Instant file search by name"
+
+msgid "Mostra o que ocupa espaço no disco"
+msgstr "Shows what takes up disk space"
+
+msgid "Visualizador, conversor e editor rápido de imagens"
+msgstr "Fast image viewer, converter and editor"
+
+msgid "Transferência de arquivos por SFTP, SCP e FTP"
+msgstr "File transfer over SFTP, SCP and FTP"
+
+msgid "Monitora e mapeia a rede, da MikroTik"
+msgstr "Monitors and maps the network, from MikroTik"
+
+msgid "Terminal serial, TCP e UDP para testar equipamentos"
+msgstr "Serial, TCP and UDP terminal for testing devices"
+
+msgid "Servidor TFTP, DHCP e syslog para atualizar equipamentos"
+msgstr "TFTP, DHCP and syslog server for updating devices"
+
+msgid "Compartilhamento de arquivos nas redes eD2k e Kad"
+msgstr "File sharing on the eD2k and Kad networks"
+
+msgid "Programação"
+msgstr "Programming"
+
+msgid "IDE de C e C++ usada no ensino, com o compilador GCC"
+msgstr "C and C++ IDE used in teaching, with the GCC compiler"
+
+msgid "Cria instaladores para programas do Windows"
+msgstr "Creates installers for Windows programs"
+
+msgid "Player de música leve e personalizável"
+msgstr "Lightweight, customizable music player"
+
+msgid "Edita as etiquetas e capas das músicas"
+msgstr "Edits song tags and cover art"
+
+msgid "Player de vídeo leve e clássico"
+msgstr "Lightweight classic video player"
