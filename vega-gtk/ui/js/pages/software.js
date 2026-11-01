@@ -15,7 +15,7 @@ import { POPULAR } from "./software/popular-catalog.js";
 import { DEVELOPER } from "./software/developer-catalog.js";
 import { WINDOWS, WINDOWS_BASE } from "./software/windows-catalog.js";
 
-const TABS = ["popular", "developers", "windows", "search", "installed", "updates", "repos"];
+const TABS = ["popular", "developers", "windows", "search", "installed", "updates"];
 // Vitrines curadas (Populares e Desenvolvedores): mesmo cartão, catálogos diferentes.
 const SHOWCASES = {
   popular: {
@@ -106,12 +106,16 @@ export default {
 
   render(ctx) {
     if (TABS.includes(ctx.sub)) memory.tab = ctx.sub;
+    if (!TABS.includes(memory.tab)) memory.tab = "popular";
     let tab = memory.tab;
     let view = local.softwareView === "cards" ? "cards" : "list";
     let installedFilter = "";
     let installed = null;
     let updates = null;
+    // Repositórios: janela própria (botão acima das abas), não uma aba.
     let repos = null;
+    let reposError = null;
+    let reposHost = null;
     let loadError = null;
     // Vitrines: chaves "origem\u0000id" instaladas e se o Flatpak está ativo.
     let popularInstalled = null;
@@ -797,7 +801,7 @@ export default {
     }
 
     function drawRepos() {
-      if (loadError) return empty("alert-circle", t("Falha: {message}", { message: loadError }));
+      if (reposError) return empty("alert-circle", t("Falha: {message}", { message: reposError }));
       if (!repos) return skeletonRows(5);
       const name = h("input", { class: "input", placeholder: t("nome"), "aria-label": t("nome") });
       const url = h("input", { class: "input", placeholder: "https://…", "aria-label": t("URL"), inputmode: "url" });
@@ -806,7 +810,7 @@ export default {
       name.addEventListener("input", sync);
       url.addEventListener("input", sync);
       url.addEventListener("keydown", (e) => { if (e.key === "Enter" && !add.disabled) add.click(); });
-      return h("div", {},
+      return h("div", { class: "sw-repos" },
         section(t("Repositórios do sistema"), { sub: String(repos.length) },
           repos.length === 0 ? empty("database", t("Nenhum resultado encontrado")) : list(repos.map((repo) =>
             h("div", { class: "list-row" },
@@ -822,6 +826,26 @@ export default {
             h("p", { class: "small muted" }, t("Se o repositório for assinado, a chave é baixada e mostrada pra você aprovar antes de confiar nela.")))));
     }
 
+    /** Recarrega a lista de repositórios, se a janela estiver aberta. */
+    async function refreshRepos() {
+      repos = null;
+      reposError = null;
+      if (!reposHost) return;
+      clear(reposHost, drawRepos());
+      try {
+        repos = await call("software_repos");
+      } catch (error) {
+        reposError = error.message;
+      }
+      if (reposHost) clear(reposHost, drawRepos());
+    }
+
+    function openRepos() {
+      reposHost = h("div", {});
+      sheet(t("Repositórios"), reposHost, { onClose: () => { reposHost = null; } });
+      refreshRepos();
+    }
+
     async function toggleRepo(repo) {
       const enabled = !repo.enabled;
       const verb = enabled ? t("Ativar") : t("Desativar");
@@ -833,8 +857,7 @@ export default {
       } catch (error) {
         fail(error);
       }
-      repos = null;
-      load();
+      refreshRepos();
     }
 
     /** Mostra a chave pendente e, se o usuário confiar, aprova; devolve se ficou confiável. */
@@ -917,8 +940,7 @@ export default {
       } else {
         ready = true;
       }
-      repos = null;
-      load();
+      refreshRepos();
       return ready;
     }
 
@@ -986,7 +1008,6 @@ export default {
         { id: "search", label: t("Buscar"), icon: "search" },
         { id: "installed", label: t("Instalados"), icon: "box" },
         { id: "updates", label: t("Atualizações"), icon: "download" },
-        { id: "repos", label: t("Repositórios"), icon: "database" },
       ],
       tab,
       (id) => { tab = memory.tab = id; loadError = null; paintToolbar(); load(); paint(); },
@@ -1027,7 +1048,7 @@ export default {
     }
 
     function paint() {
-      clear(body, SHOWCASES[tab] ? drawShowcase(SHOWCASES[tab]) : tab === "search" ? drawSearch() : tab === "installed" ? drawInstalled() : tab === "updates" ? drawUpdates() : drawRepos());
+      clear(body, SHOWCASES[tab] ? drawShowcase(SHOWCASES[tab]) : tab === "search" ? drawSearch() : tab === "installed" ? drawInstalled() : drawUpdates());
     }
 
     async function load() {
@@ -1036,7 +1057,6 @@ export default {
         if (SHOWCASES[current] && !popularInstalled) await loadPopular();
         else if (current === "installed" && !installed) installed = await call("software_installed");
         else if (current === "updates" && !updates) updates = await call("software_updates");
-        else if (current === "repos" && !repos) repos = await call("software_repos");
         else return;
         loadError = null;
       } catch (error) {
@@ -1052,7 +1072,7 @@ export default {
     let lastRunning = runningTasks().length;
     ctx.cleanup(onTasks(() => {
       const now = runningTasks().length;
-      if (tab !== "repos" && (now || now !== lastRunning)) paint();
+      if (now || now !== lastRunning) paint();
       if (now !== lastRunning) paintToolbar();
       lastRunning = now;
     }));
@@ -1064,7 +1084,7 @@ export default {
     const reload = () => {
       if (tab === "installed") installed = null;
       if (tab === "updates") updates = null;
-      if (tab === "repos") repos = null;
+      if (reposHost) refreshRepos();
       // O Flatpak pode ter sido habilitado agora (painel acima).
       popularInstalled = null;
       flatpakEnabled = null;
@@ -1078,12 +1098,15 @@ export default {
     const el = h("div", { class: "sw-page" },
       h("div", { class: "page-hero" },
         h("div", {}, h("h2", {}, t("Software")), h("p", {}, t("Busque, instale e atualize aplicativos do sistema e do Flathub."))),
+        button(t("Repositórios"), { icon: "database", onClick: openRepos }),
         tabs),
       preparationPanel(ctx),
       flatpakPanel(() => reload()),
       panelHost,
       toolbarHost,
       body);
+    // "Repositórios do sistema" na busca do Vega abre a janela.
+    if (ctx.sub === "repos") requestAnimationFrame(openRepos);
     return { el, actions: [h("button", { class: "icon-btn", "aria-label": t("Atualizar"), title: t("Atualizar"), onclick: reload }, icon("refresh", 17))] };
   },
 };
