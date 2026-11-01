@@ -5987,3 +5987,150 @@ msgstr "Vega downloads the official AppImage of the latest version, checks the c
 
 msgid "Antes, instala o suporte a AppImage (libfuse2), com a senha de administrador."
 msgstr "First it installs AppImage support (libfuse2), with the administrator password."
+
+msgid "Nuvem"
+msgstr "Cloud"
+
+msgid "Linha de comando oficial da AWS (versão 2)"
+msgstr "Official AWS command line (version 2)"
+
+msgid "Linha de comando oficial do Microsoft Azure"
+msgstr "Official Microsoft Azure command line"
+
+msgid "gcloud, gsutil e bq do Google Cloud"
+msgstr "Google Cloud's gcloud, gsutil and bq"
+
+msgid "Linha de comando oficial da DigitalOcean"
+msgstr "Official DigitalOcean command line"
+
+msgid "Cliente de RDP, VNC e SSH"
+msgstr "RDP, VNC and SSH client"
+
+msgid "Acesso remoto simples por RDP e VNC, do GNOME"
+msgstr "Simple remote access over RDP and VNC, from GNOME"
+
+msgid "Suporte remoto de código aberto, alternativa ao TeamViewer"
+msgstr "Open source remote support, a TeamViewer alternative"
+
+msgid "Suporte remoto"
+msgstr "Remote support"
+
+msgid "Cliente e servidor VNC"
+msgstr "VNC client and server"
+
+msgid "Cliente RDP de linha de comando"
+msgstr "Command-line RDP client"
+
+msgid "Terminais e transferência"
+msgstr "Terminals and file transfer"
+
+msgid "Cliente SSH, Telnet e serial"
+msgstr "SSH, Telnet and serial client"
+
+msgid "Cliente SSH com hosts sincronizados"
+msgstr "SSH client with synced hosts"
+
+msgid "Cliente FTP, FTPS e SFTP"
+msgstr "FTP, FTPS and SFTP client"
+
+msgid "Console serial para switches e roteadores"
+msgstr "Serial console for switches and routers"
+
+msgid "Console serial no terminal"
+msgstr "Serial console in the terminal"
+
+msgid "Equipamentos e VPN"
+msgstr "Network devices and VPN"
+
+msgid "Administra roteadores MikroTik (versão nativa para Linux)"
+msgstr "Manages MikroTik routers (native Linux version)"
+
+msgid "Ferramentas da VPN WireGuard (wg e wg-quick)"
+msgstr "WireGuard VPN tools (wg and wg-quick)"
+
+msgid "Consultas SNMP a equipamentos de rede"
+msgstr "SNMP queries to network devices"
+
+msgid "Diagnóstico de rede"
+msgstr "Network diagnostics"
+
+msgid "Varredura de hosts e portas"
+msgstr "Host and port scanning"
+
+msgid "Interface gráfica do Nmap"
+msgstr "Graphical interface for Nmap"
+
+msgid "Descobre os aparelhos da rede"
+msgstr "Finds the devices on the network"
+
+msgid "Ping e traceroute juntos, com perda por salto"
+msgstr "Ping and traceroute together, with loss per hop"
+
+msgid "Mede a velocidade entre dois computadores"
+msgstr "Measures the speed between two computers"
+
+msgid "Teste de velocidade da internet no terminal"
+msgstr "Internet speed test in the terminal"
+
+msgid "Captura de pacotes no terminal"
+msgstr "Packet capture in the terminal"
+
+msgid "Lista os aparelhos da rede local pelo ARP"
+msgstr "Lists the devices on the local network via ARP"
+
+msgid "Consultas de DNS"
+msgstr "DNS queries"
+
+msgid "Dono de domínios e blocos de IP"
+msgstr "Owner of domains and IP blocks"
+
+msgid "Sinal e canais do Wi-Fi no terminal"
+msgstr "Wi-Fi signal and channels in the terminal"
+
+msgid "Tráfego e monitoramento"
+msgstr "Traffic and monitoring"
+
+msgid "Mapa gráfico de quem conversa na rede"
+msgstr "Graphical map of who talks to whom on the network"
+
+msgid "Banda por conexão, em tempo real"
+msgstr "Bandwidth per connection, in real time"
+
+msgid "Banda por programa, em tempo real"
+msgstr "Bandwidth per program, in real time"
+
+msgid "Tráfego de entrada e saída por interface"
+msgstr "Incoming and outgoing traffic per interface"
+
+msgid "Suporte e manutenção"
+msgstr "Support and maintenance"
+
+msgid "Uso de processador, memória, disco e rede"
+msgstr "Processor, memory, disk and network usage"
+
+msgid "Inventário e testes de desempenho do hardware"
+msgstr "Hardware inventory and benchmarks"
+
+msgid "Saúde dos discos (SMART)"
+msgstr "Disk health (SMART)"
+
+msgid "Partições de discos e pendrives"
+msgstr "Partitions of disks and USB drives"
+
+msgid "Recupera partições e arquivos apagados"
+msgstr "Recovers lost partitions and deleted files"
+
+msgid "Teste de estresse de processador e memória"
+msgstr "Processor and memory stress test"
+
+msgid "Cofre de senhas da equipe, offline"
+msgstr "Offline password vault for the team"
+
+msgid "Carregando ferramentas de redes e TI…"
+msgstr "Loading network and IT tools…"
+
+msgid "Ferramentas para administrar redes e dar suporte técnico. Instale com um clique."
+msgstr "Tools for network administration and technical support. Install with one click."
+
+msgid "Ferramentas para administrar redes e dar suporte técnico. As do Flathub ficam disponíveis depois de habilitar o Flatpak."
+msgstr "Tools for network administration and technical support. The Flathub ones become available after enabling Flatpak."

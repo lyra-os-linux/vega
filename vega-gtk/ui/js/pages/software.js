@@ -13,9 +13,10 @@ import { requireRestart } from "../restart.js";
 import { flatpakPanel } from "./software/flatpak.js";
 import { POPULAR } from "./software/popular-catalog.js";
 import { DEVELOPER } from "./software/developer-catalog.js";
+import { NETWORK } from "./software/network-catalog.js";
 import { WINDOWS, WINDOWS_BASE } from "./software/windows-catalog.js";
 
-const TABS = ["popular", "developers", "windows", "search", "installed", "updates"];
+const TABS = ["popular", "developers", "network", "windows", "search", "installed", "updates"];
 // Vitrines curadas (Populares e Desenvolvedores): mesmo cartão, catálogos diferentes.
 const SHOWCASES = {
   popular: {
@@ -29,6 +30,12 @@ const SHOWCASES = {
     loading: N_("Carregando ferramentas de desenvolvimento…"),
     intro: N_("Linguagens e ferramentas de programação. Instale com um clique."),
     introLocked: N_("Linguagens e ferramentas de programação. As do Flathub ficam disponíveis depois de habilitar o Flatpak."),
+  },
+  network: {
+    catalog: NETWORK,
+    loading: N_("Carregando ferramentas de redes e TI…"),
+    intro: N_("Ferramentas para administrar redes e dar suporte técnico. Instale com um clique."),
+    introLocked: N_("Ferramentas para administrar redes e dar suporte técnico. As do Flathub ficam disponíveis depois de habilitar o Flatpak."),
   },
   windows: {
     catalog: WINDOWS,
@@ -98,6 +105,7 @@ export default {
     { id: "popular", label: N_("Populares"), icon: "star", keywords: ["populares", "recomendados", "spotify", "steam", "discord", "obs", "gimp"] },
     { id: "windows", label: N_("Apps do Windows"), icon: "layers", keywords: ["windows", "wine", "bottles", "exe", "winetricks"] },
     { id: "developers", label: N_("Desenvolvedores"), icon: "terminal", keywords: ["programar", "programacao", "linguagens", "python", "rust", "java", "node", "docker", "podman", "ide", "compilador"] },
+    { id: "network", label: N_("Redes e TI"), icon: "server", keywords: ["rede", "suporte", "remoto", "ssh", "rdp", "vnc", "nmap", "mikrotik", "winbox", "helpdesk"] },
     { id: "search", label: N_("Buscar aplicativos e pacotes"), icon: "search", keywords: ["buscar", "instalar", "flathub"] },
     { id: "installed", label: N_("Instalados"), icon: "box", keywords: ["remover", "desinstalar"] },
     { id: "updates", label: N_("Atualizações"), icon: "download", keywords: ["update", "atualizar"] },
@@ -1004,6 +1012,7 @@ export default {
       [
         { id: "popular", label: t("Populares"), icon: "star" },
         { id: "developers", label: t("Desenvolvedores"), icon: "terminal" },
+        { id: "network", label: t("Redes e TI"), icon: "server" },
         { id: "windows", label: t("Apps do Windows"), icon: "layers" },
         { id: "search", label: t("Buscar"), icon: "search" },
         { id: "installed", label: t("Instalados"), icon: "box" },

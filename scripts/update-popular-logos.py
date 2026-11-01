@@ -16,7 +16,7 @@ import sys
 import urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-CATALOGS = [ROOT / "vega-gtk/ui/js/pages/software" / f"{name}-catalog.js" for name in ("popular", "developer")]
+CATALOGS = [ROOT / "vega-gtk/ui/js/pages/software" / f"{name}-catalog.js" for name in ("popular", "developer", "network")]
 OUT = ROOT / "vega-gtk/ui/img/popular"
 API = "https://flathub.org/api/v2/appstream/{}"
 LIMIT = 64 * 1024

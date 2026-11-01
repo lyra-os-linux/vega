@@ -5987,3 +5987,150 @@ msgstr "Vega descarga el AppImage oficial de la versión más reciente, comprueb
 
 msgid "Antes, instala o suporte a AppImage (libfuse2), com a senha de administrador."
 msgstr "Antes instala el soporte para AppImage (libfuse2), con la contraseña de administrador."
+
+msgid "Nuvem"
+msgstr "Nube"
+
+msgid "Linha de comando oficial da AWS (versão 2)"
+msgstr "Línea de comandos oficial de AWS (versión 2)"
+
+msgid "Linha de comando oficial do Microsoft Azure"
+msgstr "Línea de comandos oficial de Microsoft Azure"
+
+msgid "gcloud, gsutil e bq do Google Cloud"
+msgstr "gcloud, gsutil y bq de Google Cloud"
+
+msgid "Linha de comando oficial da DigitalOcean"
+msgstr "Línea de comandos oficial de DigitalOcean"
+
+msgid "Cliente de RDP, VNC e SSH"
+msgstr "Cliente de RDP, VNC y SSH"
+
+msgid "Acesso remoto simples por RDP e VNC, do GNOME"
+msgstr "Acceso remoto sencillo por RDP y VNC, de GNOME"
+
+msgid "Suporte remoto de código aberto, alternativa ao TeamViewer"
+msgstr "Soporte remoto de código abierto, alternativa a TeamViewer"
+
+msgid "Suporte remoto"
+msgstr "Soporte remoto"
+
+msgid "Cliente e servidor VNC"
+msgstr "Cliente y servidor VNC"
+
+msgid "Cliente RDP de linha de comando"
+msgstr "Cliente RDP de línea de comandos"
+
+msgid "Terminais e transferência"
+msgstr "Terminales y transferencia"
+
+msgid "Cliente SSH, Telnet e serial"
+msgstr "Cliente SSH, Telnet y serie"
+
+msgid "Cliente SSH com hosts sincronizados"
+msgstr "Cliente SSH con hosts sincronizados"
+
+msgid "Cliente FTP, FTPS e SFTP"
+msgstr "Cliente FTP, FTPS y SFTP"
+
+msgid "Console serial para switches e roteadores"
+msgstr "Consola serie para switches y routers"
+
+msgid "Console serial no terminal"
+msgstr "Consola serie en la terminal"
+
+msgid "Equipamentos e VPN"
+msgstr "Equipos y VPN"
+
+msgid "Administra roteadores MikroTik (versão nativa para Linux)"
+msgstr "Administra routers MikroTik (versión nativa para Linux)"
+
+msgid "Ferramentas da VPN WireGuard (wg e wg-quick)"
+msgstr "Herramientas de la VPN WireGuard (wg y wg-quick)"
+
+msgid "Consultas SNMP a equipamentos de rede"
+msgstr "Consultas SNMP a equipos de red"
+
+msgid "Diagnóstico de rede"
+msgstr "Diagnóstico de red"
+
+msgid "Varredura de hosts e portas"
+msgstr "Escaneo de hosts y puertos"
+
+msgid "Interface gráfica do Nmap"
+msgstr "Interfaz gráfica de Nmap"
+
+msgid "Descobre os aparelhos da rede"
+msgstr "Descubre los dispositivos de la red"
+
+msgid "Ping e traceroute juntos, com perda por salto"
+msgstr "Ping y traceroute juntos, con pérdida por salto"
+
+msgid "Mede a velocidade entre dois computadores"
+msgstr "Mide la velocidad entre dos equipos"
+
+msgid "Teste de velocidade da internet no terminal"
+msgstr "Prueba de velocidad de internet en la terminal"
+
+msgid "Captura de pacotes no terminal"
+msgstr "Captura de paquetes en la terminal"
+
+msgid "Lista os aparelhos da rede local pelo ARP"
+msgstr "Lista los dispositivos de la red local por ARP"
+
+msgid "Consultas de DNS"
+msgstr "Consultas DNS"
+
+msgid "Dono de domínios e blocos de IP"
+msgstr "Titular de dominios y bloques de IP"
+
+msgid "Sinal e canais do Wi-Fi no terminal"
+msgstr "Señal y canales del Wi-Fi en la terminal"
+
+msgid "Tráfego e monitoramento"
+msgstr "Tráfico y monitoreo"
+
+msgid "Mapa gráfico de quem conversa na rede"
+msgstr "Mapa gráfico de quién habla con quién en la red"
+
+msgid "Banda por conexão, em tempo real"
+msgstr "Ancho de banda por conexión, en tiempo real"
+
+msgid "Banda por programa, em tempo real"
+msgstr "Ancho de banda por programa, en tiempo real"
+
+msgid "Tráfego de entrada e saída por interface"
+msgstr "Tráfico de entrada y salida por interfaz"
+
+msgid "Suporte e manutenção"
+msgstr "Soporte y mantenimiento"
+
+msgid "Uso de processador, memória, disco e rede"
+msgstr "Uso de procesador, memoria, disco y red"
+
+msgid "Inventário e testes de desempenho do hardware"
+msgstr "Inventario y pruebas de rendimiento del hardware"
+
+msgid "Saúde dos discos (SMART)"
+msgstr "Salud de los discos (SMART)"
+
+msgid "Partições de discos e pendrives"
+msgstr "Particiones de discos y memorias USB"
+
+msgid "Recupera partições e arquivos apagados"
+msgstr "Recupera particiones y archivos borrados"
+
+msgid "Teste de estresse de processador e memória"
+msgstr "Prueba de estrés de procesador y memoria"
+
+msgid "Cofre de senhas da equipe, offline"
+msgstr "Bóveda de contraseñas del equipo, sin conexión"
+
+msgid "Carregando ferramentas de redes e TI…"
+msgstr "Cargando herramientas de redes y TI…"
+
+msgid "Ferramentas para administrar redes e dar suporte técnico. Instale com um clique."
+msgstr "Herramientas para administrar redes y dar soporte técnico. Instala con un clic."
+
+msgid "Ferramentas para administrar redes e dar suporte técnico. As do Flathub ficam disponíveis depois de habilitar o Flatpak."
+msgstr "Herramientas para administrar redes y dar soporte técnico. Las de Flathub quedan disponibles después de habilitar Flatpak."

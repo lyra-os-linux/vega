@@ -118,6 +118,18 @@ export const DEVELOPER = [
     ],
   },
   {
+    id: "cloud",
+    title: N_("Nuvem"),
+    // Pacotes do repositório do Lyra (lyra-os-linux/cloud-cli), feitos a
+    // partir das fontes oficiais de cada fornecedor.
+    apps: [
+      { name: "AWS CLI", origin: "official", id: "aws-cli-v2", text: N_("Linha de comando oficial da AWS (versão 2)") },
+      { name: "Azure CLI", origin: "official", id: "azure-cli", text: N_("Linha de comando oficial do Microsoft Azure") },
+      { name: "Google Cloud CLI", origin: "official", id: "google-cloud-cli", text: N_("gcloud, gsutil e bq do Google Cloud") },
+      { name: "doctl", origin: "official", id: "doctl", text: N_("Linha de comando oficial da DigitalOcean") },
+    ],
+  },
+  {
     // Ferramentas de estação de trabalho para DevOps. kubectl, k9s, kind e
     // minikube não estão nos repositórios do Leap 16.1.
     id: "devops",
