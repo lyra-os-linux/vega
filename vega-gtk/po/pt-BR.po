@@ -6133,3 +6133,6 @@ msgstr "Ferramentas para administrar redes e dar suporte técnico. Instale com u
 
 msgid "Ferramentas para administrar redes e dar suporte técnico. As do Flathub ficam disponíveis depois de habilitar o Flatpak."
 msgstr "Ferramentas para administrar redes e dar suporte técnico. As do Flathub ficam disponíveis depois de habilitar o Flatpak."
+
+msgid "Já instalado fora do Vega"
+msgstr "Já instalado fora do Vega"

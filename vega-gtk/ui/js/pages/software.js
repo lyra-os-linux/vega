@@ -127,6 +127,8 @@ export default {
     let loadError = null;
     // Vitrines: chaves "origem\u0000id" instaladas e se o Flatpak está ativo.
     let popularInstalled = null;
+    // Cartões cuja ferramenta já está instalada por fora do Vega (`command`).
+    let popularExternal = new Set();
     let flatpakEnabled = null;
     let enablingWindows = false;
     // Kernel em execução roda 32 bits? E a configuração de boot (para saber
@@ -417,7 +419,8 @@ export default {
       const installedId = [app.id, ...(app.alternatives ?? [])]
         .find((id) => popularInstalled.has(queueKey({ origin: app.origin, id })));
       const pkg = { origin: app.origin, id: app.id, name: app.name, installed: false };
-      const installed = Boolean(installedId);
+      const external = !installedId && popularExternal.has(queueKey(app));
+      const installed = Boolean(installedId) || external;
       const needsFlatpak = !installed && app.origin === "flathub" && !flatpakEnabled;
       const locked = needsFlatpak || (!installed && Boolean(gateNote));
       // Instalado ou bloqueado: o cartão não abre detalhes nem instala.
@@ -432,6 +435,7 @@ export default {
       if (progress) action = progress;
       // Apps do Windows instalados podem ser removidos aqui mesmo: não
       // aparecem na aba Instalados, que lista pacotes e Flatpaks.
+      else if (external) action = button(t("Instalado"), { size: "sm", icon: "check", disabled: true, title: t("Já instalado fora do Vega") });
       else if (installed && USER_ORIGINS.has(app.origin)) action = [
         badge(t("Instalado"), "green", "check"),
         button(t("Remover"), { size: "sm", icon: "trash", kind: "danger", disabled: busy, onClick: (e) => { e.stopPropagation(); removeUserApp(app); } }),
@@ -744,7 +748,11 @@ export default {
     }
 
     async function loadPopular() {
-      const [details, packages, windows, npmApps, appImages, ia32, boot] = await Promise.all([
+      // `command`: a ferramenta pode ter sido instalada por fora do Vega
+      // (instalador próprio na conta do usuário); se o comando existe, o
+      // cartão mostra "Instalado".
+      const byCommand = Object.values(SHOWCASES).flatMap((showcase) => showcase.catalog.flatMap((section) => section.apps)).filter((app) => app.command);
+      const [details, packages, windows, npmApps, appImages, ia32, boot, commands] = await Promise.all([
         call("software_details", { origin: "official", id: "flatpak" }).catch(() => null),
         call("software_installed"),
         call("windows_installed").catch(() => []),
@@ -752,6 +760,7 @@ export default {
         call("appimage_installed").catch(() => []),
         call("windows_ia32").catch(() => true),
         call("kernel_boot_status").catch(() => null),
+        byCommand.length ? call("commands_present", { names: [...new Set(byCommand.map((app) => app.command))] }).catch(() => []) : [],
       ]);
       windowsIa32 = ia32;
       bootStatus = boot;
@@ -762,6 +771,10 @@ export default {
         ...npmApps.map((id) => queueKey({ origin: "npm", id })),
         ...appImages.map((id) => queueKey({ origin: "appimage", id })),
       ]);
+      const found = new Set(commands);
+      popularExternal = new Set(byCommand
+        .filter((app) => found.has(app.command) && !popularInstalled.has(queueKey(app)))
+        .map(queueKey));
     }
 
     // ---------- Abas ----------

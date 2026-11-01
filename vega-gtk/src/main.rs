@@ -111,6 +111,7 @@ fn main() -> ExitCode {
             windows_apps::windows_ia32,
             windows_apps::windows_run_file,
             windows_apps::windows_remove,
+            commands_present::commands_present,
             power::system_boot_id,
             power::system_reboot,
             npm_apps::npm_installed,
