@@ -119,6 +119,14 @@ export async function runWindowsRemove(id, title) {
   return started;
 }
 
+/** AppImage oficial na conta do usuário (backend/appimage_apps.rs). */
+export async function runAppImage(install, id, title) {
+  const callId = await call(install ? "appimage_install" : "appimage_remove", { id });
+  const started = track(`software:${callId}`, title, "software");
+  started.task.action = { kind: install ? "install" : "remove", origin: "appimage", id };
+  return started;
+}
+
 /** Assistente de terminal pelo npm, na conta do usuário. */
 export async function runNpm(install, id, title) {
   const callId = await call(install ? "npm_install" : "npm_remove", { package: id });

@@ -6,9 +6,11 @@
 //! exibe o texto. Operações longas devolvem o id da transação na hora e
 //! repassam o andamento como eventos.
 
+pub mod appimage_apps;
 pub mod backup;
 pub mod bluetooth;
 pub mod cleanup;
+pub mod commands_present;
 pub mod datetime;
 pub mod diagnostics;
 pub mod flatpak_session;

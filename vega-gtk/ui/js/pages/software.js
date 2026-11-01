@@ -6,16 +6,17 @@ import { call, pick } from "../api.js";
 import { refreshUpdates } from "../health.js";
 import { N_, t } from "../i18n.js";
 import { local, saveLocal } from "../store.js";
-import { runSoftware, runWindows, runWindowsFile, runWindowsRemove, runNpm, runningTasks, onTasks, transactionPanel } from "../tasks.js";
+import { runSoftware, runWindows, runWindowsFile, runWindowsRemove, runNpm, runAppImage, runningTasks, onTasks, transactionPanel } from "../tasks.js";
 import { h, icon, clear, button, badge, segmented, list, section, empty, skeletonRows, confirm, sheet, toast, fail, tile, normalize, meter, banner } from "../ui.js";
 import { preparationPanel } from "./software/preparation.js";
 import { requireRestart } from "../restart.js";
 import { flatpakPanel } from "./software/flatpak.js";
 import { POPULAR } from "./software/popular-catalog.js";
 import { DEVELOPER } from "./software/developer-catalog.js";
+import { NETWORK } from "./software/network-catalog.js";
 import { WINDOWS, WINDOWS_BASE } from "./software/windows-catalog.js";
 
-const TABS = ["popular", "developers", "windows", "search", "installed", "updates", "repos"];
+const TABS = ["popular", "developers", "network", "windows", "search", "installed", "updates"];
 // Vitrines curadas (Populares e Desenvolvedores): mesmo cartão, catálogos diferentes.
 const SHOWCASES = {
   popular: {
@@ -30,6 +31,12 @@ const SHOWCASES = {
     intro: N_("Linguagens e ferramentas de programação. Instale com um clique."),
     introLocked: N_("Linguagens e ferramentas de programação. As do Flathub ficam disponíveis depois de habilitar o Flatpak."),
   },
+  network: {
+    catalog: NETWORK,
+    loading: N_("Carregando ferramentas de redes e TI…"),
+    intro: N_("Ferramentas para administrar redes e dar suporte técnico. Instale com um clique."),
+    introLocked: N_("Ferramentas para administrar redes e dar suporte técnico. As do Flathub ficam disponíveis depois de habilitar o Flatpak."),
+  },
   windows: {
     catalog: WINDOWS,
     base: WINDOWS_BASE,
@@ -38,6 +45,8 @@ const SHOWCASES = {
     introLocked: N_("Programas do Windows que rodam no Lyra OS pelo Wine. O Bottles fica disponível depois de habilitar o Flatpak."),
   },
 };
+/** Origens instaladas na conta do usuário: sem detalhes no vegad, removidas pelo cartão. */
+const USER_ORIGINS = new Set(["windows", "npm", "appimage"]);
 const ORIGIN_RANK = { official: 0, flathub: 1 };
 
 // Estado que sobrevive à troca de página, como os widgets do vega-gtk.
@@ -51,7 +60,7 @@ const memory = {
 };
 
 const queueKey = (pkg) => `${pkg.origin}\u0000${pkg.id}`;
-const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin);
+const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "appimage" ? "AppImage" : origin);
 const rankOrigin = (a, b) => (ORIGIN_RANK[a.origin] ?? 2) - (ORIGIN_RANK[b.origin] ?? 2);
 
 function packageIcon(pkg, size = 40) {
@@ -96,6 +105,7 @@ export default {
     { id: "popular", label: N_("Populares"), icon: "star", keywords: ["populares", "recomendados", "spotify", "steam", "discord", "obs", "gimp"] },
     { id: "windows", label: N_("Apps do Windows"), icon: "layers", keywords: ["windows", "wine", "bottles", "exe", "winetricks"] },
     { id: "developers", label: N_("Desenvolvedores"), icon: "terminal", keywords: ["programar", "programacao", "linguagens", "python", "rust", "java", "node", "docker", "podman", "ide", "compilador"] },
+    { id: "network", label: N_("Redes e TI"), icon: "server", keywords: ["rede", "suporte", "remoto", "ssh", "rdp", "vnc", "nmap", "mikrotik", "winbox", "helpdesk"] },
     { id: "search", label: N_("Buscar aplicativos e pacotes"), icon: "search", keywords: ["buscar", "instalar", "flathub"] },
     { id: "installed", label: N_("Instalados"), icon: "box", keywords: ["remover", "desinstalar"] },
     { id: "updates", label: N_("Atualizações"), icon: "download", keywords: ["update", "atualizar"] },
@@ -104,15 +114,21 @@ export default {
 
   render(ctx) {
     if (TABS.includes(ctx.sub)) memory.tab = ctx.sub;
+    if (!TABS.includes(memory.tab)) memory.tab = "popular";
     let tab = memory.tab;
     let view = local.softwareView === "cards" ? "cards" : "list";
     let installedFilter = "";
     let installed = null;
     let updates = null;
+    // Repositórios: janela própria (botão acima das abas), não uma aba.
     let repos = null;
+    let reposError = null;
+    let reposHost = null;
     let loadError = null;
     // Vitrines: chaves "origem\u0000id" instaladas e se o Flatpak está ativo.
     let popularInstalled = null;
+    // Cartões cuja ferramenta já está instalada por fora do Vega (`command`).
+    let popularExternal = new Set();
     let flatpakEnabled = null;
     let enablingWindows = false;
     // Kernel em execução roda 32 bits? E a configuração de boot (para saber
@@ -403,7 +419,8 @@ export default {
       const installedId = [app.id, ...(app.alternatives ?? [])]
         .find((id) => popularInstalled.has(queueKey({ origin: app.origin, id })));
       const pkg = { origin: app.origin, id: app.id, name: app.name, installed: false };
-      const installed = Boolean(installedId);
+      const external = !installedId && popularExternal.has(queueKey(app));
+      const installed = Boolean(installedId) || external;
       const needsFlatpak = !installed && app.origin === "flathub" && !flatpakEnabled;
       const locked = needsFlatpak || (!installed && Boolean(gateNote));
       // Instalado ou bloqueado: o cartão não abre detalhes nem instala.
@@ -418,7 +435,8 @@ export default {
       if (progress) action = progress;
       // Apps do Windows instalados podem ser removidos aqui mesmo: não
       // aparecem na aba Instalados, que lista pacotes e Flatpaks.
-      else if (installed && (app.origin === "windows" || app.origin === "npm")) action = [
+      else if (external) action = button(t("Instalado"), { size: "sm", icon: "check", disabled: true, title: t("Já instalado fora do Vega") });
+      else if (installed && USER_ORIGINS.has(app.origin)) action = [
         badge(t("Instalado"), "green", "check"),
         button(t("Remover"), { size: "sm", icon: "trash", kind: "danger", disabled: busy, onClick: (e) => { e.stopPropagation(); removeUserApp(app); } }),
       ];
@@ -428,12 +446,13 @@ export default {
         e.stopPropagation();
         if (app.origin === "windows") installWindows(app);
         else if (app.origin === "npm") installNpm(app);
+        else if (app.origin === "appimage") installAppImage(app);
         else if (app.repo?.package) installFromRepoPackage(app);
         else if (app.repo) installFromRepo(app);
         else packageAction(pkg);
       } });
-      // Apps do Windows e do npm não têm detalhes no vegad.
-      const open = disabled || app.origin === "windows" || app.origin === "npm" ? undefined : () => openDetails(pkg);
+      // Apps instalados na conta do usuário não têm detalhes no vegad.
+      const open = disabled || USER_ORIGINS.has(app.origin) ? undefined : () => openDetails(pkg);
       // div, e não button: o cartão contém o botão Instalar.
       return h("div", {
         class: `card sw-card sw-popular ${locked ? "locked" : installed ? "installed" : "interactive"}`,
@@ -603,14 +622,17 @@ export default {
       load();
     }
 
-    /** Remove um app instalado na conta do usuário (Windows ou npm). */
+    /** Remove um app instalado na conta do usuário (Windows, npm ou AppImage). */
     async function removeUserApp(app) {
       const npm = app.origin === "npm";
+      const appimage = app.origin === "appimage";
       const ok = await confirm({
         title: t("Remover {name}?", { name: app.name }),
         text: npm
           ? t("A ferramenta é removida da sua conta pelo npm, sem senha. As configurações e o login dela continuam na sua pasta pessoal.")
-          : t("O desinstalador do programa roda pelo Wine, na sua conta, sem senha. Arquivos que você salvou com ele, como documentos, não são apagados."),
+          : appimage
+            ? t("O AppImage e o atalho saem da sua conta, sem senha. Os aplicativos que ele instalou e as configurações dele continuam no sistema.")
+            : t("O desinstalador do programa roda pelo Wine, na sua conta, sem senha. Arquivos que você salvou com ele, como documentos, não são apagados."),
         ic: "trash",
         tone: "danger",
         confirmLabel: t("Remover"),
@@ -620,9 +642,10 @@ export default {
       if (!ok) return;
       let started;
       try {
-        started = npm
-          ? await runNpm(false, app.id, t("Removendo {name}…", { name: app.name }))
-          : await runWindowsRemove(app.id, t("Removendo {name}…", { name: app.name }));
+        const title = t("Removendo {name}…", { name: app.name });
+        started = npm ? await runNpm(false, app.id, title)
+          : appimage ? await runAppImage(false, app.id, title)
+          : await runWindowsRemove(app.id, title);
       } catch (error) {
         return fail(error, t("Não foi possível concluir a operação"));
       }
@@ -668,6 +691,39 @@ export default {
       load();
     }
 
+    /**
+     * AppImage oficial na conta do usuário. Sem o FUSE 2 (libfuse2), que quase
+     * todo AppImage exige, instala antes o pacote (pede a senha).
+     */
+    async function installAppImage(app) {
+      const needsFuse = !isInstalled({ origin: "official", id: "libfuse2" });
+      const ok = await confirm({
+        title: t("Instalar {name}?", { name: app.name }),
+        text: t("O Vega baixa o AppImage oficial da versão mais recente, confere o checksum publicado pelo projeto e instala na sua conta, sem senha. O aplicativo se atualiza sozinho.")
+          + (needsFuse ? " " + t("Antes, instala o suporte a AppImage (libfuse2), com a senha de administrador.") : ""),
+        ic: "download",
+        confirmLabel: t("Instalar"),
+        required: true,
+      });
+      if (!ok) return;
+      if (needsFuse) {
+        const result = await transact({ kind: "install", origin: "official", id: "libfuse2" }, t("Instalando {name}…", { name: "libfuse2" }), { reload: false });
+        if (!result?.success) return;
+      }
+      let started;
+      try {
+        started = await runAppImage(true, app.id, t("Instalando {name}…", { name: app.name }));
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      showTask(started.task);
+      paint();
+      const result = await started.done;
+      if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
+      popularInstalled = null;
+      load();
+    }
+
     async function installWindows(app) {
       const ok = await confirm({
         title: t("Instalar {name}?", { name: app.name }),
@@ -692,13 +748,19 @@ export default {
     }
 
     async function loadPopular() {
-      const [details, packages, windows, npmApps, ia32, boot] = await Promise.all([
+      // `command`: a ferramenta pode ter sido instalada por fora do Vega
+      // (instalador próprio na conta do usuário); se o comando existe, o
+      // cartão mostra "Instalado".
+      const byCommand = Object.values(SHOWCASES).flatMap((showcase) => showcase.catalog.flatMap((section) => section.apps)).filter((app) => app.command);
+      const [details, packages, windows, npmApps, appImages, ia32, boot, commands] = await Promise.all([
         call("software_details", { origin: "official", id: "flatpak" }).catch(() => null),
         call("software_installed"),
         call("windows_installed").catch(() => []),
         call("npm_installed").catch(() => []),
+        call("appimage_installed").catch(() => []),
         call("windows_ia32").catch(() => true),
         call("kernel_boot_status").catch(() => null),
+        byCommand.length ? call("commands_present", { names: [...new Set(byCommand.map((app) => app.command))] }).catch(() => []) : [],
       ]);
       windowsIa32 = ia32;
       bootStatus = boot;
@@ -707,7 +769,12 @@ export default {
         ...packages.map(queueKey),
         ...windows.map((id) => queueKey({ origin: "windows", id })),
         ...npmApps.map((id) => queueKey({ origin: "npm", id })),
+        ...appImages.map((id) => queueKey({ origin: "appimage", id })),
       ]);
+      const found = new Set(commands);
+      popularExternal = new Set(byCommand
+        .filter((app) => found.has(app.command) && !popularInstalled.has(queueKey(app)))
+        .map(queueKey));
     }
 
     // ---------- Abas ----------
@@ -755,7 +822,7 @@ export default {
     }
 
     function drawRepos() {
-      if (loadError) return empty("alert-circle", t("Falha: {message}", { message: loadError }));
+      if (reposError) return empty("alert-circle", t("Falha: {message}", { message: reposError }));
       if (!repos) return skeletonRows(5);
       const name = h("input", { class: "input", placeholder: t("nome"), "aria-label": t("nome") });
       const url = h("input", { class: "input", placeholder: "https://…", "aria-label": t("URL"), inputmode: "url" });
@@ -764,7 +831,7 @@ export default {
       name.addEventListener("input", sync);
       url.addEventListener("input", sync);
       url.addEventListener("keydown", (e) => { if (e.key === "Enter" && !add.disabled) add.click(); });
-      return h("div", {},
+      return h("div", { class: "sw-repos" },
         section(t("Repositórios do sistema"), { sub: String(repos.length) },
           repos.length === 0 ? empty("database", t("Nenhum resultado encontrado")) : list(repos.map((repo) =>
             h("div", { class: "list-row" },
@@ -780,6 +847,26 @@ export default {
             h("p", { class: "small muted" }, t("Se o repositório for assinado, a chave é baixada e mostrada pra você aprovar antes de confiar nela.")))));
     }
 
+    /** Recarrega a lista de repositórios, se a janela estiver aberta. */
+    async function refreshRepos() {
+      repos = null;
+      reposError = null;
+      if (!reposHost) return;
+      clear(reposHost, drawRepos());
+      try {
+        repos = await call("software_repos");
+      } catch (error) {
+        reposError = error.message;
+      }
+      if (reposHost) clear(reposHost, drawRepos());
+    }
+
+    function openRepos() {
+      reposHost = h("div", {});
+      sheet(t("Repositórios"), reposHost, { onClose: () => { reposHost = null; } });
+      refreshRepos();
+    }
+
     async function toggleRepo(repo) {
       const enabled = !repo.enabled;
       const verb = enabled ? t("Ativar") : t("Desativar");
@@ -791,8 +878,7 @@ export default {
       } catch (error) {
         fail(error);
       }
-      repos = null;
-      load();
+      refreshRepos();
     }
 
     /** Mostra a chave pendente e, se o usuário confiar, aprova; devolve se ficou confiável. */
@@ -875,8 +961,7 @@ export default {
       } else {
         ready = true;
       }
-      repos = null;
-      load();
+      refreshRepos();
       return ready;
     }
 
@@ -940,11 +1025,11 @@ export default {
       [
         { id: "popular", label: t("Populares"), icon: "star" },
         { id: "developers", label: t("Desenvolvedores"), icon: "terminal" },
+        { id: "network", label: t("Redes e TI"), icon: "server" },
         { id: "windows", label: t("Apps do Windows"), icon: "layers" },
         { id: "search", label: t("Buscar"), icon: "search" },
         { id: "installed", label: t("Instalados"), icon: "box" },
         { id: "updates", label: t("Atualizações"), icon: "download" },
-        { id: "repos", label: t("Repositórios"), icon: "database" },
       ],
       tab,
       (id) => { tab = memory.tab = id; loadError = null; paintToolbar(); load(); paint(); },
@@ -985,7 +1070,7 @@ export default {
     }
 
     function paint() {
-      clear(body, SHOWCASES[tab] ? drawShowcase(SHOWCASES[tab]) : tab === "search" ? drawSearch() : tab === "installed" ? drawInstalled() : tab === "updates" ? drawUpdates() : drawRepos());
+      clear(body, SHOWCASES[tab] ? drawShowcase(SHOWCASES[tab]) : tab === "search" ? drawSearch() : tab === "installed" ? drawInstalled() : drawUpdates());
     }
 
     async function load() {
@@ -994,7 +1079,6 @@ export default {
         if (SHOWCASES[current] && !popularInstalled) await loadPopular();
         else if (current === "installed" && !installed) installed = await call("software_installed");
         else if (current === "updates" && !updates) updates = await call("software_updates");
-        else if (current === "repos" && !repos) repos = await call("software_repos");
         else return;
         loadError = null;
       } catch (error) {
@@ -1010,7 +1094,7 @@ export default {
     let lastRunning = runningTasks().length;
     ctx.cleanup(onTasks(() => {
       const now = runningTasks().length;
-      if (tab !== "repos" && (now || now !== lastRunning)) paint();
+      if (now || now !== lastRunning) paint();
       if (now !== lastRunning) paintToolbar();
       lastRunning = now;
     }));
@@ -1022,7 +1106,7 @@ export default {
     const reload = () => {
       if (tab === "installed") installed = null;
       if (tab === "updates") updates = null;
-      if (tab === "repos") repos = null;
+      if (reposHost) refreshRepos();
       // O Flatpak pode ter sido habilitado agora (painel acima).
       popularInstalled = null;
       flatpakEnabled = null;
@@ -1036,12 +1120,15 @@ export default {
     const el = h("div", { class: "sw-page" },
       h("div", { class: "page-hero" },
         h("div", {}, h("h2", {}, t("Software")), h("p", {}, t("Busque, instale e atualize aplicativos do sistema e do Flathub."))),
+        button(t("Repositórios"), { icon: "database", onClick: openRepos }),
         tabs),
       preparationPanel(ctx),
       flatpakPanel(() => reload()),
       panelHost,
       toolbarHost,
       body);
+    // "Repositórios do sistema" na busca do Vega abre a janela.
+    if (ctx.sub === "repos") requestAnimationFrame(openRepos);
     return { el, actions: [h("button", { class: "icon-btn", "aria-label": t("Atualizar"), title: t("Atualizar"), onclick: reload }, icon("refresh", 17))] };
   },
 };

@@ -5830,3 +5830,354 @@ msgstr "A chave do repositório ({got}) não é a esperada ({want}). Nada foi in
 
 msgid "Chave inesperada"
 msgstr "Chave inesperada"
+
+# Software → Desenvolvedores → JetBrains
+msgid "IDE completa para Java, Kotlin e web; paga, com período de teste"
+msgstr "IDE completa para Java, Kotlin e web; paga, com período de teste"
+
+msgid "IDE para Python; uso básico gratuito, recursos Pro pagos"
+msgstr "IDE para Python; uso básico gratuito, recursos Pro pagos"
+
+msgid "IDE para JavaScript e TypeScript; grátis para uso não comercial"
+msgstr "IDE para JavaScript e TypeScript; grátis para uso não comercial"
+
+msgid "IDE para C e C++; grátis para uso não comercial"
+msgstr "IDE para C e C++; grátis para uso não comercial"
+
+msgid "IDE para Go; paga, com período de teste"
+msgstr "IDE para Go; paga, com período de teste"
+
+msgid "IDE para Rust; grátis para uso não comercial"
+msgstr "IDE para Rust; grátis para uso não comercial"
+
+msgid "IDE para PHP; paga, com período de teste"
+msgstr "IDE para PHP; paga, com período de teste"
+
+msgid "IDE para bancos de dados e SQL; grátis para uso não comercial"
+msgstr "IDE para bancos de dados e SQL; grátis para uso não comercial"
+
+# Software → Desenvolvedores → Arquitetura e DevOps
+msgid "Arquitetura de software"
+msgstr "Arquitetura de software"
+
+msgid "Diagramas de arquitetura, fluxos e infraestrutura"
+msgstr "Diagramas de arquitetura, fluxos e infraestrutura"
+
+msgid "Modelagem UML, com geração de código"
+msgstr "Modelagem UML, com geração de código"
+
+msgid "Diagramas UML e C4 escritos como texto"
+msgstr "Diagramas UML e C4 escritos como texto"
+
+msgid "Gera diagramas Mermaid em SVG e PNG pelo terminal (mmdc)"
+msgstr "Gera diagramas Mermaid em SVG e PNG pelo terminal (mmdc)"
+
+msgid "Gera grafos e diagramas a partir de texto (dot)"
+msgstr "Gera grafos e diagramas a partir de texto (dot)"
+
+msgid "Editor de diagramas estruturados"
+msgstr "Editor de diagramas estruturados"
+
+msgid "DevOps e infraestrutura"
+msgstr "DevOps e infraestrutura"
+
+msgid "Automação de configuração de servidores"
+msgstr "Automação de configuração de servidores"
+
+msgid "Infraestrutura como código, compatível com o Terraform"
+msgstr "Infraestrutura como código, compatível com o Terraform"
+
+msgid "Gerenciador de pacotes do Kubernetes"
+msgstr "Gerenciador de pacotes do Kubernetes"
+
+msgid "IDE para clusters Kubernetes"
+msgstr "IDE para clusters Kubernetes"
+
+msgid "Painel do Kubernetes"
+msgstr "Painel do Kubernetes"
+
+msgid "Interface gráfica para contêineres e Kubernetes"
+msgstr "Interface gráfica para contêineres e Kubernetes"
+
+msgid "Constrói imagens de contêiner sem serviço"
+msgstr "Constrói imagens de contêiner sem serviço"
+
+msgid "Copia e inspeciona imagens entre registros"
+msgstr "Copia e inspeciona imagens entre registros"
+
+msgid "Procura vulnerabilidades em imagens, código e IaC"
+msgstr "Procura vulnerabilidades em imagens, código e IaC"
+
+msgid "Assina e verifica imagens de contêiner"
+msgstr "Assina e verifica imagens de contêiner"
+
+msgid "Revisa Dockerfiles"
+msgstr "Revisa Dockerfiles"
+
+msgid "Roda GitHub Actions localmente"
+msgstr "Roda GitHub Actions localmente"
+
+msgid "Merge requests, pipelines e issues do GitLab pelo terminal"
+msgstr "Merge requests, pipelines e issues do GitLab pelo terminal"
+
+msgid "Consulta e transforma JSON no terminal"
+msgstr "Consulta e transforma JSON no terminal"
+
+msgid "Consulta e transforma YAML no terminal"
+msgstr "Consulta e transforma YAML no terminal"
+
+msgid "Análise de tráfego de rede"
+msgstr "Análise de tráfego de rede"
+
+msgid "Histórico e commits do Git, integrado ao GNOME"
+msgstr "Histórico e commits do Git, integrado ao GNOME"
+
+msgid "Interface gráfica para o Git"
+msgstr "Interface gráfica para o Git"
+
+msgid "Interface do Git no terminal"
+msgstr "Interface do Git no terminal"
+
+msgid "GitHub Desktop para Linux, mantido pela comunidade"
+msgstr "GitHub Desktop para Linux, mantido pela comunidade"
+
+msgid "Cliente Git rápido; uso gratuito com aviso de licença"
+msgstr "Cliente Git rápido; uso gratuito com aviso de licença"
+
+msgid "Cliente de APIs de código aberto; coleções ficam no Git"
+msgstr "Cliente de APIs de código aberto; coleções ficam no Git"
+
+msgid "Cliente de APIs REST, GraphQL e gRPC"
+msgstr "Cliente de APIs REST, GraphQL e gRPC"
+
+# Software → ArtCraft e DevOps (HashiCorp, VirtualBox)
+msgid "Procurando a versão mais recente…"
+msgstr "Procurando a versão mais recente…"
+
+msgid "A versão mais recente não tem AppImage para este computador."
+msgstr "A versão mais recente não tem AppImage para este computador."
+
+msgid "A release não publica checksums; nada foi instalado."
+msgstr "A release não publica checksums; nada foi instalado."
+
+msgid "O AppImage baixado não confere com o checksum da release; nada foi instalado."
+msgstr "O AppImage baixado não confere com o checksum da release; nada foi instalado."
+
+msgid "Aplicativo desconhecido."
+msgstr "Aplicativo desconhecido."
+
+msgid "Infraestrutura como código, da HashiCorp"
+msgstr "Infraestrutura como código, da HashiCorp"
+
+msgid "Ambientes de desenvolvimento em máquinas virtuais, da HashiCorp"
+msgstr "Ambientes de desenvolvimento em máquinas virtuais, da HashiCorp"
+
+msgid "Máquinas virtuais; depois de instalar, entre no grupo vboxusers e reinicie"
+msgstr "Máquinas virtuais; depois de instalar, entre no grupo vboxusers e reinicie"
+
+msgid "Suíte livre de alternativas ao Adobe (PhotoCraft, VectorCraft, PdfCraft e outros); em fase alfa"
+msgstr "Suíte livre de alternativas ao Adobe (PhotoCraft, VectorCraft, PdfCraft e outros); em fase alfa"
+
+msgid "O AppImage e o atalho saem da sua conta, sem senha. Os aplicativos que ele instalou e as configurações dele continuam no sistema."
+msgstr "O AppImage e o atalho saem da sua conta, sem senha. Os aplicativos que ele instalou e as configurações dele continuam no sistema."
+
+msgid "O Vega baixa o AppImage oficial da versão mais recente, confere o checksum publicado pelo projeto e instala na sua conta, sem senha. O aplicativo se atualiza sozinho."
+msgstr "O Vega baixa o AppImage oficial da versão mais recente, confere o checksum publicado pelo projeto e instala na sua conta, sem senha. O aplicativo se atualiza sozinho."
+
+msgid "Antes, instala o suporte a AppImage (libfuse2), com a senha de administrador."
+msgstr "Antes, instala o suporte a AppImage (libfuse2), com a senha de administrador."
+
+msgid "Nuvem"
+msgstr "Nuvem"
+
+msgid "Linha de comando oficial da AWS (versão 2)"
+msgstr "Linha de comando oficial da AWS (versão 2)"
+
+msgid "Linha de comando oficial do Microsoft Azure"
+msgstr "Linha de comando oficial do Microsoft Azure"
+
+msgid "gcloud, gsutil e bq do Google Cloud"
+msgstr "gcloud, gsutil e bq do Google Cloud"
+
+msgid "Linha de comando oficial da DigitalOcean"
+msgstr "Linha de comando oficial da DigitalOcean"
+
+msgid "Cliente de RDP, VNC e SSH"
+msgstr "Cliente de RDP, VNC e SSH"
+
+msgid "Acesso remoto simples por RDP e VNC, do GNOME"
+msgstr "Acesso remoto simples por RDP e VNC, do GNOME"
+
+msgid "Suporte remoto de código aberto, alternativa ao TeamViewer"
+msgstr "Suporte remoto de código aberto, alternativa ao TeamViewer"
+
+msgid "Suporte remoto"
+msgstr "Suporte remoto"
+
+msgid "Cliente e servidor VNC"
+msgstr "Cliente e servidor VNC"
+
+msgid "Cliente RDP de linha de comando"
+msgstr "Cliente RDP de linha de comando"
+
+msgid "Terminais e transferência"
+msgstr "Terminais e transferência"
+
+msgid "Cliente SSH, Telnet e serial"
+msgstr "Cliente SSH, Telnet e serial"
+
+msgid "Cliente SSH com hosts sincronizados"
+msgstr "Cliente SSH com hosts sincronizados"
+
+msgid "Cliente FTP, FTPS e SFTP"
+msgstr "Cliente FTP, FTPS e SFTP"
+
+msgid "Console serial para switches e roteadores"
+msgstr "Console serial para switches e roteadores"
+
+msgid "Console serial no terminal"
+msgstr "Console serial no terminal"
+
+msgid "Equipamentos e VPN"
+msgstr "Equipamentos e VPN"
+
+msgid "Administra roteadores MikroTik (versão nativa para Linux)"
+msgstr "Administra roteadores MikroTik (versão nativa para Linux)"
+
+msgid "Ferramentas da VPN WireGuard (wg e wg-quick)"
+msgstr "Ferramentas da VPN WireGuard (wg e wg-quick)"
+
+msgid "Consultas SNMP a equipamentos de rede"
+msgstr "Consultas SNMP a equipamentos de rede"
+
+msgid "Diagnóstico de rede"
+msgstr "Diagnóstico de rede"
+
+msgid "Varredura de hosts e portas"
+msgstr "Varredura de hosts e portas"
+
+msgid "Interface gráfica do Nmap"
+msgstr "Interface gráfica do Nmap"
+
+msgid "Descobre os aparelhos da rede"
+msgstr "Descobre os aparelhos da rede"
+
+msgid "Ping e traceroute juntos, com perda por salto"
+msgstr "Ping e traceroute juntos, com perda por salto"
+
+msgid "Mede a velocidade entre dois computadores"
+msgstr "Mede a velocidade entre dois computadores"
+
+msgid "Teste de velocidade da internet no terminal"
+msgstr "Teste de velocidade da internet no terminal"
+
+msgid "Captura de pacotes no terminal"
+msgstr "Captura de pacotes no terminal"
+
+msgid "Lista os aparelhos da rede local pelo ARP"
+msgstr "Lista os aparelhos da rede local pelo ARP"
+
+msgid "Consultas de DNS"
+msgstr "Consultas de DNS"
+
+msgid "Dono de domínios e blocos de IP"
+msgstr "Dono de domínios e blocos de IP"
+
+msgid "Sinal e canais do Wi-Fi no terminal"
+msgstr "Sinal e canais do Wi-Fi no terminal"
+
+msgid "Tráfego e monitoramento"
+msgstr "Tráfego e monitoramento"
+
+msgid "Mapa gráfico de quem conversa na rede"
+msgstr "Mapa gráfico de quem conversa na rede"
+
+msgid "Banda por conexão, em tempo real"
+msgstr "Banda por conexão, em tempo real"
+
+msgid "Banda por programa, em tempo real"
+msgstr "Banda por programa, em tempo real"
+
+msgid "Tráfego de entrada e saída por interface"
+msgstr "Tráfego de entrada e saída por interface"
+
+msgid "Suporte e manutenção"
+msgstr "Suporte e manutenção"
+
+msgid "Uso de processador, memória, disco e rede"
+msgstr "Uso de processador, memória, disco e rede"
+
+msgid "Inventário e testes de desempenho do hardware"
+msgstr "Inventário e testes de desempenho do hardware"
+
+msgid "Saúde dos discos (SMART)"
+msgstr "Saúde dos discos (SMART)"
+
+msgid "Partições de discos e pendrives"
+msgstr "Partições de discos e pendrives"
+
+msgid "Recupera partições e arquivos apagados"
+msgstr "Recupera partições e arquivos apagados"
+
+msgid "Teste de estresse de processador e memória"
+msgstr "Teste de estresse de processador e memória"
+
+msgid "Cofre de senhas da equipe, offline"
+msgstr "Cofre de senhas da equipe, offline"
+
+msgid "Carregando ferramentas de redes e TI…"
+msgstr "Carregando ferramentas de redes e TI…"
+
+msgid "Ferramentas para administrar redes e dar suporte técnico. Instale com um clique."
+msgstr "Ferramentas para administrar redes e dar suporte técnico. Instale com um clique."
+
+msgid "Ferramentas para administrar redes e dar suporte técnico. As do Flathub ficam disponíveis depois de habilitar o Flatpak."
+msgstr "Ferramentas para administrar redes e dar suporte técnico. As do Flathub ficam disponíveis depois de habilitar o Flatpak."
+
+msgid "Já instalado fora do Vega"
+msgstr "Já instalado fora do Vega"
+
+msgid "Gerenciador de arquivos em dois painéis (shareware)"
+msgstr "Gerenciador de arquivos em dois painéis (shareware)"
+
+msgid "Busca instantânea de arquivos pelo nome"
+msgstr "Busca instantânea de arquivos pelo nome"
+
+msgid "Mostra o que ocupa espaço no disco"
+msgstr "Mostra o que ocupa espaço no disco"
+
+msgid "Visualizador, conversor e editor rápido de imagens"
+msgstr "Visualizador, conversor e editor rápido de imagens"
+
+msgid "Transferência de arquivos por SFTP, SCP e FTP"
+msgstr "Transferência de arquivos por SFTP, SCP e FTP"
+
+msgid "Monitora e mapeia a rede, da MikroTik"
+msgstr "Monitora e mapeia a rede, da MikroTik"
+
+msgid "Terminal serial, TCP e UDP para testar equipamentos"
+msgstr "Terminal serial, TCP e UDP para testar equipamentos"
+
+msgid "Servidor TFTP, DHCP e syslog para atualizar equipamentos"
+msgstr "Servidor TFTP, DHCP e syslog para atualizar equipamentos"
+
+msgid "Compartilhamento de arquivos nas redes eD2k e Kad"
+msgstr "Compartilhamento de arquivos nas redes eD2k e Kad"
+
+msgid "Programação"
+msgstr "Programação"
+
+msgid "IDE de C e C++ usada no ensino, com o compilador GCC"
+msgstr "IDE de C e C++ usada no ensino, com o compilador GCC"
+
+msgid "Cria instaladores para programas do Windows"
+msgstr "Cria instaladores para programas do Windows"
+
+msgid "Player de música leve e personalizável"
+msgstr "Player de música leve e personalizável"
+
+msgid "Edita as etiquetas e capas das músicas"
+msgstr "Edita as etiquetas e capas das músicas"
+
+msgid "Player de vídeo leve e clássico"
+msgstr "Player de vídeo leve e clássico"

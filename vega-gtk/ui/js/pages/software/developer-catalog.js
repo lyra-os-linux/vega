@@ -14,6 +14,9 @@
 // `repo` marca pacote que só existe no repositório do fabricante (o .NET da
 // Microsoft, #291): o cartão adiciona o repositório, com a chave aprovada pelo
 // usuário, antes de instalar.
+// `command` é o comando que a ferramenta instala: se ele já existe (instalador
+// próprio na conta do usuário, como o do Claude Code), o cartão mostra
+// "Instalado" mesmo sem o pacote (backend/commands_present.rs).
 
 import { N_ } from "../../i18n.js";
 
@@ -25,7 +28,7 @@ export const DEVELOPER = [
       { name: "C/C++ (GCC)", origin: "official", id: "gcc-c++", text: N_("Compiladores GCC de C e C++") },
       { name: "Clang", origin: "official", id: "clang", text: N_("Compilador C e C++ do LLVM") },
       { name: "Python 3.14", origin: "official", id: "python314", text: N_("Versão mais nova, ao lado do Python 3.13 do sistema") },
-      { name: "Rust", origin: "official", id: "rustup", alternatives: ["rust", "cargo"], text: N_("Instala e atualiza o Rust e o cargo") },
+      { name: "Rust", origin: "official", id: "rustup", command: "cargo", alternatives: ["rust", "cargo"], text: N_("Instala e atualiza o Rust e o cargo") },
       { name: "Go", origin: "official", id: "go", text: N_("Linguagem e ferramentas do Go") },
       { name: "Node.js 24 + npm", origin: "official", id: "npm24", text: N_("Node.js do sistema; o nvm já vem instalado") },
       { name: "Java 21 (OpenJDK)", origin: "official", id: "java-21-openjdk-devel", text: N_("JDK com suporte longo (LTS)") },
@@ -63,9 +66,21 @@ export const DEVELOPER = [
     title: N_("Editores e IDEs"),
     apps: [
       { name: "Zed", origin: "official", id: "zed", text: N_("Editor de código rápido; já vem no Lyra") },
-      { name: "VS Code", origin: "official", id: "code", repo: { package: "vscode-repo", name: "code", fingerprint: "BC528686B50D79E339D3721CEB3E94ADBE1229CF" }, text: N_("Editor da Microsoft, do repositório oficial da Microsoft") },
+      { name: "VS Code", origin: "official", id: "code", command: "code", repo: { package: "vscode-repo", name: "code", fingerprint: "BC528686B50D79E339D3721CEB3E94ADBE1229CF" }, text: N_("Editor da Microsoft, do repositório oficial da Microsoft") },
       { name: "IntelliJ IDEA Community", origin: "flathub", id: "com.jetbrains.IntelliJ-IDEA-Community", text: N_("IDE para Java e Kotlin, de código aberto") },
       { name: "Rider", origin: "flathub", id: "com.jetbrains.Rider", text: N_("IDE para .NET e C#; grátis para uso não comercial") },
+      // Demais IDEs da JetBrains no Flathub (empacotamento da comunidade,
+      // como o IntelliJ e o Rider). O PyCharm Community saiu do Flathub
+      // quando a JetBrains unificou o PyCharm; RubyMine, DataSpell e o
+      // Toolbox não estão lá (a discussão #294 indica o Toolbox).
+      { name: "IntelliJ IDEA Ultimate", origin: "flathub", id: "com.jetbrains.IntelliJ-IDEA-Ultimate", text: N_("IDE completa para Java, Kotlin e web; paga, com período de teste") },
+      { name: "PyCharm", origin: "flathub", id: "com.jetbrains.PyCharm-Professional", text: N_("IDE para Python; uso básico gratuito, recursos Pro pagos") },
+      { name: "WebStorm", origin: "flathub", id: "com.jetbrains.WebStorm", text: N_("IDE para JavaScript e TypeScript; grátis para uso não comercial") },
+      { name: "CLion", origin: "flathub", id: "com.jetbrains.CLion", text: N_("IDE para C e C++; grátis para uso não comercial") },
+      { name: "GoLand", origin: "flathub", id: "com.jetbrains.GoLand", text: N_("IDE para Go; paga, com período de teste") },
+      { name: "RustRover", origin: "flathub", id: "com.jetbrains.RustRover", text: N_("IDE para Rust; grátis para uso não comercial") },
+      { name: "PhpStorm", origin: "flathub", id: "com.jetbrains.PhpStorm", text: N_("IDE para PHP; paga, com período de teste") },
+      { name: "DataGrip", origin: "flathub", id: "com.jetbrains.DataGrip", text: N_("IDE para bancos de dados e SQL; grátis para uso não comercial") },
       { name: "Lazarus", origin: "official", id: "lazarus", text: N_("IDE visual para Free Pascal, parecida com o Delphi") },
       { name: "Eclipse", origin: "flathub", id: "org.eclipse.Java", text: N_("IDE para Java") },
       { name: "Meld", origin: "official", id: "meld", logo: "org.gnome.meld", text: N_("Compara arquivos e pastas lado a lado") },
@@ -80,15 +95,70 @@ export const DEVELOPER = [
     id: "ai",
     title: N_("IA para desenvolvimento"),
     apps: [
-      { name: "Claude Code", origin: "official", id: "claude-code", repo: { package: "claude-code-repo", name: "claude-code", fingerprint: "31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE" }, text: N_("Assistente de programação da Anthropic no terminal") },
-      { name: "Codex CLI", origin: "npm", id: "@openai/codex", text: N_("Assistente de programação da OpenAI no terminal") },
-      { name: "GitHub Copilot CLI", origin: "npm", id: "@github/copilot", text: N_("Copilot no terminal; exige uma assinatura do GitHub Copilot") },
-      { name: "Gemini CLI", origin: "npm", id: "@google/gemini-cli", text: N_("Assistente do Google no terminal, para licenças do Gemini Code Assist") },
-      { name: "opencode", origin: "npm", id: "opencode-ai", text: N_("Assistente de código aberto no terminal, com vários provedores de IA") },
-      { name: "Cursor", origin: "official", id: "cursor", repo: { package: "cursor-repo", name: "cursor", fingerprint: "380FF4BCDC34A4BD92A3565342A1772E62E492D6" }, text: N_("Editor com IA, baseado no VS Code") },
-      { name: "Ollama", origin: "official", id: "ollama", text: N_("Roda modelos de IA no próprio computador") },
+      { name: "Claude Code (CLI)", origin: "official", id: "claude-code", command: "claude", repo: { package: "claude-code-repo", name: "claude-code", fingerprint: "31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE" }, text: N_("Assistente de programação da Anthropic no terminal") },
+      { name: "Codex CLI", origin: "npm", id: "@openai/codex", command: "codex", text: N_("Assistente de programação da OpenAI no terminal") },
+      { name: "GitHub Copilot CLI", origin: "npm", id: "@github/copilot", command: "copilot", text: N_("Copilot no terminal; exige uma assinatura do GitHub Copilot") },
+      { name: "Gemini CLI", origin: "npm", id: "@google/gemini-cli", command: "gemini", text: N_("Assistente do Google no terminal, para licenças do Gemini Code Assist") },
+      { name: "opencode", origin: "npm", id: "opencode-ai", command: "opencode", text: N_("Assistente de código aberto no terminal, com vários provedores de IA") },
+      { name: "Cursor", origin: "official", id: "cursor", command: "cursor", repo: { package: "cursor-repo", name: "cursor", fingerprint: "380FF4BCDC34A4BD92A3565342A1772E62E492D6" }, text: N_("Editor com IA, baseado no VS Code") },
+      { name: "Ollama", origin: "official", id: "ollama", command: "ollama", text: N_("Roda modelos de IA no próprio computador") },
       { name: "Alpaca", origin: "flathub", id: "com.jeffser.Alpaca", logo: "com.jeffser.Alpaca", text: N_("Conversa com modelos locais do Ollama, integrado ao GNOME") },
       { name: "LM Studio", origin: "flathub", id: "ai.lmstudio.lm-studio", text: N_("Baixa e roda modelos de IA locais") },
+    ],
+  },
+  {
+    // Arquitetura de software: modelagem, UML, C4 e diagramas como código.
+    // Archi e Modelio não estão no Flathub nem nos repositórios do Leap.
+    id: "architecture",
+    title: N_("Arquitetura de software"),
+    apps: [
+      { name: "draw.io", origin: "flathub", id: "com.jgraph.drawio.desktop", text: N_("Diagramas de arquitetura, fluxos e infraestrutura") },
+      { name: "Umbrello", origin: "official", id: "umbrello", logo: "org.kde.umbrello", text: N_("Modelagem UML, com geração de código") },
+      { name: "PlantUML", origin: "official", id: "plantuml", text: N_("Diagramas UML e C4 escritos como texto") },
+      { name: "Mermaid CLI", origin: "npm", id: "@mermaid-js/mermaid-cli", command: "mmdc", text: N_("Gera diagramas Mermaid em SVG e PNG pelo terminal (mmdc)") },
+      { name: "Graphviz", origin: "official", id: "graphviz", text: N_("Gera grafos e diagramas a partir de texto (dot)") },
+      { name: "Dia", origin: "official", id: "dia", text: N_("Editor de diagramas estruturados") },
+    ],
+  },
+  {
+    id: "cloud",
+    title: N_("Nuvem"),
+    // Pacotes do repositório do Lyra (lyra-os-linux/cloud-cli), feitos a
+    // partir das fontes oficiais de cada fornecedor.
+    apps: [
+      { name: "AWS CLI", origin: "official", id: "aws-cli-v2", text: N_("Linha de comando oficial da AWS (versão 2)") },
+      { name: "Azure CLI", origin: "official", id: "azure-cli", command: "az", text: N_("Linha de comando oficial do Microsoft Azure") },
+      { name: "Google Cloud CLI", origin: "official", id: "google-cloud-cli", command: "gcloud", text: N_("gcloud, gsutil e bq do Google Cloud") },
+      { name: "doctl", origin: "official", id: "doctl", command: "doctl", text: N_("Linha de comando oficial da DigitalOcean") },
+    ],
+  },
+  {
+    // Ferramentas de estação de trabalho para DevOps. kubectl, k9s, kind e
+    // minikube não estão nos repositórios do Leap 16.1.
+    id: "devops",
+    title: N_("DevOps e infraestrutura"),
+    apps: [
+      { name: "Ansible", origin: "official", id: "ansible", text: N_("Automação de configuração de servidores") },
+      // Terraform e Vagrant não estão no Leap: vêm do repositório RPM oficial
+      // da HashiCorp (canal RHEL 9), registrado pelo pacote hashicorp-repo.
+      { name: "Terraform", origin: "official", id: "terraform", command: "terraform", repo: { package: "hashicorp-repo", name: "hashicorp", fingerprint: "D55C0D1AC78A8D8126CB631CFC9CA96ACA026560" }, text: N_("Infraestrutura como código, da HashiCorp") },
+      { name: "Vagrant", origin: "official", id: "vagrant", command: "vagrant", repo: { package: "hashicorp-repo", name: "hashicorp", fingerprint: "D55C0D1AC78A8D8126CB631CFC9CA96ACA026560" }, text: N_("Ambientes de desenvolvimento em máquinas virtuais, da HashiCorp") },
+      { name: "VirtualBox", origin: "official", id: "virtualbox-qt", text: N_("Máquinas virtuais; depois de instalar, entre no grupo vboxusers e reinicie") },
+      { name: "OpenTofu", origin: "official", id: "opentofu", command: "tofu", text: N_("Infraestrutura como código, compatível com o Terraform") },
+      { name: "Helm", origin: "official", id: "helm", command: "helm", text: N_("Gerenciador de pacotes do Kubernetes") },
+      { name: "Freelens", origin: "flathub", id: "app.freelens.Freelens", text: N_("IDE para clusters Kubernetes") },
+      { name: "Headlamp", origin: "flathub", id: "io.kinvolk.Headlamp", text: N_("Painel do Kubernetes") },
+      { name: "Podman Desktop", origin: "flathub", id: "io.podman_desktop.PodmanDesktop", text: N_("Interface gráfica para contêineres e Kubernetes") },
+      { name: "Buildah", origin: "official", id: "buildah", text: N_("Constrói imagens de contêiner sem serviço") },
+      { name: "Skopeo", origin: "official", id: "skopeo", text: N_("Copia e inspeciona imagens entre registros") },
+      { name: "Trivy", origin: "official", id: "trivy", text: N_("Procura vulnerabilidades em imagens, código e IaC") },
+      { name: "Cosign", origin: "official", id: "cosign", text: N_("Assina e verifica imagens de contêiner") },
+      { name: "hadolint", origin: "official", id: "hadolint", text: N_("Revisa Dockerfiles") },
+      { name: "act", origin: "official", id: "act", text: N_("Roda GitHub Actions localmente") },
+      { name: "GitLab CLI (glab)", origin: "official", id: "glab", text: N_("Merge requests, pipelines e issues do GitLab pelo terminal") },
+      { name: "jq", origin: "official", id: "jq", text: N_("Consulta e transforma JSON no terminal") },
+      { name: "yq", origin: "official", id: "yq", text: N_("Consulta e transforma YAML no terminal") },
+      { name: "Wireshark", origin: "official", id: "wireshark", text: N_("Análise de tráfego de rede") },
     ],
   },
   {
@@ -97,6 +167,11 @@ export const DEVELOPER = [
     apps: [
       { name: "GitHub CLI", origin: "official", id: "gh", text: N_("Pull requests, issues e repositórios pelo terminal") },
       { name: "Git LFS", origin: "official", id: "git-lfs", text: N_("Arquivos grandes em repositórios Git") },
+      { name: "gitg", origin: "official", id: "gitg", logo: "org.gnome.gitg", text: N_("Histórico e commits do Git, integrado ao GNOME") },
+      { name: "Git Cola", origin: "official", id: "git-cola", logo: "com.github.git_cola.git-cola", text: N_("Interface gráfica para o Git") },
+      { name: "lazygit", origin: "official", id: "lazygit", text: N_("Interface do Git no terminal") },
+      { name: "GitHub Desktop", origin: "flathub", id: "io.github.shiftey.Desktop", text: N_("GitHub Desktop para Linux, mantido pela comunidade") },
+      { name: "Sublime Merge", origin: "flathub", id: "com.sublimemerge.App", text: N_("Cliente Git rápido; uso gratuito com aviso de licença") },
     ],
   },
   {
@@ -121,6 +196,8 @@ export const DEVELOPER = [
       { name: "Draco Postgres", origin: "official", id: "postgres-draco", logo: "postgres-draco", text: N_("Cliente PostgreSQL nativo, com editor SQL, diagrama ER e administração") },
       { name: "DBeaver", origin: "flathub", id: "io.dbeaver.DBeaverCommunity", text: N_("Cliente gráfico para vários bancos de dados") },
       { name: "Postman", origin: "flathub", id: "com.getpostman.Postman", text: N_("Testa e documenta APIs") },
+      { name: "Bruno", origin: "flathub", id: "com.usebruno.Bruno", text: N_("Cliente de APIs de código aberto; coleções ficam no Git") },
+      { name: "Insomnia", origin: "flathub", id: "rest.insomnia.Insomnia", text: N_("Cliente de APIs REST, GraphQL e gRPC") },
     ],
   },
   {

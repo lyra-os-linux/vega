@@ -74,6 +74,11 @@ export const POPULAR = [
     id: "graphics",
     title: N_("Imagem, fotos e 3D"),
     apps: [
+      // ArtCraft: suíte livre (MIT/Apache) de alternativas ao Adobe, em fase
+      // alfa, instalada pelo ArtCraft Launcher. O Vega instala o AppImage
+      // oficial da release mais recente, conferido pelo SHA256SUMS da release
+      // (backend/appimage_apps.rs); o launcher se atualiza sozinho.
+      { name: "ArtCraft", origin: "appimage", id: "artcraft-launcher", text: N_("Suíte livre de alternativas ao Adobe (PhotoCraft, VectorCraft, PdfCraft e outros); em fase alfa") },
       { name: "GIMP", origin: "official", id: "gimp", logo: "org.gimp.GIMP", text: N_("Edição de imagens") },
       { name: "Inkscape", origin: "official", id: "inkscape", logo: "org.inkscape.Inkscape", text: N_("Desenho vetorial") },
       { name: "Krita", origin: "official", id: "krita", logo: "org.kde.krita", text: N_("Pintura digital e ilustração") },
