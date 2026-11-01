@@ -5949,3 +5949,40 @@ msgstr "Cliente de APIs de código aberto; coleções ficam no Git"
 
 msgid "Cliente de APIs REST, GraphQL e gRPC"
 msgstr "Cliente de APIs REST, GraphQL e gRPC"
+
+# Software → ArtCraft e DevOps (HashiCorp, VirtualBox)
+msgid "Procurando a versão mais recente…"
+msgstr "Procurando a versão mais recente…"
+
+msgid "A versão mais recente não tem AppImage para este computador."
+msgstr "A versão mais recente não tem AppImage para este computador."
+
+msgid "A release não publica checksums; nada foi instalado."
+msgstr "A release não publica checksums; nada foi instalado."
+
+msgid "O AppImage baixado não confere com o checksum da release; nada foi instalado."
+msgstr "O AppImage baixado não confere com o checksum da release; nada foi instalado."
+
+msgid "Aplicativo desconhecido."
+msgstr "Aplicativo desconhecido."
+
+msgid "Infraestrutura como código, da HashiCorp"
+msgstr "Infraestrutura como código, da HashiCorp"
+
+msgid "Ambientes de desenvolvimento em máquinas virtuais, da HashiCorp"
+msgstr "Ambientes de desenvolvimento em máquinas virtuais, da HashiCorp"
+
+msgid "Máquinas virtuais; depois de instalar, entre no grupo vboxusers e reinicie"
+msgstr "Máquinas virtuais; depois de instalar, entre no grupo vboxusers e reinicie"
+
+msgid "Suíte livre de alternativas ao Adobe (PhotoCraft, VectorCraft, PdfCraft e outros); em fase alfa"
+msgstr "Suíte livre de alternativas ao Adobe (PhotoCraft, VectorCraft, PdfCraft e outros); em fase alfa"
+
+msgid "O AppImage e o atalho saem da sua conta, sem senha. Os aplicativos que ele instalou e as configurações dele continuam no sistema."
+msgstr "O AppImage e o atalho saem da sua conta, sem senha. Os aplicativos que ele instalou e as configurações dele continuam no sistema."
+
+msgid "O Vega baixa o AppImage oficial da versão mais recente, confere o checksum publicado pelo projeto e instala na sua conta, sem senha. O aplicativo se atualiza sozinho."
+msgstr "O Vega baixa o AppImage oficial da versão mais recente, confere o checksum publicado pelo projeto e instala na sua conta, sem senha. O aplicativo se atualiza sozinho."
+
+msgid "Antes, instala o suporte a AppImage (libfuse2), com a senha de administrador."
+msgstr "Antes, instala o suporte a AppImage (libfuse2), com a senha de administrador."

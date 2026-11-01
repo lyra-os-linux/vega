@@ -6,7 +6,7 @@ import { call, pick } from "../api.js";
 import { refreshUpdates } from "../health.js";
 import { N_, t } from "../i18n.js";
 import { local, saveLocal } from "../store.js";
-import { runSoftware, runWindows, runWindowsFile, runWindowsRemove, runNpm, runningTasks, onTasks, transactionPanel } from "../tasks.js";
+import { runSoftware, runWindows, runWindowsFile, runWindowsRemove, runNpm, runAppImage, runningTasks, onTasks, transactionPanel } from "../tasks.js";
 import { h, icon, clear, button, badge, segmented, list, section, empty, skeletonRows, confirm, sheet, toast, fail, tile, normalize, meter, banner } from "../ui.js";
 import { preparationPanel } from "./software/preparation.js";
 import { requireRestart } from "../restart.js";
@@ -38,6 +38,8 @@ const SHOWCASES = {
     introLocked: N_("Programas do Windows que rodam no Lyra OS pelo Wine. O Bottles fica disponível depois de habilitar o Flatpak."),
   },
 };
+/** Origens instaladas na conta do usuário: sem detalhes no vegad, removidas pelo cartão. */
+const USER_ORIGINS = new Set(["windows", "npm", "appimage"]);
 const ORIGIN_RANK = { official: 0, flathub: 1 };
 
 // Estado que sobrevive à troca de página, como os widgets do vega-gtk.
@@ -51,7 +53,7 @@ const memory = {
 };
 
 const queueKey = (pkg) => `${pkg.origin}\u0000${pkg.id}`;
-const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin);
+const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "appimage" ? "AppImage" : origin);
 const rankOrigin = (a, b) => (ORIGIN_RANK[a.origin] ?? 2) - (ORIGIN_RANK[b.origin] ?? 2);
 
 function packageIcon(pkg, size = 40) {
@@ -418,7 +420,7 @@ export default {
       if (progress) action = progress;
       // Apps do Windows instalados podem ser removidos aqui mesmo: não
       // aparecem na aba Instalados, que lista pacotes e Flatpaks.
-      else if (installed && (app.origin === "windows" || app.origin === "npm")) action = [
+      else if (installed && USER_ORIGINS.has(app.origin)) action = [
         badge(t("Instalado"), "green", "check"),
         button(t("Remover"), { size: "sm", icon: "trash", kind: "danger", disabled: busy, onClick: (e) => { e.stopPropagation(); removeUserApp(app); } }),
       ];
@@ -428,12 +430,13 @@ export default {
         e.stopPropagation();
         if (app.origin === "windows") installWindows(app);
         else if (app.origin === "npm") installNpm(app);
+        else if (app.origin === "appimage") installAppImage(app);
         else if (app.repo?.package) installFromRepoPackage(app);
         else if (app.repo) installFromRepo(app);
         else packageAction(pkg);
       } });
-      // Apps do Windows e do npm não têm detalhes no vegad.
-      const open = disabled || app.origin === "windows" || app.origin === "npm" ? undefined : () => openDetails(pkg);
+      // Apps instalados na conta do usuário não têm detalhes no vegad.
+      const open = disabled || USER_ORIGINS.has(app.origin) ? undefined : () => openDetails(pkg);
       // div, e não button: o cartão contém o botão Instalar.
       return h("div", {
         class: `card sw-card sw-popular ${locked ? "locked" : installed ? "installed" : "interactive"}`,
@@ -603,14 +606,17 @@ export default {
       load();
     }
 
-    /** Remove um app instalado na conta do usuário (Windows ou npm). */
+    /** Remove um app instalado na conta do usuário (Windows, npm ou AppImage). */
     async function removeUserApp(app) {
       const npm = app.origin === "npm";
+      const appimage = app.origin === "appimage";
       const ok = await confirm({
         title: t("Remover {name}?", { name: app.name }),
         text: npm
           ? t("A ferramenta é removida da sua conta pelo npm, sem senha. As configurações e o login dela continuam na sua pasta pessoal.")
-          : t("O desinstalador do programa roda pelo Wine, na sua conta, sem senha. Arquivos que você salvou com ele, como documentos, não são apagados."),
+          : appimage
+            ? t("O AppImage e o atalho saem da sua conta, sem senha. Os aplicativos que ele instalou e as configurações dele continuam no sistema.")
+            : t("O desinstalador do programa roda pelo Wine, na sua conta, sem senha. Arquivos que você salvou com ele, como documentos, não são apagados."),
         ic: "trash",
         tone: "danger",
         confirmLabel: t("Remover"),
@@ -620,9 +626,10 @@ export default {
       if (!ok) return;
       let started;
       try {
-        started = npm
-          ? await runNpm(false, app.id, t("Removendo {name}…", { name: app.name }))
-          : await runWindowsRemove(app.id, t("Removendo {name}…", { name: app.name }));
+        const title = t("Removendo {name}…", { name: app.name });
+        started = npm ? await runNpm(false, app.id, title)
+          : appimage ? await runAppImage(false, app.id, title)
+          : await runWindowsRemove(app.id, title);
       } catch (error) {
         return fail(error, t("Não foi possível concluir a operação"));
       }
@@ -668,6 +675,39 @@ export default {
       load();
     }
 
+    /**
+     * AppImage oficial na conta do usuário. Sem o FUSE 2 (libfuse2), que quase
+     * todo AppImage exige, instala antes o pacote (pede a senha).
+     */
+    async function installAppImage(app) {
+      const needsFuse = !isInstalled({ origin: "official", id: "libfuse2" });
+      const ok = await confirm({
+        title: t("Instalar {name}?", { name: app.name }),
+        text: t("O Vega baixa o AppImage oficial da versão mais recente, confere o checksum publicado pelo projeto e instala na sua conta, sem senha. O aplicativo se atualiza sozinho.")
+          + (needsFuse ? " " + t("Antes, instala o suporte a AppImage (libfuse2), com a senha de administrador.") : ""),
+        ic: "download",
+        confirmLabel: t("Instalar"),
+        required: true,
+      });
+      if (!ok) return;
+      if (needsFuse) {
+        const result = await transact({ kind: "install", origin: "official", id: "libfuse2" }, t("Instalando {name}…", { name: "libfuse2" }), { reload: false });
+        if (!result?.success) return;
+      }
+      let started;
+      try {
+        started = await runAppImage(true, app.id, t("Instalando {name}…", { name: app.name }));
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      showTask(started.task);
+      paint();
+      const result = await started.done;
+      if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
+      popularInstalled = null;
+      load();
+    }
+
     async function installWindows(app) {
       const ok = await confirm({
         title: t("Instalar {name}?", { name: app.name }),
@@ -692,11 +732,12 @@ export default {
     }
 
     async function loadPopular() {
-      const [details, packages, windows, npmApps, ia32, boot] = await Promise.all([
+      const [details, packages, windows, npmApps, appImages, ia32, boot] = await Promise.all([
         call("software_details", { origin: "official", id: "flatpak" }).catch(() => null),
         call("software_installed"),
         call("windows_installed").catch(() => []),
         call("npm_installed").catch(() => []),
+        call("appimage_installed").catch(() => []),
         call("windows_ia32").catch(() => true),
         call("kernel_boot_status").catch(() => null),
       ]);
@@ -707,6 +748,7 @@ export default {
         ...packages.map(queueKey),
         ...windows.map((id) => queueKey({ origin: "windows", id })),
         ...npmApps.map((id) => queueKey({ origin: "npm", id })),
+        ...appImages.map((id) => queueKey({ origin: "appimage", id })),
       ]);
     }
 

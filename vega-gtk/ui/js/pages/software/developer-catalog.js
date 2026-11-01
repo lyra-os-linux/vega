@@ -124,6 +124,11 @@ export const DEVELOPER = [
     title: N_("DevOps e infraestrutura"),
     apps: [
       { name: "Ansible", origin: "official", id: "ansible", text: N_("Automação de configuração de servidores") },
+      // Terraform e Vagrant não estão no Leap: vêm do repositório RPM oficial
+      // da HashiCorp (canal RHEL 9), registrado pelo pacote hashicorp-repo.
+      { name: "Terraform", origin: "official", id: "terraform", repo: { package: "hashicorp-repo", name: "hashicorp", fingerprint: "D55C0D1AC78A8D8126CB631CFC9CA96ACA026560" }, text: N_("Infraestrutura como código, da HashiCorp") },
+      { name: "Vagrant", origin: "official", id: "vagrant", repo: { package: "hashicorp-repo", name: "hashicorp", fingerprint: "D55C0D1AC78A8D8126CB631CFC9CA96ACA026560" }, text: N_("Ambientes de desenvolvimento em máquinas virtuais, da HashiCorp") },
+      { name: "VirtualBox", origin: "official", id: "virtualbox-qt", text: N_("Máquinas virtuais; depois de instalar, entre no grupo vboxusers e reinicie") },
       { name: "OpenTofu", origin: "official", id: "opentofu", text: N_("Infraestrutura como código, compatível com o Terraform") },
       { name: "Helm", origin: "official", id: "helm", text: N_("Gerenciador de pacotes do Kubernetes") },
       { name: "Freelens", origin: "flathub", id: "app.freelens.Freelens", text: N_("IDE para clusters Kubernetes") },
