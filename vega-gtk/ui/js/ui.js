@@ -124,8 +124,12 @@ export function segmented(items, active, onChange) {
             role: "tab",
             "aria-selected": String(item.id === current),
             onclick: () => {
+              const changed = item.id !== current;
               render(item.id);
               onChange(item.id);
+              // Abas de página (presas no topo por pinTabs, em main.js): a
+              // aba nova começa do início, não no meio da rolagem da anterior.
+              if (changed && root.closest(".page-tabs")) document.getElementById("scroller")?.scrollTo({ top: 0 });
             },
           },
           item.icon && icon(item.icon, 15),
