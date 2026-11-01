@@ -66,6 +66,18 @@ export const DEVELOPER = [
       { name: "VS Code", origin: "official", id: "code", repo: { package: "vscode-repo", name: "code", fingerprint: "BC528686B50D79E339D3721CEB3E94ADBE1229CF" }, text: N_("Editor da Microsoft, do repositório oficial da Microsoft") },
       { name: "IntelliJ IDEA Community", origin: "flathub", id: "com.jetbrains.IntelliJ-IDEA-Community", text: N_("IDE para Java e Kotlin, de código aberto") },
       { name: "Rider", origin: "flathub", id: "com.jetbrains.Rider", text: N_("IDE para .NET e C#; grátis para uso não comercial") },
+      // Demais IDEs da JetBrains no Flathub (empacotamento da comunidade,
+      // como o IntelliJ e o Rider). O PyCharm Community saiu do Flathub
+      // quando a JetBrains unificou o PyCharm; RubyMine, DataSpell e o
+      // Toolbox não estão lá (a discussão #294 indica o Toolbox).
+      { name: "IntelliJ IDEA Ultimate", origin: "flathub", id: "com.jetbrains.IntelliJ-IDEA-Ultimate", text: N_("IDE completa para Java, Kotlin e web; paga, com período de teste") },
+      { name: "PyCharm", origin: "flathub", id: "com.jetbrains.PyCharm-Professional", text: N_("IDE para Python; uso básico gratuito, recursos Pro pagos") },
+      { name: "WebStorm", origin: "flathub", id: "com.jetbrains.WebStorm", text: N_("IDE para JavaScript e TypeScript; grátis para uso não comercial") },
+      { name: "CLion", origin: "flathub", id: "com.jetbrains.CLion", text: N_("IDE para C e C++; grátis para uso não comercial") },
+      { name: "GoLand", origin: "flathub", id: "com.jetbrains.GoLand", text: N_("IDE para Go; paga, com período de teste") },
+      { name: "RustRover", origin: "flathub", id: "com.jetbrains.RustRover", text: N_("IDE para Rust; grátis para uso não comercial") },
+      { name: "PhpStorm", origin: "flathub", id: "com.jetbrains.PhpStorm", text: N_("IDE para PHP; paga, com período de teste") },
+      { name: "DataGrip", origin: "flathub", id: "com.jetbrains.DataGrip", text: N_("IDE para bancos de dados e SQL; grátis para uso não comercial") },
       { name: "Lazarus", origin: "official", id: "lazarus", text: N_("IDE visual para Free Pascal, parecida com o Delphi") },
       { name: "Eclipse", origin: "flathub", id: "org.eclipse.Java", text: N_("IDE para Java") },
       { name: "Meld", origin: "official", id: "meld", logo: "org.gnome.meld", text: N_("Compara arquivos e pastas lado a lado") },

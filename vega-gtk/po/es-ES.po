@@ -5831,3 +5831,28 @@ msgstr "La clave del repositorio ({got}) no es la esperada ({want}). No se insta
 
 msgid "Chave inesperada"
 msgstr "Clave inesperada"
+
+# Software → Desenvolvedores → JetBrains
+msgid "IDE completa para Java, Kotlin e web; paga, com período de teste"
+msgstr "IDE completo para Java, Kotlin y web; de pago, con período de prueba"
+
+msgid "IDE para Python; uso básico gratuito, recursos Pro pagos"
+msgstr "IDE para Python; uso básico gratuito, funciones Pro de pago"
+
+msgid "IDE para JavaScript e TypeScript; grátis para uso não comercial"
+msgstr "IDE para JavaScript y TypeScript; gratis para uso no comercial"
+
+msgid "IDE para C e C++; grátis para uso não comercial"
+msgstr "IDE para C y C++; gratis para uso no comercial"
+
+msgid "IDE para Go; paga, com período de teste"
+msgstr "IDE para Go; de pago, con período de prueba"
+
+msgid "IDE para Rust; grátis para uso não comercial"
+msgstr "IDE para Rust; gratis para uso no comercial"
+
+msgid "IDE para PHP; paga, com período de teste"
+msgstr "IDE para PHP; de pago, con período de prueba"
+
+msgid "IDE para bancos de dados e SQL; grátis para uso não comercial"
+msgstr "IDE para bases de datos y SQL; gratis para uso no comercial"

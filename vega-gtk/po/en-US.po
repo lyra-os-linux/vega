@@ -5831,3 +5831,28 @@ msgstr "The repository key ({got}) is not the expected one ({want}). Nothing was
 
 msgid "Chave inesperada"
 msgstr "Unexpected key"
+
+# Software → Desenvolvedores → JetBrains
+msgid "IDE completa para Java, Kotlin e web; paga, com período de teste"
+msgstr "Full IDE for Java, Kotlin and web; paid, with a trial period"
+
+msgid "IDE para Python; uso básico gratuito, recursos Pro pagos"
+msgstr "Python IDE; basic use is free, Pro features are paid"
+
+msgid "IDE para JavaScript e TypeScript; grátis para uso não comercial"
+msgstr "IDE for JavaScript and TypeScript; free for non-commercial use"
+
+msgid "IDE para C e C++; grátis para uso não comercial"
+msgstr "IDE for C and C++; free for non-commercial use"
+
+msgid "IDE para Go; paga, com período de teste"
+msgstr "IDE for Go; paid, with a trial period"
+
+msgid "IDE para Rust; grátis para uso não comercial"
+msgstr "IDE for Rust; free for non-commercial use"
+
+msgid "IDE para PHP; paga, com período de teste"
+msgstr "IDE for PHP; paid, with a trial period"
+
+msgid "IDE para bancos de dados e SQL; grátis para uso não comercial"
+msgstr "IDE for databases and SQL; free for non-commercial use"
