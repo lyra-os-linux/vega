@@ -43,9 +43,11 @@ fn search_dirs(path: Option<&str>, home: Option<&Path>) -> Vec<PathBuf> {
         dirs.push(PathBuf::from(dir));
     }
     let mut seen = Vec::new();
-    dirs.retain(|dir| dir.is_absolute() && !seen.contains(dir) && {
-        seen.push(dir.clone());
-        true
+    dirs.retain(|dir| {
+        dir.is_absolute() && !seen.contains(dir) && {
+            seen.push(dir.clone());
+            true
+        }
     });
     dirs
 }
