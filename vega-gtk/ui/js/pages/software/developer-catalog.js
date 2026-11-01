@@ -63,12 +63,32 @@ export const DEVELOPER = [
     title: N_("Editores e IDEs"),
     apps: [
       { name: "Zed", origin: "official", id: "zed", text: N_("Editor de código rápido; já vem no Lyra") },
-      { name: "VS Code", origin: "official", id: "vscode-repo", text: N_("Registra o repositório da Microsoft; depois instale o pacote code") },
+      { name: "VS Code", origin: "official", id: "code", repo: { package: "vscode-repo", name: "code", fingerprint: "BC528686B50D79E339D3721CEB3E94ADBE1229CF" }, text: N_("Editor da Microsoft, do repositório oficial da Microsoft") },
       { name: "IntelliJ IDEA Community", origin: "flathub", id: "com.jetbrains.IntelliJ-IDEA-Community", text: N_("IDE para Java e Kotlin, de código aberto") },
       { name: "Rider", origin: "flathub", id: "com.jetbrains.Rider", text: N_("IDE para .NET e C#; grátis para uso não comercial") },
       { name: "Lazarus", origin: "official", id: "lazarus", text: N_("IDE visual para Free Pascal, parecida com o Delphi") },
       { name: "Eclipse", origin: "flathub", id: "org.eclipse.Java", text: N_("IDE para Java") },
       { name: "Meld", origin: "official", id: "meld", logo: "org.gnome.meld", text: N_("Compara arquivos e pastas lado a lado") },
+    ],
+  },
+  {
+    // Os métodos seguem a documentação de cada fabricante,
+    // adaptada ao openSUSE: Claude Code e Cursor pelos repositórios RPM
+    // oficiais (pacotes claude-code-repo e cursor-repo, com a chave fixada);
+    // Codex, Copilot, Gemini e opencode pelo npm na conta do usuário
+    // (backend/npm_apps.rs, sem sudo); Ollama pelo pacote do openSUSE.
+    id: "ai",
+    title: N_("IA para desenvolvimento"),
+    apps: [
+      { name: "Claude Code", origin: "official", id: "claude-code", repo: { package: "claude-code-repo", name: "claude-code", fingerprint: "31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE" }, text: N_("Assistente de programação da Anthropic no terminal") },
+      { name: "Codex CLI", origin: "npm", id: "@openai/codex", text: N_("Assistente de programação da OpenAI no terminal") },
+      { name: "GitHub Copilot CLI", origin: "npm", id: "@github/copilot", text: N_("Copilot no terminal; exige uma assinatura do GitHub Copilot") },
+      { name: "Gemini CLI", origin: "npm", id: "@google/gemini-cli", text: N_("Assistente do Google no terminal, para licenças do Gemini Code Assist") },
+      { name: "opencode", origin: "npm", id: "opencode-ai", text: N_("Assistente de código aberto no terminal, com vários provedores de IA") },
+      { name: "Cursor", origin: "official", id: "cursor", repo: { package: "cursor-repo", name: "cursor", fingerprint: "380FF4BCDC34A4BD92A3565342A1772E62E492D6" }, text: N_("Editor com IA, baseado no VS Code") },
+      { name: "Ollama", origin: "official", id: "ollama", text: N_("Roda modelos de IA no próprio computador") },
+      { name: "Alpaca", origin: "flathub", id: "com.jeffser.Alpaca", logo: "com.jeffser.Alpaca", text: N_("Conversa com modelos locais do Ollama, integrado ao GNOME") },
+      { name: "LM Studio", origin: "flathub", id: "ai.lmstudio.lm-studio", text: N_("Baixa e roda modelos de IA locais") },
     ],
   },
   {

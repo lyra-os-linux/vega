@@ -6,7 +6,7 @@ import { call, pick } from "../api.js";
 import { refreshUpdates } from "../health.js";
 import { N_, t } from "../i18n.js";
 import { local, saveLocal } from "../store.js";
-import { runSoftware, runWindows, runWindowsFile, runWindowsRemove, runningTasks, onTasks, transactionPanel } from "../tasks.js";
+import { runSoftware, runWindows, runWindowsFile, runWindowsRemove, runNpm, runningTasks, onTasks, transactionPanel } from "../tasks.js";
 import { h, icon, clear, button, badge, segmented, list, section, empty, skeletonRows, confirm, sheet, toast, fail, tile, normalize, meter, banner } from "../ui.js";
 import { preparationPanel } from "./software/preparation.js";
 import { requireRestart } from "../restart.js";
@@ -51,7 +51,7 @@ const memory = {
 };
 
 const queueKey = (pkg) => `${pkg.origin}\u0000${pkg.id}`;
-const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin);
+const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin);
 const rankOrigin = (a, b) => (ORIGIN_RANK[a.origin] ?? 2) - (ORIGIN_RANK[b.origin] ?? 2);
 
 function packageIcon(pkg, size = 40) {
@@ -418,20 +418,22 @@ export default {
       if (progress) action = progress;
       // Apps do Windows instalados podem ser removidos aqui mesmo: não
       // aparecem na aba Instalados, que lista pacotes e Flatpaks.
-      else if (installed && app.origin === "windows") action = [
+      else if (installed && (app.origin === "windows" || app.origin === "npm")) action = [
         badge(t("Instalado"), "green", "check"),
-        button(t("Remover"), { size: "sm", icon: "trash", kind: "danger", disabled: busy, onClick: (e) => { e.stopPropagation(); removeWindows(app); } }),
+        button(t("Remover"), { size: "sm", icon: "trash", kind: "danger", disabled: busy, onClick: (e) => { e.stopPropagation(); removeUserApp(app); } }),
       ];
       else if (installed) action = button(t("Instalado"), { size: "sm", icon: "check", disabled: true });
       else if (locked) action = button(t("Instalar"), { size: "sm", icon: "download", disabled: true, title: needsFlatpak ? t("Habilite o Flatpak para instalar") : gateNote });
       else action = button(t("Instalar"), { kind: "primary", size: "sm", icon: "download", disabled: busy, onClick: (e) => {
         e.stopPropagation();
         if (app.origin === "windows") installWindows(app);
+        else if (app.origin === "npm") installNpm(app);
+        else if (app.repo?.package) installFromRepoPackage(app);
         else if (app.repo) installFromRepo(app);
         else packageAction(pkg);
       } });
-      // Apps do Windows não têm detalhes no vegad.
-      const open = disabled || app.origin === "windows" ? undefined : () => openDetails(pkg);
+      // Apps do Windows e do npm não têm detalhes no vegad.
+      const open = disabled || app.origin === "windows" || app.origin === "npm" ? undefined : () => openDetails(pkg);
       // div, e não button: o cartão contém o botão Instalar.
       return h("div", {
         class: `card sw-card sw-popular ${locked ? "locked" : installed ? "installed" : "interactive"}`,
@@ -601,10 +603,14 @@ export default {
       load();
     }
 
-    async function removeWindows(app) {
+    /** Remove um app instalado na conta do usuário (Windows ou npm). */
+    async function removeUserApp(app) {
+      const npm = app.origin === "npm";
       const ok = await confirm({
         title: t("Remover {name}?", { name: app.name }),
-        text: t("O desinstalador do programa roda pelo Wine, na sua conta, sem senha. Arquivos que você salvou com ele, como documentos, não são apagados."),
+        text: npm
+          ? t("A ferramenta é removida da sua conta pelo npm, sem senha. As configurações e o login dela continuam na sua pasta pessoal.")
+          : t("O desinstalador do programa roda pelo Wine, na sua conta, sem senha. Arquivos que você salvou com ele, como documentos, não são apagados."),
         ic: "trash",
         tone: "danger",
         confirmLabel: t("Remover"),
@@ -614,7 +620,43 @@ export default {
       if (!ok) return;
       let started;
       try {
-        started = await runWindowsRemove(app.id, t("Removendo {name}…", { name: app.name }));
+        started = npm
+          ? await runNpm(false, app.id, t("Removendo {name}…", { name: app.name }))
+          : await runWindowsRemove(app.id, t("Removendo {name}…", { name: app.name }));
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      showTask(started.task);
+      paint();
+      const result = await started.done;
+      if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
+      popularInstalled = null;
+      load();
+    }
+
+    /**
+     * Assistente de terminal pelo npm, na conta do usuário. Sem o npm do
+     * sistema, instala antes o Node.js 24 + npm (pede a senha).
+     */
+    async function installNpm(app) {
+      const needsNode = !isInstalled({ origin: "official", id: "npm24" });
+      const ok = await confirm({
+        title: t("Instalar {name}?", { name: app.name }),
+        text: needsNode
+          ? t("O Vega instala antes o Node.js 24 e o npm, com a senha de administrador. Depois instala a ferramenta na sua conta, sem senha; o comando fica em ~/.local/bin.")
+          : t("A ferramenta é instalada na sua conta pelo npm, sem senha; o comando fica em ~/.local/bin."),
+        ic: "download",
+        confirmLabel: t("Instalar"),
+        required: true,
+      });
+      if (!ok) return;
+      if (needsNode) {
+        const result = await transact({ kind: "install", origin: "official", id: "npm24" }, t("Instalando {name}…", { name: "Node.js 24 + npm" }), { reload: false });
+        if (!result?.success) return;
+      }
+      let started;
+      try {
+        started = await runNpm(true, app.id, t("Instalando {name}…", { name: app.name }));
       } catch (error) {
         return fail(error, t("Não foi possível concluir a operação"));
       }
@@ -650,10 +692,11 @@ export default {
     }
 
     async function loadPopular() {
-      const [details, packages, windows, ia32, boot] = await Promise.all([
+      const [details, packages, windows, npmApps, ia32, boot] = await Promise.all([
         call("software_details", { origin: "official", id: "flatpak" }).catch(() => null),
         call("software_installed"),
         call("windows_installed").catch(() => []),
+        call("npm_installed").catch(() => []),
         call("windows_ia32").catch(() => true),
         call("kernel_boot_status").catch(() => null),
       ]);
@@ -663,6 +706,7 @@ export default {
       popularInstalled = new Set([
         ...packages.map(queueKey),
         ...windows.map((id) => queueKey({ origin: "windows", id })),
+        ...npmApps.map((id) => queueKey({ origin: "npm", id })),
       ]);
     }
 
@@ -751,6 +795,65 @@ export default {
       load();
     }
 
+    /** Mostra a chave pendente e, se o usuário confiar, aprova; devolve se ficou confiável. */
+    async function approveKey(key) {
+      const text = key.key_id
+        ? t("\"{repo}\" está assinado por:\n{user}\nImpressão digital: {fingerprint}\n\nConfiar nessa chave e continuar?", { repo: key.repo, user: key.user_id, fingerprint: key.fingerprint })
+        : t("Não foi possível obter uma chave verificável para \"{repo}\" (assinado por: {user}). Deseja continuar mesmo assim, sem verificação de assinatura?", { repo: key.repo, user: key.user_id });
+      const trust = await confirm({
+        title: t("Confiar na chave do repositório?"),
+        ic: "key",
+        tone: "warn",
+        extra: h("p", { class: "sw-pre selectable" }, text),
+        confirmLabel: t("Confiar"),
+        required: true,
+      });
+      if (!trust) return false;
+      return Boolean((await transact({ kind: "trust-repo-key", repo: key.repo, key_id: key.key_id }, t("Confiando na chave…"), { reload: false }))?.success);
+    }
+
+    const fingerprintOf = (value) => String(value ?? "").replace(/\s+/g, "").toUpperCase();
+
+    /**
+     * Cartão cujo repositório vem num pacote do Lyra (vscode-repo,
+     * cursor-repo, claude-code-repo): instala o pacote, pede ao vegad a chave
+     * do repositório (TrustRepoKey propõe a chave e emite RepoKeyPending),
+     * confere a impressão digital esperada, deixa o usuário aprovar e instala
+     * o aplicativo. Sem isso o zypper ignora o repositório para sempre.
+     */
+    async function installFromRepoPackage(app) {
+      const { package: repoPackage, name: repoName, fingerprint } = app.repo;
+      const ok = await confirm({
+        title: t("Instalar {name}?", { name: app.name }),
+        text: t("O {name} vem do repositório oficial do fabricante. O Vega instala o registro desse repositório, mostra a chave de assinatura para você aprovar e instala o {name}. Pede a senha de administrador.", { name: app.name }),
+        ic: "download",
+        confirmLabel: t("Instalar"),
+        required: true,
+      });
+      if (!ok) return;
+      if (!isInstalled({ origin: "official", id: repoPackage })) {
+        const added = await transact({ kind: "install", origin: "official", id: repoPackage }, t("Instalando {name}…", { name: repoPackage }), { reload: false });
+        if (!added?.success) return;
+      }
+      let started;
+      try {
+        started = await runSoftware({ kind: "trust-repo-key", repo: repoName, key_id: fingerprint }, t("Conferindo a chave do repositório…"));
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      showTask(started.task);
+      const result = await started.done;
+      if (!result.success) {
+        const key = started.task.keyPending;
+        if (!key) return fail(result.message, t("Não foi possível concluir a operação"));
+        if (fingerprintOf(key.fingerprint) !== fingerprintOf(fingerprint)) {
+          return fail(t("A chave do repositório ({got}) não é a esperada ({want}). Nada foi instalado.", { got: key.fingerprint, want: fingerprint }), t("Chave inesperada"));
+        }
+        if (!(await approveKey(key))) return;
+      }
+      await transact({ kind: "install", origin: app.origin, id: app.id }, t("{verb} {name}", { verb: t("Instalar"), name: app.name }));
+    }
+
     /** Adiciona o repositório (aprovando a chave, se pedir); devolve se ficou pronto para uso. */
     async function addRepo(name, url) {
       let started;
@@ -766,18 +869,7 @@ export default {
       const key = started.task.keyPending;
       if (!result.success && key) {
         toast(t("Repositório adicionado — assinatura pendente de aprovação"), { ic: "key" });
-        const text = key.key_id
-          ? t("\"{repo}\" está assinado por:\n{user}\nImpressão digital: {fingerprint}\n\nConfiar nessa chave e continuar?", { repo: key.repo, user: key.user_id, fingerprint: key.fingerprint })
-          : t("Não foi possível obter uma chave verificável para \"{repo}\" (assinado por: {user}). Deseja continuar mesmo assim, sem verificação de assinatura?", { repo: key.repo, user: key.user_id });
-        const trust = await confirm({
-          title: t("Confiar na chave do repositório?"),
-          ic: "key",
-          tone: "warn",
-          extra: h("p", { class: "sw-pre selectable" }, text),
-          confirmLabel: t("Confiar"),
-          required: true,
-        });
-        if (trust) ready = Boolean((await transact({ kind: "trust-repo-key", repo: key.repo, key_id: key.key_id }, t("Confiando na chave…")))?.success);
+        ready = await approveKey(key);
       } else if (!result.success) {
         fail(result.message, t("Não foi possível concluir a operação"));
       } else {
