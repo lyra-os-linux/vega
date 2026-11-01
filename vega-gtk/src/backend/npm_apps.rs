@@ -10,6 +10,11 @@
 //! Só os pacotes de `PACKAGES` são aceitos: a interface nunca passa texto
 //! livre para o npm. O Claude Code vem do repositório RPM oficial da
 //! Anthropic (pacote claude-code-repo), não daqui.
+//!
+//! O shell padrão do Lyra é o fish, que não põe `~/.local/bin` no PATH
+//! sozinho (o `/etc/profile` só vale para o bash, e só se a pasta já existia
+//! no login). Depois de instalar, o Vega roda `fish_add_path ~/.local/bin`,
+//! que grava em `fish_user_paths` e não faz nada se a pasta já estiver lá.
 
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -18,7 +23,7 @@ use std::sync::atomic::{AtomicU32, Ordering};
 use gettextrs::gettext;
 use tauri::AppHandle;
 
-use super::flatpak_session::follow;
+use super::flatpak_session::follow_then;
 
 /// Pacotes npm que a vitrine oferece.
 pub const PACKAGES: &[&str] = &[
@@ -98,9 +103,42 @@ fn start(app: AppHandle, install: bool, package: String) -> Result<u32, String> 
         } else {
             gettext("A remoção pelo npm falhou.")
         };
-        follow(&app, tx, command, "npm", failed);
+        let bin = prefix.join("bin");
+        follow_then(&app, tx, command, "npm", failed, |success| {
+            if success && install {
+                add_to_fish_path(&bin);
+            }
+        });
     });
     Ok(tx)
+}
+
+/// Comando do fish que põe `dir` no PATH de todas as sessões do usuário.
+pub fn fish_add_path_command(dir: &Path) -> Option<String> {
+    let dir = dir.to_str()?;
+    // Só caminhos absolutos simples: o texto vai para dentro de um comando fish.
+    let plain = dir.starts_with('/')
+        && dir
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || "/._-+@".contains(c));
+    plain.then(|| format!("fish_add_path --universal {dir}"))
+}
+
+/// Melhor esforço: sem fish instalado, ou se falhar, segue sem erro (o bash
+/// já lê `~/.local/bin` pelo /etc/profile no próximo login).
+fn add_to_fish_path(dir: &Path) {
+    let Some(script) = fish_add_path_command(dir) else {
+        return;
+    };
+    // Sem `--no-config`: com ele o fish 4 não grava variáveis universais.
+    let mut command = Command::new("fish");
+    command
+        .args(["-c", &script])
+        .stdin(std::process::Stdio::null())
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::null());
+    crate::webkit_env::clean_command(&mut command);
+    let _ = command.status();
 }
 
 #[tauri::command]
@@ -156,6 +194,20 @@ mod tests {
         std::fs::create_dir_all(root.join("lib/node_modules/outro")).unwrap();
         assert_eq!(installed_under(&root), ["@openai/codex"]);
         std::fs::remove_dir_all(&root).unwrap();
+    }
+
+    #[test]
+    fn fish_path_command_only_takes_plain_absolute_paths() {
+        assert_eq!(
+            fish_add_path_command(Path::new("/home/u/.local/bin")).as_deref(),
+            Some("fish_add_path --universal /home/u/.local/bin")
+        );
+        assert_eq!(fish_add_path_command(Path::new("relative/bin")), None);
+        assert_eq!(
+            fish_add_path_command(Path::new("/home/u;rm -rf ~/bin")),
+            None
+        );
+        assert_eq!(fish_add_path_command(Path::new("/home/my user/bin")), None);
     }
 
     #[test]
