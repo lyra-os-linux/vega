@@ -1,6 +1,7 @@
 //! Assistentes de IA de terminal (Vega → Software → Desenvolvedores).
 //!
-//! Codex CLI, Gemini CLI, GitHub Copilot CLI e opencode não têm RPM; a
+//! Codex CLI, Gemini CLI, GitHub Copilot CLI, opencode e o Mermaid CLI
+//! não têm RPM; a
 //! documentação de cada um indica `npm install -g`. O Vega instala na conta do
 //! usuário (`npm install -g --prefix ~/.local`), sem `sudo`, como a própria
 //! Anthropic e o GitHub recomendam: os executáveis vão para `~/.local/bin` e o
@@ -25,6 +26,7 @@ pub const PACKAGES: &[&str] = &[
     "@google/gemini-cli",
     "@github/copilot",
     "opencode-ai",
+    "@mermaid-js/mermaid-cli",
 ];
 
 /// Ids próprios, acima dos do vegad, do Flatpak e dos apps do Windows.

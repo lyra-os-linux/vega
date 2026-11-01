@@ -5856,3 +5856,97 @@ msgstr "IDE for PHP; paid, with a trial period"
 
 msgid "IDE para bancos de dados e SQL; grátis para uso não comercial"
 msgstr "IDE for databases and SQL; free for non-commercial use"
+
+# Software → Desenvolvedores → Arquitetura e DevOps
+msgid "Arquitetura de software"
+msgstr "Software architecture"
+
+msgid "Diagramas de arquitetura, fluxos e infraestrutura"
+msgstr "Architecture, flow and infrastructure diagrams"
+
+msgid "Modelagem UML, com geração de código"
+msgstr "UML modeling, with code generation"
+
+msgid "Diagramas UML e C4 escritos como texto"
+msgstr "UML and C4 diagrams written as text"
+
+msgid "Gera diagramas Mermaid em SVG e PNG pelo terminal (mmdc)"
+msgstr "Renders Mermaid diagrams to SVG and PNG from the terminal (mmdc)"
+
+msgid "Gera grafos e diagramas a partir de texto (dot)"
+msgstr "Renders graphs and diagrams from text (dot)"
+
+msgid "Editor de diagramas estruturados"
+msgstr "Structured diagram editor"
+
+msgid "DevOps e infraestrutura"
+msgstr "DevOps and infrastructure"
+
+msgid "Automação de configuração de servidores"
+msgstr "Server configuration automation"
+
+msgid "Infraestrutura como código, compatível com o Terraform"
+msgstr "Infrastructure as code, Terraform-compatible"
+
+msgid "Gerenciador de pacotes do Kubernetes"
+msgstr "Kubernetes package manager"
+
+msgid "IDE para clusters Kubernetes"
+msgstr "IDE for Kubernetes clusters"
+
+msgid "Painel do Kubernetes"
+msgstr "Kubernetes dashboard"
+
+msgid "Interface gráfica para contêineres e Kubernetes"
+msgstr "Graphical interface for containers and Kubernetes"
+
+msgid "Constrói imagens de contêiner sem serviço"
+msgstr "Builds container images without a daemon"
+
+msgid "Copia e inspeciona imagens entre registros"
+msgstr "Copies and inspects images between registries"
+
+msgid "Procura vulnerabilidades em imagens, código e IaC"
+msgstr "Scans images, code and IaC for vulnerabilities"
+
+msgid "Assina e verifica imagens de contêiner"
+msgstr "Signs and verifies container images"
+
+msgid "Revisa Dockerfiles"
+msgstr "Lints Dockerfiles"
+
+msgid "Roda GitHub Actions localmente"
+msgstr "Runs GitHub Actions locally"
+
+msgid "Merge requests, pipelines e issues do GitLab pelo terminal"
+msgstr "GitLab merge requests, pipelines and issues from the terminal"
+
+msgid "Consulta e transforma JSON no terminal"
+msgstr "Queries and transforms JSON in the terminal"
+
+msgid "Consulta e transforma YAML no terminal"
+msgstr "Queries and transforms YAML in the terminal"
+
+msgid "Análise de tráfego de rede"
+msgstr "Network traffic analysis"
+
+msgid "Histórico e commits do Git, integrado ao GNOME"
+msgstr "Git history and commits, integrated with GNOME"
+
+msgid "Interface gráfica para o Git"
+msgstr "Graphical interface for Git"
+
+msgid "Interface do Git no terminal"
+msgstr "Git interface in the terminal"
+
+msgid "GitHub Desktop para Linux, mantido pela comunidade"
+msgstr "GitHub Desktop for Linux, maintained by the community"
+
+msgid "Cliente Git rápido; uso gratuito com aviso de licença"
+msgstr "Fast Git client; free to use with a license reminder"
+
+msgid "Cliente de APIs de código aberto; coleções ficam no Git"
+msgstr "Open source API client; collections live in Git"
+
+msgid "Cliente de APIs REST, GraphQL e gRPC"
+msgstr "REST, GraphQL and gRPC API client"

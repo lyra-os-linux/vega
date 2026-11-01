@@ -92,7 +92,7 @@ export const DEVELOPER = [
     id: "ai",
     title: N_("IA para desenvolvimento"),
     apps: [
-      { name: "Claude Code", origin: "official", id: "claude-code", repo: { package: "claude-code-repo", name: "claude-code", fingerprint: "31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE" }, text: N_("Assistente de programação da Anthropic no terminal") },
+      { name: "Claude Code (CLI)", origin: "official", id: "claude-code", repo: { package: "claude-code-repo", name: "claude-code", fingerprint: "31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE" }, text: N_("Assistente de programação da Anthropic no terminal") },
       { name: "Codex CLI", origin: "npm", id: "@openai/codex", text: N_("Assistente de programação da OpenAI no terminal") },
       { name: "GitHub Copilot CLI", origin: "npm", id: "@github/copilot", text: N_("Copilot no terminal; exige uma assinatura do GitHub Copilot") },
       { name: "Gemini CLI", origin: "npm", id: "@google/gemini-cli", text: N_("Assistente do Google no terminal, para licenças do Gemini Code Assist") },
@@ -104,11 +104,54 @@ export const DEVELOPER = [
     ],
   },
   {
+    // Arquitetura de software: modelagem, UML, C4 e diagramas como código.
+    // Archi e Modelio não estão no Flathub nem nos repositórios do Leap.
+    id: "architecture",
+    title: N_("Arquitetura de software"),
+    apps: [
+      { name: "draw.io", origin: "flathub", id: "com.jgraph.drawio.desktop", text: N_("Diagramas de arquitetura, fluxos e infraestrutura") },
+      { name: "Umbrello", origin: "official", id: "umbrello", logo: "org.kde.umbrello", text: N_("Modelagem UML, com geração de código") },
+      { name: "PlantUML", origin: "official", id: "plantuml", text: N_("Diagramas UML e C4 escritos como texto") },
+      { name: "Mermaid CLI", origin: "npm", id: "@mermaid-js/mermaid-cli", text: N_("Gera diagramas Mermaid em SVG e PNG pelo terminal (mmdc)") },
+      { name: "Graphviz", origin: "official", id: "graphviz", text: N_("Gera grafos e diagramas a partir de texto (dot)") },
+      { name: "Dia", origin: "official", id: "dia", text: N_("Editor de diagramas estruturados") },
+    ],
+  },
+  {
+    // Ferramentas de estação de trabalho para DevOps. kubectl, k9s, kind e
+    // minikube não estão nos repositórios do Leap 16.1.
+    id: "devops",
+    title: N_("DevOps e infraestrutura"),
+    apps: [
+      { name: "Ansible", origin: "official", id: "ansible", text: N_("Automação de configuração de servidores") },
+      { name: "OpenTofu", origin: "official", id: "opentofu", text: N_("Infraestrutura como código, compatível com o Terraform") },
+      { name: "Helm", origin: "official", id: "helm", text: N_("Gerenciador de pacotes do Kubernetes") },
+      { name: "Freelens", origin: "flathub", id: "app.freelens.Freelens", text: N_("IDE para clusters Kubernetes") },
+      { name: "Headlamp", origin: "flathub", id: "io.kinvolk.Headlamp", text: N_("Painel do Kubernetes") },
+      { name: "Podman Desktop", origin: "flathub", id: "io.podman_desktop.PodmanDesktop", text: N_("Interface gráfica para contêineres e Kubernetes") },
+      { name: "Buildah", origin: "official", id: "buildah", text: N_("Constrói imagens de contêiner sem serviço") },
+      { name: "Skopeo", origin: "official", id: "skopeo", text: N_("Copia e inspeciona imagens entre registros") },
+      { name: "Trivy", origin: "official", id: "trivy", text: N_("Procura vulnerabilidades em imagens, código e IaC") },
+      { name: "Cosign", origin: "official", id: "cosign", text: N_("Assina e verifica imagens de contêiner") },
+      { name: "hadolint", origin: "official", id: "hadolint", text: N_("Revisa Dockerfiles") },
+      { name: "act", origin: "official", id: "act", text: N_("Roda GitHub Actions localmente") },
+      { name: "GitLab CLI (glab)", origin: "official", id: "glab", text: N_("Merge requests, pipelines e issues do GitLab pelo terminal") },
+      { name: "jq", origin: "official", id: "jq", text: N_("Consulta e transforma JSON no terminal") },
+      { name: "yq", origin: "official", id: "yq", text: N_("Consulta e transforma YAML no terminal") },
+      { name: "Wireshark", origin: "official", id: "wireshark", text: N_("Análise de tráfego de rede") },
+    ],
+  },
+  {
     id: "git",
     title: N_("Git"),
     apps: [
       { name: "GitHub CLI", origin: "official", id: "gh", text: N_("Pull requests, issues e repositórios pelo terminal") },
       { name: "Git LFS", origin: "official", id: "git-lfs", text: N_("Arquivos grandes em repositórios Git") },
+      { name: "gitg", origin: "official", id: "gitg", logo: "org.gnome.gitg", text: N_("Histórico e commits do Git, integrado ao GNOME") },
+      { name: "Git Cola", origin: "official", id: "git-cola", logo: "com.github.git_cola.git-cola", text: N_("Interface gráfica para o Git") },
+      { name: "lazygit", origin: "official", id: "lazygit", text: N_("Interface do Git no terminal") },
+      { name: "GitHub Desktop", origin: "flathub", id: "io.github.shiftey.Desktop", text: N_("GitHub Desktop para Linux, mantido pela comunidade") },
+      { name: "Sublime Merge", origin: "flathub", id: "com.sublimemerge.App", text: N_("Cliente Git rápido; uso gratuito com aviso de licença") },
     ],
   },
   {
@@ -133,6 +176,8 @@ export const DEVELOPER = [
       { name: "Draco Postgres", origin: "official", id: "postgres-draco", logo: "postgres-draco", text: N_("Cliente PostgreSQL nativo, com editor SQL, diagrama ER e administração") },
       { name: "DBeaver", origin: "flathub", id: "io.dbeaver.DBeaverCommunity", text: N_("Cliente gráfico para vários bancos de dados") },
       { name: "Postman", origin: "flathub", id: "com.getpostman.Postman", text: N_("Testa e documenta APIs") },
+      { name: "Bruno", origin: "flathub", id: "com.usebruno.Bruno", text: N_("Cliente de APIs de código aberto; coleções ficam no Git") },
+      { name: "Insomnia", origin: "flathub", id: "rest.insomnia.Insomnia", text: N_("Cliente de APIs REST, GraphQL e gRPC") },
     ],
   },
   {

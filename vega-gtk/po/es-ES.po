@@ -5856,3 +5856,97 @@ msgstr "IDE para PHP; de pago, con período de prueba"
 
 msgid "IDE para bancos de dados e SQL; grátis para uso não comercial"
 msgstr "IDE para bases de datos y SQL; gratis para uso no comercial"
+
+# Software → Desenvolvedores → Arquitetura e DevOps
+msgid "Arquitetura de software"
+msgstr "Arquitectura de software"
+
+msgid "Diagramas de arquitetura, fluxos e infraestrutura"
+msgstr "Diagramas de arquitectura, flujos e infraestructura"
+
+msgid "Modelagem UML, com geração de código"
+msgstr "Modelado UML, con generación de código"
+
+msgid "Diagramas UML e C4 escritos como texto"
+msgstr "Diagramas UML y C4 escritos como texto"
+
+msgid "Gera diagramas Mermaid em SVG e PNG pelo terminal (mmdc)"
+msgstr "Genera diagramas Mermaid en SVG y PNG desde la terminal (mmdc)"
+
+msgid "Gera grafos e diagramas a partir de texto (dot)"
+msgstr "Genera grafos y diagramas a partir de texto (dot)"
+
+msgid "Editor de diagramas estruturados"
+msgstr "Editor de diagramas estructurados"
+
+msgid "DevOps e infraestrutura"
+msgstr "DevOps e infraestructura"
+
+msgid "Automação de configuração de servidores"
+msgstr "Automatización de la configuración de servidores"
+
+msgid "Infraestrutura como código, compatível com o Terraform"
+msgstr "Infraestructura como código, compatible con Terraform"
+
+msgid "Gerenciador de pacotes do Kubernetes"
+msgstr "Gestor de paquetes de Kubernetes"
+
+msgid "IDE para clusters Kubernetes"
+msgstr "IDE para clústeres de Kubernetes"
+
+msgid "Painel do Kubernetes"
+msgstr "Panel de Kubernetes"
+
+msgid "Interface gráfica para contêineres e Kubernetes"
+msgstr "Interfaz gráfica para contenedores y Kubernetes"
+
+msgid "Constrói imagens de contêiner sem serviço"
+msgstr "Construye imágenes de contenedor sin servicio"
+
+msgid "Copia e inspeciona imagens entre registros"
+msgstr "Copia e inspecciona imágenes entre registros"
+
+msgid "Procura vulnerabilidades em imagens, código e IaC"
+msgstr "Busca vulnerabilidades en imágenes, código e IaC"
+
+msgid "Assina e verifica imagens de contêiner"
+msgstr "Firma y verifica imágenes de contenedor"
+
+msgid "Revisa Dockerfiles"
+msgstr "Revisa Dockerfiles"
+
+msgid "Roda GitHub Actions localmente"
+msgstr "Ejecuta GitHub Actions localmente"
+
+msgid "Merge requests, pipelines e issues do GitLab pelo terminal"
+msgstr "Merge requests, pipelines e issues de GitLab desde la terminal"
+
+msgid "Consulta e transforma JSON no terminal"
+msgstr "Consulta y transforma JSON en la terminal"
+
+msgid "Consulta e transforma YAML no terminal"
+msgstr "Consulta y transforma YAML en la terminal"
+
+msgid "Análise de tráfego de rede"
+msgstr "Análisis de tráfico de red"
+
+msgid "Histórico e commits do Git, integrado ao GNOME"
+msgstr "Historial y commits de Git, integrado con GNOME"
+
+msgid "Interface gráfica para o Git"
+msgstr "Interfaz gráfica para Git"
+
+msgid "Interface do Git no terminal"
+msgstr "Interfaz de Git en la terminal"
+
+msgid "GitHub Desktop para Linux, mantido pela comunidade"
+msgstr "GitHub Desktop para Linux, mantenido por la comunidad"
+
+msgid "Cliente Git rápido; uso gratuito com aviso de licença"
+msgstr "Cliente Git rápido; uso gratuito con aviso de licencia"
+
+msgid "Cliente de APIs de código aberto; coleções ficam no Git"
+msgstr "Cliente de API de código abierto; las colecciones quedan en Git"
+
+msgid "Cliente de APIs REST, GraphQL e gRPC"
+msgstr "Cliente de API REST, GraphQL y gRPC"
