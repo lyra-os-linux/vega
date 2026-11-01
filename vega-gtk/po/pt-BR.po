@@ -5766,3 +5766,67 @@ msgstr "O desinstalador do programa roda pelo Wine, na sua conta, sem senha. Arq
 
 msgid "Removendo {name}…"
 msgstr "Removendo {name}…"
+
+# Software → Desenvolvedores → IA
+msgid "Ferramenta desconhecida."
+msgstr "Ferramenta desconhecida."
+
+msgid "A instalação pelo npm falhou."
+msgstr "A instalação pelo npm falhou."
+
+msgid "A remoção pelo npm falhou."
+msgstr "A remoção pelo npm falhou."
+
+msgid "Editor da Microsoft, do repositório oficial da Microsoft"
+msgstr "Editor da Microsoft, do repositório oficial da Microsoft"
+
+msgid "IA para desenvolvimento"
+msgstr "IA para desenvolvimento"
+
+msgid "Assistente de programação da Anthropic no terminal"
+msgstr "Assistente de programação da Anthropic no terminal"
+
+msgid "Assistente de programação da OpenAI no terminal"
+msgstr "Assistente de programação da OpenAI no terminal"
+
+msgid "Copilot no terminal; exige uma assinatura do GitHub Copilot"
+msgstr "Copilot no terminal; exige uma assinatura do GitHub Copilot"
+
+msgid "Assistente do Google no terminal, para licenças do Gemini Code Assist"
+msgstr "Assistente do Google no terminal, para licenças do Gemini Code Assist"
+
+msgid "Assistente de código aberto no terminal, com vários provedores de IA"
+msgstr "Assistente de código aberto no terminal, com vários provedores de IA"
+
+msgid "Editor com IA, baseado no VS Code"
+msgstr "Editor com IA, baseado no VS Code"
+
+msgid "Roda modelos de IA no próprio computador"
+msgstr "Roda modelos de IA no próprio computador"
+
+msgid "Conversa com modelos locais do Ollama, integrado ao GNOME"
+msgstr "Conversa com modelos locais do Ollama, integrado ao GNOME"
+
+msgid "Baixa e roda modelos de IA locais"
+msgstr "Baixa e roda modelos de IA locais"
+
+msgid "A ferramenta é removida da sua conta pelo npm, sem senha. As configurações e o login dela continuam na sua pasta pessoal."
+msgstr "A ferramenta é removida da sua conta pelo npm, sem senha. As configurações e o login dela continuam na sua pasta pessoal."
+
+msgid "O Vega instala antes o Node.js 24 e o npm, com a senha de administrador. Depois instala a ferramenta na sua conta, sem senha; o comando fica em ~/.local/bin."
+msgstr "O Vega instala antes o Node.js 24 e o npm, com a senha de administrador. Depois instala a ferramenta na sua conta, sem senha; o comando fica em ~/.local/bin."
+
+msgid "A ferramenta é instalada na sua conta pelo npm, sem senha; o comando fica em ~/.local/bin."
+msgstr "A ferramenta é instalada na sua conta pelo npm, sem senha; o comando fica em ~/.local/bin."
+
+msgid "O {name} vem do repositório oficial do fabricante. O Vega instala o registro desse repositório, mostra a chave de assinatura para você aprovar e instala o {name}. Pede a senha de administrador."
+msgstr "O {name} vem do repositório oficial do fabricante. O Vega instala o registro desse repositório, mostra a chave de assinatura para você aprovar e instala o {name}. Pede a senha de administrador."
+
+msgid "Conferindo a chave do repositório…"
+msgstr "Conferindo a chave do repositório…"
+
+msgid "A chave do repositório ({got}) não é a esperada ({want}). Nada foi instalado."
+msgstr "A chave do repositório ({got}) não é a esperada ({want}). Nada foi instalado."
+
+msgid "Chave inesperada"
+msgstr "Chave inesperada"
