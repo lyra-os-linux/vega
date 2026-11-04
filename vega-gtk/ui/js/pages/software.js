@@ -832,7 +832,7 @@ export default {
       url.addEventListener("input", sync);
       url.addEventListener("keydown", (e) => { if (e.key === "Enter" && !add.disabled) add.click(); });
       return h("div", { class: "sw-repos" },
-        section(t("Repositórios do sistema"), { sub: String(repos.length) },
+        section(t("Repositórios do sistema"), { sub: String(repos.length), actions: button(t("Atualizar repositórios"), { size: "sm", icon: "refresh", onClick: refreshAllRepos }) },
           repos.length === 0 ? empty("database", t("Nenhum resultado encontrado")) : list(repos.map((repo) =>
             h("div", { class: "list-row" },
               h("span", { class: `lead ${repo.enabled ? "green" : ""}`.trim() }, icon("database", 18)),
@@ -845,6 +845,16 @@ export default {
           h("div", { class: "card pad sw-repo-form" },
             h("div", { class: "sw-repo-fields" }, name, url, add),
             h("p", { class: "small muted" }, t("Se o repositório for assinado, a chave é baixada e mostrada pra você aprovar antes de confiar nela.")))));
+    }
+
+    /**
+     * Baixa agora os metadados de todos os repositórios ativos (o
+     * `zypper refresh` do vegad, como `sudo zypper ref`), sem esperar a
+     * próxima verificação de atualizações, e recarrega a lista.
+     */
+    async function refreshAllRepos() {
+      await transact({ kind: "refresh-repos" }, t("Atualizar repositórios"));
+      refreshRepos();
     }
 
     /** Recarrega a lista de repositórios, se a janela estiver aberta. */
