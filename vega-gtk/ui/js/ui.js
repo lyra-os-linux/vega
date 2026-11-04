@@ -395,7 +395,10 @@ export function menuItem(ic, label, onClick, hint) {
 /** Toast de erro com o texto do backend. */
 export function fail(error, prefix) {
   const message = error?.message ?? String(error);
-  return toast(prefix ? `${prefix}: ${message}` : message, { ic: "alert-circle", timeout: 8000 });
+  const text = prefix ? `${prefix}: ${message}` : message;
+  // As falhas explicadas pelo vegad dizem a causa e o que fazer: o tempo na
+  // tela acompanha o tamanho do texto (de 8 a 20 s) para dar tempo de ler.
+  return toast(text, { ic: "alert-circle", timeout: Math.min(20000, Math.max(8000, text.length * 70)) });
 }
 
 /** Executa `fn` com o botão em estado ocupado (spinner + desabilitado). */
