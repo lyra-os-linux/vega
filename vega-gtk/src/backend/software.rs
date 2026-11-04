@@ -181,6 +181,8 @@ pub enum Action {
     UpdateAll,
     UpdateAllNative,
     ClearCache,
+    /// `zypper refresh` de todos os repositórios ativos, na hora.
+    RefreshRepos,
     AddRepo {
         name: String,
         url: String,
@@ -265,6 +267,7 @@ pub async fn software_run(app: AppHandle, state: State<'_>, action: Action) -> C
         Action::UpdateAll => software.update_all().await,
         Action::UpdateAllNative => software.update_all_native().await,
         Action::ClearCache => software.clear_cache().await,
+        Action::RefreshRepos => software.refresh_repos().await,
         Action::AddRepo { name, url } => software.add_repo(name, url).await,
         Action::TrustRepoKey { repo, key_id } => software.trust_repo_key(repo, key_id).await,
         Action::UpdateFirmware => unreachable!("o firmware é atualizado na sessão"),

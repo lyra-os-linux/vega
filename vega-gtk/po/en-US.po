@@ -6182,3 +6182,6 @@ msgstr "Edits song tags and cover art"
 
 msgid "Player de vídeo leve e clássico"
 msgstr "Lightweight classic video player"
+
+msgid "Atualizar repositórios"
+msgstr "Refresh repositories"

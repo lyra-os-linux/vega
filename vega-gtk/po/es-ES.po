@@ -6182,3 +6182,6 @@ msgstr "Edita las etiquetas y portadas de las canciones"
 
 msgid "Player de vídeo leve e clássico"
 msgstr "Reproductor de vídeo ligero y clásico"
+
+msgid "Atualizar repositórios"
+msgstr "Actualizar repositorios"
