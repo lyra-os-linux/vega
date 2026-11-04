@@ -6181,3 +6181,6 @@ msgstr "Edita as etiquetas e capas das músicas"
 
 msgid "Player de vídeo leve e clássico"
 msgstr "Player de vídeo leve e clássico"
+
+msgid "Atualizar repositórios"
+msgstr "Atualizar repositórios"
