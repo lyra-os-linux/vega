@@ -11,7 +11,6 @@
 
 use std::io::Write;
 use std::path::{Path, PathBuf};
-use std::sync::atomic::{AtomicU32, Ordering};
 
 use gettextrs::gettext;
 use serde::Deserialize;
@@ -49,9 +48,6 @@ pub const APPS: &[App] = &[App {
 pub fn app(id: &str) -> Option<&'static App> {
     APPS.iter().find(|app| app.id == id)
 }
-
-/// Ids próprios, acima dos do npm.
-static NEXT_ID: AtomicU32 = AtomicU32::new(0xE000_0000);
 
 fn home() -> Option<PathBuf> {
     std::env::var_os("HOME").map(PathBuf::from)
@@ -267,7 +263,7 @@ pub fn appimage_installed() -> Vec<String> {
 
 fn start(app_handle: AppHandle, id: String, installing: bool) -> Result<u32, String> {
     let app = app(&id).ok_or_else(|| gettext("Aplicativo desconhecido."))?;
-    let tx = NEXT_ID.fetch_add(1, Ordering::Relaxed);
+    let tx = super::session_tx::next();
     std::thread::spawn(move || {
         let emit = |event: TransactionEvent| {
             let _ = app_handle.emit("software-transaction", event);

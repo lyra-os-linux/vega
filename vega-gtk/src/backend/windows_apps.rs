@@ -26,7 +26,6 @@
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use std::sync::atomic::{AtomicU32, Ordering};
 
 use gettextrs::gettext;
 use sha2::{Digest, Sha256};
@@ -306,9 +305,6 @@ fn guarded_winetricks_path() -> Result<PathBuf, String> {
     std::fs::write(&path, guarded).map_err(|error| error.to_string())?;
     Ok(path)
 }
-
-/// Ids próprios, acima dos do vegad e dos do Flatpak na sessão.
-static NEXT_ID: AtomicU32 = AtomicU32::new(0xC000_0000);
 
 fn prefix() -> Option<PathBuf> {
     let data = std::env::var_os("XDG_DATA_HOME")
@@ -803,7 +799,7 @@ pub fn windows_install(app: AppHandle, verb: String) -> Result<u32, String> {
         return Err(gettext("Aplicativo do Windows desconhecido."));
     }
     let prefix = ready_prefix()?;
-    let tx = NEXT_ID.fetch_add(1, Ordering::Relaxed);
+    let tx = super::session_tx::next();
     if let Some(recipe) = recipe(&verb) {
         std::thread::spawn(move || {
             prepare_prefix(&prefix);
@@ -1313,7 +1309,7 @@ pub fn windows_remove(app: AppHandle, id: String) -> Result<u32, String> {
         return Err(gettext("Aplicativo do Windows desconhecido."));
     };
     let prefix = prefix().ok_or_else(|| gettext("Pasta pessoal não encontrada."))?;
-    let tx = NEXT_ID.fetch_add(1, Ordering::Relaxed);
+    let tx = super::session_tx::next();
     std::thread::spawn(move || {
         run_removal(&app, tx, &id, removal, &prefix);
     });
@@ -1340,7 +1336,7 @@ pub fn windows_run_file(app: AppHandle, path: String) -> Result<u32, String> {
         return Err(gettext("Escolha um arquivo .exe ou .msi."));
     }
     let prefix = ready_prefix()?;
-    let tx = NEXT_ID.fetch_add(1, Ordering::Relaxed);
+    let tx = super::session_tx::next();
     std::thread::spawn(move || {
         prepare_prefix(&prefix);
         let mut command = Command::new("wine");

@@ -14,15 +14,11 @@
 
 use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
-use std::sync::atomic::{AtomicU32, Ordering};
 
 use gettextrs::gettext;
 use tauri::{AppHandle, Emitter};
 
 use super::software::TransactionEvent;
-
-/// Ids locais ficam acima dos do vegad, para as tarefas não colidirem.
-static NEXT_ID: AtomicU32 = AtomicU32::new(0x8000_0000);
 
 /// Mesmo critério do vegad (`validateFlatpakAppID`): nome reverso-DNS, sem
 /// nada que vire opção ou caminho.
@@ -112,7 +108,7 @@ pub fn start(app: AppHandle, operation: Operation, id: String) -> Result<u32, St
     if !valid_app_id(&id) {
         return Err(gettext("Identificador de aplicativo Flatpak inválido."));
     }
-    let tx = NEXT_ID.fetch_add(1, Ordering::Relaxed);
+    let tx = super::session_tx::next();
     std::thread::spawn(move || run(app, tx, operation, id));
     Ok(tx)
 }

@@ -26,6 +26,7 @@ pub mod npm_apps;
 pub mod power;
 pub mod preparation;
 pub mod services;
+pub mod session_tx;
 pub mod snapshots;
 pub mod software;
 pub mod storage;
