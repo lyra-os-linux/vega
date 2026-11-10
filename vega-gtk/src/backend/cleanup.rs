@@ -7,7 +7,7 @@
 //! Nada aqui segue links simbólicos: um link dentro de uma categoria é
 //! apagado como link, e o destino fica intacto.
 
-use std::collections::{BTreeMap, BTreeSet, HashSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::fs;
 use std::io;
 use std::os::unix::fs::MetadataExt;
@@ -391,9 +391,55 @@ fn unused_user_runtimes() -> Option<Vec<(String, String)>> {
         let _ = stdin.write_all(b"n\n");
     }
     let output = child.wait_with_output().ok()?;
-    Some(parse_flatpak_unused(&String::from_utf8_lossy(
-        &output.stdout,
-    )))
+    unused_from_output(&String::from_utf8_lossy(&output.stdout))
+}
+
+/// Uma lista vazia só vale se o Flatpak disse que não há nada; uma saída que
+/// não reconhecemos deixa a categoria indisponível, e não "Vazio".
+fn unused_from_output(text: &str) -> Option<Vec<(String, String)>> {
+    let refs = parse_flatpak_unused(text);
+    (!refs.is_empty() || text.contains("Nothing unused")).then_some(refs)
+}
+
+/// Espaço que sairia com estas pastas de deploy do Flatpak. O ostree guarda
+/// cada arquivo uma vez no repositório e o liga por hard link a cada deploy
+/// que o usa; um arquivo só conta se todos os links dele, fora o do
+/// repositório, estiverem nestas pastas. O que é compartilhado com runtimes
+/// que ficam não é liberado e não entra. Continua sendo uma estimativa.
+fn exclusive_size(dirs: &[PathBuf]) -> u64 {
+    let mut seen: HashMap<(u64, u64), (u64, u64, u64)> = HashMap::new();
+    for dir in dirs.iter().filter(|dir| !is_link(dir)) {
+        let Ok(root) = fs::symlink_metadata(dir) else {
+            continue;
+        };
+        let device = root.dev();
+        let mut stack = vec![(dir.clone(), root)];
+        while let Some((path, meta)) = stack.pop() {
+            if meta.dev() != device {
+                continue;
+            }
+            if meta.is_dir() {
+                if let Ok(entries) = fs::read_dir(&path) {
+                    for entry in entries.flatten() {
+                        if let Ok(child) = entry.metadata() {
+                            stack.push((entry.path(), child));
+                        }
+                    }
+                }
+                continue;
+            }
+            let entry = seen.entry((meta.dev(), meta.ino())).or_insert((
+                0,
+                meta.nlink(),
+                meta.blocks() * 512,
+            ));
+            entry.0 += 1;
+        }
+    }
+    seen.values()
+        .filter(|(found, nlink, _)| *nlink <= 1 || *found >= nlink - 1)
+        .map(|(_, _, bytes)| bytes)
+        .sum()
 }
 
 fn user_flatpak_category(home: &Home) -> UserCategory {
@@ -416,7 +462,7 @@ fn user_flatpak_category(home: &Home) -> UserCategory {
     }
     UserCategory {
         id: "user-flatpak-unused".into(),
-        bytes: measure_dirs(&dirs).0,
+        bytes: exclusive_size(&dirs),
         count: refs.len() as u64,
         entries: Vec::new(),
         items: refs
@@ -606,6 +652,37 @@ mod tests {
     fn write(path: &Path, size: usize) {
         fs::create_dir_all(path.parent().unwrap()).unwrap();
         fs::write(path, vec![7u8; size]).unwrap();
+    }
+
+    #[test]
+    fn unrecognized_flatpak_output_is_unavailable_not_empty() {
+        assert_eq!(
+            unused_from_output("Nothing unused to uninstall\n"),
+            Some(Vec::new())
+        );
+        assert_eq!(unused_from_output("error: something new\n"), None);
+        assert_eq!(unused_from_output(""), None);
+    }
+
+    #[test]
+    fn flatpak_size_counts_only_what_is_not_shared_with_runtimes_that_stay() {
+        let (dir, _home) = home();
+        let repo = dir.path().join("repo/objects");
+        let gone = dir.path().join("runtime/org.Old/x86_64/1");
+        let stays = dir.path().join("runtime/org.New/x86_64/2");
+        // Objeto só do runtime que sai, objeto compartilhado e arquivo comum.
+        write(&repo.join("own"), 64 << 10);
+        write(&repo.join("shared"), 256 << 10);
+        fs::create_dir_all(&gone).unwrap();
+        fs::create_dir_all(&stays).unwrap();
+        fs::hard_link(repo.join("own"), gone.join("own")).unwrap();
+        fs::hard_link(repo.join("shared"), gone.join("shared")).unwrap();
+        fs::hard_link(repo.join("shared"), stays.join("shared")).unwrap();
+        write(&gone.join("plain"), 16 << 10);
+
+        let size = exclusive_size(&[gone]);
+        assert!(size >= (64 + 16) << 10, "{size}");
+        assert!(size < 256 << 10, "o compartilhado não pode entrar: {size}");
     }
 
     #[test]
