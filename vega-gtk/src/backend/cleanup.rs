@@ -177,19 +177,40 @@ impl Home {
         })
     }
 
-    /// A raiz do cache só vale se não for a pasta pessoal nem uma pasta que a
-    /// contém (`XDG_CACHE_HOME=$HOME`, por exemplo): nesse caso as "subpastas
-    /// do cache" seriam Documentos, Downloads etc. Compara os caminhos já
-    /// resolvidos, para que um link não esconda a igualdade.
-    fn cache_is_safe(&self) -> bool {
-        let resolve = |path: &Path| fs::canonicalize(path).unwrap_or_else(|_| path.to_path_buf());
-        !resolve(&self.home).starts_with(resolve(&self.cache))
+    /// Raiz de uma categoria do usuário, com os links do caminho seguidos uma
+    /// vez (`~/.cache` em tmpfs ou em outro disco funciona). Só é aceita se for
+    /// uma pasta do próprio usuário que não contenha a pasta pessoal: com
+    /// `XDG_CACHE_HOME=$HOME`, as "subpastas do cache" seriam Documentos,
+    /// Downloads etc. Dentro da raiz nada é seguido. Uma raiz que ainda não
+    /// existe não tem o que medir nem apagar.
+    fn root(&self, path: &Path) -> Option<PathBuf> {
+        let home = fs::canonicalize(&self.home).unwrap_or_else(|_| self.home.clone());
+        let resolved = match fs::canonicalize(path) {
+            Ok(resolved) => resolved,
+            Err(error) if error.kind() == io::ErrorKind::NotFound => {
+                return (!home.starts_with(path)).then(|| path.to_path_buf());
+            }
+            Err(_) => return None,
+        };
+        let meta = fs::metadata(&resolved).ok()?;
+        let own = fs::metadata("/proc/self").ok()?.uid();
+        (meta.is_dir() && meta.uid() == own && !home.starts_with(&resolved)).then_some(resolved)
     }
 
+    fn trash_root(&self) -> Option<PathBuf> {
+        self.root(&self.data.join("Trash"))
+    }
+
+    fn cache_root(&self) -> Option<PathBuf> {
+        self.root(&self.cache)
+    }
+
+    #[cfg(test)]
     fn trash(&self) -> PathBuf {
         self.data.join("Trash")
     }
 
+    #[cfg(test)]
     fn thumbnails(&self) -> PathBuf {
         self.cache.join("thumbnails")
     }
@@ -276,10 +297,10 @@ fn measure_dirs(dirs: &[PathBuf]) -> (u64, u64) {
         .fold((0, 0), |(b, f), (bytes, files)| (b + bytes, f + files))
 }
 
-fn trash_dirs(home: &Home) -> Vec<PathBuf> {
+fn trash_dirs(root: &Path) -> Vec<PathBuf> {
     ["files", "info", "expunged"]
         .iter()
-        .map(|name| home.trash().join(name))
+        .map(|name| root.join(name))
         .collect()
 }
 
@@ -291,9 +312,11 @@ fn cache_users(home: &Home) -> BTreeMap<String, BTreeSet<String>> {
     let Ok(processes) = fs::read_dir(&home.proc) else {
         return users;
     };
-    // O kernel informa os alvos já resolvidos; o cache precisa estar na mesma
-    // forma, ou um link no caminho (/home -> /var/home) faz nada casar.
-    let cache = fs::canonicalize(&home.cache).unwrap_or_else(|_| home.cache.clone());
+    // O kernel informa os alvos já resolvidos; a raiz do cache também vem
+    // resolvida, ou um link no caminho (/home -> /var/home) faria nada casar.
+    let Some(cache) = home.cache_root() else {
+        return users;
+    };
     for process in processes.flatten() {
         let pid = process.file_name().to_string_lossy().into_owned();
         if pid.is_empty() || !pid.bytes().all(|b| b.is_ascii_digit()) {
@@ -329,10 +352,10 @@ fn cache_users(home: &Home) -> BTreeMap<String, BTreeSet<String>> {
 
 /// Subpastas de `~/.cache`, sem as miniaturas, que têm a própria categoria.
 fn cache_entries(home: &Home) -> Vec<UserEntry> {
-    if is_link(&home.cache) || !home.cache_is_safe() {
+    let Some(cache) = home.cache_root() else {
         return Vec::new();
-    }
-    let Ok(entries) = fs::read_dir(&home.cache) else {
+    };
+    let Ok(entries) = fs::read_dir(&cache) else {
         return Vec::new();
     };
     let users = cache_users(home);
@@ -443,13 +466,15 @@ fn user_flatpak_category(home: &Home) -> UserCategory {
 }
 
 fn scan_user(home: &Home, with_flatpak: bool) -> Vec<UserCategory> {
-    let (trash_bytes, trash_files) = measure_dirs(&trash_dirs(home));
-    let cache_safe = home.cache_is_safe();
-    let (thumb_bytes, thumb_files) = if cache_safe {
-        measure_dirs(&[home.thumbnails()])
-    } else {
-        (0, 0)
-    };
+    let trash_root = home.trash_root();
+    let cache_root = home.cache_root();
+    let (trash_bytes, trash_files) = trash_root
+        .as_deref()
+        .map_or((0, 0), |root| measure_dirs(&trash_dirs(root)));
+    let (thumb_bytes, thumb_files) = cache_root
+        .as_deref()
+        .map_or((0, 0), |root| measure_dirs(&[root.join("thumbnails")]));
+    let cache_safe = cache_root.is_some();
     let entries = cache_entries(home);
     let mut categories = vec![
         UserCategory {
@@ -458,7 +483,7 @@ fn scan_user(home: &Home, with_flatpak: bool) -> Vec<UserCategory> {
             count: trash_files,
             entries: Vec::new(),
             items: Vec::new(),
-            available: true,
+            available: trash_root.is_some(),
         },
         UserCategory {
             id: "thumbnails".into(),
@@ -488,24 +513,33 @@ fn valid_entry(name: &str) -> bool {
     !name.is_empty() && name != "." && name != ".." && !name.contains('/') && name != "thumbnails"
 }
 
+fn refused_root() -> String {
+    gettext(
+        "A pasta desta categoria não é do seu usuário ou contém a pasta pessoal; nada foi apagado.",
+    )
+}
+
 fn clean_user(home: &Home, id: &str, entries: &[String]) -> Result<(), String> {
     let result = match id {
-        "trash" => trash_dirs(home).iter().try_for_each(|dir| empty_dir(dir)),
-        "thumbnails" | "user-cache" if !home.cache_is_safe() => {
-            return Err(gettext(
-                "A pasta do cache configurada (XDG_CACHE_HOME) contém a pasta pessoal; nada foi apagado.",
-            ));
+        "trash" => {
+            let Some(root) = home.trash_root() else {
+                return Err(refused_root());
+            };
+            trash_dirs(&root).iter().try_for_each(|dir| empty_dir(dir))
         }
-        "thumbnails" => empty_dir(&home.thumbnails()),
+        "thumbnails" => {
+            let Some(root) = home.cache_root() else {
+                return Err(refused_root());
+            };
+            empty_dir(&root.join("thumbnails"))
+        }
         "user-cache" => {
             if entries.is_empty() || !entries.iter().all(|name| valid_entry(name)) {
                 return Err(gettext("Escolha as pastas do cache que serão apagadas."));
             }
-            if is_link(&home.cache) {
-                return Err(gettext(
-                    "A pasta do cache é um link simbólico; nada foi apagado.",
-                ));
-            }
+            let Some(cache) = home.cache_root() else {
+                return Err(refused_root());
+            };
             // Conferido de novo na hora: o programa pode ter aberto depois da lista.
             let users = cache_users(home);
             let busy: Vec<String> = entries
@@ -524,7 +558,7 @@ fn clean_user(home: &Home, id: &str, entries: &[String]) -> Result<(), String> {
             }
             entries
                 .iter()
-                .try_for_each(|name| match remove_entry(&home.cache.join(name)) {
+                .try_for_each(|name| match remove_entry(&cache.join(name)) {
                     Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(()),
                     other => other,
                 })
@@ -789,6 +823,61 @@ mod tests {
         std::os::unix::fs::symlink(&elsewhere, home.thumbnails()).unwrap();
         assert!(clean_user(&home, "thumbnails", &[]).is_err());
         assert!(elsewhere.join("keep").exists());
+    }
+
+    #[test]
+    fn linked_roots_owned_by_the_user_are_followed_once() {
+        // ~/.cache e a lixeira em outro disco, alcançados por link.
+        let (dir, mut home) = home();
+        let disk = dir.path().join("other-disk");
+        write(&disk.join("cache/app/a"), 4 << 10);
+        write(&disk.join("cache/thumbnails/large/x.png"), 4 << 10);
+        write(&disk.join("data/Trash/files/old.txt"), 4 << 10);
+        std::os::unix::fs::symlink(disk.join("cache"), dir.path().join("cache-link")).unwrap();
+        std::os::unix::fs::symlink(disk.join("data"), dir.path().join("data-link")).unwrap();
+        home.cache = dir.path().join("cache-link");
+        home.data = dir.path().join("data-link");
+
+        let categories = scan_user(&home, false);
+        for id in ["trash", "thumbnails", "user-cache"] {
+            let category = categories.iter().find(|c| c.id == id).unwrap();
+            assert!(category.available, "{id} deveria estar disponível");
+            assert!(category.bytes > 0, "{id} deveria ser medida");
+        }
+        clean_user(&home, "user-cache", &["app".into()]).unwrap();
+        clean_user(&home, "thumbnails", &[]).unwrap();
+        clean_user(&home, "trash", &[]).unwrap();
+        assert!(!disk.join("cache/app").exists());
+        assert_eq!(
+            fs::read_dir(disk.join("cache/thumbnails")).unwrap().count(),
+            0
+        );
+        assert_eq!(
+            fs::read_dir(disk.join("data/Trash/files")).unwrap().count(),
+            0
+        );
+    }
+
+    #[test]
+    fn a_root_that_is_not_the_users_is_refused() {
+        if fs::metadata("/proc/self").unwrap().uid() == 0 {
+            return; // como root, /usr seria "do usuário"
+        }
+        let (dir, mut home) = home();
+        fs::create_dir_all(dir.path().join("data")).unwrap();
+        std::os::unix::fs::symlink("/usr", dir.path().join("data/Trash")).unwrap();
+        std::os::unix::fs::symlink("/usr/share", dir.path().join("cache-link")).unwrap();
+        home.cache = dir.path().join("cache-link");
+
+        let categories = scan_user(&home, false);
+        for id in ["trash", "thumbnails", "user-cache"] {
+            let category = categories.iter().find(|c| c.id == id).unwrap();
+            assert!(!category.available, "{id} deveria ficar indisponível");
+            assert_eq!(category.bytes, 0);
+        }
+        assert!(clean_user(&home, "trash", &[]).is_err());
+        assert!(clean_user(&home, "thumbnails", &[]).is_err());
+        assert!(clean_user(&home, "user-cache", &["doc".into()]).is_err());
     }
 
     #[test]
