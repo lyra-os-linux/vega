@@ -152,6 +152,8 @@ pub struct UserCategory {
 }
 
 struct Home {
+    /// A pasta pessoal, `$HOME`.
+    home: PathBuf,
     data: PathBuf,
     cache: PathBuf,
     /// `/proc`, trocado nos testes.
@@ -170,8 +172,18 @@ impl Home {
         Some(Self {
             data: xdg("XDG_DATA_HOME", ".local/share"),
             cache: xdg("XDG_CACHE_HOME", ".cache"),
+            home,
             proc: PathBuf::from("/proc"),
         })
+    }
+
+    /// A raiz do cache só vale se não for a pasta pessoal nem uma pasta que a
+    /// contém (`XDG_CACHE_HOME=$HOME`, por exemplo): nesse caso as "subpastas
+    /// do cache" seriam Documentos, Downloads etc. Compara os caminhos já
+    /// resolvidos, para que um link não esconda a igualdade.
+    fn cache_is_safe(&self) -> bool {
+        let resolve = |path: &Path| fs::canonicalize(path).unwrap_or_else(|_| path.to_path_buf());
+        !resolve(&self.home).starts_with(resolve(&self.cache))
     }
 
     fn trash(&self) -> PathBuf {
@@ -314,7 +326,7 @@ fn cache_users(home: &Home) -> BTreeMap<String, BTreeSet<String>> {
 
 /// Subpastas de `~/.cache`, sem as miniaturas, que têm a própria categoria.
 fn cache_entries(home: &Home) -> Vec<UserEntry> {
-    if is_link(&home.cache) {
+    if is_link(&home.cache) || !home.cache_is_safe() {
         return Vec::new();
     }
     let Ok(entries) = fs::read_dir(&home.cache) else {
@@ -429,7 +441,12 @@ fn user_flatpak_category(home: &Home) -> UserCategory {
 
 fn scan_user(home: &Home, with_flatpak: bool) -> Vec<UserCategory> {
     let (trash_bytes, trash_files) = measure_dirs(&trash_dirs(home));
-    let (thumb_bytes, thumb_files) = measure_dirs(&[home.thumbnails()]);
+    let cache_safe = home.cache_is_safe();
+    let (thumb_bytes, thumb_files) = if cache_safe {
+        measure_dirs(&[home.thumbnails()])
+    } else {
+        (0, 0)
+    };
     let entries = cache_entries(home);
     let mut categories = vec![
         UserCategory {
@@ -446,7 +463,7 @@ fn scan_user(home: &Home, with_flatpak: bool) -> Vec<UserCategory> {
             count: thumb_files,
             entries: Vec::new(),
             items: Vec::new(),
-            available: true,
+            available: cache_safe,
         },
         UserCategory {
             id: "user-cache".into(),
@@ -454,7 +471,7 @@ fn scan_user(home: &Home, with_flatpak: bool) -> Vec<UserCategory> {
             count: entries.len() as u64,
             entries,
             items: Vec::new(),
-            available: true,
+            available: cache_safe,
         },
     ];
     if with_flatpak {
@@ -471,6 +488,11 @@ fn valid_entry(name: &str) -> bool {
 fn clean_user(home: &Home, id: &str, entries: &[String]) -> Result<(), String> {
     let result = match id {
         "trash" => trash_dirs(home).iter().try_for_each(|dir| empty_dir(dir)),
+        "thumbnails" | "user-cache" if !home.cache_is_safe() => {
+            return Err(gettext(
+                "A pasta do cache configurada (XDG_CACHE_HOME) contém a pasta pessoal; nada foi apagado.",
+            ));
+        }
         "thumbnails" => empty_dir(&home.thumbnails()),
         "user-cache" => {
             if entries.is_empty() || !entries.iter().all(|name| valid_entry(name)) {
@@ -596,6 +618,7 @@ mod tests {
         )));
         fs::create_dir_all(dir.path()).unwrap();
         let home = Home {
+            home: dir.path().join("home"),
             data: dir.path().join("data"),
             cache: dir.path().join("cache"),
             proc: dir.path().join("proc"),
@@ -737,5 +760,27 @@ mod tests {
         std::os::unix::fs::symlink(&elsewhere, home.thumbnails()).unwrap();
         assert!(clean_user(&home, "thumbnails", &[]).is_err());
         assert!(elsewhere.join("keep").exists());
+    }
+
+    #[test]
+    fn cache_root_containing_home_is_refused() {
+        let (dir, mut home) = home();
+        write(&home.home.join("Documentos/carta.odt"), 1 << 10);
+        write(&home.home.join("thumbnails/foto.png"), 1 << 10);
+        // XDG_CACHE_HOME=$HOME e XDG_CACHE_HOME apontando para um ancestral.
+        for cache in [home.home.clone(), dir.path().to_path_buf()] {
+            home.cache = cache;
+            let categories = scan_user(&home, false);
+            for id in ["user-cache", "thumbnails"] {
+                let category = categories.iter().find(|c| c.id == id).unwrap();
+                assert!(!category.available, "{id} deveria ficar indisponível");
+                assert!(category.entries.is_empty());
+                assert_eq!(category.bytes, 0);
+            }
+            assert!(clean_user(&home, "user-cache", &["Documentos".into()]).is_err());
+            assert!(clean_user(&home, "thumbnails", &[]).is_err());
+            assert!(home.home.join("Documentos/carta.odt").exists());
+            assert!(home.home.join("thumbnails/foto.png").exists());
+        }
     }
 }
