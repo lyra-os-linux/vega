@@ -279,6 +279,9 @@ fn cache_users(home: &Home) -> BTreeMap<String, BTreeSet<String>> {
     let Ok(processes) = fs::read_dir(&home.proc) else {
         return users;
     };
+    // O kernel informa os alvos já resolvidos; o cache precisa estar na mesma
+    // forma, ou um link no caminho (/home -> /var/home) faz nada casar.
+    let cache = fs::canonicalize(&home.cache).unwrap_or_else(|_| home.cache.clone());
     for process in processes.flatten() {
         let pid = process.file_name().to_string_lossy().into_owned();
         if pid.is_empty() || !pid.bytes().all(|b| b.is_ascii_digit()) {
@@ -295,7 +298,7 @@ fn cache_users(home: &Home) -> BTreeMap<String, BTreeSet<String>> {
         targets.extend(fs::read_link(dir.join("cwd")).ok());
         let names: BTreeSet<String> = targets
             .iter()
-            .filter_map(|target| target.strip_prefix(&home.cache).ok())
+            .filter_map(|target| target.strip_prefix(&cache).ok())
             .filter_map(|rest| rest.components().next())
             .map(|first| first.as_os_str().to_string_lossy().into_owned())
             .collect();
@@ -713,6 +716,32 @@ mod tests {
         );
         clean_user(&home, "user-cache", &["mozilla".into()]).unwrap();
         assert!(!home.cache.join("mozilla").exists());
+    }
+
+    #[test]
+    fn a_folder_in_use_is_found_when_the_cache_is_reached_through_a_link() {
+        let (dir, mut home) = home();
+        // Como /home -> /var/home: o link está acima do cache, e o kernel
+        // informa em /proc o caminho real.
+        let real = dir.path().join("var-home");
+        fs::create_dir_all(&real).unwrap();
+        std::os::unix::fs::symlink(&real, dir.path().join("linked-home")).unwrap();
+        home.cache = dir.path().join("linked-home/cache");
+        write(&real.join("cache/tracker3/files/meta.db"), 4 << 10);
+        let process = dir.path().join("proc/4242");
+        fs::create_dir_all(process.join("fd")).unwrap();
+        fs::write(process.join("comm"), "localsearch-3\n").unwrap();
+        std::os::unix::fs::symlink(
+            real.join("cache/tracker3/files/meta.db"),
+            process.join("fd/7"),
+        )
+        .unwrap();
+
+        let entries = cache_entries(&home);
+        let tracker = entries.iter().find(|e| e.name == "tracker3").unwrap();
+        assert_eq!(tracker.in_use_by, ["localsearch-3"]);
+        assert!(clean_user(&home, "user-cache", &["tracker3".into()]).is_err());
+        assert!(real.join("cache/tracker3/files/meta.db").exists());
     }
 
     #[test]
