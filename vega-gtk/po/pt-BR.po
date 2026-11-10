@@ -6196,3 +6196,267 @@ msgstr "A pasta desta categoria não é do seu usuário ou contém a pasta pesso
 
 msgid "aprox. {size}"
 msgstr "aprox. {size}"
+
+msgid "API REST"
+msgstr "API REST"
+
+msgid "CAD"
+msgstr "CAD"
+
+msgid "Em {tab}"
+msgstr "Em {tab}"
+
+msgid "Epic Games"
+msgstr "Epic Games"
+
+msgid "Estudar"
+msgstr "Estudar"
+
+msgid "Excel"
+msgstr "Excel"
+
+msgid "Filtrar por tarefa"
+msgstr "Filtrar por tarefa"
+
+msgid "GOG"
+msgstr "GOG"
+
+msgid "Golang"
+msgstr "Golang"
+
+msgid "Gravar"
+msgstr "Gravar"
+
+msgid "IA local"
+msgstr "IA local"
+
+msgid "Jogar"
+msgstr "Jogar"
+
+msgid "Kindle"
+msgstr "Kindle"
+
+msgid "Kotlin"
+msgstr "Kotlin"
+
+msgid "LLM"
+msgstr "LLM"
+
+msgid "MP3"
+msgstr "MP3"
+
+msgid "Markdown"
+msgstr "Markdown"
+
+msgid "MySQL"
+msgstr "MySQL"
+
+msgid "No catálogo do Lyra"
+msgstr "No catálogo do Lyra"
+
+msgid "PDF"
+msgstr "PDF"
+
+msgid "Pacotes e Flathub"
+msgstr "Pacotes e Flathub"
+
+msgid "Postgres"
+msgstr "Postgres"
+
+msgid "PowerPoint"
+msgstr "PowerPoint"
+
+msgid "Programar"
+msgstr "Programar"
+
+msgid "RAR"
+msgstr "RAR"
+
+msgid "RAW"
+msgstr "RAW"
+
+msgid "Redis"
+msgstr "Redis"
+
+msgid "SQL"
+msgstr "SQL"
+
+msgid "SVG"
+msgstr "SVG"
+
+msgid "VPN"
+msgstr "VPN"
+
+msgid "Visual Studio Code"
+msgstr "Visual Studio Code"
+
+msgid "WhatsApp"
+msgstr "WhatsApp"
+
+msgid "Word"
+msgstr "Word"
+
+msgid "ZIP"
+msgstr "ZIP"
+
+msgid "acesso remoto"
+msgstr "acesso remoto"
+
+msgid "alternativa ao Illustrator"
+msgstr "alternativa ao Illustrator"
+
+msgid "alternativa ao InDesign"
+msgstr "alternativa ao InDesign"
+
+msgid "alternativa ao Lightroom"
+msgstr "alternativa ao Lightroom"
+
+msgid "alternativa ao Microsoft Office"
+msgstr "alternativa ao Microsoft Office"
+
+msgid "alternativa ao Outlook"
+msgstr "alternativa ao Outlook"
+
+msgid "alternativa ao Photoshop"
+msgstr "alternativa ao Photoshop"
+
+msgid "alternativa ao TeamViewer"
+msgstr "alternativa ao TeamViewer"
+
+msgid "alternativa ao Visio"
+msgstr "alternativa ao Visio"
+
+msgid "animação"
+msgstr "animação"
+
+msgid "anotações"
+msgstr "anotações"
+
+msgid "bolsa de valores"
+msgstr "bolsa de valores"
+
+msgid "captura de pacotes"
+msgstr "captura de pacotes"
+
+msgid "compactar"
+msgstr "compactar"
+
+msgid "converter vídeo"
+msgstr "converter vídeo"
+
+msgid "desenho"
+msgstr "desenho"
+
+msgid "diagramação"
+msgstr "diagramação"
+
+msgid "e-book"
+msgstr "e-book"
+
+msgid "editor de imagens"
+msgstr "editor de imagens"
+
+msgid "editor de vídeo"
+msgstr "editor de vídeo"
+
+msgid "eletrônica"
+msgstr "eletrônica"
+
+msgid "engenharia"
+msgstr "engenharia"
+
+msgid "fastboot"
+msgstr "fastboot"
+
+msgid "filmes"
+msgstr "filmes"
+
+msgid "fluxograma"
+msgstr "fluxograma"
+
+msgid "forex"
+msgstr "forex"
+
+msgid "formatar disco"
+msgstr "formatar disco"
+
+msgid "gerenciador de tarefas"
+msgstr "gerenciador de tarefas"
+
+msgid "gravar a tela"
+msgstr "gravar a tela"
+
+msgid "gravar áudio"
+msgstr "gravar áudio"
+
+msgid "lista de tarefas"
+msgstr "lista de tarefas"
+
+msgid "live"
+msgstr "live"
+
+msgid "modelagem 3D"
+msgstr "modelagem 3D"
+
+msgid "mpv"
+msgstr "mpv"
+
+msgid "máquina virtual"
+msgstr "máquina virtual"
+
+msgid "nuvem"
+msgstr "nuvem"
+
+msgid "partições"
+msgstr "partições"
+
+msgid "pintura digital"
+msgstr "pintura digital"
+
+msgid "placa de circuito"
+msgstr "placa de circuito"
+
+msgid "podcast"
+msgstr "podcast"
+
+msgid "recuperar arquivos"
+msgstr "recuperar arquivos"
+
+msgid "reunião online"
+msgstr "reunião online"
+
+msgid "senhas"
+msgstr "senhas"
+
+msgid "sincronizar arquivos"
+msgstr "sincronizar arquivos"
+
+msgid "séries"
+msgstr "séries"
+
+msgid "torrent"
+msgstr "torrent"
+
+msgid "traceroute"
+msgstr "traceroute"
+
+msgid "transmissão ao vivo"
+msgstr "transmissão ao vivo"
+
+msgid "varredura de portas"
+msgstr "varredura de portas"
+
+msgid "varredura de rede"
+msgstr "varredura de rede"
+
+msgid "velocidade da internet"
+msgstr "velocidade da internet"
+
+msgid "vetor"
+msgstr "vetor"
+
+msgid "videoconferência"
+msgstr "videoconferência"
+
+msgid "área de trabalho remota"
+msgstr "área de trabalho remota"

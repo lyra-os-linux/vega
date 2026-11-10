@@ -6852,3 +6852,267 @@ msgstr ""
 #: vega-gtk/ui/js/ui.js:347
 msgid "Para confirmar, digite {text}:"
 msgstr ""
+
+msgid "API REST"
+msgstr ""
+
+msgid "CAD"
+msgstr ""
+
+msgid "Em {tab}"
+msgstr ""
+
+msgid "Epic Games"
+msgstr ""
+
+msgid "Estudar"
+msgstr ""
+
+msgid "Excel"
+msgstr ""
+
+msgid "Filtrar por tarefa"
+msgstr ""
+
+msgid "GOG"
+msgstr ""
+
+msgid "Golang"
+msgstr ""
+
+msgid "Gravar"
+msgstr ""
+
+msgid "IA local"
+msgstr ""
+
+msgid "Jogar"
+msgstr ""
+
+msgid "Kindle"
+msgstr ""
+
+msgid "Kotlin"
+msgstr ""
+
+msgid "LLM"
+msgstr ""
+
+msgid "MP3"
+msgstr ""
+
+msgid "Markdown"
+msgstr ""
+
+msgid "MySQL"
+msgstr ""
+
+msgid "No catálogo do Lyra"
+msgstr ""
+
+msgid "PDF"
+msgstr ""
+
+msgid "Pacotes e Flathub"
+msgstr ""
+
+msgid "Postgres"
+msgstr ""
+
+msgid "PowerPoint"
+msgstr ""
+
+msgid "Programar"
+msgstr ""
+
+msgid "RAR"
+msgstr ""
+
+msgid "RAW"
+msgstr ""
+
+msgid "Redis"
+msgstr ""
+
+msgid "SQL"
+msgstr ""
+
+msgid "SVG"
+msgstr ""
+
+msgid "VPN"
+msgstr ""
+
+msgid "Visual Studio Code"
+msgstr ""
+
+msgid "WhatsApp"
+msgstr ""
+
+msgid "Word"
+msgstr ""
+
+msgid "ZIP"
+msgstr ""
+
+msgid "acesso remoto"
+msgstr ""
+
+msgid "alternativa ao Illustrator"
+msgstr ""
+
+msgid "alternativa ao InDesign"
+msgstr ""
+
+msgid "alternativa ao Lightroom"
+msgstr ""
+
+msgid "alternativa ao Microsoft Office"
+msgstr ""
+
+msgid "alternativa ao Outlook"
+msgstr ""
+
+msgid "alternativa ao Photoshop"
+msgstr ""
+
+msgid "alternativa ao TeamViewer"
+msgstr ""
+
+msgid "alternativa ao Visio"
+msgstr ""
+
+msgid "animação"
+msgstr ""
+
+msgid "anotações"
+msgstr ""
+
+msgid "bolsa de valores"
+msgstr ""
+
+msgid "captura de pacotes"
+msgstr ""
+
+msgid "compactar"
+msgstr ""
+
+msgid "converter vídeo"
+msgstr ""
+
+msgid "desenho"
+msgstr ""
+
+msgid "diagramação"
+msgstr ""
+
+msgid "e-book"
+msgstr ""
+
+msgid "editor de imagens"
+msgstr ""
+
+msgid "editor de vídeo"
+msgstr ""
+
+msgid "eletrônica"
+msgstr ""
+
+msgid "engenharia"
+msgstr ""
+
+msgid "fastboot"
+msgstr ""
+
+msgid "filmes"
+msgstr ""
+
+msgid "fluxograma"
+msgstr ""
+
+msgid "forex"
+msgstr ""
+
+msgid "formatar disco"
+msgstr ""
+
+msgid "gerenciador de tarefas"
+msgstr ""
+
+msgid "gravar a tela"
+msgstr ""
+
+msgid "gravar áudio"
+msgstr ""
+
+msgid "lista de tarefas"
+msgstr ""
+
+msgid "live"
+msgstr ""
+
+msgid "modelagem 3D"
+msgstr ""
+
+msgid "mpv"
+msgstr ""
+
+msgid "máquina virtual"
+msgstr ""
+
+msgid "nuvem"
+msgstr ""
+
+msgid "partições"
+msgstr ""
+
+msgid "pintura digital"
+msgstr ""
+
+msgid "placa de circuito"
+msgstr ""
+
+msgid "podcast"
+msgstr ""
+
+msgid "recuperar arquivos"
+msgstr ""
+
+msgid "reunião online"
+msgstr ""
+
+msgid "senhas"
+msgstr ""
+
+msgid "sincronizar arquivos"
+msgstr ""
+
+msgid "séries"
+msgstr ""
+
+msgid "torrent"
+msgstr ""
+
+msgid "traceroute"
+msgstr ""
+
+msgid "transmissão ao vivo"
+msgstr ""
+
+msgid "varredura de portas"
+msgstr ""
+
+msgid "varredura de rede"
+msgstr ""
+
+msgid "velocidade da internet"
+msgstr ""
+
+msgid "vetor"
+msgstr ""
+
+msgid "videoconferência"
+msgstr ""
+
+msgid "área de trabalho remota"
+msgstr ""
