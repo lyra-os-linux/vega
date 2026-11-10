@@ -6185,5 +6185,14 @@ msgstr "Player de vídeo leve e clássico"
 msgid "Atualizar repositórios"
 msgstr "Atualizar repositórios"
 
+msgid "{path} é um link simbólico"
+msgstr "{path} é um link simbólico"
+
+msgid "O Flatpak terminou com erro ({status})."
+msgstr "O Flatpak terminou com erro ({status})."
+
+msgid "A pasta desta categoria não é do seu usuário ou contém a pasta pessoal; nada foi apagado."
+msgstr "A pasta desta categoria não é do seu usuário ou contém a pasta pessoal; nada foi apagado."
+
 msgid "aprox. {size}"
 msgstr "aprox. {size}"

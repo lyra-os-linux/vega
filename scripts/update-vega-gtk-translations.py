@@ -132,6 +132,14 @@ def header(locale: str) -> str:
     )
 
 
+def workspace_version() -> str:
+    """Versão do workspace (Cargo.toml), para o .pot não ficar com uma fixa."""
+    match = re.search(r'^version = "([^"]+)"', (ROOT / "Cargo.toml").read_text(encoding="utf-8"), re.M)
+    if not match:
+        raise SystemExit("version not found in Cargo.toml")
+    return match.group(1)
+
+
 def main() -> int:
     subprocess.run(
         [
@@ -142,13 +150,24 @@ def main() -> int:
             "--package-name",
             "vega-gtk",
             "--package-version",
-            "4.0.3",
+            workspace_version(),
             "--msgid-bugs-address",
             "https://github.com/lyra-os-linux/vega/issues",
         ],
         check=True,
         cwd=ROOT,
     )
+    # O xtr só lê o Rust; as mensagens da interface (t() e N_() no JS) entram
+    # pelo xgettext, senão o catálogo perde a maior parte delas (vega#243).
+    js_files = sorted(str(p.relative_to(ROOT)) for p in (GTK / "ui").rglob("*.js"))
+    js_pot = POT.with_suffix(".js.pot")
+    subprocess.run(
+        ["xgettext", "-L", "JavaScript", "--from-code=UTF-8", "-k", "-kt", "-kN_", "--no-wrap", "-o", str(js_pot), *js_files],
+        check=True,
+        cwd=ROOT,
+    )
+    subprocess.run(["msgcat", "--use-first", "--no-wrap", str(POT), str(js_pot), "-o", str(POT)], check=True, cwd=ROOT)
+    js_pot.unlink()
     messages = parse_messages(POT.read_text(encoding="utf-8"))
     selected = set(sys.argv[1:]) or set(LANGUAGES)
     unknown = selected.difference(LANGUAGES)
