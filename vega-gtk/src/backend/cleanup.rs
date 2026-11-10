@@ -230,10 +230,9 @@ fn remove_entry(path: &Path) -> io::Result<()> {
 fn empty_dir(dir: &Path) -> io::Result<()> {
     match fs::symlink_metadata(dir) {
         Ok(meta) if meta.file_type().is_symlink() => {
-            return Err(io::Error::other(format!(
-                "{} é um link simbólico",
-                dir.display()
-            )));
+            return Err(io::Error::other(
+                gettext("{path} é um link simbólico").replace("{path}", &dir.display().to_string()),
+            ));
         }
         Ok(_) => {}
         Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(()),
@@ -514,7 +513,10 @@ fn clean_user(home: &Home, id: &str, entries: &[String]) -> Result<(), String> {
             if status.success() {
                 Ok(())
             } else {
-                Err(io::Error::other(format!("flatpak: {status}")))
+                Err(io::Error::other(
+                    gettext("O Flatpak terminou com erro ({status}).")
+                        .replace("{status}", &status.to_string()),
+                ))
             }
         }
         _ => return Err(gettext("Categoria de limpeza desconhecida.")),

@@ -4632,7 +4632,7 @@ msgid "Pouco espaço livre faz atualizações e snapshots falharem. Veja o que d
 msgstr "Poco espacio libre hace fallar las actualizaciones y las instantáneas. Vea qué se puede borrar con seguridad."
 
 msgid "Abrir Liberar espaço"
-msgstr "Abrir Liberar espacio"
+msgstr "Liberar espacio"
 
 msgid "Relatórios de falha (core dumps)"
 msgstr "Informes de fallos (core dumps)"
@@ -6185,3 +6185,12 @@ msgstr "Reproductor de vídeo ligero y clásico"
 
 msgid "Atualizar repositórios"
 msgstr "Actualizar repositorios"
+
+msgid "{path} é um link simbólico"
+msgstr "{path} es un enlace simbólico"
+
+msgid "O Flatpak terminou com erro ({status})."
+msgstr "Flatpak terminó con un error ({status})."
+
+msgid "A pasta desta categoria não é do seu usuário ou contém a pasta pessoal; nada foi apagado."
+msgstr "La carpeta de esta categoría no es de tu usuario o contiene la carpeta personal; no se borró nada."
