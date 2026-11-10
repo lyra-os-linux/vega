@@ -43,6 +43,7 @@ for spec in packaging/opensuse/vega.spec packaging/obs/vega-gtk.spec; do
 done
 rg -q 'VEGA_VERSION="\$VERSION" cargo build' packaging/opensuse/install.sh
 rg -q 'option_env!\("VEGA_VERSION"\)' vega-gtk/src/model.rs
-rg -q '\.version\(crate::model::APPLICATION_VERSION\)' vega-gtk/src/ui/shell.rs
+# Desde a migração para Tauri, a versão vai ao Sobre pelo app.rs (vega#246).
+rg -q 'version: model::APPLICATION_VERSION' vega-gtk/src/app.rs
 
 echo "Empacotamento do vega-gtk: OK"
