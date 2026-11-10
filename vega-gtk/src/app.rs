@@ -12,19 +12,52 @@ pub struct Startup {
     pub started: Instant,
 }
 
-/// Página pedida na linha de comando: `--virtual-machines` (atalho das VMs),
-/// `--open-updates` ou `--open-health` (notificador).
-pub fn requested_page(argv: &[String]) -> Option<&'static str> {
+/// Esquema dos links que abrem o Vega numa página (vega#209), registrado no
+/// vega.desktop: `vega://software/developers/databases`.
+const LINK_SCHEME: &str = "vega://";
+
+/// Destino pedido na linha de comando, como `página/aba/seção`:
+/// `--virtual-machines` (atalho das VMs), `--open-updates` ou `--open-health`
+/// (notificador), `--page P [--tab A [--section S]]` (Welcome, documentação)
+/// ou um link `vega://P/A/S`. Destino malformado é ignorado e o Vega abre na
+/// página inicial; a interface confere se página e seção existem.
+pub fn requested_page(argv: &[String]) -> Option<String> {
     if argv.iter().any(|arg| arg == "--virtual-machines") {
-        Some("virtualization")
+        Some("virtualization".to_owned())
     } else if argv.iter().any(|arg| arg == "--open-updates") {
-        Some("software/updates")
+        Some("software/updates".to_owned())
     } else if argv.iter().any(|arg| arg == "--open-health") {
         // Notificação da verificação periódica: o relatório no Diagnóstico.
-        Some("hardware/health")
+        Some("hardware/health".to_owned())
+    } else if let Some(link) = argv.iter().find_map(|arg| arg.strip_prefix(LINK_SCHEME)) {
+        let link = link.strip_suffix('/').unwrap_or(link);
+        destination(link.split('/'))
+    } else if let Some(page) = option_value(argv, "--page") {
+        // A seção só vale dentro de uma aba.
+        let tab = option_value(argv, "--tab");
+        let section = tab.and(option_value(argv, "--section"));
+        destination([Some(page), tab, section].into_iter().flatten())
     } else {
         None
     }
+}
+
+fn option_value<'a>(argv: &'a [String], name: &str) -> Option<&'a str> {
+    let at = argv.iter().position(|arg| arg == name)?;
+    argv.get(at + 1).map(String::as_str)
+}
+
+/// Junta os trechos se forem até três identificadores simples (minúsculas,
+/// dígitos e hífen), como os ids de página, aba e seção da interface.
+fn destination<'a>(parts: impl IntoIterator<Item = &'a str>) -> Option<String> {
+    let parts: Vec<&str> = parts.into_iter().collect();
+    let valid = |part: &&str| {
+        (1..=48).contains(&part.len())
+            && part
+                .bytes()
+                .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'-')
+    };
+    (!parts.is_empty() && parts.len() <= 3 && parts.iter().all(valid)).then(|| parts.join("/"))
 }
 
 #[derive(Serialize)]
@@ -39,7 +72,6 @@ pub struct AppInfo {
 pub fn app_info() -> AppInfo {
     let argv: Vec<String> = std::env::args().collect();
     let start = requested_page(&argv)
-        .map(str::to_owned)
         .or_else(|| {
             (std::env::var_os("VEGA_START_PAGE").as_deref()
                 == Some(std::ffi::OsStr::new("software")))
@@ -150,5 +182,67 @@ mod tests {
         ] {
             assert!(!valid_portal_uri(bad), "{bad}");
         }
+    }
+
+    fn page(args: &[&str]) -> Option<String> {
+        let argv: Vec<String> = std::iter::once("vega-gtk")
+            .chain(args.iter().copied())
+            .map(str::to_owned)
+            .collect();
+        requested_page(&argv)
+    }
+
+    #[test]
+    fn page_options_build_the_destination() {
+        assert_eq!(page(&[]), None);
+        assert_eq!(
+            page(&["--open-updates"]).as_deref(),
+            Some("software/updates")
+        );
+        assert_eq!(page(&["--page", "network"]).as_deref(), Some("network"));
+        assert_eq!(
+            page(&[
+                "--page",
+                "software",
+                "--tab",
+                "developers",
+                "--section",
+                "databases"
+            ])
+            .as_deref(),
+            Some("software/developers/databases")
+        );
+        // Seção sem aba não tem onde ficar.
+        assert_eq!(
+            page(&["--page", "software", "--section", "databases"]).as_deref(),
+            Some("software")
+        );
+        assert_eq!(page(&["--page"]), None);
+    }
+
+    #[test]
+    fn links_build_the_destination() {
+        assert_eq!(
+            page(&["vega://software/developers/databases"]).as_deref(),
+            Some("software/developers/databases")
+        );
+        assert_eq!(page(&["vega://hardware/"]).as_deref(), Some("hardware"));
+    }
+
+    #[test]
+    fn malformed_destinations_are_ignored() {
+        for bad in [
+            "vega://",
+            "vega://software//databases",
+            "vega://a/b/c/d",
+            "vega://Software",
+            "vega://software?x=1",
+            "vega://software/../etc",
+            "vega://software/<img>",
+        ] {
+            assert_eq!(page(&[bad]), None, "{bad}");
+        }
+        assert_eq!(page(&["--page", "x y"]), None);
+        assert_eq!(page(&["--page", &"a".repeat(49)]), None);
     }
 }

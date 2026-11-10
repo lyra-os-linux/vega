@@ -519,7 +519,7 @@ export default {
                 h("strong", {}, t("Rodar um programa do Windows")),
                 h("p", { class: "small muted" }, t("Escolha o instalador (.exe ou .msi) que você baixou do site do fabricante. Ele roda pelo Wine, na sua conta, sem senha."))),
               button(t("Escolher arquivo…"), { kind: "primary", icon: "folder", disabled: busy, onClick: runExe })))),
-        catalog.map((category) => section(t(category.title), { sub: String(category.apps.length) },
+        catalog.map((category) => section(t(category.title), { sub: String(category.apps.length), id: `section-${category.id}` },
           h("div", { class: "grid auto sw-cards" }, category.apps.map((app) => popularCard(app, { gateNote: category.gated ? gate?.note : null }))))));
     }
 
