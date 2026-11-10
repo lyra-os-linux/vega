@@ -12,7 +12,9 @@ Este repositório entrega:
 - as categorias do usuário no backend (`src/backend/cleanup.rs`): lixeira,
   miniaturas, `~/.cache` por aplicativo e runtimes Flatpak do usuário, limpos na
   sessão, sem senha e sem seguir links simbólicos (`remove_dir_all` do Rust não
-  atravessa links; uma raiz de categoria que seja link é recusada);
+  atravessa links; a raiz de cada categoria é resolvida uma vez e só é aceita
+  se for uma pasta do próprio usuário que não contenha a pasta pessoal, e
+  dentro dela nada é seguido);
 - o atalho "Abrir Liberar espaço" para o achado `storage.low-space`.
 
 "Limpar tudo o que for seguro" cobre `coredumps`, `journal`, `package-cache`,
