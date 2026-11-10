@@ -18,7 +18,6 @@
 
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use std::sync::atomic::{AtomicU32, Ordering};
 
 use gettextrs::gettext;
 use tauri::AppHandle;
@@ -33,9 +32,6 @@ pub const PACKAGES: &[&str] = &[
     "opencode-ai",
     "@mermaid-js/mermaid-cli",
 ];
-
-/// Ids próprios, acima dos do vegad, do Flatpak e dos apps do Windows.
-static NEXT_ID: AtomicU32 = AtomicU32::new(0xD000_0000);
 
 /// `~/.local`, o prefixo do npm na conta do usuário.
 fn prefix() -> Option<PathBuf> {
@@ -90,7 +86,7 @@ fn start(app: AppHandle, install: bool, package: String) -> Result<u32, String> 
         return Err(gettext("Ferramenta desconhecida."));
     }
     let prefix = prefix().ok_or_else(|| gettext("Pasta pessoal não encontrada."))?;
-    let tx = NEXT_ID.fetch_add(1, Ordering::Relaxed);
+    let tx = super::session_tx::next();
     std::thread::spawn(move || {
         let mut command = Command::new("npm");
         command

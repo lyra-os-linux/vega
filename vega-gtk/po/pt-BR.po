@@ -6184,3 +6184,6 @@ msgstr "Player de vídeo leve e clássico"
 
 msgid "Atualizar repositórios"
 msgstr "Atualizar repositórios"
+
+msgid "aprox. {size}"
+msgstr "aprox. {size}"

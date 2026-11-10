@@ -11,16 +11,19 @@ const CATEGORIES = {
   coredumps: { icon: "alert", title: N_("Relatórios de falha (core dumps)"), text: N_("Cópias da memória de programas que travaram. Servem para depurar; podem ser apagadas.") },
   journal: { icon: "logs", title: N_("Logs antigos do sistema"), text: N_("O journal fica em até 500 MB. O boot atual e o anterior são sempre mantidos.") },
   "package-cache": { icon: "package", title: N_("Pacotes baixados"), text: N_("Cópias de pacotes que o Zypper já instalou. São baixados de novo se precisar.") },
-  "flatpak-unused": { icon: "box", title: N_("Runtimes Flatpak sem uso (sistema)"), text: N_("Bibliotecas que nenhum aplicativo instalado usa mais.") },
+  "flatpak-unused": { icon: "box", title: N_("Runtimes Flatpak sem uso (sistema)"), text: N_("Bibliotecas que nenhum aplicativo instalado usa mais."), approximate: true },
   "old-kernels": { icon: "layers", title: N_("Kernels antigos"), text: N_("Segue a regra do openSUSE: o kernel em uso e o mais novo ficam. Um snapshot é criado antes."), explicit: true },
   snapshots: { icon: "history", title: N_("Snapshots fora da política"), text: N_("Aplica a limpeza automática do Snapper, que respeita a retenção configurada."), explicit: true },
   trash: { icon: "trash", title: N_("Lixeira"), text: N_("Arquivos que você já mandou para a lixeira.") },
   thumbnails: { icon: "grid", title: N_("Miniaturas"), text: N_("Prévias de imagens e vídeos; são recriadas quando necessário.") },
   "user-cache": { icon: "folder", title: N_("Cache dos aplicativos"), text: N_("Arquivos temporários por aplicativo, em ~/.cache. Escolha quais apagar."), explicit: true },
-  "user-flatpak-unused": { icon: "box", title: N_("Runtimes Flatpak sem uso (usuário)"), text: N_("Bibliotecas da sua instalação Flatpak que nenhum aplicativo usa mais.") },
+  "user-flatpak-unused": { icon: "box", title: N_("Runtimes Flatpak sem uso (usuário)"), text: N_("Bibliotecas da sua instalação Flatpak que nenhum aplicativo usa mais."), approximate: true },
 };
 
 const SYSTEM = new Set(["coredumps", "journal", "package-cache", "flatpak-unused", "old-kernels", "snapshots"]);
+// Lista positiva do que entra em "Limpar tudo o que for seguro": só ids
+// conhecidos e sem escolha explícita. Um id novo do vegad nunca entra aqui.
+const SAFE = new Set(Object.keys(CATEGORIES).filter((id) => !CATEGORIES[id].explicit));
 
 const REASONS = {
   nothing: N_("Nada para limpar"),
@@ -40,6 +43,10 @@ function sizeText(category) {
   if (category.size_unknown) {
     const count = category.count ?? 0;
     return count ? t("pelo menos {count} • tamanho desconhecido", { count }) : t("tamanho desconhecido");
+  }
+  // O Flatpak compartilha arquivos entre runtimes: o tamanho é estimado.
+  if (CATEGORIES[category.id]?.approximate && category.bytes) {
+    return t("aprox. {size}", { size: bytes(category.bytes) });
   }
   return bytes(category.bytes);
 }
@@ -216,7 +223,7 @@ export function cleanupSection(ctx, refreshVolumes) {
   }
 
   function paint() {
-    const safe = categories.filter((c) => !CATEGORIES[c.id]?.explicit && cleanable(c));
+    const safe = categories.filter((c) => SAFE.has(c.id) && cleanable(c));
     const total = categories.filter(cleanable).reduce((sum, c) => sum + (c.bytes || 0), 0);
     const safeTotal = safe.reduce((sum, c) => sum + (c.bytes || 0), 0);
     clear(body,
@@ -232,10 +239,12 @@ export function cleanupSection(ctx, refreshVolumes) {
       hasCapability("space-cleanup-v1") ? call("cleanup_scan") : Promise.resolve([]),
       call("cleanup_user_scan"),
     ]);
+    // Só as categorias que esta versão conhece: um id que um vegad mais novo
+    // traga não é listado, somado nem apagado (spec space-cleanup).
     categories = [
       ...(system.status === "fulfilled" ? system.value : []),
       ...(user.status === "fulfilled" ? user.value.filter((c) => c.available) : []),
-    ];
+    ].filter((c) => Object.hasOwn(CATEGORIES, c.id));
     const problems = [system, user].filter((r) => r.status === "rejected").map((r) => r.reason?.message ?? String(r.reason));
     paint();
     if (problems.length) status.textContent = problems.join("; ");
