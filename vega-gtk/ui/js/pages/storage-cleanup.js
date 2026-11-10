@@ -21,6 +21,9 @@ const CATEGORIES = {
 };
 
 const SYSTEM = new Set(["coredumps", "journal", "package-cache", "flatpak-unused", "old-kernels", "snapshots"]);
+// Lista positiva do que entra em "Limpar tudo o que for seguro": só ids
+// conhecidos e sem escolha explícita. Um id novo do vegad nunca entra aqui.
+const SAFE = new Set(Object.keys(CATEGORIES).filter((id) => !CATEGORIES[id].explicit));
 
 const REASONS = {
   nothing: N_("Nada para limpar"),
@@ -216,7 +219,7 @@ export function cleanupSection(ctx, refreshVolumes) {
   }
 
   function paint() {
-    const safe = categories.filter((c) => !CATEGORIES[c.id]?.explicit && cleanable(c));
+    const safe = categories.filter((c) => SAFE.has(c.id) && cleanable(c));
     const total = categories.filter(cleanable).reduce((sum, c) => sum + (c.bytes || 0), 0);
     const safeTotal = safe.reduce((sum, c) => sum + (c.bytes || 0), 0);
     clear(body,
@@ -232,10 +235,12 @@ export function cleanupSection(ctx, refreshVolumes) {
       hasCapability("space-cleanup-v1") ? call("cleanup_scan") : Promise.resolve([]),
       call("cleanup_user_scan"),
     ]);
+    // Só as categorias que esta versão conhece: um id que um vegad mais novo
+    // traga não é listado, somado nem apagado (spec space-cleanup).
     categories = [
       ...(system.status === "fulfilled" ? system.value : []),
       ...(user.status === "fulfilled" ? user.value.filter((c) => c.available) : []),
-    ];
+    ].filter((c) => Object.hasOwn(CATEGORIES, c.id));
     const problems = [system, user].filter((r) => r.status === "rejected").map((r) => r.reason?.message ?? String(r.reason));
     paint();
     if (problems.length) status.textContent = problems.join("; ");
