@@ -51,14 +51,57 @@ function renderNav() {
 }
 onBadges(renderNav);
 
-export function navigate(id, sub) {
-  const hash = `#/${id}${sub ? `/${encodeURIComponent(sub)}` : ""}`;
+function hashFor(id, sub, section) {
+  return `#/${id}${sub ? `/${encodeURIComponent(sub)}` : ""}${sub && section ? `/${encodeURIComponent(section)}` : ""}`;
+}
+
+function go(hash) {
   if (location.hash === hash) route();
   else location.hash = hash;
 }
 
+export function navigate(id, sub, section) {
+  go(hashFor(id, sub, section));
+}
+
+/**
+ * Destino `página/aba/seção` pedido de fora (linha de comando, link vega://,
+ * vega#209). Página desconhecida abre a página inicial; aba e seção que a
+ * página não tiver são ignoradas por ela.
+ */
+function destinationHash(destination) {
+  const [id, sub, section] = destination.split("/");
+  return byId.has(id) ? hashFor(id, sub, section) : hashFor(prefs.start_page);
+}
+
+/**
+ * Rola até a seção pedida (`<section id="section-…">`) quando ela aparecer:
+ * catálogos carregam depois do primeiro desenho. Desiste em 15 s ou ao sair
+ * da página.
+ */
+function scrollToSection(host, section, cleanup) {
+  const find = () => document.getElementById(`section-${section}`);
+  const reveal = (el) => el.scrollIntoView({ block: "start", behavior: "smooth" });
+  const found = find();
+  if (found) return void requestAnimationFrame(() => reveal(found));
+  const observer = new MutationObserver(() => {
+    const el = find();
+    if (el) {
+      stop();
+      reveal(el);
+    }
+  });
+  const timer = setTimeout(() => stop(), 15000);
+  const stop = () => {
+    observer.disconnect();
+    clearTimeout(timer);
+  };
+  observer.observe(host, { childList: true, subtree: true });
+  cleanup(stop);
+}
+
 function route() {
-  const [, id = prefs.start_page, sub] = location.hash.split("/");
+  const [, id = prefs.start_page, sub, section] = location.hash.split("/");
   const page = byId.get(id) ?? byId.get("dashboard");
   current?.cleanups.forEach((fn) => fn());
 
@@ -91,6 +134,7 @@ function route() {
   void host.offsetWidth;
   host.classList.add("enter");
   $("scroller").scrollTop = 0;
+  if (section) scrollToSection(host, decodeURIComponent(section), ctx.cleanup);
   renderNav();
   closeSidebar();
 }
@@ -376,11 +420,8 @@ function setupShell() {
     }
   });
 
-  // Pedidos de outra execução (`--virtual-machines`, notificador).
-  on("open-page", (page) => {
-    const [id, sub] = page.split("/");
-    navigate(id, sub);
-  });
+  // Pedidos de outra execução (`--virtual-machines`, notificador, `--page`, vega://).
+  on("open-page", (destination) => go(destinationHash(destination)));
 }
 
 async function loadHost() {
@@ -413,8 +454,7 @@ async function start() {
   await initRestart();
   startHealth();
 
-  const [id, sub] = appInfo.start.split("/");
-  if (!location.hash) history.replaceState(null, "", `#/${byId.has(id) ? id : "dashboard"}${sub ? `/${sub}` : ""}`);
+  if (!location.hash) history.replaceState(null, "", destinationHash(appInfo.start));
   route();
   requestAnimationFrame(() => call("app_ready"));
 }
