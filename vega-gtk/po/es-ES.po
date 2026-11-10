@@ -6185,3 +6185,6 @@ msgstr "Reproductor de vídeo ligero y clásico"
 
 msgid "Atualizar repositórios"
 msgstr "Actualizar repositorios"
+
+msgid "aprox. {size}"
+msgstr "aprox. {size}"
