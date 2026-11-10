@@ -7,7 +7,7 @@
 //! Nada aqui segue links simbólicos: um link dentro de uma categoria é
 //! apagado como link, e o destino fica intacto.
 
-use std::collections::{BTreeMap, BTreeSet, HashSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::fs;
 use std::io;
 use std::os::unix::fs::MetadataExt;
@@ -152,6 +152,8 @@ pub struct UserCategory {
 }
 
 struct Home {
+    /// A pasta pessoal, `$HOME`.
+    home: PathBuf,
     data: PathBuf,
     cache: PathBuf,
     /// `/proc`, trocado nos testes.
@@ -170,8 +172,18 @@ impl Home {
         Some(Self {
             data: xdg("XDG_DATA_HOME", ".local/share"),
             cache: xdg("XDG_CACHE_HOME", ".cache"),
+            home,
             proc: PathBuf::from("/proc"),
         })
+    }
+
+    /// A raiz do cache só vale se não for a pasta pessoal nem uma pasta que a
+    /// contém (`XDG_CACHE_HOME=$HOME`, por exemplo): nesse caso as "subpastas
+    /// do cache" seriam Documentos, Downloads etc. Compara os caminhos já
+    /// resolvidos, para que um link não esconda a igualdade.
+    fn cache_is_safe(&self) -> bool {
+        let resolve = |path: &Path| fs::canonicalize(path).unwrap_or_else(|_| path.to_path_buf());
+        !resolve(&self.home).starts_with(resolve(&self.cache))
     }
 
     fn trash(&self) -> PathBuf {
@@ -278,6 +290,9 @@ fn cache_users(home: &Home) -> BTreeMap<String, BTreeSet<String>> {
     let Ok(processes) = fs::read_dir(&home.proc) else {
         return users;
     };
+    // O kernel informa os alvos já resolvidos; o cache precisa estar na mesma
+    // forma, ou um link no caminho (/home -> /var/home) faz nada casar.
+    let cache = fs::canonicalize(&home.cache).unwrap_or_else(|_| home.cache.clone());
     for process in processes.flatten() {
         let pid = process.file_name().to_string_lossy().into_owned();
         if pid.is_empty() || !pid.bytes().all(|b| b.is_ascii_digit()) {
@@ -294,7 +309,7 @@ fn cache_users(home: &Home) -> BTreeMap<String, BTreeSet<String>> {
         targets.extend(fs::read_link(dir.join("cwd")).ok());
         let names: BTreeSet<String> = targets
             .iter()
-            .filter_map(|target| target.strip_prefix(&home.cache).ok())
+            .filter_map(|target| target.strip_prefix(&cache).ok())
             .filter_map(|rest| rest.components().next())
             .map(|first| first.as_os_str().to_string_lossy().into_owned())
             .collect();
@@ -313,7 +328,7 @@ fn cache_users(home: &Home) -> BTreeMap<String, BTreeSet<String>> {
 
 /// Subpastas de `~/.cache`, sem as miniaturas, que têm a própria categoria.
 fn cache_entries(home: &Home) -> Vec<UserEntry> {
-    if is_link(&home.cache) {
+    if is_link(&home.cache) || !home.cache_is_safe() {
         return Vec::new();
     }
     let Ok(entries) = fs::read_dir(&home.cache) else {
@@ -390,9 +405,55 @@ fn unused_user_runtimes() -> Option<Vec<(String, String)>> {
         let _ = stdin.write_all(b"n\n");
     }
     let output = child.wait_with_output().ok()?;
-    Some(parse_flatpak_unused(&String::from_utf8_lossy(
-        &output.stdout,
-    )))
+    unused_from_output(&String::from_utf8_lossy(&output.stdout))
+}
+
+/// Uma lista vazia só vale se o Flatpak disse que não há nada; uma saída que
+/// não reconhecemos deixa a categoria indisponível, e não "Vazio".
+fn unused_from_output(text: &str) -> Option<Vec<(String, String)>> {
+    let refs = parse_flatpak_unused(text);
+    (!refs.is_empty() || text.contains("Nothing unused")).then_some(refs)
+}
+
+/// Espaço que sairia com estas pastas de deploy do Flatpak. O ostree guarda
+/// cada arquivo uma vez no repositório e o liga por hard link a cada deploy
+/// que o usa; um arquivo só conta se todos os links dele, fora o do
+/// repositório, estiverem nestas pastas. O que é compartilhado com runtimes
+/// que ficam não é liberado e não entra. Continua sendo uma estimativa.
+fn exclusive_size(dirs: &[PathBuf]) -> u64 {
+    let mut seen: HashMap<(u64, u64), (u64, u64, u64)> = HashMap::new();
+    for dir in dirs.iter().filter(|dir| !is_link(dir)) {
+        let Ok(root) = fs::symlink_metadata(dir) else {
+            continue;
+        };
+        let device = root.dev();
+        let mut stack = vec![(dir.clone(), root)];
+        while let Some((path, meta)) = stack.pop() {
+            if meta.dev() != device {
+                continue;
+            }
+            if meta.is_dir() {
+                if let Ok(entries) = fs::read_dir(&path) {
+                    for entry in entries.flatten() {
+                        if let Ok(child) = entry.metadata() {
+                            stack.push((entry.path(), child));
+                        }
+                    }
+                }
+                continue;
+            }
+            let entry = seen.entry((meta.dev(), meta.ino())).or_insert((
+                0,
+                meta.nlink(),
+                meta.blocks() * 512,
+            ));
+            entry.0 += 1;
+        }
+    }
+    seen.values()
+        .filter(|(found, nlink, _)| *nlink <= 1 || *found >= nlink - 1)
+        .map(|(_, _, bytes)| bytes)
+        .sum()
 }
 
 fn user_flatpak_category(home: &Home) -> UserCategory {
@@ -415,7 +476,7 @@ fn user_flatpak_category(home: &Home) -> UserCategory {
     }
     UserCategory {
         id: "user-flatpak-unused".into(),
-        bytes: measure_dirs(&dirs).0,
+        bytes: exclusive_size(&dirs),
         count: refs.len() as u64,
         entries: Vec::new(),
         items: refs
@@ -428,7 +489,12 @@ fn user_flatpak_category(home: &Home) -> UserCategory {
 
 fn scan_user(home: &Home, with_flatpak: bool) -> Vec<UserCategory> {
     let (trash_bytes, trash_files) = measure_dirs(&trash_dirs(home));
-    let (thumb_bytes, thumb_files) = measure_dirs(&[home.thumbnails()]);
+    let cache_safe = home.cache_is_safe();
+    let (thumb_bytes, thumb_files) = if cache_safe {
+        measure_dirs(&[home.thumbnails()])
+    } else {
+        (0, 0)
+    };
     let entries = cache_entries(home);
     let mut categories = vec![
         UserCategory {
@@ -445,7 +511,7 @@ fn scan_user(home: &Home, with_flatpak: bool) -> Vec<UserCategory> {
             count: thumb_files,
             entries: Vec::new(),
             items: Vec::new(),
-            available: true,
+            available: cache_safe,
         },
         UserCategory {
             id: "user-cache".into(),
@@ -453,7 +519,7 @@ fn scan_user(home: &Home, with_flatpak: bool) -> Vec<UserCategory> {
             count: entries.len() as u64,
             entries,
             items: Vec::new(),
-            available: true,
+            available: cache_safe,
         },
     ];
     if with_flatpak {
@@ -470,6 +536,11 @@ fn valid_entry(name: &str) -> bool {
 fn clean_user(home: &Home, id: &str, entries: &[String]) -> Result<(), String> {
     let result = match id {
         "trash" => trash_dirs(home).iter().try_for_each(|dir| empty_dir(dir)),
+        "thumbnails" | "user-cache" if !home.cache_is_safe() => {
+            return Err(gettext(
+                "A pasta do cache configurada (XDG_CACHE_HOME) contém a pasta pessoal; nada foi apagado.",
+            ));
+        }
         "thumbnails" => empty_dir(&home.thumbnails()),
         "user-cache" => {
             if entries.is_empty() || !entries.iter().all(|name| valid_entry(name)) {
@@ -598,6 +669,7 @@ mod tests {
         )));
         fs::create_dir_all(dir.path()).unwrap();
         let home = Home {
+            home: dir.path().join("home"),
             data: dir.path().join("data"),
             cache: dir.path().join("cache"),
             proc: dir.path().join("proc"),
@@ -608,6 +680,37 @@ mod tests {
     fn write(path: &Path, size: usize) {
         fs::create_dir_all(path.parent().unwrap()).unwrap();
         fs::write(path, vec![7u8; size]).unwrap();
+    }
+
+    #[test]
+    fn unrecognized_flatpak_output_is_unavailable_not_empty() {
+        assert_eq!(
+            unused_from_output("Nothing unused to uninstall\n"),
+            Some(Vec::new())
+        );
+        assert_eq!(unused_from_output("error: something new\n"), None);
+        assert_eq!(unused_from_output(""), None);
+    }
+
+    #[test]
+    fn flatpak_size_counts_only_what_is_not_shared_with_runtimes_that_stay() {
+        let (dir, _home) = home();
+        let repo = dir.path().join("repo/objects");
+        let gone = dir.path().join("runtime/org.Old/x86_64/1");
+        let stays = dir.path().join("runtime/org.New/x86_64/2");
+        // Objeto só do runtime que sai, objeto compartilhado e arquivo comum.
+        write(&repo.join("own"), 64 << 10);
+        write(&repo.join("shared"), 256 << 10);
+        fs::create_dir_all(&gone).unwrap();
+        fs::create_dir_all(&stays).unwrap();
+        fs::hard_link(repo.join("own"), gone.join("own")).unwrap();
+        fs::hard_link(repo.join("shared"), gone.join("shared")).unwrap();
+        fs::hard_link(repo.join("shared"), stays.join("shared")).unwrap();
+        write(&gone.join("plain"), 16 << 10);
+
+        let size = exclusive_size(&[gone]);
+        assert!(size >= (64 + 16) << 10, "{size}");
+        assert!(size < 256 << 10, "o compartilhado não pode entrar: {size}");
     }
 
     #[test]
@@ -718,6 +821,32 @@ mod tests {
     }
 
     #[test]
+    fn a_folder_in_use_is_found_when_the_cache_is_reached_through_a_link() {
+        let (dir, mut home) = home();
+        // Como /home -> /var/home: o link está acima do cache, e o kernel
+        // informa em /proc o caminho real.
+        let real = dir.path().join("var-home");
+        fs::create_dir_all(&real).unwrap();
+        std::os::unix::fs::symlink(&real, dir.path().join("linked-home")).unwrap();
+        home.cache = dir.path().join("linked-home/cache");
+        write(&real.join("cache/tracker3/files/meta.db"), 4 << 10);
+        let process = dir.path().join("proc/4242");
+        fs::create_dir_all(process.join("fd")).unwrap();
+        fs::write(process.join("comm"), "localsearch-3\n").unwrap();
+        std::os::unix::fs::symlink(
+            real.join("cache/tracker3/files/meta.db"),
+            process.join("fd/7"),
+        )
+        .unwrap();
+
+        let entries = cache_entries(&home);
+        let tracker = entries.iter().find(|e| e.name == "tracker3").unwrap();
+        assert_eq!(tracker.in_use_by, ["localsearch-3"]);
+        assert!(clean_user(&home, "user-cache", &["tracker3".into()]).is_err());
+        assert!(real.join("cache/tracker3/files/meta.db").exists());
+    }
+
+    #[test]
     fn cache_entries_must_be_single_names() {
         let (_dir, home) = home();
         for bad in ["", "..", "../Documentos", "a/b", "thumbnails"] {
@@ -739,5 +868,27 @@ mod tests {
         std::os::unix::fs::symlink(&elsewhere, home.thumbnails()).unwrap();
         assert!(clean_user(&home, "thumbnails", &[]).is_err());
         assert!(elsewhere.join("keep").exists());
+    }
+
+    #[test]
+    fn cache_root_containing_home_is_refused() {
+        let (dir, mut home) = home();
+        write(&home.home.join("Documentos/carta.odt"), 1 << 10);
+        write(&home.home.join("thumbnails/foto.png"), 1 << 10);
+        // XDG_CACHE_HOME=$HOME e XDG_CACHE_HOME apontando para um ancestral.
+        for cache in [home.home.clone(), dir.path().to_path_buf()] {
+            home.cache = cache;
+            let categories = scan_user(&home, false);
+            for id in ["user-cache", "thumbnails"] {
+                let category = categories.iter().find(|c| c.id == id).unwrap();
+                assert!(!category.available, "{id} deveria ficar indisponível");
+                assert!(category.entries.is_empty());
+                assert_eq!(category.bytes, 0);
+            }
+            assert!(clean_user(&home, "user-cache", &["Documentos".into()]).is_err());
+            assert!(clean_user(&home, "thumbnails", &[]).is_err());
+            assert!(home.home.join("Documentos/carta.odt").exists());
+            assert!(home.home.join("thumbnails/foto.png").exists());
+        }
     }
 }

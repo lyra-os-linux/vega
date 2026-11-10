@@ -6194,3 +6194,6 @@ msgstr "Flatpak finished with an error ({status})."
 
 msgid "A pasta desta categoria não é do seu usuário ou contém a pasta pessoal; nada foi apagado."
 msgstr "This category's folder is not yours or contains your home folder; nothing was deleted."
+
+msgid "aprox. {size}"
+msgstr "approx. {size}"

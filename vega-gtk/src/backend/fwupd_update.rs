@@ -7,15 +7,11 @@
 
 use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
-use std::sync::atomic::{AtomicU32, Ordering};
 
 use gettextrs::gettext;
 use tauri::{AppHandle, Emitter};
 
 use super::software::TransactionEvent;
-
-/// Ids locais acima dos do vegad e dos do Flatpak.
-static NEXT_ID: AtomicU32 = AtomicU32::new(0xC000_0000);
 
 /// O fwupd termina com 2 quando não há nada para atualizar.
 const NOTHING_TO_DO: i32 = 2;
@@ -27,7 +23,7 @@ pub fn asks_for_reboot(line: &str) -> bool {
 }
 
 pub fn start(app: AppHandle) -> Result<u32, String> {
-    let tx = NEXT_ID.fetch_add(1, Ordering::Relaxed);
+    let tx = super::session_tx::next();
     std::thread::spawn(move || run(app, tx));
     Ok(tx)
 }

@@ -72,6 +72,18 @@ jobs:
           python3 tests/profile-command.py --binary target/debug/vega-gtk --schemas fixtures/sheliak/schemas
           python3 tests/profile-command.py --binary target/debug/vega-gtk --schemas fixtures/sheliak/schemas --suite-helper fixtures/sheliak/packaging/lyra-shell-suite.py
 
+  packaging:
+    name: Empacotamento do vega-gtk (qa-packaging.sh)
+    runs-on: ubuntu-24.04
+    container:
+      image: registry.opensuse.org/opensuse/leap:16.0
+    steps:
+      - name: Ferramentas
+        run: zypper --non-interactive install --no-recommends desktop-file-utils libxml2-tools rpm-build ripgrep tar gzip
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Validação estática dos artefatos de pacote
+        run: bash scripts/qa-packaging.sh
+
   translations:
     name: Inventário de traduções
     runs-on: ubuntu-24.04

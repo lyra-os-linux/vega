@@ -6139,6 +6139,10 @@ msgstr ""
 msgid "tamanho desconhecido"
 msgstr ""
 
+#: vega-gtk/ui/js/pages/storage-cleanup.js:49
+msgid "aprox. {size}"
+msgstr ""
+
 #: vega-gtk/ui/js/pages/storage-cleanup.js:63
 #: vega-gtk/ui/js/pages/storage-cleanup.js:89
 msgid "Limpando: {name}…"
