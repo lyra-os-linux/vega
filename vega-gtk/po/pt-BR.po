@@ -6488,3 +6488,34 @@ msgstr "Procurando a versão conferida pelo Lyra…"
 #: src/backend/appimage_apps.rs
 msgid "A versão conferida pelo Lyra não tem AppImage para este computador."
 msgstr "A versão conferida pelo Lyra não tem AppImage para este computador."
+
+msgid "looper"
+msgstr "looper"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "loop ao vivo"
+msgstr "loop ao vivo"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "JACK"
+msgstr "JACK"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Looper ao vivo: grava e sobrepõe camadas de áudio"
+msgstr "Looper ao vivo: grava e sobrepõe camadas de áudio"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Documentos, planilhas, apresentações e PDF, com visual parecido com o do Office"
+msgstr "Documentos, planilhas, apresentações e PDF, com visual parecido com o do Office"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "fontes"
+msgstr "fontes"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "tipografia"
+msgstr "tipografia"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Visualiza, compara, instala e organiza fontes"
+msgstr "Visualiza, compara, instala e organiza fontes"
