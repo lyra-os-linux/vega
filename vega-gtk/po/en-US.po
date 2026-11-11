@@ -6463,6 +6463,109 @@ msgid "área de trabalho remota"
 msgstr "remote desktop"
 
 #: ui/js/pages/software/popular-catalog.js
+msgid "Desenho e animação"
+msgstr "Drawing and animation"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "mesa digitalizadora"
+msgstr "drawing tablet"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Pintura com pincéis naturais, em tela infinita"
+msgstr "Painting with natural brushes on an infinite canvas"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "animação 2D"
+msgstr "2D animation"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "desenho animado"
+msgstr "cartoon"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Animação 2D quadro a quadro"
+msgstr "Frame-by-frame 2D animation"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "conta-gotas"
+msgstr "eyedropper"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "paleta de cores"
+msgstr "color palette"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Seletor de cores, com conta-gotas na tela"
+msgstr "Color picker with an on-screen eyedropper"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "scanner"
+msgstr "scanner"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "digitalizar"
+msgstr "scan"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Digitaliza desenhos e documentos no scanner"
+msgstr "Scans drawings and documents"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Fotografia"
+msgstr "Photography"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "panorama"
+msgstr "panorama"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Junta várias fotos num panorama"
+msgstr "Stitches several photos into a panorama"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "tethering"
+msgstr "tethering"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "câmera no computador"
+msgstr "camera on the computer"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Fotografa com a câmera ligada ao computador"
+msgstr "Shoots with the camera connected to the computer"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "calibração de cor"
+msgstr "color calibration"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "colorímetro"
+msgstr "colorimeter"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "perfil ICC"
+msgstr "ICC profile"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Calibra o monitor com colorímetro; o perfil é aplicado em Configurações → Cor"
+msgstr "Calibrates the monitor with a colorimeter; the profile is applied in Settings → Color"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "colagem"
+msgstr "collage"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Monta colagens de fotos"
+msgstr "Makes photo collages"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Apresentações e eventos"
+msgstr "Presentations and events"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "igreja"
+msgstr "church"
+
 msgid "apresentações"
 msgstr "presentations"
 
@@ -6471,14 +6574,60 @@ msgid "projeção"
 msgstr "projection"
 
 #: ui/js/pages/software/popular-catalog.js
-msgid "igreja"
-msgstr "church"
+
 
 #: ui/js/pages/software/popular-catalog.js
 msgid "letras de músicas"
 msgstr "song lyrics"
 
 #: ui/js/pages/software/popular-catalog.js
+msgid "culto"
+msgstr "worship service"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Projeta letras de músicas, versículos e slides em cultos e eventos"
+msgstr "Projects song lyrics, Bible verses and slides at services and events"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "reprodutor de vídeo"
+msgstr "video player"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Reprodutor de vídeo para conferir e projetar"
+msgstr "Video player for reviewing and projecting"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "trilha sonora"
+msgstr "soundtrack"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Ardour"
+msgstr "Ardour"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Mostra o vídeo sincronizado com o Ardour, para fazer a trilha"
+msgstr "Shows video in sync with Ardour, for scoring"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "gravar CD"
+msgstr "burn CD"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "gravar DVD"
+msgstr "burn DVD"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Grava CDs e DVDs"
+msgstr "Burns CDs and DVDs"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Publicação e escrita"
+msgstr "Publishing and writing"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "criar fonte"
+msgstr "create font"
+
 msgid "Apresentações e projeção para igrejas e eventos"
 msgstr "Presentations and projection for churches and events"
 
@@ -6518,5 +6667,56 @@ msgid "tipografia"
 msgstr "typography"
 
 #: ui/js/pages/software/popular-catalog.js
+msgid "Cria e edita fontes"
+msgstr "Creates and edits fonts"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "OCR"
+msgstr "OCR"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "PDF digitalizado"
+msgstr "scanned PDF"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Extrai o texto de imagens e PDFs digitalizados (OCR); escolha o idioma Português no app"
+msgstr "Extracts text from images and scanned PDFs (OCR); choose the Portuguese language in the app"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "juntar PDF"
+msgstr "merge PDF"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Junta, separa e gira páginas de PDF"
+msgstr "Merges, splits and rotates PDF pages"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "escrever livro"
+msgstr "write a book"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "roteiro"
+msgstr "screenplay"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Escrita de romances e roteiros, organizada por capítulos"
+msgstr "Writing novels and screenplays, organized by chapter"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "iluminação"
+msgstr "lighting"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "DMX"
+msgstr "DMX"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "mesa de luz"
+msgstr "lighting console"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Controle de iluminação DMX para palcos e eventos"
+msgstr "DMX lighting control for stages and events"
+
 msgid "Visualiza, compara, instala e organiza fontes"
 msgstr "Previews, compares, installs and organizes fonts"

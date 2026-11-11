@@ -98,6 +98,56 @@ export const POPULAR = [
     ],
   },
   {
+    // vega#218: desenho e animação. Mesas digitalizadoras (Wacom, XP-Pen,
+    // Huion) são configuradas pelo GNOME em Configurações → Mesa
+    // digitalizadora; o xf86-input-wacom só serve à sessão X11.
+    id: "drawing",
+    title: N_("Desenho e animação"),
+    tasks: ["edit"],
+    apps: [
+      { name: "MyPaint", origin: "flathub", id: "org.mypaint.MyPaint", logo: "org.mypaint.MyPaint", tags: [N_("pintura digital"), N_("mesa digitalizadora")], text: N_("Pintura com pincéis naturais, em tela infinita") },
+      { name: "Pencil2D", origin: "flathub", id: "org.pencil2d.Pencil2D", logo: "org.pencil2d.Pencil2D", tags: [N_("animação 2D"), N_("desenho animado")], text: N_("Animação 2D quadro a quadro") },
+      { name: "KColorChooser", origin: "official", id: "kcolorchooser", logo: "org.kde.kcolorchooser", tags: [N_("conta-gotas"), N_("paleta de cores")], text: N_("Seletor de cores, com conta-gotas na tela") },
+      { name: "Skanlite", origin: "official", id: "skanlite", logo: "org.kde.skanlite", tags: [N_("scanner"), N_("digitalizar")], text: N_("Digitaliza desenhos e documentos no scanner") },
+    ],
+  },
+  {
+    // vega#219: complementa darktable, digiKam e Shotwell (Imagem, fotos e 3D).
+    id: "photography",
+    title: N_("Fotografia"),
+    tasks: ["edit"],
+    apps: [
+      { name: "Hugin", origin: "official", id: "hugin", logo: "net.sourceforge.Hugin", tags: [N_("panorama")], text: N_("Junta várias fotos num panorama") },
+      { name: "Entangle", origin: "official", id: "entangle", logo: "org.entangle_photo.Manager", tags: [N_("tethering"), N_("câmera no computador")], text: N_("Fotografa com a câmera ligada ao computador") },
+      { name: "DisplayCAL", origin: "flathub", id: "net.displaycal.DisplayCAL", logo: "net.displaycal.DisplayCAL", tags: [N_("calibração de cor"), N_("colorímetro"), N_("perfil ICC")], text: N_("Calibra o monitor com colorímetro; o perfil é aplicado em Configurações → Cor") },
+      { name: "PhotoCollage", origin: "flathub", id: "io.github.adrienverge.PhotoCollage", logo: "io.github.adrienverge.PhotoCollage", tags: [N_("colagem")], text: N_("Monta colagens de fotos") },
+    ],
+  },
+  {
+    // vega#220: o OpenLP tem muita demanda em igrejas no Brasil.
+    id: "events",
+    title: N_("Apresentações e eventos"),
+    apps: [
+      { name: "OpenLP", origin: "official", id: "OpenLP", tags: [N_("igreja"), N_("projeção"), N_("letras de músicas"), N_("culto")], text: N_("Projeta letras de músicas, versículos e slides em cultos e eventos") },
+      { name: "Haruna", origin: "official", id: "haruna", logo: "org.kde.haruna", tags: [N_("reprodutor de vídeo")], text: N_("Reprodutor de vídeo para conferir e projetar") },
+      { name: "Xjadeo", origin: "official", id: "xjadeo", tags: [N_("trilha sonora"), N_("Ardour")], tasks: ["edit"], text: N_("Mostra o vídeo sincronizado com o Ardour, para fazer a trilha") },
+      { name: "QLC+", origin: "official", id: "qlcplus", tags: [N_("iluminação"), N_("DMX"), N_("mesa de luz")], text: N_("Controle de iluminação DMX para palcos e eventos") },
+      { name: "K3b", origin: "official", id: "k3b", tags: [N_("gravar CD"), N_("gravar DVD")], text: N_("Grava CDs e DVDs") },
+    ],
+  },
+  {
+    // vega#221: Scribus e Calibre ficam em Escritório e anotações.
+    id: "publishing",
+    title: N_("Publicação e escrita"),
+    tasks: ["edit"],
+    apps: [
+      { name: "FontForge", origin: "official", id: "fontforge", logo: "org.fontforge.FontForge", tags: [N_("criar fonte"), N_("tipografia")], text: N_("Cria e edita fontes") },
+      { name: "gImageReader", origin: "flathub", id: "io.github.manisandro.gImageReader", logo: "io.github.manisandro.gImageReader", tags: [N_("OCR"), N_("PDF digitalizado")], text: N_("Extrai o texto de imagens e PDFs digitalizados (OCR); escolha o idioma Português no app") },
+      { name: "PDF Arranger", origin: "official", id: "pdfarranger", logo: "com.github.jeromerobert.pdfarranger", tags: [N_("PDF"), N_("juntar PDF")], text: N_("Junta, separa e gira páginas de PDF") },
+      { name: "Skribisto", origin: "flathub", id: "eu.skribisto.skribisto", logo: "eu.skribisto.skribisto", tags: [N_("escrever livro"), N_("roteiro")], tasks: ["edit", "study"], text: N_("Escrita de romances e roteiros, organizada por capítulos") },
+    ],
+  },
+  {
     id: "office",
     title: N_("Escritório e anotações"),
     apps: [
