@@ -80,3 +80,10 @@
 .sw-card-progress { width: 100%; max-width: none; margin-top: 0; }
 .sw-run-exe .row-flex { align-items: center; gap: 14px; flex-wrap: wrap; }
 .sw-run-exe p { margin: 4px 0 0; }
+
+/* Busca: filtros por tarefa e aba de origem dos cartões curados (vega#207). */
+.sw-tasks { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 4px 12px; }
+.sw-task { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line-strong); background: transparent; color: var(--fg-2); font: inherit; font-size: 13px; cursor: pointer; }
+.sw-task:hover { background: var(--fill); }
+.sw-task[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-fg, #fff); }
+.sw-card-where { margin: 0; }

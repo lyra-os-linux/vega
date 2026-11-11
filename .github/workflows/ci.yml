@@ -50,6 +50,9 @@ jobs:
       - name: Interface web (sintaxe, imports e páginas)
         run: python3 scripts/ci/check-ui.py
 
+      - name: Catálogo do Software (offline)
+        run: python3 scripts/check-catalog.py
+
       - name: Verify desktop toggle without system GSettings schemas
         run: |
           schema_fixture_dir="$(mktemp -d)"

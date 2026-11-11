@@ -15,29 +15,34 @@ import { POPULAR } from "./software/popular-catalog.js";
 import { DEVELOPER } from "./software/developer-catalog.js";
 import { NETWORK } from "./software/network-catalog.js";
 import { WINDOWS, WINDOWS_BASE } from "./software/windows-catalog.js";
+import { TASKS, curatedEntries, searchCatalog } from "./software/catalog-search.js";
 
 const TABS = ["popular", "developers", "network", "windows", "search", "installed", "updates"];
 // Vitrines curadas (Populares e Desenvolvedores): mesmo cartão, catálogos diferentes.
 const SHOWCASES = {
   popular: {
+    label: N_("Populares"),
     catalog: POPULAR,
     loading: N_("Carregando aplicativos populares…"),
     intro: N_("Aplicativos que mais procuram no Lyra OS. Instale com um clique."),
     introLocked: N_("Aplicativos que mais procuram no Lyra OS. Os do Flathub ficam disponíveis depois de habilitar o Flatpak."),
   },
   developers: {
+    label: N_("Desenvolvedores"),
     catalog: DEVELOPER,
     loading: N_("Carregando ferramentas de desenvolvimento…"),
     intro: N_("Linguagens e ferramentas de programação. Instale com um clique."),
     introLocked: N_("Linguagens e ferramentas de programação. As do Flathub ficam disponíveis depois de habilitar o Flatpak."),
   },
   network: {
+    label: N_("Redes e TI"),
     catalog: NETWORK,
     loading: N_("Carregando ferramentas de redes e TI…"),
     intro: N_("Ferramentas para administrar redes e dar suporte técnico. Instale com um clique."),
     introLocked: N_("Ferramentas para administrar redes e dar suporte técnico. As do Flathub ficam disponíveis depois de habilitar o Flatpak."),
   },
   windows: {
+    label: N_("Apps do Windows"),
     catalog: WINDOWS,
     base: WINDOWS_BASE,
     loading: N_("Carregando apps do Windows…"),
@@ -45,6 +50,8 @@ const SHOWCASES = {
     introLocked: N_("Programas do Windows que rodam no Lyra OS pelo Wine. O Bottles fica disponível depois de habilitar o Flatpak."),
   },
 };
+/** Cartões de todas as vitrines, para a busca offline do catálogo curado. */
+const CURATED = curatedEntries(Object.entries(SHOWCASES).map(([tab, { label, catalog }]) => ({ tab, label, catalog })));
 /** Origens instaladas na conta do usuário: sem detalhes no vegad, removidas pelo cartão. */
 const USER_ORIGINS = new Set(["windows", "npm", "appimage"]);
 const ORIGIN_RANK = { official: 0, flathub: 1 };
@@ -53,6 +60,8 @@ const ORIGIN_RANK = { official: 0, flathub: 1 };
 const memory = {
   tab: "popular",
   query: "",
+  submitted: "", // última busca feita; os cartões curados seguem ela
+  task: null, // filtro por tarefa (TASKS)
   results: null,
   queue: new Map(), // "origem\u0000id" → pacote
   chosenOrigin: new Map(), // nome em minúsculas → origem escolhida
@@ -412,7 +421,8 @@ export default {
 
     /** Cartão de vitrine: Instalar, "Instalado" ou bloqueado até habilitar o Flatpak. */
     /** `gateNote`: motivo de a seção estar bloqueada (base do Windows ou suporte a 32 bits). */
-    function popularCard(app, { gateNote = null } = {}) {
+    /** `where`: aba de origem, mostrada nos resultados da busca. */
+    function popularCard(app, { gateNote = null, where = null } = {}) {
       // `alternatives`: pacotes que já entregam a mesma ferramenta (o Rust do
       // sistema no lugar do rustup). Se um deles está instalado, o cartão
       // fica desabilitado como "Instalado".
@@ -465,6 +475,7 @@ export default {
         h("div", { class: "sw-card-top" }, logo, h("div", { class: "spacer" }), badge(originLabel(app.origin), app.origin === "official" ? "accent" : "outline")),
         h("strong", { class: "sw-card-name" }, app.name),
         h("p", { class: "sw-card-desc" }, t(app.text)),
+        where && h("p", { class: "sw-card-where small faint" }, t("Em {tab}", { tab: where })),
         locked && h("p", { class: "sw-locked-note small" }, icon("lock", 13), needsFlatpak
           ? t("Habilite o Flatpak primeiro para instalar este app.")
           : gateNote),
@@ -778,15 +789,42 @@ export default {
     }
 
     // ---------- Abas ----------
+    /** Aba Buscar: filtros por tarefa, cartões curados (offline) e depois o zypper e o Flatpak. */
     function drawSearch() {
-      if (searching) return h("div", {}, h("p", { class: "sw-status" }, t("Consultando as origens disponíveis…")), skeletonRows(5));
-      if (searchStatus) return empty("alert-circle", searchStatus);
-      if (!memory.results) return empty("search", t("Buscar aplicativos e pacotes"), t("Os detalhes e a ação disponível aparecerão aqui."));
-      if (!memory.results.length) return empty("search", t("Nenhum resultado encontrado"));
-      const groups = groupByName(memory.results);
-      return h("div", {},
+      const query = memory.submitted;
+      const chips = h("div", { class: "sw-tasks", role: "group", "aria-label": t("Filtrar por tarefa") },
+        TASKS.filter((task) => CURATED.some((entry) => entry.tasks.has(task.id))).map((task) =>
+          h("button", { class: "sw-task", type: "button", "aria-pressed": String(memory.task === task.id), onclick: () => { memory.task = memory.task === task.id ? null : task.id; paint(); } },
+            icon(task.icon, 14), t(task.label))));
+      const curated = query || memory.task ? searchCatalog(CURATED, query, memory.task) : [];
+      const packages = query || searching || searchStatus ? drawPackages() : null;
+      if (!curated.length && !packages) {
+        return h("div", {}, chips, empty("search", t("Buscar aplicativos e pacotes"), t("Os detalhes e a ação disponível aparecerão aqui.")));
+      }
+      return h("div", {}, chips, curated.length > 0 && drawCurated(curated), packages);
+    }
+
+    function drawCurated(entries) {
+      let content;
+      if (loadError) content = empty("alert-circle", t("Falha: {message}", { message: loadError }));
+      else if (!popularInstalled || flatpakEnabled == null) content = skeletonRows(2);
+      else {
+        const gate = windowsGate(WINDOWS_BASE);
+        content = h("div", { class: "grid auto sw-cards" }, entries.map(({ app, section: category, label }) =>
+          popularCard(app, { gateNote: category.gated ? gate?.note : null, where: t(label) })));
+      }
+      return section(t("No catálogo do Lyra"), { sub: String(entries.length) }, content);
+    }
+
+    function drawPackages() {
+      let content;
+      if (searching) content = h("div", {}, h("p", { class: "sw-status" }, t("Consultando as origens disponíveis…")), skeletonRows(5));
+      else if (searchStatus) content = empty("alert-circle", searchStatus);
+      else if (!memory.results?.length) content = empty("search", t("Nenhum resultado encontrado"));
+      else content = h("div", {},
         h("p", { class: "sw-status" }, t("Escolha a origem antes de instalar")),
-        collection(groups.map(searchItem)));
+        collection(groupByName(memory.results).map(searchItem)));
+      return section(t("Pacotes e Flathub"), {}, content);
     }
 
     function drawInstalled() {
@@ -1013,8 +1051,10 @@ export default {
       if (query.length < 2) {
         searchStatus = t("Digite ao menos dois caracteres para buscar");
         memory.results = null;
+        memory.submitted = "";
         return paint();
       }
+      memory.submitted = query;
       searching = true;
       searchStatus = "";
       paintToolbar();
@@ -1086,7 +1126,8 @@ export default {
     async function load() {
       const current = tab;
       try {
-        if (SHOWCASES[current] && !popularInstalled) await loadPopular();
+        // A busca mostra os cartões curados, que precisam do mesmo estado das vitrines.
+        if ((SHOWCASES[current] || current === "search") && !popularInstalled) await loadPopular();
         else if (current === "installed" && !installed) installed = await call("software_installed");
         else if (current === "updates" && !updates) updates = await call("software_updates");
         else return;

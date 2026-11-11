@@ -6197,3 +6197,267 @@ msgstr "This category's folder is not yours or contains your home folder; nothin
 
 msgid "aprox. {size}"
 msgstr "approx. {size}"
+
+msgid "API REST"
+msgstr "REST API"
+
+msgid "CAD"
+msgstr "CAD"
+
+msgid "Em {tab}"
+msgstr "In {tab}"
+
+msgid "Epic Games"
+msgstr "Epic Games"
+
+msgid "Estudar"
+msgstr "Study"
+
+msgid "Excel"
+msgstr "Excel"
+
+msgid "Filtrar por tarefa"
+msgstr "Filter by task"
+
+msgid "GOG"
+msgstr "GOG"
+
+msgid "Golang"
+msgstr "Golang"
+
+msgid "Gravar"
+msgstr "Record"
+
+msgid "IA local"
+msgstr "local AI"
+
+msgid "Jogar"
+msgstr "Play"
+
+msgid "Kindle"
+msgstr "Kindle"
+
+msgid "Kotlin"
+msgstr "Kotlin"
+
+msgid "LLM"
+msgstr "LLM"
+
+msgid "MP3"
+msgstr "MP3"
+
+msgid "Markdown"
+msgstr "Markdown"
+
+msgid "MySQL"
+msgstr "MySQL"
+
+msgid "No catálogo do Lyra"
+msgstr "In the Lyra catalog"
+
+msgid "PDF"
+msgstr "PDF"
+
+msgid "Pacotes e Flathub"
+msgstr "Packages and Flathub"
+
+msgid "Postgres"
+msgstr "Postgres"
+
+msgid "PowerPoint"
+msgstr "PowerPoint"
+
+msgid "Programar"
+msgstr "Code"
+
+msgid "RAR"
+msgstr "RAR"
+
+msgid "RAW"
+msgstr "RAW"
+
+msgid "Redis"
+msgstr "Redis"
+
+msgid "SQL"
+msgstr "SQL"
+
+msgid "SVG"
+msgstr "SVG"
+
+msgid "VPN"
+msgstr "VPN"
+
+msgid "Visual Studio Code"
+msgstr "Visual Studio Code"
+
+msgid "WhatsApp"
+msgstr "WhatsApp"
+
+msgid "Word"
+msgstr "Word"
+
+msgid "ZIP"
+msgstr "ZIP"
+
+msgid "acesso remoto"
+msgstr "remote access"
+
+msgid "alternativa ao Illustrator"
+msgstr "Illustrator alternative"
+
+msgid "alternativa ao InDesign"
+msgstr "InDesign alternative"
+
+msgid "alternativa ao Lightroom"
+msgstr "Lightroom alternative"
+
+msgid "alternativa ao Microsoft Office"
+msgstr "Microsoft Office alternative"
+
+msgid "alternativa ao Outlook"
+msgstr "Outlook alternative"
+
+msgid "alternativa ao Photoshop"
+msgstr "Photoshop alternative"
+
+msgid "alternativa ao TeamViewer"
+msgstr "TeamViewer alternative"
+
+msgid "alternativa ao Visio"
+msgstr "Visio alternative"
+
+msgid "animação"
+msgstr "animation"
+
+msgid "anotações"
+msgstr "notes"
+
+msgid "bolsa de valores"
+msgstr "stock market"
+
+msgid "captura de pacotes"
+msgstr "packet capture"
+
+msgid "compactar"
+msgstr "compress"
+
+msgid "converter vídeo"
+msgstr "convert video"
+
+msgid "desenho"
+msgstr "drawing"
+
+msgid "diagramação"
+msgstr "desktop publishing"
+
+msgid "e-book"
+msgstr "e-book"
+
+msgid "editor de imagens"
+msgstr "image editor"
+
+msgid "editor de vídeo"
+msgstr "video editor"
+
+msgid "eletrônica"
+msgstr "electronics"
+
+msgid "engenharia"
+msgstr "engineering"
+
+msgid "fastboot"
+msgstr "fastboot"
+
+msgid "filmes"
+msgstr "movies"
+
+msgid "fluxograma"
+msgstr "flowchart"
+
+msgid "forex"
+msgstr "forex"
+
+msgid "formatar disco"
+msgstr "format disk"
+
+msgid "gerenciador de tarefas"
+msgstr "task manager"
+
+msgid "gravar a tela"
+msgstr "screen recording"
+
+msgid "gravar áudio"
+msgstr "record audio"
+
+msgid "lista de tarefas"
+msgstr "to-do list"
+
+msgid "live"
+msgstr "live"
+
+msgid "modelagem 3D"
+msgstr "3D modeling"
+
+msgid "mpv"
+msgstr "mpv"
+
+msgid "máquina virtual"
+msgstr "virtual machine"
+
+msgid "nuvem"
+msgstr "cloud"
+
+msgid "partições"
+msgstr "partitions"
+
+msgid "pintura digital"
+msgstr "digital painting"
+
+msgid "placa de circuito"
+msgstr "circuit board"
+
+msgid "podcast"
+msgstr "podcast"
+
+msgid "recuperar arquivos"
+msgstr "recover files"
+
+msgid "reunião online"
+msgstr "online meeting"
+
+msgid "senhas"
+msgstr "passwords"
+
+msgid "sincronizar arquivos"
+msgstr "sync files"
+
+msgid "séries"
+msgstr "TV shows"
+
+msgid "torrent"
+msgstr "torrent"
+
+msgid "traceroute"
+msgstr "traceroute"
+
+msgid "transmissão ao vivo"
+msgstr "live streaming"
+
+msgid "varredura de portas"
+msgstr "port scanner"
+
+msgid "varredura de rede"
+msgstr "network scanner"
+
+msgid "velocidade da internet"
+msgstr "internet speed"
+
+msgid "vetor"
+msgstr "vector"
+
+msgid "videoconferência"
+msgstr "video conferencing"
+
+msgid "área de trabalho remota"
+msgstr "remote desktop"
