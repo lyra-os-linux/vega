@@ -24,12 +24,14 @@ export const DEVELOPER = [
   {
     id: "languages",
     title: N_("Linguagens"),
+
+    tasks: ["code"],
     apps: [
       { name: "C/C++ (GCC)", origin: "official", id: "gcc-c++", text: N_("Compiladores GCC de C e C++") },
       { name: "Clang", origin: "official", id: "clang", text: N_("Compilador C e C++ do LLVM") },
       { name: "Python 3.14", origin: "official", id: "python314", text: N_("Versão mais nova, ao lado do Python 3.13 do sistema") },
       { name: "Rust", origin: "official", id: "rustup", command: "cargo", alternatives: ["rust", "cargo"], text: N_("Instala e atualiza o Rust e o cargo") },
-      { name: "Go", origin: "official", id: "go", text: N_("Linguagem e ferramentas do Go") },
+      { name: "Go", origin: "official", id: "go", tags: [N_("Golang")], text: N_("Linguagem e ferramentas do Go") },
       { name: "Node.js 24 + npm", origin: "official", id: "npm24", text: N_("Node.js do sistema; o nvm já vem instalado") },
       { name: "Java 21 (OpenJDK)", origin: "official", id: "java-21-openjdk-devel", text: N_("JDK com suporte longo (LTS)") },
       { name: "Java 25 (OpenJDK)", origin: "official", id: "java-25-openjdk-devel", text: N_("JDK mais recente com suporte longo (LTS)") },
@@ -48,6 +50,8 @@ export const DEVELOPER = [
   {
     id: "build",
     title: N_("Compilação e depuração"),
+
+    tasks: ["code"],
     apps: [
       { name: "CMake", origin: "official", id: "cmake", text: N_("Gera os arquivos de compilação de projetos C e C++") },
       { name: "Meson", origin: "official", id: "meson", text: N_("Sistema de compilação rápido") },
@@ -64,9 +68,11 @@ export const DEVELOPER = [
   {
     id: "editors",
     title: N_("Editores e IDEs"),
+
+    tasks: ["code"],
     apps: [
       { name: "Zed", origin: "official", id: "zed", text: N_("Editor de código rápido; já vem no Lyra") },
-      { name: "VS Code", origin: "official", id: "code", command: "code", repo: { package: "vscode-repo", name: "code", fingerprint: "BC528686B50D79E339D3721CEB3E94ADBE1229CF" }, text: N_("Editor da Microsoft, do repositório oficial da Microsoft") },
+      { name: "VS Code", origin: "official", id: "code", command: "code", repo: { package: "vscode-repo", name: "code", fingerprint: "BC528686B50D79E339D3721CEB3E94ADBE1229CF" }, tags: [N_("Visual Studio Code")], text: N_("Editor da Microsoft, do repositório oficial da Microsoft") },
       { name: "IntelliJ IDEA Community", origin: "flathub", id: "com.jetbrains.IntelliJ-IDEA-Community", text: N_("IDE para Java e Kotlin, de código aberto") },
       { name: "Rider", origin: "flathub", id: "com.jetbrains.Rider", text: N_("IDE para .NET e C#; grátis para uso não comercial") },
       // Demais IDEs da JetBrains no Flathub (empacotamento da comunidade,
@@ -94,6 +100,8 @@ export const DEVELOPER = [
     // (backend/npm_apps.rs, sem sudo); Ollama pelo pacote do openSUSE.
     id: "ai",
     title: N_("IA para desenvolvimento"),
+
+    tasks: ["code"],
     apps: [
       { name: "Claude Code (CLI)", origin: "official", id: "claude-code", command: "claude", repo: { package: "claude-code-repo", name: "claude-code", fingerprint: "31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE" }, text: N_("Assistente de programação da Anthropic no terminal") },
       { name: "Codex CLI", origin: "npm", id: "@openai/codex", command: "codex", text: N_("Assistente de programação da OpenAI no terminal") },
@@ -101,9 +109,9 @@ export const DEVELOPER = [
       { name: "Gemini CLI", origin: "npm", id: "@google/gemini-cli", command: "gemini", text: N_("Assistente do Google no terminal, para licenças do Gemini Code Assist") },
       { name: "opencode", origin: "npm", id: "opencode-ai", command: "opencode", text: N_("Assistente de código aberto no terminal, com vários provedores de IA") },
       { name: "Cursor", origin: "official", id: "cursor", command: "cursor", repo: { package: "cursor-repo", name: "cursor", fingerprint: "380FF4BCDC34A4BD92A3565342A1772E62E492D6" }, text: N_("Editor com IA, baseado no VS Code") },
-      { name: "Ollama", origin: "official", id: "ollama", command: "ollama", text: N_("Roda modelos de IA no próprio computador") },
+      { name: "Ollama", origin: "official", id: "ollama", command: "ollama", tags: [N_("IA local"), N_("LLM")], text: N_("Roda modelos de IA no próprio computador") },
       { name: "Alpaca", origin: "flathub", id: "com.jeffser.Alpaca", logo: "com.jeffser.Alpaca", text: N_("Conversa com modelos locais do Ollama, integrado ao GNOME") },
-      { name: "LM Studio", origin: "flathub", id: "ai.lmstudio.lm-studio", text: N_("Baixa e roda modelos de IA locais") },
+      { name: "LM Studio", origin: "flathub", id: "ai.lmstudio.lm-studio", tags: [N_("IA local"), N_("LLM")], text: N_("Baixa e roda modelos de IA locais") },
     ],
   },
   {
@@ -111,18 +119,22 @@ export const DEVELOPER = [
     // Archi e Modelio não estão no Flathub nem nos repositórios do Leap.
     id: "architecture",
     title: N_("Arquitetura de software"),
+
+    tasks: ["code"],
     apps: [
-      { name: "draw.io", origin: "flathub", id: "com.jgraph.drawio.desktop", text: N_("Diagramas de arquitetura, fluxos e infraestrutura") },
+      { name: "draw.io", origin: "flathub", id: "com.jgraph.drawio.desktop", tags: [N_("fluxograma"), N_("alternativa ao Visio")], text: N_("Diagramas de arquitetura, fluxos e infraestrutura") },
       { name: "Umbrello", origin: "official", id: "umbrello", logo: "org.kde.umbrello", text: N_("Modelagem UML, com geração de código") },
       { name: "PlantUML", origin: "official", id: "plantuml", text: N_("Diagramas UML e C4 escritos como texto") },
       { name: "Mermaid CLI", origin: "npm", id: "@mermaid-js/mermaid-cli", command: "mmdc", text: N_("Gera diagramas Mermaid em SVG e PNG pelo terminal (mmdc)") },
       { name: "Graphviz", origin: "official", id: "graphviz", text: N_("Gera grafos e diagramas a partir de texto (dot)") },
-      { name: "Dia", origin: "official", id: "dia", text: N_("Editor de diagramas estruturados") },
+      { name: "Dia", origin: "official", id: "dia", tags: [N_("fluxograma"), N_("alternativa ao Visio")], text: N_("Editor de diagramas estruturados") },
     ],
   },
   {
     id: "cloud",
     title: N_("Nuvem"),
+
+    tasks: ["code"],
     // Pacotes do repositório do Lyra (lyra-os-linux/cloud-cli), feitos a
     // partir das fontes oficiais de cada fornecedor.
     apps: [
@@ -137,6 +149,8 @@ export const DEVELOPER = [
     // minikube não estão nos repositórios do Leap 16.1.
     id: "devops",
     title: N_("DevOps e infraestrutura"),
+
+    tasks: ["code"],
     apps: [
       { name: "Ansible", origin: "official", id: "ansible", text: N_("Automação de configuração de servidores") },
       // Terraform e Vagrant não estão no Leap: vêm do repositório RPM oficial
@@ -164,6 +178,8 @@ export const DEVELOPER = [
   {
     id: "git",
     title: N_("Git"),
+
+    tasks: ["code"],
     apps: [
       { name: "GitHub CLI", origin: "official", id: "gh", text: N_("Pull requests, issues e repositórios pelo terminal") },
       { name: "Git LFS", origin: "official", id: "git-lfs", text: N_("Arquivos grandes em repositórios Git") },
@@ -177,6 +193,8 @@ export const DEVELOPER = [
   {
     id: "containers",
     title: N_("Contêineres"),
+
+    tasks: ["code"],
     apps: [
       { name: "Podman", origin: "official", id: "podman", text: N_("Contêineres sem serviço nem acesso de administrador") },
       { name: "Distrobox", origin: "official", id: "distrobox", text: N_("Ferramentas de outras distribuições num contêiner") },
@@ -188,24 +206,28 @@ export const DEVELOPER = [
   {
     id: "databases",
     title: N_("Bancos de dados e APIs"),
+
+    tasks: ["code"],
     apps: [
-      { name: "PostgreSQL 18", origin: "official", id: "postgresql18-server", text: N_("Servidor PostgreSQL") },
-      { name: "MariaDB", origin: "official", id: "mariadb", text: N_("Servidor compatível com o MySQL") },
-      { name: "Valkey", origin: "official", id: "valkey", text: N_("Banco em memória compatível com o Redis") },
+      { name: "PostgreSQL 18", origin: "official", id: "postgresql18-server", tags: [N_("Postgres")], text: N_("Servidor PostgreSQL") },
+      { name: "MariaDB", origin: "official", id: "mariadb", tags: [N_("MySQL")], text: N_("Servidor compatível com o MySQL") },
+      { name: "Valkey", origin: "official", id: "valkey", tags: [N_("Redis")], text: N_("Banco em memória compatível com o Redis") },
       { name: "SQLite", origin: "official", id: "sqlite3", text: N_("Banco de dados num arquivo, pelo terminal") },
       { name: "Draco Postgres", origin: "official", id: "postgres-draco", logo: "postgres-draco", text: N_("Cliente PostgreSQL nativo, com editor SQL, diagrama ER e administração") },
-      { name: "DBeaver", origin: "flathub", id: "io.dbeaver.DBeaverCommunity", text: N_("Cliente gráfico para vários bancos de dados") },
-      { name: "Postman", origin: "flathub", id: "com.getpostman.Postman", text: N_("Testa e documenta APIs") },
-      { name: "Bruno", origin: "flathub", id: "com.usebruno.Bruno", text: N_("Cliente de APIs de código aberto; coleções ficam no Git") },
-      { name: "Insomnia", origin: "flathub", id: "rest.insomnia.Insomnia", text: N_("Cliente de APIs REST, GraphQL e gRPC") },
+      { name: "DBeaver", origin: "flathub", id: "io.dbeaver.DBeaverCommunity", tags: [N_("SQL")], text: N_("Cliente gráfico para vários bancos de dados") },
+      { name: "Postman", origin: "flathub", id: "com.getpostman.Postman", tags: [N_("API REST")], text: N_("Testa e documenta APIs") },
+      { name: "Bruno", origin: "flathub", id: "com.usebruno.Bruno", tags: [N_("API REST")], text: N_("Cliente de APIs de código aberto; coleções ficam no Git") },
+      { name: "Insomnia", origin: "flathub", id: "rest.insomnia.Insomnia", tags: [N_("API REST")], text: N_("Cliente de APIs REST, GraphQL e gRPC") },
     ],
   },
   {
     id: "mobile",
     title: N_("Android"),
+
+    tasks: ["code"],
     apps: [
-      { name: "Android Studio", origin: "flathub", id: "com.google.AndroidStudio", text: N_("IDE e SDK para apps Android") },
-      { name: "Android Tools (adb)", origin: "official", id: "android-tools", text: N_("adb e fastboot para o celular por USB") },
+      { name: "Android Studio", origin: "flathub", id: "com.google.AndroidStudio", tags: [N_("Kotlin")], text: N_("IDE e SDK para apps Android") },
+      { name: "Android Tools (adb)", origin: "official", id: "android-tools", tags: [N_("fastboot")], text: N_("adb e fastboot para o celular por USB") },
     ],
   },
 ];

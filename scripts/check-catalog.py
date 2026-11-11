@@ -6,7 +6,9 @@ Sem opções, só a validação offline, usada na CI de PR:
 - ids únicos por seção e seções únicas por catálogo;
 - id do Flathub no formato de id de app (com.empresa.App);
 - apps do Windows e AppImages existem em windows_apps.rs e appimage_apps.rs;
-- textos com tradução em en-US e es-ES (po/*.po).
+- `tasks` (seção ou cartão) entre as de TASKS (catalog-search.js) e `tags`
+  como lista de textos;
+- textos e tags com tradução em en-US e es-ES (po/*.po).
 
 Com --remote, também confere na rede (workflow diário catalog.yml):
 - `origin: "flathub"`: o app existe em flathub.org/api/v2/appstream/<id>;
@@ -139,8 +141,14 @@ def po_translations(path):
     return entries
 
 
+def task_ids():
+    text = (GTK / "ui" / "js" / "pages" / "software" / "catalog-search.js").read_text(encoding="utf-8")
+    return set(re.findall(r'\{ id: "([a-z]+)", label: N_\(', text))
+
+
 def check_offline(entries):
     errors = []
+    tasks = task_ids()
     windows_ids = verbs() | set(recipes())
     appimage_ids = set(appimages())
     translations = {lang: po_translations(GTK / "po" / f"{lang}.po") for lang in ("en-US", "es-ES")}
@@ -167,7 +175,14 @@ def check_offline(entries):
                 errors.append(f"{label}: repo.fingerprint precisa de 40 dígitos hexadecimais")
         elif repo is not None and not str(repo.get("url", "")).startswith("https://"):
             errors.append(f"{label}: repo precisa de url https ou de package")
-        texts.update(filter(None, (app.get("text"), section.get("title"))))
+        for task in set(app.get("tasks", [])) | set(section.get("tasks", [])):
+            if task not in tasks:
+                errors.append(f"{label}: tarefa desconhecida {task!r} (TASKS em catalog-search.js)")
+        tags = app.get("tags", [])
+        if not isinstance(tags, list) or not all(isinstance(tag, str) and tag for tag in tags):
+            errors.append(f"{label}: tags precisa ser uma lista de textos")
+            tags = []
+        texts.update(filter(None, (app.get("text"), section.get("title"), *tags)))
     for lang, known in translations.items():
         for text in sorted(texts):
             if not known.get(text):
