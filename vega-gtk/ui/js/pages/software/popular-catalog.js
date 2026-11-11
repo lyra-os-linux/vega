@@ -67,6 +67,10 @@ export const POPULAR = [
       { name: "Kdenlive", origin: "official", id: "kdenlive", logo: "org.kde.kdenlive", tasks: ["edit"], tags: [N_("editor de vídeo")], text: N_("Edição de vídeo") },
       { name: "Shotcut", origin: "official", id: "shotcut", logo: "org.shotcut.Shotcut", tasks: ["edit"], tags: [N_("editor de vídeo")], text: N_("Edição de vídeo") },
       { name: "Audacity", origin: "official", id: "audacity", tasks: ["record", "edit"], tags: [N_("gravar áudio"), N_("podcast")], text: N_("Gravação e edição de áudio") },
+      // FreeShow: só publica AppImage e RPM no GitHub, sem arquivo de
+      // checksums; o Vega instala o AppImage 1.6.7, com SHA-256 fixado, na
+      // conta do usuário (appimage_apps.rs).
+      { name: "FreeShow", origin: "appimage", id: "freeshow", logo: "freeshow", tags: [N_("apresentações"), N_("projeção"), N_("igreja"), N_("letras de músicas")], text: N_("Apresentações e projeção para igrejas e eventos") },
       { name: "HandBrake", origin: "flathub", id: "fr.handbrake.ghb", logo: "fr.handbrake.ghb", tasks: ["edit"], tags: [N_("converter vídeo")], text: N_("Converte vídeos e reduz o tamanho") },
       { name: "SooperLooper", origin: "official", id: "sooperlooper", tasks: ["record"], tags: [N_("looper"), N_("loop ao vivo"), N_("JACK")], text: N_("Looper ao vivo: grava e sobrepõe camadas de áudio") },
     ],
