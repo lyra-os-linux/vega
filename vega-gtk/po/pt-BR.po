@@ -6565,9 +6565,15 @@ msgstr "Apresentações e eventos"
 msgid "igreja"
 msgstr "igreja"
 
+msgid "apresentações"
+msgstr "apresentações"
+
 #: ui/js/pages/software/popular-catalog.js
 msgid "projeção"
 msgstr "projeção"
+
+#: ui/js/pages/software/popular-catalog.js
+
 
 #: ui/js/pages/software/popular-catalog.js
 msgid "letras de músicas"
@@ -6620,6 +6626,40 @@ msgstr "Publicação e escrita"
 #: ui/js/pages/software/popular-catalog.js
 msgid "criar fonte"
 msgstr "criar fonte"
+
+msgid "Apresentações e projeção para igrejas e eventos"
+msgstr "Apresentações e projeção para igrejas e eventos"
+
+#: src/backend/appimage_apps.rs
+msgid "Procurando a versão conferida pelo Lyra…"
+msgstr "Procurando a versão conferida pelo Lyra…"
+
+#: src/backend/appimage_apps.rs
+msgid "A versão conferida pelo Lyra não tem AppImage para este computador."
+msgstr "A versão conferida pelo Lyra não tem AppImage para este computador."
+
+msgid "looper"
+msgstr "looper"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "loop ao vivo"
+msgstr "loop ao vivo"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "JACK"
+msgstr "JACK"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Looper ao vivo: grava e sobrepõe camadas de áudio"
+msgstr "Looper ao vivo: grava e sobrepõe camadas de áudio"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Documentos, planilhas, apresentações e PDF, com visual parecido com o do Office"
+msgstr "Documentos, planilhas, apresentações e PDF, com visual parecido com o do Office"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "fontes"
+msgstr "fontes"
 
 #: ui/js/pages/software/popular-catalog.js
 msgid "tipografia"
@@ -6676,3 +6716,6 @@ msgstr "mesa de luz"
 #: ui/js/pages/software/popular-catalog.js
 msgid "Controle de iluminação DMX para palcos e eventos"
 msgstr "Controle de iluminação DMX para palcos e eventos"
+
+msgid "Visualiza, compara, instala e organiza fontes"
+msgstr "Visualiza, compara, instala e organiza fontes"

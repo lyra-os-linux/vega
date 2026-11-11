@@ -18,7 +18,8 @@ Com --remote, também confere na rede (workflow diário catalog.yml):
   pacote do Lyra que registra o repositório;
 - `origin: "npm"`: o pacote existe no registro do npm;
 - receitas do Windows (RECIPES): a URL responde e o SHA-256 bate com o fixado;
-- AppImages: a última release tem o AppImage e o arquivo de checksums.
+- AppImages: a última release tem o AppImage e o arquivo de checksums;
+  nos fixados, a tag tem o arquivo e o SHA-256 confere com o do GitHub.
 Os verbos do winetricks não entram: o próprio winetricks confere o checksum.
 
 Saída: 0 tudo certo, 1 itens quebrados, 2 verificação incompleta (falha de
@@ -120,8 +121,12 @@ def verbs():
 def appimages():
     """AppImages: {id: (dono/repositório, prefixo, arquivo de checksums)}."""
     text = (GTK / "src" / "backend" / "appimage_apps.rs").read_text(encoding="utf-8")
-    found = re.findall(r'id: "([^"]+)",.*?repo: "([^"]+)",\s*prefix: "([^"]+)",\s*sums: "([^"]+)"', text, re.S)
-    return {aid: (repo, prefix, sums) for aid, repo, prefix, sums in found}
+    found = re.findall(r'id: "([^"]+)",\s*name: "[^"]*",\s*repo: "([^"]+)",\s*source: Source::Latest \{\s*prefix: "([^"]+)",\s*sums: "([^"]+)"', text, re.S)
+    apps = {aid: (repo, prefix, sums) for aid, repo, prefix, sums in found}
+    # Versão fixada: (dono/repositório, tag, arquivo, SHA-256).
+    pinned = re.findall(r'id: "([^"]+)",\s*name: "[^"]*",\s*repo: "([^"]+)",\s*source: Source::Pinned \{\s*tag: "([^"]+)",\s*file: "([^"]+)",\s*sha256: "([^"]+)"', text, re.S)
+    apps.update({aid: (repo, tag, file, sha) for aid, repo, tag, file, sha in pinned})
+    return apps
 
 
 def po_translations(path):
@@ -258,6 +263,16 @@ def check_appimage(repo, prefix, sums):
     return None
 
 
+def check_pinned_appimage(repo, tag, file, sha256):
+    release = json.loads(fetch(f"https://api.github.com/repos/{repo}/releases/tags/{tag}"))
+    asset = next((a for a in release.get("assets", []) if a["name"] == file), None)
+    if asset is None:
+        return f"a release {tag} de {repo} não tem {file}"
+    if asset.get("digest") and asset["digest"] != f"sha256:{sha256}":
+        return f"{file}: o SHA-256 fixado não confere com o publicado no GitHub"
+    return None
+
+
 def check_remote(entries):
     """Devolve (quebrados, não verificados)."""
     broken, unverified, jobs = [], [], []
@@ -295,8 +310,9 @@ def check_remote(entries):
             broken.append(f"{label}: pacote não existe nos repositórios do Leap 16.1 e do Lyra")
     for rid, (url, sha256) in sorted(recipes().items()):
         jobs.append((f"receita do Windows {rid}", check_recipe, (url, sha256)))
-    for aid, (repo, prefix, sums) in sorted(appimages().items()):
-        jobs.append((f"AppImage {aid}", check_appimage, (repo, prefix, sums)))
+    for aid, spec in sorted(appimages().items()):
+        check = check_appimage if len(spec) == 3 else check_pinned_appimage
+        jobs.append((f"AppImage {aid}", check, spec))
 
     def run(job):
         label, function, args = job
