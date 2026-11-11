@@ -68,6 +68,7 @@ export const POPULAR = [
       { name: "Shotcut", origin: "official", id: "shotcut", logo: "org.shotcut.Shotcut", tasks: ["edit"], tags: [N_("editor de vídeo")], text: N_("Edição de vídeo") },
       { name: "Audacity", origin: "official", id: "audacity", tasks: ["record", "edit"], tags: [N_("gravar áudio"), N_("podcast")], text: N_("Gravação e edição de áudio") },
       { name: "HandBrake", origin: "flathub", id: "fr.handbrake.ghb", logo: "fr.handbrake.ghb", tasks: ["edit"], tags: [N_("converter vídeo")], text: N_("Converte vídeos e reduz o tamanho") },
+      { name: "SooperLooper", origin: "official", id: "sooperlooper", tasks: ["record"], tags: [N_("looper"), N_("loop ao vivo"), N_("JACK")], text: N_("Looper ao vivo: grava e sobrepõe camadas de áudio") },
     ],
   },
   {
@@ -97,10 +98,12 @@ export const POPULAR = [
     title: N_("Escritório e anotações"),
     apps: [
       { name: "ONLYOFFICE", origin: "flathub", id: "org.onlyoffice.desktopeditors", tasks: ["edit", "study"], tags: [N_("alternativa ao Microsoft Office"), N_("Word"), N_("Excel"), N_("PowerPoint")], text: N_("Documentos, planilhas e apresentações") },
+      { name: "WPS Office", origin: "flathub", id: "com.wps.Office", tasks: ["edit", "study"], tags: [N_("alternativa ao Microsoft Office"), N_("Word"), N_("Excel"), N_("PowerPoint"), N_("PDF")], text: N_("Documentos, planilhas, apresentações e PDF, com visual parecido com o do Office") },
       { name: "Obsidian", origin: "flathub", id: "md.obsidian.Obsidian", tasks: ["study"], tags: [N_("anotações"), N_("Markdown")], text: N_("Anotações em Markdown, com links entre as notas") },
       { name: "Planify", origin: "flathub", id: "io.github.alainm23.planify", logo: "io.github.alainm23.planify", tags: [N_("lista de tarefas")], text: N_("Tarefas, lembretes e projetos") },
       { name: "Calibre", origin: "official", id: "calibre", logo: "com.calibre_ebook.calibre", tasks: ["study"], tags: [N_("e-book"), N_("Kindle")], text: N_("Biblioteca e conversão de e-books") },
       { name: "Okular", origin: "official", id: "okular", logo: "org.kde.okular", tasks: ["study"], tags: [N_("PDF")], text: N_("Leitor de PDF com anotações") },
+      { name: "Font Manager", origin: "official", id: "font-manager", logo: "com.github.FontManager.FontManager", tasks: ["edit"], tags: [N_("fontes"), N_("tipografia")], text: N_("Visualiza, compara, instala e organiza fontes") },
       { name: "Scribus", origin: "official", id: "scribus", logo: "net.scribus.Scribus", tasks: ["edit"], tags: [N_("diagramação"), N_("alternativa ao InDesign")], text: N_("Diagramação de revistas e folhetos") },
     ],
   },
