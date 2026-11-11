@@ -6460,3 +6460,203 @@ msgstr "videoconferência"
 
 msgid "área de trabalho remota"
 msgstr "área de trabalho remota"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Desenho e animação"
+msgstr "Desenho e animação"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "mesa digitalizadora"
+msgstr "mesa digitalizadora"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Pintura com pincéis naturais, em tela infinita"
+msgstr "Pintura com pincéis naturais, em tela infinita"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "animação 2D"
+msgstr "animação 2D"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "desenho animado"
+msgstr "desenho animado"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Animação 2D quadro a quadro"
+msgstr "Animação 2D quadro a quadro"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "conta-gotas"
+msgstr "conta-gotas"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "paleta de cores"
+msgstr "paleta de cores"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Seletor de cores, com conta-gotas na tela"
+msgstr "Seletor de cores, com conta-gotas na tela"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "scanner"
+msgstr "scanner"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "digitalizar"
+msgstr "digitalizar"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Digitaliza desenhos e documentos no scanner"
+msgstr "Digitaliza desenhos e documentos no scanner"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Fotografia"
+msgstr "Fotografia"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "panorama"
+msgstr "panorama"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Junta várias fotos num panorama"
+msgstr "Junta várias fotos num panorama"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "tethering"
+msgstr "tethering"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "câmera no computador"
+msgstr "câmera no computador"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Fotografa com a câmera ligada ao computador"
+msgstr "Fotografa com a câmera ligada ao computador"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "calibração de cor"
+msgstr "calibração de cor"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "colorímetro"
+msgstr "colorímetro"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "perfil ICC"
+msgstr "perfil ICC"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Calibra o monitor com colorímetro; o perfil é aplicado em Configurações → Cor"
+msgstr "Calibra o monitor com colorímetro; o perfil é aplicado em Configurações → Cor"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "colagem"
+msgstr "colagem"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Monta colagens de fotos"
+msgstr "Monta colagens de fotos"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Apresentações e eventos"
+msgstr "Apresentações e eventos"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "igreja"
+msgstr "igreja"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "projeção"
+msgstr "projeção"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "letras de músicas"
+msgstr "letras de músicas"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "culto"
+msgstr "culto"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Projeta letras de músicas, versículos e slides em cultos e eventos"
+msgstr "Projeta letras de músicas, versículos e slides em cultos e eventos"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "reprodutor de vídeo"
+msgstr "reprodutor de vídeo"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Reprodutor de vídeo para conferir e projetar"
+msgstr "Reprodutor de vídeo para conferir e projetar"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "trilha sonora"
+msgstr "trilha sonora"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Ardour"
+msgstr "Ardour"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Mostra o vídeo sincronizado com o Ardour, para fazer a trilha"
+msgstr "Mostra o vídeo sincronizado com o Ardour, para fazer a trilha"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "gravar CD"
+msgstr "gravar CD"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "gravar DVD"
+msgstr "gravar DVD"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Grava CDs e DVDs"
+msgstr "Grava CDs e DVDs"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Publicação e escrita"
+msgstr "Publicação e escrita"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "criar fonte"
+msgstr "criar fonte"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "tipografia"
+msgstr "tipografia"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Cria e edita fontes"
+msgstr "Cria e edita fontes"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "OCR"
+msgstr "OCR"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "PDF digitalizado"
+msgstr "PDF digitalizado"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Extrai o texto de imagens e PDFs digitalizados (OCR); escolha o idioma Português no app"
+msgstr "Extrai o texto de imagens e PDFs digitalizados (OCR); escolha o idioma Português no app"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "juntar PDF"
+msgstr "juntar PDF"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Junta, separa e gira páginas de PDF"
+msgstr "Junta, separa e gira páginas de PDF"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "escrever livro"
+msgstr "escrever livro"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "roteiro"
+msgstr "roteiro"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Escrita de romances e roteiros, organizada por capítulos"
+msgstr "Escrita de romances e roteiros, organizada por capítulos"
