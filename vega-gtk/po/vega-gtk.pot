@@ -5151,7 +5151,7 @@ msgid "O Vega baixa o AppImage oficial da versão mais recente, confere o checks
 msgstr ""
 
 #: vega-gtk/ui/js/pages/software.js:703
-msgid "Antes, instala o suporte a AppImage (libfuse2), com a senha de administrador."
+msgid "Antes, instala o suporte a AppImage ({packages}), com a senha de administrador."
 msgstr ""
 
 #: vega-gtk/ui/js/pages/software.js:730

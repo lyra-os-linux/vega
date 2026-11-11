@@ -483,6 +483,8 @@ export default {
     }
 
     const isInstalled = (app) => popularInstalled.has(queueKey(app));
+    /** Pacotes do FUSE 2 que um AppImage precisa para abrir (installAppImage). */
+    const APPIMAGE_FUSE = ["libfuse2", "fuse"];
 
     const IA32_ON = /(^|\s)ia32_emulation=(1|y|yes|on|true)(\s|$)/i;
     /** ia32_emulation=1 já está no boot, mas o kernel em execução ainda é o antigo. */
@@ -703,22 +705,26 @@ export default {
     }
 
     /**
-     * AppImage oficial na conta do usuário. Sem o FUSE 2 (libfuse2), que quase
-     * todo AppImage exige, instala antes o pacote (pede a senha).
+     * AppImage oficial na conta do usuário. Quase todo AppImage monta a si
+     * mesmo com o FUSE 2: precisa da biblioteca (libfuse2) e do fusermount, que
+     * vem no pacote fuse e não é dependência do libfuse2. Sem um deles, o
+     * AppImage instala mas não abre; o Vega instala antes o que falta (pede a
+     * senha).
      */
     async function installAppImage(app) {
-      const needsFuse = !isInstalled({ origin: "official", id: "libfuse2" });
+      const fuseMissing = APPIMAGE_FUSE.filter((id) => !isInstalled({ origin: "official", id }));
+      const needsFuse = fuseMissing.length > 0;
       const ok = await confirm({
         title: t("Instalar {name}?", { name: app.name }),
         text: t("O Vega baixa o AppImage oficial da versão mais recente, confere o checksum publicado pelo projeto e instala na sua conta, sem senha. O aplicativo se atualiza sozinho.")
-          + (needsFuse ? " " + t("Antes, instala o suporte a AppImage (libfuse2), com a senha de administrador.") : ""),
+          + (needsFuse ? " " + t("Antes, instala o suporte a AppImage ({packages}), com a senha de administrador.", { packages: fuseMissing.join(", ") }) : ""),
         ic: "download",
         confirmLabel: t("Instalar"),
         required: true,
       });
       if (!ok) return;
-      if (needsFuse) {
-        const result = await transact({ kind: "install", origin: "official", id: "libfuse2" }, t("Instalando {name}…", { name: "libfuse2" }), { reload: false });
+      for (const id of fuseMissing) {
+        const result = await transact({ kind: "install", origin: "official", id }, t("Instalando {name}…", { name: id }), { reload: false });
         if (!result?.success) return;
       }
       let started;

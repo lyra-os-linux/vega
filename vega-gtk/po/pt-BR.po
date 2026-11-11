@@ -5984,8 +5984,8 @@ msgstr "O AppImage e o atalho saem da sua conta, sem senha. Os aplicativos que e
 msgid "O Vega baixa o AppImage oficial da versão mais recente, confere o checksum publicado pelo projeto e instala na sua conta, sem senha. O aplicativo se atualiza sozinho."
 msgstr "O Vega baixa o AppImage oficial da versão mais recente, confere o checksum publicado pelo projeto e instala na sua conta, sem senha. O aplicativo se atualiza sozinho."
 
-msgid "Antes, instala o suporte a AppImage (libfuse2), com a senha de administrador."
-msgstr "Antes, instala o suporte a AppImage (libfuse2), com a senha de administrador."
+msgid "Antes, instala o suporte a AppImage ({packages}), com a senha de administrador."
+msgstr "Antes, instala o suporte a AppImage ({packages}), com a senha de administrador."
 
 msgid "Nuvem"
 msgstr "Nuvem"
