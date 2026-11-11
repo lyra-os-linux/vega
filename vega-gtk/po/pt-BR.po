@@ -6460,3 +6460,35 @@ msgstr "videoconferência"
 
 msgid "área de trabalho remota"
 msgstr "área de trabalho remota"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "looper"
+msgstr "looper"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "loop ao vivo"
+msgstr "loop ao vivo"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "JACK"
+msgstr "JACK"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Looper ao vivo: grava e sobrepõe camadas de áudio"
+msgstr "Looper ao vivo: grava e sobrepõe camadas de áudio"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Documentos, planilhas, apresentações e PDF, com visual parecido com o do Office"
+msgstr "Documentos, planilhas, apresentações e PDF, com visual parecido com o do Office"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "fontes"
+msgstr "fontes"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "tipografia"
+msgstr "tipografia"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Visualiza, compara, instala e organiza fontes"
+msgstr "Visualiza, compara, instala e organiza fontes"
