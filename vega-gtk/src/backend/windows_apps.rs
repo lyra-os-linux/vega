@@ -156,11 +156,14 @@ pub const RECIPES: &[Recipe] = &[
         file: "foobar2000-x64_v2.26.2.exe",
         kind: Kind::Installer(NSIS),
     },
+    // O Mp3tag tira do ar a versão anterior a cada lançamento (o endereço
+    // antigo devolve a página de download). 3.37 conferida em 10/11/2026:
+    // assinatura Authenticode de Florian Heidenreich (Sectigo).
     Recipe {
         id: "mp3tag",
-        url: "https://download.mp3tag.de/mp3tag-v3.36.1-x64-setup.exe",
-        sha256: "a977861003a87b1f00f2e0c91263c61bf12d457c6d457b367ce5f69de28fbea0",
-        file: "mp3tag-v3.36.1-x64-setup.exe",
+        url: "https://download.mp3tag.de/mp3tag-v3.37-x64-setup.exe",
+        sha256: "2f4c62a2fcf6a08f9c5aeb2bb3daed80db2a4eaa5999e4331d9f30c832119aee",
+        file: "mp3tag-v3.37-x64-setup.exe",
         kind: Kind::Installer(NSIS),
     },
     Recipe {
