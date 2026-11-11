@@ -126,6 +126,7 @@ export const POPULAR = [
       { name: "OpenLP", origin: "official", id: "OpenLP", tags: [N_("igreja"), N_("projeção"), N_("letras de músicas"), N_("culto")], text: N_("Projeta letras de músicas, versículos e slides em cultos e eventos") },
       { name: "Haruna", origin: "official", id: "haruna", logo: "org.kde.haruna", tags: [N_("reprodutor de vídeo")], text: N_("Reprodutor de vídeo para conferir e projetar") },
       { name: "Xjadeo", origin: "official", id: "xjadeo", tags: [N_("trilha sonora"), N_("Ardour")], tasks: ["edit"], text: N_("Mostra o vídeo sincronizado com o Ardour, para fazer a trilha") },
+      { name: "QLC+", origin: "official", id: "qlcplus", tags: [N_("iluminação"), N_("DMX"), N_("mesa de luz")], text: N_("Controle de iluminação DMX para palcos e eventos") },
       { name: "K3b", origin: "official", id: "k3b", tags: [N_("gravar CD"), N_("gravar DVD")], text: N_("Grava CDs e DVDs") },
     ],
   },

@@ -7316,3 +7316,19 @@ msgstr ""
 #: ui/js/pages/software/popular-catalog.js
 msgid "Escrita de romances e roteiros, organizada por capítulos"
 msgstr ""
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "iluminação"
+msgstr ""
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "DMX"
+msgstr ""
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "mesa de luz"
+msgstr ""
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Controle de iluminação DMX para palcos e eventos"
+msgstr ""

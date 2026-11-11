@@ -6661,3 +6661,19 @@ msgstr "guion"
 #: ui/js/pages/software/popular-catalog.js
 msgid "Escrita de romances e roteiros, organizada por capítulos"
 msgstr "Escritura de novelas y guiones, organizada por capítulos"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "iluminação"
+msgstr "iluminación"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "DMX"
+msgstr "DMX"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "mesa de luz"
+msgstr "mesa de luces"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Controle de iluminação DMX para palcos e eventos"
+msgstr "Control de iluminación DMX para escenarios y eventos"
