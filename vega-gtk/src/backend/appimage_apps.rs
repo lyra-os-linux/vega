@@ -8,6 +8,10 @@
 //! ele diferente, nada é instalado. O arquivo vai para `~/Applications`, onde
 //! o próprio aplicativo se atualiza, com atalho no menu e ícone na conta do
 //! usuário. Só os aplicativos de `APPS` são aceitos.
+//!
+//! Quem não publica arquivo de checksums (como o FreeShow) entra com versão
+//! fixada: tag, arquivo e SHA-256 conferidos pelo Lyra ficam no código, e
+//! uma versão diferente nunca é instalada.
 
 use std::io::Write;
 use std::path::{Path, PathBuf};
@@ -26,24 +30,56 @@ pub struct App {
     pub name: &'static str,
     /// `dono/repositório` no GitHub.
     pub repo: &'static str,
-    /// Começo do nome do AppImage (`<prefixo><versão>-linux-<arch>.AppImage`).
-    pub prefix: &'static str,
-    /// Arquivo de checksums da release (formato do sha256sum).
-    pub sums: &'static str,
+    pub source: Source,
     /// Ícone do aplicativo no repositório, no ref da release.
     pub icon_path: &'static str,
     pub comment: &'static str,
 }
 
-pub const APPS: &[App] = &[App {
-    id: "artcraft-launcher",
-    name: "ArtCraft Launcher",
-    repo: "storytold/craft-launcher",
-    prefix: "artcraft-launcher-",
-    sums: "SHA256SUMS.txt",
-    icon_path: "assets/app-icon/hicolor/256x256/apps/ai.storyteller.artcraft-launcher.png",
-    comment: "Install and update the Craft apps",
-}];
+/// De onde vem o AppImage e como ele é conferido.
+#[derive(Debug, Clone, Copy)]
+pub enum Source {
+    /// Última release, conferida pelo arquivo de checksums dela.
+    Latest {
+        /// Começo do nome do AppImage (`<prefixo><versão>-linux-<arch>.AppImage`).
+        prefix: &'static str,
+        /// Arquivo de checksums da release (formato do sha256sum).
+        sums: &'static str,
+    },
+    /// Versão fixada pelo Lyra, conferida pelo SHA-256 fixado aqui.
+    Pinned {
+        tag: &'static str,
+        /// AppImage x86_64 da release.
+        file: &'static str,
+        sha256: &'static str,
+    },
+}
+
+pub const APPS: &[App] = &[
+    App {
+        id: "artcraft-launcher",
+        name: "ArtCraft Launcher",
+        repo: "storytold/craft-launcher",
+        source: Source::Latest {
+            prefix: "artcraft-launcher-",
+            sums: "SHA256SUMS.txt",
+        },
+        icon_path: "assets/app-icon/hicolor/256x256/apps/ai.storyteller.artcraft-launcher.png",
+        comment: "Install and update the Craft apps",
+    },
+    App {
+        id: "freeshow",
+        name: "FreeShow",
+        repo: "ChurchApps/FreeShow",
+        source: Source::Pinned {
+            tag: "v1.6.7",
+            file: "FreeShow-1.6.7-x86_64.AppImage",
+            sha256: "bc6a20b6ff0975d4753215f30a4a3f305cd27473bdb0e6f02a56a631064c35ef",
+        },
+        icon_path: "public/icon.png",
+        comment: "Presentations for churches and events",
+    },
+];
 
 pub fn app(id: &str) -> Option<&'static App> {
     APPS.iter().find(|app| app.id == id)
@@ -82,10 +118,10 @@ fn arch() -> &'static str {
 }
 
 /// Nome do AppImage desta arquitetura entre os assets da release.
-pub fn pick_asset<'a>(app: &App, assets: &'a [String], arch: &str) -> Option<&'a String> {
+pub fn pick_asset<'a>(prefix: &str, assets: &'a [String], arch: &str) -> Option<&'a String> {
     let suffix = format!("-linux-{arch}.AppImage");
     assets.iter().find(|name| {
-        name.strip_prefix(app.prefix)
+        name.strip_prefix(prefix)
             .and_then(|rest| rest.strip_suffix(suffix.as_str()))
             .is_some_and(|version| {
                 !version.is_empty() && version.chars().all(|c| c.is_ascii_digit() || c == '.')
@@ -155,20 +191,26 @@ fn install(app: &App, report: &dyn Fn(u32, String)) -> Result<(), String> {
     let home = home().ok_or_else(|| gettext("Pasta pessoal não encontrada."))?;
     let data = data_dir().ok_or_else(|| gettext("Pasta pessoal não encontrada."))?;
     let client = client()?;
-    report(5, gettext("Procurando a versão mais recente…"));
-    let release: Release = serde_json::from_slice(&get(
-        &client,
-        &format!("https://api.github.com/repos/{}/releases/latest", app.repo),
-    )?)
-    .map_err(|error| error.to_string())?;
+    let release_url = match app.source {
+        Source::Latest { .. } => {
+            report(5, gettext("Procurando a versão mais recente…"));
+            format!("https://api.github.com/repos/{}/releases/latest", app.repo)
+        }
+        Source::Pinned { tag, .. } => {
+            report(5, gettext("Procurando a versão conferida pelo Lyra…"));
+            format!(
+                "https://api.github.com/repos/{}/releases/tags/{tag}",
+                app.repo
+            )
+        }
+    };
+    let release: Release =
+        serde_json::from_slice(&get(&client, &release_url)?).map_err(|error| error.to_string())?;
     let names: Vec<String> = release
         .assets
         .iter()
         .map(|asset| asset.name.clone())
         .collect();
-    let file = pick_asset(app, &names, arch())
-        .ok_or_else(|| gettext("A versão mais recente não tem AppImage para este computador."))?
-        .clone();
     let url_of = |name: &str| {
         release
             .assets
@@ -176,11 +218,29 @@ fn install(app: &App, report: &dyn Fn(u32, String)) -> Result<(), String> {
             .find(|asset| asset.name == name)
             .map(|asset| asset.browser_download_url.clone())
     };
-    let sums_url = url_of(app.sums)
-        .ok_or_else(|| gettext("A release não publica checksums; nada foi instalado."))?;
-    let sums = String::from_utf8_lossy(&get(&client, &sums_url)?).into_owned();
-    let expected = checksum_for(&sums, &file)
-        .ok_or_else(|| gettext("A release não publica checksums; nada foi instalado."))?;
+    let (file, expected) = match app.source {
+        Source::Latest { prefix, sums } => {
+            let file = pick_asset(prefix, &names, arch())
+                .ok_or_else(|| {
+                    gettext("A versão mais recente não tem AppImage para este computador.")
+                })?
+                .clone();
+            let sums_url = url_of(sums)
+                .ok_or_else(|| gettext("A release não publica checksums; nada foi instalado."))?;
+            let sums = String::from_utf8_lossy(&get(&client, &sums_url)?).into_owned();
+            let expected = checksum_for(&sums, &file)
+                .ok_or_else(|| gettext("A release não publica checksums; nada foi instalado."))?;
+            (file, expected)
+        }
+        Source::Pinned { file, sha256, .. } => {
+            if arch() != "x86_64" || !names.iter().any(|name| name == file) {
+                return Err(gettext(
+                    "A versão conferida pelo Lyra não tem AppImage para este computador.",
+                ));
+            }
+            (file.to_owned(), sha256.to_owned())
+        }
+    };
     report(20, gettext("Baixando {file}…").replace("{file}", &file));
     let image = get(&client, &url_of(&file).unwrap_or_default())?;
     if sha256_hex(&image) != expected {
@@ -306,6 +366,13 @@ mod tests {
 
     const LAUNCHER: &App = &APPS[0];
 
+    fn launcher_prefix() -> &'static str {
+        match LAUNCHER.source {
+            Source::Latest { prefix, .. } => prefix,
+            Source::Pinned { .. } => unreachable!(),
+        }
+    }
+
     #[test]
     fn picks_only_the_appimage_for_this_arch() {
         let assets: Vec<String> = [
@@ -318,16 +385,16 @@ mod tests {
         .map(String::from)
         .to_vec();
         assert_eq!(
-            pick_asset(LAUNCHER, &assets, "x86_64").map(String::as_str),
+            pick_asset(launcher_prefix(), &assets, "x86_64").map(String::as_str),
             Some("artcraft-launcher-0.12.0-linux-x86_64.AppImage")
         );
         assert_eq!(
-            pick_asset(LAUNCHER, &assets, "aarch64").map(String::as_str),
+            pick_asset(launcher_prefix(), &assets, "aarch64").map(String::as_str),
             Some("artcraft-launcher-0.12.0-linux-aarch64.AppImage")
         );
-        assert_eq!(pick_asset(LAUNCHER, &assets, "riscv64"), None);
+        assert_eq!(pick_asset(launcher_prefix(), &assets, "riscv64"), None);
         let tricky = vec!["artcraft-launcher-evil;rm-linux-x86_64.AppImage".to_owned()];
-        assert_eq!(pick_asset(LAUNCHER, &tricky, "x86_64"), None);
+        assert_eq!(pick_asset(launcher_prefix(), &tricky, "x86_64"), None);
     }
 
     #[test]
@@ -358,6 +425,24 @@ mod tests {
         for app in APPS {
             assert_eq!(app.repo.matches('/').count(), 1, "{}", app.id);
             assert!(!app.icon_path.starts_with('/'), "{}", app.id);
+        }
+    }
+
+    #[test]
+    fn pinned_apps_fix_a_valid_sha256() {
+        for app in APPS {
+            if let Source::Pinned { tag, file, sha256 } = app.source {
+                assert!(tag.starts_with('v'), "{}", app.id);
+                assert!(file.ends_with("-x86_64.AppImage"), "{}", app.id);
+                assert_eq!(sha256.len(), 64, "{}", app.id);
+                assert!(
+                    sha256
+                        .chars()
+                        .all(|c| c.is_ascii_hexdigit() && !c.is_ascii_uppercase()),
+                    "{}",
+                    app.id
+                );
+            }
         }
     }
 }

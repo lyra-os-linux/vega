@@ -7116,3 +7116,31 @@ msgstr ""
 
 msgid "área de trabalho remota"
 msgstr ""
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "apresentações"
+msgstr ""
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "projeção"
+msgstr ""
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "igreja"
+msgstr ""
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "letras de músicas"
+msgstr ""
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Apresentações e projeção para igrejas e eventos"
+msgstr ""
+
+#: src/backend/appimage_apps.rs
+msgid "Procurando a versão conferida pelo Lyra…"
+msgstr ""
+
+#: src/backend/appimage_apps.rs
+msgid "A versão conferida pelo Lyra não tem AppImage para este computador."
+msgstr ""

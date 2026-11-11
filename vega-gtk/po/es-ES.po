@@ -6461,3 +6461,31 @@ msgstr "videoconferencia"
 
 msgid "área de trabalho remota"
 msgstr "escritorio remoto"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "apresentações"
+msgstr "presentaciones"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "projeção"
+msgstr "proyección"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "igreja"
+msgstr "iglesia"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "letras de músicas"
+msgstr "letras de canciones"
+
+#: ui/js/pages/software/popular-catalog.js
+msgid "Apresentações e projeção para igrejas e eventos"
+msgstr "Presentaciones y proyección para iglesias y eventos"
+
+#: src/backend/appimage_apps.rs
+msgid "Procurando a versão conferida pelo Lyra…"
+msgstr "Buscando la versión verificada por Lyra…"
+
+#: src/backend/appimage_apps.rs
+msgid "A versão conferida pelo Lyra não tem AppImage para este computador."
+msgstr "La versión verificada por Lyra no tiene AppImage para este equipo."
