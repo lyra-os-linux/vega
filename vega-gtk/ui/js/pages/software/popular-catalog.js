@@ -152,6 +152,9 @@ export const POPULAR = [
     title: N_("Escritório e anotações"),
     apps: [
       { name: "ONLYOFFICE", origin: "flathub", id: "org.onlyoffice.desktopeditors", tasks: ["edit", "study"], tags: [N_("alternativa ao Microsoft Office"), N_("Word"), N_("Excel"), N_("PowerPoint")], text: N_("Documentos, planilhas e apresentações") },
+      // vega#212: IRPF do site da Receita, versão e SHA-256 fixados em
+      // backend/receita_apps.rs; instala em ~/ProgramasRFB, sem senha.
+      { name: "IRPF 2026", origin: "receita", id: "irpf2026", version: "1.5", tags: [N_("Imposto de Renda"), N_("declaração"), N_("Receita Federal")], text: N_("Declaração do Imposto de Renda 2026, do site da Receita Federal") },
       { name: "WPS Office", origin: "flathub", id: "com.wps.Office", tasks: ["edit", "study"], tags: [N_("alternativa ao Microsoft Office"), N_("Word"), N_("Excel"), N_("PowerPoint"), N_("PDF")], text: N_("Documentos, planilhas, apresentações e PDF, com visual parecido com o do Office") },
       { name: "Obsidian", origin: "flathub", id: "md.obsidian.Obsidian", tasks: ["study"], tags: [N_("anotações"), N_("Markdown")], text: N_("Anotações em Markdown, com links entre as notas") },
       { name: "Planify", origin: "flathub", id: "io.github.alainm23.planify", logo: "io.github.alainm23.planify", tags: [N_("lista de tarefas")], text: N_("Tarefas, lembretes e projetos") },

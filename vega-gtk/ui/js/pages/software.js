@@ -6,7 +6,7 @@ import { call, pick } from "../api.js";
 import { refreshUpdates } from "../health.js";
 import { N_, t } from "../i18n.js";
 import { local, saveLocal } from "../store.js";
-import { runSoftware, runWindows, runWindowsFile, runWindowsRemove, runNpm, runAppImage, runningTasks, onTasks, transactionPanel } from "../tasks.js";
+import { runSoftware, runWindows, runWindowsFile, runWindowsRemove, runNpm, runAppImage, runReceita, runningTasks, onTasks, transactionPanel } from "../tasks.js";
 import { h, icon, clear, button, badge, segmented, list, section, empty, skeletonRows, confirm, sheet, toast, fail, tile, normalize, meter, banner } from "../ui.js";
 import { preparationPanel } from "./software/preparation.js";
 import { requireRestart } from "../restart.js";
@@ -53,7 +53,7 @@ const SHOWCASES = {
 /** Cartões de todas as vitrines, para a busca offline do catálogo curado. */
 const CURATED = curatedEntries(Object.entries(SHOWCASES).map(([tab, { label, catalog }]) => ({ tab, label, catalog })));
 /** Origens instaladas na conta do usuário: sem detalhes no vegad, removidas pelo cartão. */
-const USER_ORIGINS = new Set(["windows", "npm", "appimage"]);
+const USER_ORIGINS = new Set(["windows", "npm", "appimage", "receita"]);
 const ORIGIN_RANK = { official: 0, flathub: 1 };
 
 // Estado que sobrevive à troca de página, como os widgets do vega-gtk.
@@ -69,7 +69,7 @@ const memory = {
 };
 
 const queueKey = (pkg) => `${pkg.origin}\u0000${pkg.id}`;
-const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "appimage" ? "AppImage" : origin);
+const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "appimage" ? "AppImage" : origin === "receita" ? t("Receita Federal") : origin);
 const rankOrigin = (a, b) => (ORIGIN_RANK[a.origin] ?? 2) - (ORIGIN_RANK[b.origin] ?? 2);
 
 function packageIcon(pkg, size = 40) {
@@ -446,7 +446,9 @@ export default {
       // Apps do Windows instalados podem ser removidos aqui mesmo: não
       // aparecem na aba Instalados, que lista pacotes e Flatpaks.
       else if (external) action = button(t("Instalado"), { size: "sm", icon: "check", disabled: true, title: t("Já instalado fora do Vega") });
-      else if (installed && USER_ORIGINS.has(app.origin)) action = [
+      // O Vega não remove os programas da Receita: as declarações ficam na
+      // pasta do programa (receita_apps.rs).
+      else if (installed && USER_ORIGINS.has(app.origin) && app.origin !== "receita") action = [
         badge(t("Instalado"), "green", "check"),
         button(t("Remover"), { size: "sm", icon: "trash", kind: "danger", disabled: busy, onClick: (e) => { e.stopPropagation(); removeUserApp(app); } }),
       ];
@@ -457,6 +459,7 @@ export default {
         if (app.origin === "windows") installWindows(app);
         else if (app.origin === "npm") installNpm(app);
         else if (app.origin === "appimage") installAppImage(app);
+        else if (app.origin === "receita") installReceita(app);
         else if (app.repo?.package) installFromRepoPackage(app);
         else if (app.repo) installFromRepo(app);
         else packageAction(pkg);
@@ -741,6 +744,34 @@ export default {
       load();
     }
 
+    /**
+     * Programa da Receita Federal (IRPF): o Vega baixa do site da Receita a
+     * versão conferida pelo Lyra, confere o checksum e instala na conta do
+     * usuário, sem senha, com o Java que vem no instalador.
+     */
+    async function installReceita(app) {
+      const ok = await confirm({
+        title: t("Instalar {name}?", { name: app.name }),
+        text: t("O Vega baixa o programa do site da Receita Federal, confere se é a versão {version} verificada pelo Lyra e instala na sua conta, em ~/ProgramasRFB, sem senha. As declarações ficam nessa pasta.", { version: app.version }),
+        ic: "download",
+        confirmLabel: t("Instalar"),
+        required: true,
+      });
+      if (!ok) return;
+      let started;
+      try {
+        started = await runReceita(app.id, t("Instalando {name}…", { name: app.name }));
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      showTask(started.task);
+      paint();
+      const result = await started.done;
+      if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
+      popularInstalled = null;
+      load();
+    }
+
     async function installWindows(app) {
       const ok = await confirm({
         title: t("Instalar {name}?", { name: app.name }),
@@ -769,12 +800,13 @@ export default {
       // (instalador próprio na conta do usuário); se o comando existe, o
       // cartão mostra "Instalado".
       const byCommand = Object.values(SHOWCASES).flatMap((showcase) => showcase.catalog.flatMap((section) => section.apps)).filter((app) => app.command);
-      const [details, packages, windows, npmApps, appImages, ia32, boot, commands] = await Promise.all([
+      const [details, packages, windows, npmApps, appImages, receita, ia32, boot, commands] = await Promise.all([
         call("software_details", { origin: "official", id: "flatpak" }).catch(() => null),
         call("software_installed"),
         call("windows_installed").catch(() => []),
         call("npm_installed").catch(() => []),
         call("appimage_installed").catch(() => []),
+        call("receita_installed").catch(() => []),
         call("windows_ia32").catch(() => true),
         call("kernel_boot_status").catch(() => null),
         byCommand.length ? call("commands_present", { names: [...new Set(byCommand.map((app) => app.command))] }).catch(() => []) : [],
@@ -787,6 +819,7 @@ export default {
         ...windows.map((id) => queueKey({ origin: "windows", id })),
         ...npmApps.map((id) => queueKey({ origin: "npm", id })),
         ...appImages.map((id) => queueKey({ origin: "appimage", id })),
+        ...receita.map((id) => queueKey({ origin: "receita", id })),
       ]);
       const found = new Set(commands);
       popularExternal = new Set(byCommand

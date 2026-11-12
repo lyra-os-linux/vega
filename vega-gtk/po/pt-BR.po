@@ -6719,3 +6719,36 @@ msgstr "Controle de iluminação DMX para palcos e eventos"
 
 msgid "Visualiza, compara, instala e organiza fontes"
 msgstr "Visualiza, compara, instala e organiza fontes"
+
+msgid "Esta versão ainda não foi conferida pelo Lyra. O Vega aceita só a versão {version}."
+msgstr "Esta versão ainda não foi conferida pelo Lyra. O Vega aceita só a versão {version}."
+
+msgid "O arquivo não confere com o checksum conferido pelo Lyra; ele pode estar corrompido ou ter sido alterado. Nada foi instalado."
+msgstr "O arquivo não confere com o checksum conferido pelo Lyra; ele pode estar corrompido ou ter sido alterado. Nada foi instalado."
+
+msgid "A Receita só publica este programa para x86_64."
+msgstr "A Receita só publica este programa para x86_64."
+
+msgid "Baixando {file} do site da Receita Federal…"
+msgstr "Baixando {file} do site da Receita Federal…"
+
+msgid "Conferindo o instalador…"
+msgstr "Conferindo o instalador…"
+
+msgid "O instalador da Receita falhou ({status})."
+msgstr "O instalador da Receita falhou ({status})."
+
+msgid "Imposto de Renda"
+msgstr "Imposto de Renda"
+
+msgid "declaração"
+msgstr "declaração"
+
+msgid "Receita Federal"
+msgstr "Receita Federal"
+
+msgid "Declaração do Imposto de Renda 2026, do site da Receita Federal"
+msgstr "Declaração do Imposto de Renda 2026, do site da Receita Federal"
+
+msgid "O Vega baixa o programa do site da Receita Federal, confere se é a versão {version} verificada pelo Lyra e instala na sua conta, em ~/ProgramasRFB, sem senha. As declarações ficam nessa pasta."
+msgstr "O Vega baixa o programa do site da Receita Federal, confere se é a versão {version} verificada pelo Lyra e instala na sua conta, em ~/ProgramasRFB, sem senha. As declarações ficam nessa pasta."

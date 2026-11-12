@@ -7375,3 +7375,36 @@ msgstr ""
 
 msgid "Visualiza, compara, instala e organiza fontes"
 msgstr ""
+
+msgid "Esta versão ainda não foi conferida pelo Lyra. O Vega aceita só a versão {version}."
+msgstr ""
+
+msgid "O arquivo não confere com o checksum conferido pelo Lyra; ele pode estar corrompido ou ter sido alterado. Nada foi instalado."
+msgstr ""
+
+msgid "A Receita só publica este programa para x86_64."
+msgstr ""
+
+msgid "Baixando {file} do site da Receita Federal…"
+msgstr ""
+
+msgid "Conferindo o instalador…"
+msgstr ""
+
+msgid "O instalador da Receita falhou ({status})."
+msgstr ""
+
+msgid "Imposto de Renda"
+msgstr ""
+
+msgid "declaração"
+msgstr ""
+
+msgid "Receita Federal"
+msgstr ""
+
+msgid "Declaração do Imposto de Renda 2026, do site da Receita Federal"
+msgstr ""
+
+msgid "O Vega baixa o programa do site da Receita Federal, confere se é a versão {version} verificada pelo Lyra e instala na sua conta, em ~/ProgramasRFB, sem senha. As declarações ficam nessa pasta."
+msgstr ""

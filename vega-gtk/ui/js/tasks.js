@@ -127,6 +127,14 @@ export async function runAppImage(install, id, title) {
   return started;
 }
 
+/** Programa da Receita Federal na conta do usuário (receita_apps.rs). */
+export async function runReceita(id, title) {
+  const callId = await call("receita_install", { id });
+  const started = track(`software:${callId}`, title, "software");
+  started.task.action = { kind: "install", origin: "receita", id };
+  return started;
+}
+
 /** Assistente de terminal pelo npm, na conta do usuário. */
 export async function runNpm(install, id, title) {
   const callId = await call(install ? "npm_install" : "npm_remove", { package: id });

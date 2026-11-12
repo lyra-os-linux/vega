@@ -120,6 +120,8 @@ fn main() -> ExitCode {
             appimage_apps::appimage_installed,
             appimage_apps::appimage_install,
             appimage_apps::appimage_remove,
+            receita_apps::receita_installed,
+            receita_apps::receita_install,
             backup::backup_configs,
             backup::backup_create_config,
             backup::backup_delete_config,
