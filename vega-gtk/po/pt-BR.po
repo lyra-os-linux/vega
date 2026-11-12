@@ -6932,3 +6932,132 @@ msgstr "roteamento de áudio"
 
 msgid "Roteamento de áudio do PipeWire, mais simples"
 msgstr "Roteamento de áudio do PipeWire, mais simples"
+
+msgid "atalhos"
+msgstr "atalhos"
+
+msgid "Atalhos do OBS funcionando com a janela fora de foco"
+msgstr "Atalhos do OBS funcionando com a janela fora de foco"
+
+msgid "câmera virtual"
+msgstr "câmera virtual"
+
+msgid "Câmera virtual do OBS para Meet, Zoom e Discord (módulo do kernel assinado pelo openSUSE)"
+msgstr "Câmera virtual do OBS para Meet, Zoom e Discord (módulo do kernel assinado pelo openSUSE)"
+
+msgid "Captura jogos Vulkan e OpenGL com pouco custo"
+msgstr "Captura jogos Vulkan e OpenGL com pouco custo"
+
+msgid "celular como webcam"
+msgstr "celular como webcam"
+
+msgid "Cena vertical para Shorts, Reels e TikTok"
+msgstr "Cena vertical para Shorts, Reels e TikTok"
+
+msgid "Configura o Elgato Stream Deck"
+msgstr "Configura o Elgato Stream Deck"
+
+msgid "Controle do OBS pela rede, usado pelo StreamController"
+msgstr "Controle do OBS pela rede, usado pelo StreamController"
+
+msgid "desfoque"
+msgstr "desfoque"
+
+msgid "Desfoque de fundo e de partes da cena"
+msgstr "Desfoque de fundo e de partes da cena"
+
+msgid "Escolhe a transição para cada par de cenas"
+msgstr "Escolhe a transição para cada par de cenas"
+
+msgid "Fontes e codificadores do GStreamer no OBS"
+msgstr "Fontes e codificadores do GStreamer no OBS"
+
+msgid "fundo virtual"
+msgstr "fundo virtual"
+
+msgid "Grava a câmera e a tela em arquivos separados, para editar depois"
+msgstr "Grava a câmera e a tela em arquivos separados, para editar depois"
+
+msgid "Gravação de tela simples, para quem não precisa do OBS"
+msgstr "Gravação de tela simples, para quem não precisa do OBS"
+
+msgid "Grava jogos pela placa de vídeo, com replay instantâneo"
+msgstr "Grava jogos pela placa de vídeo, com replay instantâneo"
+
+msgid "Gravar e transmitir"
+msgstr "Gravar e transmitir"
+
+msgid "gravar jogos"
+msgstr "gravar jogos"
+
+msgid "Logos e letreiros por cima de todas as cenas"
+msgstr "Logos e letreiros por cima de todas as cenas"
+
+msgid "Meet"
+msgstr "Meet"
+
+msgid "Mostra o teclado e o mouse na tela, para tutoriais"
+msgstr "Mostra o teclado e o mouse na tela, para tutoriais"
+
+msgid "multistream"
+msgstr "multistream"
+
+msgid "OpenGL"
+msgstr "OpenGL"
+
+msgid "plugin do OBS"
+msgstr "plugin do OBS"
+
+msgid "Recebe a câmera do celular direto no OBS"
+msgstr "Recebe a câmera do celular direto no OBS"
+
+msgid "Reels"
+msgstr "Reels"
+
+msgid "Remove o fundo da câmera sem tela verde"
+msgstr "Remove o fundo da câmera sem tela verde"
+
+msgid "replay"
+msgstr "replay"
+
+msgid "Shorts"
+msgstr "Shorts"
+
+msgid "sobreposição"
+msgstr "sobreposição"
+
+msgid "Stream Deck"
+msgstr "Stream Deck"
+
+msgid "teleprompter"
+msgstr "teleprompter"
+
+msgid "Teleprompter para gravar e apresentar"
+msgstr "Teleprompter para gravar e apresentar"
+
+msgid "TikTok"
+msgstr "TikTok"
+
+msgid "transições"
+msgstr "transições"
+
+msgid "Transições que movem e animam as fontes"
+msgstr "Transições que movem e animam as fontes"
+
+msgid "Transmite em várias plataformas ao mesmo tempo"
+msgstr "Transmite em várias plataformas ao mesmo tempo"
+
+msgid "Troca de cena sozinho, por regras"
+msgstr "Troca de cena sozinho, por regras"
+
+msgid "tutoriais"
+msgstr "tutoriais"
+
+msgid "Usa o celular como câmera; instale o app DroidCam no celular"
+msgstr "Usa o celular como câmera; instale o app DroidCam no celular"
+
+msgid "Vulkan"
+msgstr "Vulkan"
+
+msgid "Zoom"
+msgstr "Zoom"

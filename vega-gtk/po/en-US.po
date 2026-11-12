@@ -6933,3 +6933,132 @@ msgstr "None"
 
 msgid "Roteamento de áudio do PipeWire, mais simples"
 msgstr "None"
+
+msgid "atalhos"
+msgstr "None"
+
+msgid "Atalhos do OBS funcionando com a janela fora de foco"
+msgstr "None"
+
+msgid "câmera virtual"
+msgstr "None"
+
+msgid "Câmera virtual do OBS para Meet, Zoom e Discord (módulo do kernel assinado pelo openSUSE)"
+msgstr "None"
+
+msgid "Captura jogos Vulkan e OpenGL com pouco custo"
+msgstr "None"
+
+msgid "celular como webcam"
+msgstr "None"
+
+msgid "Cena vertical para Shorts, Reels e TikTok"
+msgstr "None"
+
+msgid "Configura o Elgato Stream Deck"
+msgstr "None"
+
+msgid "Controle do OBS pela rede, usado pelo StreamController"
+msgstr "None"
+
+msgid "desfoque"
+msgstr "None"
+
+msgid "Desfoque de fundo e de partes da cena"
+msgstr "None"
+
+msgid "Escolhe a transição para cada par de cenas"
+msgstr "None"
+
+msgid "Fontes e codificadores do GStreamer no OBS"
+msgstr "None"
+
+msgid "fundo virtual"
+msgstr "None"
+
+msgid "Grava a câmera e a tela em arquivos separados, para editar depois"
+msgstr "None"
+
+msgid "Gravação de tela simples, para quem não precisa do OBS"
+msgstr "None"
+
+msgid "Grava jogos pela placa de vídeo, com replay instantâneo"
+msgstr "None"
+
+msgid "Gravar e transmitir"
+msgstr "None"
+
+msgid "gravar jogos"
+msgstr "None"
+
+msgid "Logos e letreiros por cima de todas as cenas"
+msgstr "None"
+
+msgid "Meet"
+msgstr "None"
+
+msgid "Mostra o teclado e o mouse na tela, para tutoriais"
+msgstr "None"
+
+msgid "multistream"
+msgstr "None"
+
+msgid "OpenGL"
+msgstr "None"
+
+msgid "plugin do OBS"
+msgstr "None"
+
+msgid "Recebe a câmera do celular direto no OBS"
+msgstr "None"
+
+msgid "Reels"
+msgstr "None"
+
+msgid "Remove o fundo da câmera sem tela verde"
+msgstr "None"
+
+msgid "replay"
+msgstr "None"
+
+msgid "Shorts"
+msgstr "None"
+
+msgid "sobreposição"
+msgstr "None"
+
+msgid "Stream Deck"
+msgstr "None"
+
+msgid "teleprompter"
+msgstr "None"
+
+msgid "Teleprompter para gravar e apresentar"
+msgstr "None"
+
+msgid "TikTok"
+msgstr "None"
+
+msgid "transições"
+msgstr "None"
+
+msgid "Transições que movem e animam as fontes"
+msgstr "None"
+
+msgid "Transmite em várias plataformas ao mesmo tempo"
+msgstr "None"
+
+msgid "Troca de cena sozinho, por regras"
+msgstr "None"
+
+msgid "tutoriais"
+msgstr "None"
+
+msgid "Usa o celular como câmera; instale o app DroidCam no celular"
+msgstr "None"
+
+msgid "Vulkan"
+msgstr "None"
+
+msgid "Zoom"
+msgstr "None"

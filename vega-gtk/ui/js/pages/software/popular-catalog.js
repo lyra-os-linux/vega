@@ -76,6 +76,38 @@ export const POPULAR = [
     ],
   },
   {
+    // vega#196: kit do OBS. Os plugins são extensões Flatpak do OBS
+    // (com.obsproject.Studio.Plugin.*), instaladas pelo vegad com --runtime
+    // (vegad#157). O DistroAV (NDI) fica de fora até conferir como o
+    // Flatpak obtém o runtime NDI, que é proprietário.
+    id: "obs-kit",
+    title: N_("Gravar e transmitir"),
+    tasks: ["record"],
+    apps: [
+      { name: "v4l2loopback", origin: "official", id: "v4l2loopback-autoload", tags: [N_("câmera virtual"), N_("Meet"), N_("Zoom")], text: N_("Câmera virtual do OBS para Meet, Zoom e Discord (módulo do kernel assinado pelo openSUSE)") },
+      { name: "DroidCam", origin: "official", id: "droidcam", tags: [N_("celular como webcam")], text: N_("Usa o celular como câmera; instale o app DroidCam no celular") },
+      { name: "DroidCam OBS", origin: "flathub", id: "com.obsproject.Studio.Plugin.DroidCam", tags: [N_("celular como webcam"), N_("plugin do OBS")], text: N_("Recebe a câmera do celular direto no OBS") },
+      { name: "Background Removal", origin: "flathub", id: "com.obsproject.Studio.Plugin.BackgroundRemoval", tags: [N_("plugin do OBS"), N_("fundo virtual")], text: N_("Remove o fundo da câmera sem tela verde") },
+      { name: "Aitum Multistream", origin: "flathub", id: "com.obsproject.Studio.Plugin.AitumMultistream", tags: [N_("plugin do OBS"), N_("multistream")], text: N_("Transmite em várias plataformas ao mesmo tempo") },
+      { name: "Vertical Canvas", origin: "flathub", id: "com.obsproject.Studio.Plugin.VerticalCanvas", tags: [N_("plugin do OBS"), N_("Shorts"), N_("Reels"), N_("TikTok")], text: N_("Cena vertical para Shorts, Reels e TikTok") },
+      { name: "Advanced Scene Switcher", origin: "flathub", id: "com.obsproject.Studio.Plugin.SceneSwitcher", tags: [N_("plugin do OBS")], text: N_("Troca de cena sozinho, por regras") },
+      { name: "Source Record", origin: "flathub", id: "com.obsproject.Studio.Plugin.SourceRecord", tags: [N_("plugin do OBS")], text: N_("Grava a câmera e a tela em arquivos separados, para editar depois") },
+      { name: "Move Transition", origin: "flathub", id: "com.obsproject.Studio.Plugin.MoveTransition", tags: [N_("plugin do OBS"), N_("transições")], text: N_("Transições que movem e animam as fontes") },
+      { name: "Transition Table", origin: "flathub", id: "com.obsproject.Studio.Plugin.TransitionTable", tags: [N_("plugin do OBS"), N_("transições")], text: N_("Escolhe a transição para cada par de cenas") },
+      { name: "Composite Blur", origin: "flathub", id: "com.obsproject.Studio.Plugin.CompositeBlur", tags: [N_("plugin do OBS"), N_("desfoque")], text: N_("Desfoque de fundo e de partes da cena") },
+      { name: "Downstream Keyer", origin: "flathub", id: "com.obsproject.Studio.Plugin.DownstreamKeyer", tags: [N_("plugin do OBS"), N_("sobreposição")], text: N_("Logos e letreiros por cima de todas as cenas") },
+      { name: "Input Overlay", origin: "flathub", id: "com.obsproject.Studio.Plugin.InputOverlay", tags: [N_("plugin do OBS"), N_("tutoriais")], text: N_("Mostra o teclado e o mouse na tela, para tutoriais") },
+      { name: "Wayland Hotkeys", origin: "flathub", id: "com.obsproject.Studio.Plugin.WaylandHotkeys", tags: [N_("plugin do OBS"), N_("atalhos")], text: N_("Atalhos do OBS funcionando com a janela fora de foco") },
+      { name: "OBS Vkcapture", origin: "flathub", id: "com.obsproject.Studio.Plugin.OBSVkCapture", tags: [N_("plugin do OBS"), N_("Vulkan"), N_("OpenGL")], text: N_("Captura jogos Vulkan e OpenGL com pouco custo") },
+      { name: "obs-websocket", origin: "flathub", id: "com.obsproject.Studio.Plugin.WebSocket", tags: [N_("plugin do OBS"), N_("Stream Deck")], text: N_("Controle do OBS pela rede, usado pelo StreamController") },
+      { name: "obs-gstreamer", origin: "flathub", id: "com.obsproject.Studio.Plugin.Gstreamer", tags: [N_("plugin do OBS")], text: N_("Fontes e codificadores do GStreamer no OBS") },
+      { name: "StreamController", origin: "flathub", id: "com.core447.StreamController", logo: "com.core447.StreamController", tags: [N_("Stream Deck")], text: N_("Configura o Elgato Stream Deck") },
+      { name: "QPrompt", origin: "flathub", id: "com.cuperino.qprompt", logo: "com.cuperino.qprompt", tags: [N_("teleprompter")], text: N_("Teleprompter para gravar e apresentar") },
+      { name: "GPU Screen Recorder", origin: "flathub", id: "com.dec05eba.gpu_screen_recorder", logo: "com.dec05eba.gpu_screen_recorder", tags: [N_("gravar jogos"), N_("replay")], text: N_("Grava jogos pela placa de vídeo, com replay instantâneo") },
+      { name: "Kooha", origin: "flathub", id: "io.github.seadve.Kooha", logo: "io.github.seadve.Kooha", tags: [N_("gravar a tela")], text: N_("Gravação de tela simples, para quem não precisa do OBS") },
+    ],
+  },
+  {
     // vega#197: editar e publicar. Apps conferidos no Flathub em 12/11/2026.
     id: "publish-video",
     title: N_("Editar e publicar"),

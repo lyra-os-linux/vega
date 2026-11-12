@@ -7588,3 +7588,132 @@ msgstr ""
 
 msgid "Roteamento de áudio do PipeWire, mais simples"
 msgstr ""
+
+msgid "atalhos"
+msgstr ""
+
+msgid "Atalhos do OBS funcionando com a janela fora de foco"
+msgstr ""
+
+msgid "câmera virtual"
+msgstr ""
+
+msgid "Câmera virtual do OBS para Meet, Zoom e Discord (módulo do kernel assinado pelo openSUSE)"
+msgstr ""
+
+msgid "Captura jogos Vulkan e OpenGL com pouco custo"
+msgstr ""
+
+msgid "celular como webcam"
+msgstr ""
+
+msgid "Cena vertical para Shorts, Reels e TikTok"
+msgstr ""
+
+msgid "Configura o Elgato Stream Deck"
+msgstr ""
+
+msgid "Controle do OBS pela rede, usado pelo StreamController"
+msgstr ""
+
+msgid "desfoque"
+msgstr ""
+
+msgid "Desfoque de fundo e de partes da cena"
+msgstr ""
+
+msgid "Escolhe a transição para cada par de cenas"
+msgstr ""
+
+msgid "Fontes e codificadores do GStreamer no OBS"
+msgstr ""
+
+msgid "fundo virtual"
+msgstr ""
+
+msgid "Grava a câmera e a tela em arquivos separados, para editar depois"
+msgstr ""
+
+msgid "Gravação de tela simples, para quem não precisa do OBS"
+msgstr ""
+
+msgid "Grava jogos pela placa de vídeo, com replay instantâneo"
+msgstr ""
+
+msgid "Gravar e transmitir"
+msgstr ""
+
+msgid "gravar jogos"
+msgstr ""
+
+msgid "Logos e letreiros por cima de todas as cenas"
+msgstr ""
+
+msgid "Meet"
+msgstr ""
+
+msgid "Mostra o teclado e o mouse na tela, para tutoriais"
+msgstr ""
+
+msgid "multistream"
+msgstr ""
+
+msgid "OpenGL"
+msgstr ""
+
+msgid "plugin do OBS"
+msgstr ""
+
+msgid "Recebe a câmera do celular direto no OBS"
+msgstr ""
+
+msgid "Reels"
+msgstr ""
+
+msgid "Remove o fundo da câmera sem tela verde"
+msgstr ""
+
+msgid "replay"
+msgstr ""
+
+msgid "Shorts"
+msgstr ""
+
+msgid "sobreposição"
+msgstr ""
+
+msgid "Stream Deck"
+msgstr ""
+
+msgid "teleprompter"
+msgstr ""
+
+msgid "Teleprompter para gravar e apresentar"
+msgstr ""
+
+msgid "TikTok"
+msgstr ""
+
+msgid "transições"
+msgstr ""
+
+msgid "Transições que movem e animam as fontes"
+msgstr ""
+
+msgid "Transmite em várias plataformas ao mesmo tempo"
+msgstr ""
+
+msgid "Troca de cena sozinho, por regras"
+msgstr ""
+
+msgid "tutoriais"
+msgstr ""
+
+msgid "Usa o celular como câmera; instale o app DroidCam no celular"
+msgstr ""
+
+msgid "Vulkan"
+msgstr ""
+
+msgid "Zoom"
+msgstr ""
