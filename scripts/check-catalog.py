@@ -5,7 +5,8 @@ Sem opções, só a validação offline, usada na CI de PR:
 - todo app tem name, origin, id e text, e a origem é conhecida;
 - ids únicos por seção e seções únicas por catálogo;
 - id do Flathub no formato de id de app (com.empresa.App);
-- apps do Windows e AppImages existem em windows_apps.rs e appimage_apps.rs;
+- apps do Windows, AppImages e programas da Receita existem em
+  windows_apps.rs, appimage_apps.rs e receita_apps.rs;
 - `tasks` (seção ou cartão) entre as de TASKS (catalog-search.js) e `tags`
   como lista de textos;
 - textos e tags com tradução em en-US e es-ES (po/*.po).
@@ -18,6 +19,8 @@ Com --remote, também confere na rede (workflow diário catalog.yml):
   pacote do Lyra que registra o repositório;
 - `origin: "npm"`: o pacote existe no registro do npm;
 - receitas do Windows (RECIPES): a URL responde e o SHA-256 bate com o fixado;
+- programas da Receita (receita_apps.rs): o instalador fixado responde com o
+  tamanho fixado e a versão seguinte ainda não foi publicada;
 - AppImages: a última release tem o AppImage e o arquivo de checksums;
   nos fixados, a tag tem o arquivo e o SHA-256 confere com o do GitHub.
 Os verbos do winetricks não entram: o próprio winetricks confere o checksum.
@@ -43,7 +46,7 @@ import urllib.request
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 GTK = ROOT / "vega-gtk"
 CATALOGS = sorted((GTK / "ui" / "js" / "pages" / "software").glob("*-catalog.js"))
-ORIGINS = {"official", "flathub", "windows", "npm", "appimage"}
+ORIGINS = {"official", "flathub", "windows", "npm", "appimage", "receita", "preset"}
 FLATHUB_ID = re.compile(r"^[A-Za-z_][\w-]*(\.[A-Za-z_][\w-]*){2,}$")
 REPOS = [
     "https://download.opensuse.org/distribution/leap/16.1/repo/oss/",
@@ -129,6 +132,13 @@ def appimages():
     return apps
 
 
+def receita_programs():
+    """Programas da Receita: {id: (URL do instalador, tamanho)}."""
+    text = (GTK / "src" / "backend" / "receita_apps.rs").read_text(encoding="utf-8")
+    found = re.findall(r'id: "([^"]+)",.*?url: "([^"]+)",.*?size: ([0-9_]+),', text, re.S)
+    return {pid: (url, int(size.replace("_", ""))) for pid, url, size in found}
+
+
 def po_translations(path):
     """msgid → msgstr de um catálogo po."""
     entries, current, field = {}, {}, None
@@ -156,6 +166,7 @@ def check_offline(entries):
     tasks = task_ids()
     windows_ids = verbs() | set(recipes())
     appimage_ids = set(appimages())
+    receita_ids = set(receita_programs())
     translations = {lang: po_translations(GTK / "po" / f"{lang}.po") for lang in ("en-US", "es-ES")}
     texts = set()
     for where, section, app in entries:
@@ -172,6 +183,10 @@ def check_offline(entries):
             errors.append(f"{label}: {app_id!r} não está em VERBS nem em RECIPES (windows_apps.rs)")
         if origin == "appimage" and app_id not in appimage_ids:
             errors.append(f"{label}: {app_id!r} não está em APPS (appimage_apps.rs)")
+        if origin == "preset" and f'id: "{app_id}"' not in (GTK / "src" / "backend" / "easyeffects_presets.rs").read_text(encoding="utf-8"):
+            errors.append(f"{label}: {app_id!r} não está em PRESETS (easyeffects_presets.rs)")
+        if origin == "receita" and app_id not in receita_ids:
+            errors.append(f"{label}: {app_id!r} não está em PROGRAMS (receita_apps.rs)")
         repo = app.get("repo")
         if repo is not None and not repo.get("name"):
             errors.append(f"{label}: repo sem name")
@@ -273,6 +288,36 @@ def check_pinned_appimage(repo, tag, file, sha256):
     return None
 
 
+def content_length(url):
+    """Tamanho anunciado pelo servidor, ou None quando o arquivo não existe."""
+    request = urllib.request.Request(url, method="HEAD", headers={"User-Agent": USER_AGENT})
+    try:
+        with urllib.request.urlopen(request, timeout=120) as response:
+            return int(response.headers.get("Content-Length", -1))
+    except urllib.error.HTTPError as error:
+        if error.code in (404, 410):
+            return None
+        raise Unverified(f"{url}: HTTP {error.code}") from error
+    except (urllib.error.URLError, TimeoutError, OSError) as error:
+        raise Unverified(f"{url}: {error}") from error
+
+
+def check_receita(url, size):
+    """O instalador fixado continua no ar, e a Receita ainda não publicou o seguinte."""
+    published = content_length(url)
+    if published is None:
+        return f"{url} não existe mais"
+    if published != size:
+        return f"{url}: tamanho {published}, o fixado é {size}"
+    version = re.search(r"v(\d+)\.(\d+)\.sh\.bin$", url)
+    if version:
+        major, minor = int(version[1]), int(version[2])
+        following = url.replace(f"v{major}.{minor}.sh.bin", f"v{major}.{minor + 1}.sh.bin")
+        if content_length(following) is not None:
+            return f"a Receita publicou {following.rsplit('/', 1)[1]}: conferir o SHA-256 e atualizar receita_apps.rs"
+    return None
+
+
 def check_remote(entries):
     """Devolve (quebrados, não verificados)."""
     broken, unverified, jobs = [], [], []
@@ -313,6 +358,8 @@ def check_remote(entries):
     for aid, spec in sorted(appimages().items()):
         check = check_appimage if len(spec) == 3 else check_pinned_appimage
         jobs.append((f"AppImage {aid}", check, spec))
+    for pid, spec in sorted(receita_programs().items()):
+        jobs.append((f"Receita {pid}", check_receita, spec))
 
     def run(job):
         label, function, args = job

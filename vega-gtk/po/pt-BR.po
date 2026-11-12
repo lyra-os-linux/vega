@@ -6719,3 +6719,399 @@ msgstr "Controle de iluminação DMX para palcos e eventos"
 
 msgid "Visualiza, compara, instala e organiza fontes"
 msgstr "Visualiza, compara, instala e organiza fontes"
+
+msgid "Esta versão ainda não foi conferida pelo Lyra. O Vega aceita só a versão {version}."
+msgstr "Esta versão ainda não foi conferida pelo Lyra. O Vega aceita só a versão {version}."
+
+msgid "O arquivo não confere com o checksum conferido pelo Lyra; ele pode estar corrompido ou ter sido alterado. Nada foi instalado."
+msgstr "O arquivo não confere com o checksum conferido pelo Lyra; ele pode estar corrompido ou ter sido alterado. Nada foi instalado."
+
+msgid "A Receita só publica este programa para x86_64."
+msgstr "A Receita só publica este programa para x86_64."
+
+msgid "Baixando {file} do site da Receita Federal…"
+msgstr "Baixando {file} do site da Receita Federal…"
+
+msgid "Conferindo o instalador…"
+msgstr "Conferindo o instalador…"
+
+msgid "O instalador da Receita falhou ({status})."
+msgstr "O instalador da Receita falhou ({status})."
+
+msgid "Imposto de Renda"
+msgstr "Imposto de Renda"
+
+msgid "declaração"
+msgstr "declaração"
+
+msgid "Receita Federal"
+msgstr "Receita Federal"
+
+msgid "Declaração do Imposto de Renda 2026, do site da Receita Federal"
+msgstr "Declaração do Imposto de Renda 2026, do site da Receita Federal"
+
+msgid "O Vega baixa o programa do site da Receita Federal, confere se é a versão {version} verificada pelo Lyra e instala na sua conta, em ~/ProgramasRFB, sem senha. As declarações ficam nessa pasta."
+msgstr "O Vega baixa o programa do site da Receita Federal, confere se é a versão {version} verificada pelo Lyra e instala na sua conta, em ~/ProgramasRFB, sem senha. As declarações ficam nessa pasta."
+
+msgid "retificação"
+msgstr "retificação"
+
+msgid "Declaração de 2025, para retificar a que já foi entregue"
+msgstr "Declaração de 2025, para retificar a que já foi entregue"
+
+msgid "Ajusta tempo e estilo das legendas"
+msgstr "Ajusta tempo e estilo das legendas"
+
+msgid "Animação 2D vetorial"
+msgstr "Animação 2D vetorial"
+
+msgid "animação vetorial"
+msgstr "animação vetorial"
+
+msgid "Animação vetorial e Lottie, integrada ao Kdenlive"
+msgstr "Animação vetorial e Lottie, integrada ao Kdenlive"
+
+msgid "Aumenta a resolução de imagens com IA local"
+msgstr "Aumenta a resolução de imagens com IA local"
+
+msgid "aumentar resolução"
+msgstr "aumentar resolução"
+
+msgid "baixar vídeo"
+msgstr "baixar vídeo"
+
+msgid "Baixa vídeos que você publicou para arquivo"
+msgstr "Baixa vídeos que você publicou para arquivo"
+
+msgid "captura de tela"
+msgstr "captura de tela"
+
+msgid "Captura de tela com anotações"
+msgstr "Captura de tela com anotações"
+
+msgid "composição"
+msgstr "composição"
+
+msgid "Composição e efeitos visuais (VFX)"
+msgstr "Composição e efeitos visuais (VFX)"
+
+msgid "Corta o começo e o fim de um vídeo"
+msgstr "Corta o começo e o fim de um vídeo"
+
+msgid "cortar vídeo"
+msgstr "cortar vídeo"
+
+msgid "Corta vídeos sem recodificar, em segundos"
+msgstr "Corta vídeos sem recodificar, em segundos"
+
+msgid "Deixa capturas de tela prontas para publicar"
+msgstr "Deixa capturas de tela prontas para publicar"
+
+msgid "ditado"
+msgstr "ditado"
+
+msgid "Edição rápida de imagens"
+msgstr "Edição rápida de imagens"
+
+msgid "Edita os metadados de arquivos de áudio"
+msgstr "Edita os metadados de arquivos de áudio"
+
+msgid "Editar e publicar"
+msgstr "Editar e publicar"
+
+msgid "Editor de legendas com forma de onda do áudio"
+msgstr "Editor de legendas com forma de onda do áudio"
+
+msgid "Editor de legendas simples"
+msgstr "Editor de legendas simples"
+
+msgid "Editor de vídeo simples"
+msgstr "Editor de vídeo simples"
+
+msgid "efeitos visuais"
+msgstr "efeitos visuais"
+
+msgid "Fala para texto e texto para fala, offline"
+msgstr "Fala para texto e texto para fala, offline"
+
+msgid "fotografia"
+msgstr "fotografia"
+
+msgid "IA"
+msgstr "IA"
+
+msgid "legendas"
+msgstr "legendas"
+
+msgid "leitura em voz alta"
+msgstr "leitura em voz alta"
+
+msgid "Lottie"
+msgstr "Lottie"
+
+msgid "metadados"
+msgstr "metadados"
+
+msgid "miniaturas"
+msgstr "miniaturas"
+
+msgid "sem recodificar"
+msgstr "sem recodificar"
+
+msgid "tags de áudio"
+msgstr "tags de áudio"
+
+msgid "Transcreve e traduz áudio e vídeo offline, com o Whisper, e gera legendas"
+msgstr "Transcreve e traduz áudio e vídeo offline, com o Whisper, e gera legendas"
+
+msgid "transcrição"
+msgstr "transcrição"
+
+msgid "Whisper"
+msgstr "Whisper"
+
+msgid "Áudio e podcast"
+msgstr "Áudio e podcast"
+
+msgid "DAW"
+msgstr "DAW"
+
+msgid "DJ"
+msgstr "DJ"
+
+msgid "editor de áudio"
+msgstr "editor de áudio"
+
+msgid "efeitos"
+msgstr "efeitos"
+
+msgid "Efeitos de áudio profissionais para o Ardour e outros programas"
+msgstr "Efeitos de áudio profissionais para o Ardour e outros programas"
+
+msgid "estúdio"
+msgstr "estúdio"
+
+msgid "Estúdio de gravação e mixagem multipista"
+msgstr "Estúdio de gravação e mixagem multipista"
+
+msgid "Gravação e edição de áudio, derivado do Audacity"
+msgstr "Gravação e edição de áudio, derivado do Audacity"
+
+msgid "gravação multipista"
+msgstr "gravação multipista"
+
+msgid "Liga as saídas e entradas de áudio do PipeWire, por exemplo para mandar o jogo e a chamada separados ao OBS"
+msgstr "Liga as saídas e entradas de áudio do PipeWire, por exemplo para mandar o jogo e a chamada separados ao OBS"
+
+msgid "Limpa a voz do microfone: redução de ruído, compressor e equalizador"
+msgstr "Limpa a voz do microfone: redução de ruído, compressor e equalizador"
+
+msgid "microfone"
+msgstr "microfone"
+
+msgid "Mixagem para DJs e lives"
+msgstr "Mixagem para DJs e lives"
+
+msgid "PipeWire"
+msgstr "PipeWire"
+
+msgid "plugins de áudio"
+msgstr "plugins de áudio"
+
+msgid "produção musical"
+msgstr "produção musical"
+
+msgid "Produção musical: batidas, sintetizadores e trilhas"
+msgstr "Produção musical: batidas, sintetizadores e trilhas"
+
+msgid "redução de ruído"
+msgstr "redução de ruído"
+
+msgid "roteamento de áudio"
+msgstr "roteamento de áudio"
+
+msgid "Roteamento de áudio do PipeWire, mais simples"
+msgstr "Roteamento de áudio do PipeWire, mais simples"
+
+msgid "atalhos"
+msgstr "atalhos"
+
+msgid "Atalhos do OBS funcionando com a janela fora de foco"
+msgstr "Atalhos do OBS funcionando com a janela fora de foco"
+
+msgid "câmera virtual"
+msgstr "câmera virtual"
+
+msgid "Câmera virtual do OBS para Meet, Zoom e Discord (módulo do kernel assinado pelo openSUSE)"
+msgstr "Câmera virtual do OBS para Meet, Zoom e Discord (módulo do kernel assinado pelo openSUSE)"
+
+msgid "Captura jogos Vulkan e OpenGL com pouco custo"
+msgstr "Captura jogos Vulkan e OpenGL com pouco custo"
+
+msgid "celular como webcam"
+msgstr "celular como webcam"
+
+msgid "Cena vertical para Shorts, Reels e TikTok"
+msgstr "Cena vertical para Shorts, Reels e TikTok"
+
+msgid "Configura o Elgato Stream Deck"
+msgstr "Configura o Elgato Stream Deck"
+
+msgid "Controle do OBS pela rede, usado pelo StreamController"
+msgstr "Controle do OBS pela rede, usado pelo StreamController"
+
+msgid "desfoque"
+msgstr "desfoque"
+
+msgid "Desfoque de fundo e de partes da cena"
+msgstr "Desfoque de fundo e de partes da cena"
+
+msgid "Escolhe a transição para cada par de cenas"
+msgstr "Escolhe a transição para cada par de cenas"
+
+msgid "Fontes e codificadores do GStreamer no OBS"
+msgstr "Fontes e codificadores do GStreamer no OBS"
+
+msgid "fundo virtual"
+msgstr "fundo virtual"
+
+msgid "Grava a câmera e a tela em arquivos separados, para editar depois"
+msgstr "Grava a câmera e a tela em arquivos separados, para editar depois"
+
+msgid "Gravação de tela simples, para quem não precisa do OBS"
+msgstr "Gravação de tela simples, para quem não precisa do OBS"
+
+msgid "Grava jogos pela placa de vídeo, com replay instantâneo"
+msgstr "Grava jogos pela placa de vídeo, com replay instantâneo"
+
+msgid "Gravar e transmitir"
+msgstr "Gravar e transmitir"
+
+msgid "gravar jogos"
+msgstr "gravar jogos"
+
+msgid "Logos e letreiros por cima de todas as cenas"
+msgstr "Logos e letreiros por cima de todas as cenas"
+
+msgid "Meet"
+msgstr "Meet"
+
+msgid "Mostra o teclado e o mouse na tela, para tutoriais"
+msgstr "Mostra o teclado e o mouse na tela, para tutoriais"
+
+msgid "multistream"
+msgstr "multistream"
+
+msgid "OpenGL"
+msgstr "OpenGL"
+
+msgid "plugin do OBS"
+msgstr "plugin do OBS"
+
+msgid "Recebe a câmera do celular direto no OBS"
+msgstr "Recebe a câmera do celular direto no OBS"
+
+msgid "Reels"
+msgstr "Reels"
+
+msgid "Remove o fundo da câmera sem tela verde"
+msgstr "Remove o fundo da câmera sem tela verde"
+
+msgid "replay"
+msgstr "replay"
+
+msgid "Shorts"
+msgstr "Shorts"
+
+msgid "sobreposição"
+msgstr "sobreposição"
+
+msgid "Stream Deck"
+msgstr "Stream Deck"
+
+msgid "teleprompter"
+msgstr "teleprompter"
+
+msgid "Teleprompter para gravar e apresentar"
+msgstr "Teleprompter para gravar e apresentar"
+
+msgid "TikTok"
+msgstr "TikTok"
+
+msgid "transições"
+msgstr "transições"
+
+msgid "Transições que movem e animam as fontes"
+msgstr "Transições que movem e animam as fontes"
+
+msgid "Transmite em várias plataformas ao mesmo tempo"
+msgstr "Transmite em várias plataformas ao mesmo tempo"
+
+msgid "Troca de cena sozinho, por regras"
+msgstr "Troca de cena sozinho, por regras"
+
+msgid "tutoriais"
+msgstr "tutoriais"
+
+msgid "Usa o celular como câmera; instale o app DroidCam no celular"
+msgstr "Usa o celular como câmera; instale o app DroidCam no celular"
+
+msgid "Vulkan"
+msgstr "Vulkan"
+
+msgid "Zoom"
+msgstr "Zoom"
+
+msgid "Instale o Easy Effects antes de instalar o perfil."
+msgstr "Instale o Easy Effects antes de instalar o perfil."
+
+msgid "Easy Effects"
+msgstr "Easy Effects"
+
+msgid "Perfil do Easy Effects para o microfone: tira ruído, nivela e deixa a voz clara"
+msgstr "Perfil do Easy Effects para o microfone: tira ruído, nivela e deixa a voz clara"
+
+msgid "Perfil instalado. No Easy Effects, abra Entrada → Presets e escolha \"{name}\"; depois selecione o seu microfone."
+msgstr "Perfil instalado. No Easy Effects, abra Entrada → Presets e escolha \"{name}\"; depois selecione o seu microfone."
+
+msgid "NDI"
+msgstr "NDI"
+
+msgid "vídeo pela rede"
+msgstr "vídeo pela rede"
+
+msgid "Vídeo e áudio pela rede local com NDI; inclui o runtime NDI, que é proprietário"
+msgstr "Vídeo e áudio pela rede local com NDI; inclui o runtime NDI, que é proprietário"
+
+msgid "Placa NVIDIA sem o driver da NVIDIA"
+msgstr "Placa NVIDIA sem o driver da NVIDIA"
+
+msgid "Sem ele, o OBS grava e transmite pelo processador. Instale o driver em Vega → Hardware para usar o NVENC."
+msgstr "Sem ele, o OBS grava e transmite pelo processador. Instale o driver em Vega → Hardware para usar o NVENC."
+
+msgid "Codificação por hardware: {encoders}"
+msgstr "Codificação por hardware: {encoders}"
+
+msgid "No OBS, escolha esse codificador em Configurações → Saída. A gravação pesa menos no processador."
+msgstr "No OBS, escolha esse codificador em Configurações → Saída. A gravação pesa menos no processador."
+
+msgid "Sem codificação por hardware"
+msgstr "Sem codificação por hardware"
+
+msgid "O OBS usa o processador (x264). Para gravar em alta resolução, prefira presets mais leves."
+msgstr "O OBS usa o processador (x264). Para gravar em alta resolução, prefira presets mais leves."
+
+msgid "Os pacotes que dependem dele também são removidos."
+msgstr "Os pacotes que dependem dele também são removidos."
+
+msgid "Na sua conta"
+msgstr "Na sua conta"
+
+msgid "Pacotes e Flatpaks"
+msgstr "Pacotes e Flatpaks"
+
+msgid "Removido. As declarações foram guardadas em {path}."
+msgstr "Removido. As declarações foram guardadas em {path}."
+
+msgid "O programa e os atalhos saem da sua conta, sem senha. As declarações são guardadas antes em ~/ProgramasRFB, numa pasta com \"declarações\" no nome."
+msgstr "O programa e os atalhos saem da sua conta, sem senha. As declarações são guardadas antes em ~/ProgramasRFB, numa pasta com \"declarações\" no nome."

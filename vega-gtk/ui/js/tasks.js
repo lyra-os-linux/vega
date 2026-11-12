@@ -12,6 +12,9 @@ const CONSOLE_BYTES = 4 * 1024 * 1024;
 const tasks = new Map(); // chave: "software:12", "backup:3", "local:1"
 const listeners = new Set();
 const waiters = new Map();
+// Fim de transação que chegou antes do track(): operações rápidas na conta do
+// usuário (remover um AppImage) terminam antes de a interface acompanhar.
+const earlyFinished = new Map();
 let localId = 0;
 
 export function onTasks(fn) {
@@ -50,7 +53,10 @@ function finish(task, success, message) {
 
 on("software-transaction", (event) => {
   const task = tasks.get(`software:${event.id}`);
-  if (!task) return;
+  if (!task) {
+    if (event.type === "finished") earlyFinished.set(`software:${event.id}`, event);
+    return;
+  }
   switch (event.type) {
     case "progress":
       task.percent = event.percent;
@@ -127,6 +133,14 @@ export async function runAppImage(install, id, title) {
   return started;
 }
 
+/** Programa da Receita Federal na conta do usuário (receita_apps.rs). */
+export async function runReceita(install, id, title) {
+  const callId = await call(install ? "receita_install" : "receita_remove", { id });
+  const started = track(`software:${callId}`, title, "software");
+  started.task.action = { kind: install ? "install" : "remove", origin: "receita", id };
+  return started;
+}
+
 /** Assistente de terminal pelo npm, na conta do usuário. */
 export async function runNpm(install, id, title) {
   const callId = await call(install ? "npm_install" : "npm_remove", { package: id });
@@ -151,6 +165,11 @@ export async function runBackup(action, title) {
 function track(key, title, kind) {
   const task = tasks.get(key) ?? create(key, title, kind);
   task.title = title;
+  const early = earlyFinished.get(key);
+  if (early) {
+    earlyFinished.delete(key);
+    finish(task, early.success, early.message);
+  }
   const done = new Promise((resolve) => {
     if (task.state !== "running") resolve({ success: task.state === "done", message: task.message, task });
     else waiters.set(key, resolve);

@@ -76,6 +76,85 @@ export const POPULAR = [
     ],
   },
   {
+    // vega#196: kit do OBS. Os plugins são extensões Flatpak do OBS
+    // (com.obsproject.Studio.Plugin.*), instaladas pelo vegad com --runtime
+    // (vegad#157). O DistroAV traz o runtime NDI, que é proprietário.
+    id: "obs-kit",
+    title: N_("Gravar e transmitir"),
+    tasks: ["record"],
+    // Mostra qual codificador por hardware o OBS pode usar (backend/encoders.rs).
+    encoders: true,
+    apps: [
+      { name: "v4l2loopback", origin: "official", id: "v4l2loopback-autoload", tags: [N_("câmera virtual"), N_("Meet"), N_("Zoom")], text: N_("Câmera virtual do OBS para Meet, Zoom e Discord (módulo do kernel assinado pelo openSUSE)") },
+      { name: "DroidCam", origin: "official", id: "droidcam", tags: [N_("celular como webcam")], text: N_("Usa o celular como câmera; instale o app DroidCam no celular") },
+      { name: "DroidCam OBS", origin: "flathub", id: "com.obsproject.Studio.Plugin.DroidCam", tags: [N_("celular como webcam"), N_("plugin do OBS")], text: N_("Recebe a câmera do celular direto no OBS") },
+      { name: "Background Removal", origin: "flathub", id: "com.obsproject.Studio.Plugin.BackgroundRemoval", tags: [N_("plugin do OBS"), N_("fundo virtual")], text: N_("Remove o fundo da câmera sem tela verde") },
+      { name: "Aitum Multistream", origin: "flathub", id: "com.obsproject.Studio.Plugin.AitumMultistream", tags: [N_("plugin do OBS"), N_("multistream")], text: N_("Transmite em várias plataformas ao mesmo tempo") },
+      { name: "Vertical Canvas", origin: "flathub", id: "com.obsproject.Studio.Plugin.VerticalCanvas", tags: [N_("plugin do OBS"), N_("Shorts"), N_("Reels"), N_("TikTok")], text: N_("Cena vertical para Shorts, Reels e TikTok") },
+      { name: "Advanced Scene Switcher", origin: "flathub", id: "com.obsproject.Studio.Plugin.SceneSwitcher", tags: [N_("plugin do OBS")], text: N_("Troca de cena sozinho, por regras") },
+      { name: "Source Record", origin: "flathub", id: "com.obsproject.Studio.Plugin.SourceRecord", tags: [N_("plugin do OBS")], text: N_("Grava a câmera e a tela em arquivos separados, para editar depois") },
+      { name: "Move Transition", origin: "flathub", id: "com.obsproject.Studio.Plugin.MoveTransition", tags: [N_("plugin do OBS"), N_("transições")], text: N_("Transições que movem e animam as fontes") },
+      { name: "Transition Table", origin: "flathub", id: "com.obsproject.Studio.Plugin.TransitionTable", tags: [N_("plugin do OBS"), N_("transições")], text: N_("Escolhe a transição para cada par de cenas") },
+      { name: "Composite Blur", origin: "flathub", id: "com.obsproject.Studio.Plugin.CompositeBlur", tags: [N_("plugin do OBS"), N_("desfoque")], text: N_("Desfoque de fundo e de partes da cena") },
+      { name: "Downstream Keyer", origin: "flathub", id: "com.obsproject.Studio.Plugin.DownstreamKeyer", tags: [N_("plugin do OBS"), N_("sobreposição")], text: N_("Logos e letreiros por cima de todas as cenas") },
+      { name: "Input Overlay", origin: "flathub", id: "com.obsproject.Studio.Plugin.InputOverlay", tags: [N_("plugin do OBS"), N_("tutoriais")], text: N_("Mostra o teclado e o mouse na tela, para tutoriais") },
+      { name: "Wayland Hotkeys", origin: "flathub", id: "com.obsproject.Studio.Plugin.WaylandHotkeys", tags: [N_("plugin do OBS"), N_("atalhos")], text: N_("Atalhos do OBS funcionando com a janela fora de foco") },
+      { name: "OBS Vkcapture", origin: "flathub", id: "com.obsproject.Studio.Plugin.OBSVkCapture", tags: [N_("plugin do OBS"), N_("Vulkan"), N_("OpenGL")], text: N_("Captura jogos Vulkan e OpenGL com pouco custo") },
+      { name: "obs-websocket", origin: "flathub", id: "com.obsproject.Studio.Plugin.WebSocket", tags: [N_("plugin do OBS"), N_("Stream Deck")], text: N_("Controle do OBS pela rede, usado pelo StreamController") },
+      { name: "DistroAV", origin: "flathub", id: "com.obsproject.Studio.Plugin.DistroAV", tags: [N_("plugin do OBS"), N_("NDI"), N_("vídeo pela rede")], text: N_("Vídeo e áudio pela rede local com NDI; inclui o runtime NDI, que é proprietário") },
+      { name: "obs-gstreamer", origin: "flathub", id: "com.obsproject.Studio.Plugin.Gstreamer", tags: [N_("plugin do OBS")], text: N_("Fontes e codificadores do GStreamer no OBS") },
+      { name: "StreamController", origin: "flathub", id: "com.core447.StreamController", logo: "com.core447.StreamController", tags: [N_("Stream Deck")], text: N_("Configura o Elgato Stream Deck") },
+      { name: "QPrompt", origin: "flathub", id: "com.cuperino.qprompt", logo: "com.cuperino.qprompt", tags: [N_("teleprompter")], text: N_("Teleprompter para gravar e apresentar") },
+      { name: "GPU Screen Recorder", origin: "flathub", id: "com.dec05eba.gpu_screen_recorder", logo: "com.dec05eba.gpu_screen_recorder", tags: [N_("gravar jogos"), N_("replay")], text: N_("Grava jogos pela placa de vídeo, com replay instantâneo") },
+      { name: "Kooha", origin: "flathub", id: "io.github.seadve.Kooha", logo: "io.github.seadve.Kooha", tags: [N_("gravar a tela")], text: N_("Gravação de tela simples, para quem não precisa do OBS") },
+    ],
+  },
+  {
+    // vega#197: editar e publicar. Apps conferidos no Flathub em 12/11/2026.
+    id: "publish-video",
+    title: N_("Editar e publicar"),
+    tasks: ["edit"],
+    apps: [
+      { name: "LosslessCut", origin: "flathub", id: "no.mifi.losslesscut", logo: "no.mifi.losslesscut", tags: [N_("cortar vídeo"), N_("sem recodificar")], text: N_("Corta vídeos sem recodificar, em segundos") },
+      { name: "Video Trimmer", origin: "flathub", id: "org.gnome.gitlab.YaLTeR.VideoTrimmer", logo: "org.gnome.gitlab.YaLTeR.VideoTrimmer", tags: [N_("cortar vídeo")], text: N_("Corta o começo e o fim de um vídeo") },
+      { name: "Pitivi", origin: "flathub", id: "org.pitivi.Pitivi", logo: "org.pitivi.Pitivi", tags: [N_("editor de vídeo")], text: N_("Editor de vídeo simples") },
+      { name: "Buzz", origin: "flathub", id: "io.github.chidiwilliams.Buzz", logo: "io.github.chidiwilliams.Buzz", tags: [N_("legendas"), N_("transcrição"), N_("Whisper")], text: N_("Transcreve e traduz áudio e vídeo offline, com o Whisper, e gera legendas") },
+      { name: "Speech Note", origin: "flathub", id: "net.mkiol.SpeechNote", logo: "net.mkiol.SpeechNote", tags: [N_("transcrição"), N_("ditado"), N_("leitura em voz alta")], text: N_("Fala para texto e texto para fala, offline") },
+      { name: "Aegisub", origin: "flathub", id: "org.aegisub.Aegisub", logo: "org.aegisub.Aegisub", tags: [N_("legendas")], text: N_("Ajusta tempo e estilo das legendas") },
+      { name: "Subtitle Composer", origin: "flathub", id: "org.kde.subtitlecomposer", logo: "org.kde.subtitlecomposer", tags: [N_("legendas")], text: N_("Editor de legendas com forma de onda do áudio") },
+      { name: "Gaupol", origin: "flathub", id: "io.otsaloma.gaupol", logo: "io.otsaloma.gaupol", tags: [N_("legendas")], text: N_("Editor de legendas simples") },
+      { name: "Upscayl", origin: "flathub", id: "org.upscayl.Upscayl", logo: "org.upscayl.Upscayl", tags: [N_("IA"), N_("aumentar resolução"), N_("miniaturas")], text: N_("Aumenta a resolução de imagens com IA local") },
+      { name: "Glaxnimate", origin: "flathub", id: "org.kde.glaxnimate", logo: "org.kde.glaxnimate", tags: [N_("animação vetorial"), N_("Lottie")], text: N_("Animação vetorial e Lottie, integrada ao Kdenlive") },
+      { name: "Synfig Studio", origin: "flathub", id: "org.synfig.SynfigStudio", logo: "org.synfig.SynfigStudio", tags: [N_("animação 2D")], text: N_("Animação 2D vetorial") },
+      { name: "Natron", origin: "flathub", id: "fr.natron.Natron", logo: "fr.natron.Natron", tags: [N_("composição"), N_("efeitos visuais")], text: N_("Composição e efeitos visuais (VFX)") },
+      { name: "Flameshot", origin: "flathub", id: "org.flameshot.Flameshot", logo: "org.flameshot.Flameshot", tags: [N_("captura de tela")], text: N_("Captura de tela com anotações") },
+      { name: "Gradia", origin: "flathub", id: "be.alexandervanhee.gradia", logo: "be.alexandervanhee.gradia", tags: [N_("captura de tela")], text: N_("Deixa capturas de tela prontas para publicar") },
+      { name: "Pinta", origin: "flathub", id: "com.github.PintaProject.Pinta", logo: "com.github.PintaProject.Pinta", tags: [N_("editor de imagens")], text: N_("Edição rápida de imagens") },
+      { name: "RawTherapee", origin: "flathub", id: "com.rawtherapee.RawTherapee", logo: "com.rawtherapee.RawTherapee", tags: [N_("RAW"), N_("fotografia")], text: N_("Revelação de fotos RAW") },
+      { name: "Ear Tag", origin: "flathub", id: "app.drey.EarTag", logo: "app.drey.EarTag", tags: [N_("metadados"), N_("tags de áudio")], text: N_("Edita os metadados de arquivos de áudio") },
+      { name: "Parabolic", origin: "flathub", id: "org.nickvision.tubeconverter", logo: "org.nickvision.tubeconverter", tags: [N_("baixar vídeo")], text: N_("Baixa vídeos que você publicou para arquivo") },
+    ],
+  },
+  {
+    // vega#198: áudio e podcast. O Audacity está em Vídeo, áudio e gravação.
+    id: "podcast",
+    title: N_("Áudio e podcast"),
+    tasks: ["record", "edit"],
+    apps: [
+      { name: "Easy Effects", origin: "flathub", id: "com.github.wwmm.easyeffects", logo: "com.github.wwmm.easyeffects", tags: [N_("redução de ruído"), N_("microfone")], text: N_("Limpa a voz do microfone: redução de ruído, compressor e equalizador") },
+      // Perfil "Voz para gravação" (backend/easyeffects_presets.rs): passa-alta,
+      // RNNoise com detecção de voz, compressor, equalizador e limitador.
+      { name: "Voz para gravação", origin: "preset", id: "easyeffects-voice", presetName: "Voz para gravação", tags: [N_("Easy Effects"), N_("microfone"), N_("redução de ruído")], text: N_("Perfil do Easy Effects para o microfone: tira ruído, nivela e deixa a voz clara") },
+      { name: "qpwgraph", origin: "official", id: "qpwgraph", logo: "org.rncbc.qpwgraph", tags: [N_("roteamento de áudio"), N_("PipeWire")], text: N_("Liga as saídas e entradas de áudio do PipeWire, por exemplo para mandar o jogo e a chamada separados ao OBS") },
+      { name: "Helvum", origin: "official", id: "helvum", logo: "org.pipewire.Helvum", tags: [N_("roteamento de áudio"), N_("PipeWire")], text: N_("Roteamento de áudio do PipeWire, mais simples") },
+      { name: "Ardour", origin: "official", id: "ardour", logo: "org.ardour.Ardour", tags: [N_("estúdio"), N_("gravação multipista"), N_("DAW")], text: N_("Estúdio de gravação e mixagem multipista") },
+      { name: "Tenacity", origin: "flathub", id: "org.tenacityaudio.Tenacity", logo: "org.tenacityaudio.Tenacity", tags: [N_("editor de áudio"), N_("podcast")], text: N_("Gravação e edição de áudio, derivado do Audacity") },
+      { name: "LMMS", origin: "flathub", id: "io.lmms.LMMS", logo: "io.lmms.LMMS", tags: [N_("produção musical"), N_("trilha sonora")], text: N_("Produção musical: batidas, sintetizadores e trilhas") },
+      { name: "Mixxx", origin: "flathub", id: "org.mixxx.Mixxx", logo: "org.mixxx.Mixxx", tags: [N_("DJ"), N_("live")], text: N_("Mixagem para DJs e lives") },
+      { name: "LSP Plugins", origin: "official", id: "lsp-plugins", tags: [N_("plugins de áudio"), N_("efeitos")], text: N_("Efeitos de áudio profissionais para o Ardour e outros programas") },
+    ],
+  },
+  {
     id: "graphics",
     title: N_("Imagem, fotos e 3D"),
 
@@ -152,6 +231,10 @@ export const POPULAR = [
     title: N_("Escritório e anotações"),
     apps: [
       { name: "ONLYOFFICE", origin: "flathub", id: "org.onlyoffice.desktopeditors", tasks: ["edit", "study"], tags: [N_("alternativa ao Microsoft Office"), N_("Word"), N_("Excel"), N_("PowerPoint")], text: N_("Documentos, planilhas e apresentações") },
+      // vega#212: IRPF do site da Receita, versão e SHA-256 fixados em
+      // backend/receita_apps.rs; instala em ~/ProgramasRFB, sem senha.
+      { name: "IRPF 2026", origin: "receita", id: "irpf2026", version: "1.5", tags: [N_("Imposto de Renda"), N_("declaração"), N_("Receita Federal")], text: N_("Declaração do Imposto de Renda 2026, do site da Receita Federal") },
+      { name: "IRPF 2025", origin: "receita", id: "irpf2025", version: "1.8", tags: [N_("Imposto de Renda"), N_("declaração"), N_("retificação"), N_("Receita Federal")], text: N_("Declaração de 2025, para retificar a que já foi entregue") },
       { name: "WPS Office", origin: "flathub", id: "com.wps.Office", tasks: ["edit", "study"], tags: [N_("alternativa ao Microsoft Office"), N_("Word"), N_("Excel"), N_("PowerPoint"), N_("PDF")], text: N_("Documentos, planilhas, apresentações e PDF, com visual parecido com o do Office") },
       { name: "Obsidian", origin: "flathub", id: "md.obsidian.Obsidian", tasks: ["study"], tags: [N_("anotações"), N_("Markdown")], text: N_("Anotações em Markdown, com links entre as notas") },
       { name: "Planify", origin: "flathub", id: "io.github.alainm23.planify", logo: "io.github.alainm23.planify", tags: [N_("lista de tarefas")], text: N_("Tarefas, lembretes e projetos") },

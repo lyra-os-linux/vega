@@ -6,7 +6,7 @@ import { call, pick } from "../api.js";
 import { refreshUpdates } from "../health.js";
 import { N_, t } from "../i18n.js";
 import { local, saveLocal } from "../store.js";
-import { runSoftware, runWindows, runWindowsFile, runWindowsRemove, runNpm, runAppImage, runningTasks, onTasks, transactionPanel } from "../tasks.js";
+import { runSoftware, runWindows, runWindowsFile, runWindowsRemove, runNpm, runAppImage, runReceita, runningTasks, onTasks, transactionPanel } from "../tasks.js";
 import { h, icon, clear, button, badge, segmented, list, section, empty, skeletonRows, confirm, sheet, toast, fail, tile, normalize, meter, banner } from "../ui.js";
 import { preparationPanel } from "./software/preparation.js";
 import { requireRestart } from "../restart.js";
@@ -53,7 +53,7 @@ const SHOWCASES = {
 /** Cartões de todas as vitrines, para a busca offline do catálogo curado. */
 const CURATED = curatedEntries(Object.entries(SHOWCASES).map(([tab, { label, catalog }]) => ({ tab, label, catalog })));
 /** Origens instaladas na conta do usuário: sem detalhes no vegad, removidas pelo cartão. */
-const USER_ORIGINS = new Set(["windows", "npm", "appimage"]);
+const USER_ORIGINS = new Set(["windows", "npm", "appimage", "receita", "preset"]);
 const ORIGIN_RANK = { official: 0, flathub: 1 };
 
 // Estado que sobrevive à troca de página, como os widgets do vega-gtk.
@@ -69,7 +69,7 @@ const memory = {
 };
 
 const queueKey = (pkg) => `${pkg.origin}\u0000${pkg.id}`;
-const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "appimage" ? "AppImage" : origin);
+const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "appimage" ? "AppImage" : origin === "receita" ? t("Receita Federal") : origin === "preset" ? t("Perfil") : origin);
 const rankOrigin = (a, b) => (ORIGIN_RANK[a.origin] ?? 2) - (ORIGIN_RANK[b.origin] ?? 2);
 
 function packageIcon(pkg, size = 40) {
@@ -143,6 +143,10 @@ export default {
     // Kernel em execução roda 32 bits? E a configuração de boot (para saber
     // se ia32_emulation=1 já foi aplicado e só falta reiniciar).
     let windowsIa32 = null;
+    let obsEncoders = null;
+    // Apps instalados na conta do usuário (Windows, npm, AppImage, Receita,
+    // perfis), mostrados na aba Instalados ao lado dos pacotes e Flatpaks.
+    let userInstalled = null;
     let bootStatus = null;
     let searching = false;
     let searchStatus = "";
@@ -191,7 +195,8 @@ export default {
       const verb = pkg.installed ? t("Remover") : t("Instalar");
       const ok = await confirm({
         title: t("{verb} {name}?", { verb, name: pkg.name }),
-        text: t("A operação será autorizada pelo polkit e acompanhada até a conclusão."),
+        text: t("A operação será autorizada pelo polkit e acompanhada até a conclusão.")
+          + (pkg.installed && pkg.origin === "official" ? " " + t("Os pacotes que dependem dele também são removidos.") : ""),
         ic: pkg.installed ? "trash" : "download",
         tone: pkg.installed ? "danger" : "",
         confirmLabel: verb,
@@ -446,9 +451,17 @@ export default {
       // Apps do Windows instalados podem ser removidos aqui mesmo: não
       // aparecem na aba Instalados, que lista pacotes e Flatpaks.
       else if (external) action = button(t("Instalado"), { size: "sm", icon: "check", disabled: true, title: t("Já instalado fora do Vega") });
-      else if (installed && USER_ORIGINS.has(app.origin)) action = [
+      // O Vega não remove os programas da Receita: as declarações ficam na
+      // pasta do programa (receita_apps.rs).
+      // Todo app instalado pode ser removido no próprio cartão, pelo caminho
+      // da origem.
+      else if (installed) action = [
         badge(t("Instalado"), "green", "check"),
-        button(t("Remover"), { size: "sm", icon: "trash", kind: "danger", disabled: busy, onClick: (e) => { e.stopPropagation(); removeUserApp(app); } }),
+        button(t("Remover"), { size: "sm", icon: "trash", kind: "danger", disabled: busy, onClick: (e) => {
+          e.stopPropagation();
+          if (USER_ORIGINS.has(app.origin)) removeUserApp(app);
+          else packageAction({ ...pkg, installed: true });
+        } }),
       ];
       else if (installed) action = button(t("Instalado"), { size: "sm", icon: "check", disabled: true });
       else if (locked) action = button(t("Instalar"), { size: "sm", icon: "download", disabled: true, title: needsFlatpak ? t("Habilite o Flatpak para instalar") : gateNote });
@@ -457,6 +470,8 @@ export default {
         if (app.origin === "windows") installWindows(app);
         else if (app.origin === "npm") installNpm(app);
         else if (app.origin === "appimage") installAppImage(app);
+        else if (app.origin === "receita") installReceita(app);
+        else if (app.origin === "preset") installPreset(app);
         else if (app.repo?.package) installFromRepoPackage(app);
         else if (app.repo) installFromRepo(app);
         else packageAction(pkg);
@@ -533,6 +548,7 @@ export default {
                 h("p", { class: "small muted" }, t("Escolha o instalador (.exe ou .msi) que você baixou do site do fabricante. Ele roda pelo Wine, na sua conta, sem senha."))),
               button(t("Escolher arquivo…"), { kind: "primary", icon: "folder", disabled: busy, onClick: runExe })))),
         catalog.map((category) => section(t(category.title), { sub: String(category.apps.length), id: `section-${category.id}` },
+          category.encoders && encodersBanner(),
           h("div", { class: "grid auto sw-cards" }, category.apps.map((app) => popularCard(app, { gateNote: category.gated ? gate?.note : null }))))));
     }
 
@@ -635,13 +651,36 @@ export default {
       load();
     }
 
+    /** Codificação por hardware para o OBS (backend/encoders.rs, vega#196). */
+    function encodersBanner() {
+      const found = obsEncoders;
+      if (!found) return null;
+      if (found.nvidia_without_driver) return banner("warn", "alert", t("Placa NVIDIA sem o driver da NVIDIA"), t("Sem ele, o OBS grava e transmite pelo processador. Instale o driver em Vega → Hardware para usar o NVENC."));
+      const names = [found.nvenc && "NVENC (NVIDIA)", found.vaapi && "VA-API (AMD/Intel)"].filter(Boolean);
+      if (names.length) return banner("info", "cpu", t("Codificação por hardware: {encoders}", { encoders: names.join(", ") }), t("No OBS, escolha esse codificador em Configurações → Saída. A gravação pesa menos no processador."));
+      return banner("info", "cpu", t("Sem codificação por hardware"), t("O OBS usa o processador (x264). Para gravar em alta resolução, prefira presets mais leves."));
+    }
+
     /** Remove um app instalado na conta do usuário (Windows, npm ou AppImage). */
     async function removeUserApp(app) {
+      if (app.origin === "preset") {
+        try {
+          await call("easyeffects_preset_remove", { id: app.id });
+        } catch (error) {
+          return fail(error, t("Não foi possível concluir a operação"));
+        }
+        popularInstalled = null;
+        userInstalled = null;
+        return load();
+      }
       const npm = app.origin === "npm";
       const appimage = app.origin === "appimage";
+      const receita = app.origin === "receita";
       const ok = await confirm({
         title: t("Remover {name}?", { name: app.name }),
-        text: npm
+        text: receita
+          ? t("O programa e os atalhos saem da sua conta, sem senha. As declarações são guardadas antes em ~/ProgramasRFB, numa pasta com \"declarações\" no nome.")
+          : npm
           ? t("A ferramenta é removida da sua conta pelo npm, sem senha. As configurações e o login dela continuam na sua pasta pessoal.")
           : appimage
             ? t("O AppImage e o atalho saem da sua conta, sem senha. Os aplicativos que ele instalou e as configurações dele continuam no sistema.")
@@ -656,7 +695,8 @@ export default {
       let started;
       try {
         const title = t("Removendo {name}…", { name: app.name });
-        started = npm ? await runNpm(false, app.id, title)
+        started = receita ? await runReceita(false, app.id, title)
+          : npm ? await runNpm(false, app.id, title)
           : appimage ? await runAppImage(false, app.id, title)
           : await runWindowsRemove(app.id, title);
       } catch (error) {
@@ -666,7 +706,9 @@ export default {
       paint();
       const result = await started.done;
       if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
+      else if (receita) toast(result.message);
       popularInstalled = null;
+      userInstalled = null;
       load();
     }
 
@@ -741,6 +783,49 @@ export default {
       load();
     }
 
+    /**
+     * Programa da Receita Federal (IRPF): o Vega baixa do site da Receita a
+     * versão conferida pelo Lyra, confere o checksum e instala na conta do
+     * usuário, sem senha, com o Java que vem no instalador.
+     */
+    async function installReceita(app) {
+      const ok = await confirm({
+        title: t("Instalar {name}?", { name: app.name }),
+        text: t("O Vega baixa o programa do site da Receita Federal, confere se é a versão {version} verificada pelo Lyra e instala na sua conta, em ~/ProgramasRFB, sem senha. As declarações ficam nessa pasta.", { version: app.version }),
+        ic: "download",
+        confirmLabel: t("Instalar"),
+        required: true,
+      });
+      if (!ok) return;
+      let started;
+      try {
+        started = await runReceita(true, app.id, t("Instalando {name}…", { name: app.name }));
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      showTask(started.task);
+      paint();
+      const result = await started.done;
+      if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
+      popularInstalled = null;
+      load();
+    }
+
+    /**
+     * Perfil do Easy Effects (easyeffects_presets.rs): só grava um arquivo na
+     * conta do usuário, sem senha; o perfil é escolhido no Easy Effects.
+     */
+    async function installPreset(app) {
+      try {
+        await call("easyeffects_preset_install", { id: app.id });
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      toast(t("Perfil instalado. No Easy Effects, abra Entrada → Presets e escolha \"{name}\"; depois selecione o seu microfone.", { name: app.presetName }));
+      popularInstalled = null;
+      load();
+    }
+
     async function installWindows(app) {
       const ok = await confirm({
         title: t("Instalar {name}?", { name: app.name }),
@@ -769,17 +854,21 @@ export default {
       // (instalador próprio na conta do usuário); se o comando existe, o
       // cartão mostra "Instalado".
       const byCommand = Object.values(SHOWCASES).flatMap((showcase) => showcase.catalog.flatMap((section) => section.apps)).filter((app) => app.command);
-      const [details, packages, windows, npmApps, appImages, ia32, boot, commands] = await Promise.all([
+      const [details, packages, windows, npmApps, appImages, receita, presets, encoders, ia32, boot, commands] = await Promise.all([
         call("software_details", { origin: "official", id: "flatpak" }).catch(() => null),
         call("software_installed"),
         call("windows_installed").catch(() => []),
         call("npm_installed").catch(() => []),
         call("appimage_installed").catch(() => []),
+        call("receita_installed").catch(() => []),
+        call("easyeffects_presets_installed").catch(() => []),
+        call("obs_encoders").catch(() => null),
         call("windows_ia32").catch(() => true),
         call("kernel_boot_status").catch(() => null),
         byCommand.length ? call("commands_present", { names: [...new Set(byCommand.map((app) => app.command))] }).catch(() => []) : [],
       ]);
       windowsIa32 = ia32;
+      obsEncoders = encoders;
       bootStatus = boot;
       flatpakEnabled = Boolean(details?.installed);
       popularInstalled = new Set([
@@ -787,6 +876,8 @@ export default {
         ...windows.map((id) => queueKey({ origin: "windows", id })),
         ...npmApps.map((id) => queueKey({ origin: "npm", id })),
         ...appImages.map((id) => queueKey({ origin: "appimage", id })),
+        ...receita.map((id) => queueKey({ origin: "receita", id })),
+        ...presets.map((id) => queueKey({ origin: "preset", id })),
       ]);
       const found = new Set(commands);
       popularExternal = new Set(byCommand
@@ -833,15 +924,57 @@ export default {
       return section(t("Pacotes e Flathub"), {}, content);
     }
 
+    /** Apps dos catálogos instalados na conta do usuário, sem repetir. */
+    async function loadUserInstalled() {
+      const [windows, npmApps, appImages, receita, presets] = await Promise.all([
+        call("windows_installed").catch(() => []),
+        call("npm_installed").catch(() => []),
+        call("appimage_installed").catch(() => []),
+        call("receita_installed").catch(() => []),
+        call("easyeffects_presets_installed").catch(() => []),
+      ]);
+      const keys = new Set([
+        ...windows.map((id) => queueKey({ origin: "windows", id })),
+        ...npmApps.map((id) => queueKey({ origin: "npm", id })),
+        ...appImages.map((id) => queueKey({ origin: "appimage", id })),
+        ...receita.map((id) => queueKey({ origin: "receita", id })),
+        ...presets.map((id) => queueKey({ origin: "preset", id })),
+      ]);
+      const apps = new Map();
+      for (const showcase of Object.values(SHOWCASES)) {
+        for (const category of showcase.catalog) {
+          for (const app of category.apps) {
+            const key = queueKey(app);
+            if (USER_ORIGINS.has(app.origin) && keys.has(key) && !apps.has(key)) apps.set(key, app);
+          }
+        }
+      }
+      return [...apps.values()];
+    }
+
+    function drawUserInstalled(q) {
+      const apps = (userInstalled || []).filter((app) => !q || normalize(`${app.name} ${app.id} ${t(app.text)}`).includes(q));
+      if (!apps.length) return null;
+      const busy = runningTasks().some((task) => task.kind === "software");
+      return section(t("Na sua conta"), { sub: String(apps.length) }, collection(apps.map((app) => item(
+        { name: app.name, id: app.id, origin: app.origin, logo: app.logo },
+        {
+          description: `${originLabel(app.origin)} · ${t(app.text)}`,
+          suffix: [button(t("Remover"), { size: "sm", icon: "trash", kind: "danger", disabled: busy, onClick: (e) => { e.stopPropagation(); removeUserApp(app); } })],
+        }))));
+    }
+
     function drawInstalled() {
       if (loadError) return empty("alert-circle", t("Falha: {message}", { message: loadError }));
       if (!installed) return h("div", {}, h("p", { class: "sw-status" }, t("Carregando pacotes instalados…")), skeletonRows(6));
       const q = normalize(installedFilter);
       const items = installed.filter((pkg) => !q || normalize(`${pkg.name} ${pkg.id} ${pkg.description}`).includes(q));
-      if (!items.length) return empty("search", t("Nenhum resultado encontrado"));
+      const userApps = drawUserInstalled(q);
+      if (!items.length && !userApps) return empty("search", t("Nenhum resultado encontrado"));
       const shown = items.slice(0, 400);
       return h("div", {},
-        collection(shown.map((pkg) => item(pkg, { onOpen: () => openDetails(pkg) }))),
+        userApps,
+        section(t("Pacotes e Flatpaks"), { sub: String(items.length) }, collection(shown.map((pkg) => item(pkg, { onOpen: () => openDetails(pkg) })))),
         items.length > shown.length && h("p", { class: "sw-status" }, t("Mostrando {shown} de {total}", { shown: shown.length, total: items.length })));
     }
 
@@ -1134,7 +1267,7 @@ export default {
       try {
         // A busca mostra os cartões curados, que precisam do mesmo estado das vitrines.
         if ((SHOWCASES[current] || current === "search") && !popularInstalled) await loadPopular();
-        else if (current === "installed" && !installed) installed = await call("software_installed");
+        else if (current === "installed" && (!installed || !userInstalled)) [installed, userInstalled] = await Promise.all([call("software_installed"), loadUserInstalled()]);
         else if (current === "updates" && !updates) updates = await call("software_updates");
         else return;
         loadError = null;
