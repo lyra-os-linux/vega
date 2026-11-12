@@ -454,8 +454,8 @@ export default {
       // O Vega não remove os programas da Receita: as declarações ficam na
       // pasta do programa (receita_apps.rs).
       // Todo app instalado pode ser removido no próprio cartão, pelo caminho
-      // da origem; os da Receita não (as declarações ficam na pasta deles).
-      else if (installed && app.origin !== "receita") action = [
+      // da origem.
+      else if (installed) action = [
         badge(t("Instalado"), "green", "check"),
         button(t("Remover"), { size: "sm", icon: "trash", kind: "danger", disabled: busy, onClick: (e) => {
           e.stopPropagation();
@@ -675,9 +675,12 @@ export default {
       }
       const npm = app.origin === "npm";
       const appimage = app.origin === "appimage";
+      const receita = app.origin === "receita";
       const ok = await confirm({
         title: t("Remover {name}?", { name: app.name }),
-        text: npm
+        text: receita
+          ? t("O programa e os atalhos saem da sua conta, sem senha. As declarações são guardadas antes em ~/ProgramasRFB, numa pasta com \"declarações\" no nome.")
+          : npm
           ? t("A ferramenta é removida da sua conta pelo npm, sem senha. As configurações e o login dela continuam na sua pasta pessoal.")
           : appimage
             ? t("O AppImage e o atalho saem da sua conta, sem senha. Os aplicativos que ele instalou e as configurações dele continuam no sistema.")
@@ -692,7 +695,8 @@ export default {
       let started;
       try {
         const title = t("Removendo {name}…", { name: app.name });
-        started = npm ? await runNpm(false, app.id, title)
+        started = receita ? await runReceita(false, app.id, title)
+          : npm ? await runNpm(false, app.id, title)
           : appimage ? await runAppImage(false, app.id, title)
           : await runWindowsRemove(app.id, title);
       } catch (error) {
@@ -702,6 +706,7 @@ export default {
       paint();
       const result = await started.done;
       if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
+      else if (receita) toast(result.message);
       popularInstalled = null;
       userInstalled = null;
       load();
@@ -794,7 +799,7 @@ export default {
       if (!ok) return;
       let started;
       try {
-        started = await runReceita(app.id, t("Instalando {name}…", { name: app.name }));
+        started = await runReceita(true, app.id, t("Instalando {name}…", { name: app.name }));
       } catch (error) {
         return fail(error, t("Não foi possível concluir a operação"));
       }
@@ -955,9 +960,7 @@ export default {
         { name: app.name, id: app.id, origin: app.origin, logo: app.logo },
         {
           description: `${originLabel(app.origin)} · ${t(app.text)}`,
-          suffix: app.origin === "receita"
-            ? [badge(t("Instalado"), "green", "check")]
-            : [button(t("Remover"), { size: "sm", icon: "trash", kind: "danger", disabled: busy, onClick: (e) => { e.stopPropagation(); removeUserApp(app); } })],
+          suffix: [button(t("Remover"), { size: "sm", icon: "trash", kind: "danger", disabled: busy, onClick: (e) => { e.stopPropagation(); removeUserApp(app); } })],
         }))));
     }
 

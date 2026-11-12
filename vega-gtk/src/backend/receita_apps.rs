@@ -7,8 +7,10 @@
 //! root, em `~/ProgramasRFB/<programa>`, a pasta padrão da Receita. Uma
 //! versão nova da Receita só é instalada depois que o Lyra confere o hash.
 //!
-//! O Vega não remove o programa: as declarações ficam dentro da pasta dele, e
-//! apagá-la por engano faria o contribuinte perder o trabalho.
+//! Os atalhos do menu são os que o próprio instalador cria
+//! (`install4j_*.desktop`). Na remoção, as declarações, que ficam em
+//! `aplicacao/dados` dentro da pasta do programa, são movidas antes para
+//! `~/ProgramasRFB/<programa>-declarações`; nada do contribuinte é apagado.
 
 use std::io::Write;
 use std::path::{Path, PathBuf};
@@ -28,7 +30,6 @@ pub struct Program {
     pub dir: &'static str,
     pub url: &'static str,
     pub installer: Expected,
-    pub comment: &'static str,
 }
 
 pub const PROGRAMS: &[Program] = &[
@@ -44,7 +45,6 @@ pub const PROGRAMS: &[Program] = &[
             sha256: "fada62389c323bee32129de26e5769367f24dfb4effb0243d2fc690d50ea08e2",
             version: "1.5",
         },
-        comment: "Declaração do Imposto de Renda Pessoa Física 2026",
     },
     // Ano anterior, para retificar a declaração já entregue.
     Program {
@@ -59,7 +59,6 @@ pub const PROGRAMS: &[Program] = &[
             sha256: "e5812fe4246ef0bc5e75f2a727ccae399ab3342a148d2b62abd125100f499856",
             version: "1.8",
         },
-        comment: "Declaração do Imposto de Renda Pessoa Física 2025",
     },
 ];
 
@@ -94,19 +93,43 @@ fn launcher(home: &Path, program: &Program) -> PathBuf {
     install_dir(home, program).join(program.dir)
 }
 
-fn desktop_path(data: &Path, program: &Program) -> PathBuf {
+/// Atalho que o vega-gtk 5.17.0 de desenvolvimento criava; o instalador da
+/// Receita já cria os dele, então este só é apagado.
+fn legacy_desktop_path(data: &Path, program: &Program) -> PathBuf {
     data.join(format!("applications/lyra-receita-{}.desktop", program.id))
 }
 
-pub fn desktop_entry(program: &Program, launcher: &Path, icon: &Path) -> String {
-    format!(
-        "[Desktop Entry]\nType=Application\nName={name}\nComment={comment}\nExec=\"{launcher}\"\nPath={dir}\nIcon={icon}\nTerminal=false\nCategories=Office;Finance;\n",
-        name = program.name,
-        comment = program.comment,
-        launcher = launcher.display(),
-        dir = launcher.parent().unwrap_or(launcher).display(),
-        icon = icon.display(),
-    )
+/// Pasta onde as declarações ficam guardadas depois da remoção. Se já existir
+/// (de uma remoção anterior), ganha um número no fim.
+pub fn declarations_target(home: &Path, program: &Program) -> PathBuf {
+    let base = home
+        .join("ProgramasRFB")
+        .join(format!("{}-declarações", program.dir));
+    let mut target = base.clone();
+    let mut n = 2;
+    while target.exists() {
+        target = PathBuf::from(format!("{} ({n})", base.display()));
+        n += 1;
+    }
+    target
+}
+
+/// Atalhos do install4j que apontam para a pasta do programa.
+fn installer_desktop_files(data: &Path, dir: &Path) -> Vec<PathBuf> {
+    let Ok(entries) = std::fs::read_dir(data.join("applications")) else {
+        return Vec::new();
+    };
+    let needle = format!("{}/", dir.display());
+    entries
+        .flatten()
+        .map(|entry| entry.path())
+        .filter(|path| {
+            path.file_name()
+                .and_then(|name| name.to_str())
+                .is_some_and(|name| name.starts_with("install4j_") && name.ends_with(".desktop"))
+                && std::fs::read_to_string(path).is_ok_and(|text| text.contains(&needle))
+        })
+        .collect()
 }
 
 fn download(url: &str, target: &Path) -> Result<(), String> {
@@ -164,15 +187,34 @@ fn install(program: &Program, report: &dyn Fn(u32, String)) -> Result<(), String
             Ok(())
         });
     let _ = std::fs::remove_file(&installer);
-    result?;
-    let target = launcher(&home, program);
-    let icon = install_dir(&home, program)
-        .join(".install4j")
-        .join(format!("{}.png", program.dir));
-    let entry = desktop_path(&data, program);
-    std::fs::create_dir_all(entry.parent().unwrap_or(&data)).map_err(|error| error.to_string())?;
-    std::fs::write(&entry, desktop_entry(program, &target, &icon))
-        .map_err(|error| error.to_string())
+    let _ = std::fs::remove_file(legacy_desktop_path(&data, program));
+    result
+}
+
+/// Guarda as declarações e apaga o programa e os atalhos dele. Devolve a
+/// pasta das declarações, quando havia alguma.
+fn remove(program: &Program) -> Result<Option<PathBuf>, String> {
+    let home = home().ok_or_else(|| gettext("Pasta pessoal não encontrada."))?;
+    let data = data_dir().ok_or_else(|| gettext("Pasta pessoal não encontrada."))?;
+    let dir = install_dir(&home, program);
+    let dados = dir.join("aplicacao/dados");
+    let kept = if dados.is_dir() {
+        let target = declarations_target(&home, program);
+        // Mesma pasta pessoal: rename não copia, e falhar aqui interrompe a
+        // remoção antes de apagar qualquer coisa.
+        std::fs::rename(&dados, &target).map_err(|error| error.to_string())?;
+        Some(target)
+    } else {
+        None
+    };
+    for entry in installer_desktop_files(&data, &dir) {
+        let _ = std::fs::remove_file(entry);
+    }
+    let _ = std::fs::remove_file(legacy_desktop_path(&data, program));
+    if dir.exists() {
+        std::fs::remove_dir_all(&dir).map_err(|error| error.to_string())?;
+    }
+    Ok(kept)
 }
 
 fn refresh_menu() {
@@ -223,6 +265,34 @@ pub fn receita_install(app: AppHandle, id: String) -> Result<u32, String> {
     Ok(tx)
 }
 
+#[tauri::command]
+pub fn receita_remove(app: AppHandle, id: String) -> Result<u32, String> {
+    let program = program(&id).ok_or_else(|| gettext("Aplicativo desconhecido."))?;
+    let tx = super::session_tx::next();
+    std::thread::spawn(move || {
+        let result = remove(program);
+        refresh_menu();
+        let (success, message) = match result {
+            Ok(Some(kept)) => (
+                true,
+                gettext("Removido. As declarações foram guardadas em {path}.")
+                    .replace("{path}", &kept.display().to_string()),
+            ),
+            Ok(None) => (true, gettext("Concluído")),
+            Err(error) => (false, error),
+        };
+        let _ = app.emit(
+            "software-transaction",
+            TransactionEvent::Finished {
+                id: tx,
+                success,
+                message,
+            },
+        );
+    });
+    Ok(tx)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -256,12 +326,27 @@ mod tests {
             launcher(home, program),
             Path::new("/home/ana/ProgramasRFB/IRPF2026/IRPF2026")
         );
-        let entry = desktop_entry(
-            program,
-            &launcher(home, program),
-            Path::new("/home/ana/ProgramasRFB/IRPF2026/.install4j/IRPF2026.png"),
+    }
+
+    #[test]
+    fn removal_keeps_the_declarations_and_only_installer_shortcuts_go() {
+        let program = program("irpf2026").unwrap();
+        let home = std::env::temp_dir().join(format!("vega-receita-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&home);
+        let dir = install_dir(&home, program);
+        std::fs::create_dir_all(dir.join("aplicacao/dados/12345678900")).unwrap();
+        // Remoção anterior já guardou declarações: a nova pasta ganha número.
+        std::fs::create_dir_all(home.join("ProgramasRFB/IRPF2026-declarações")).unwrap();
+        assert_eq!(
+            declarations_target(&home, program),
+            home.join("ProgramasRFB/IRPF2026-declarações (2)")
         );
-        assert!(entry.contains("Exec=\"/home/ana/ProgramasRFB/IRPF2026/IRPF2026\"\n"));
-        assert!(entry.contains("Path=/home/ana/ProgramasRFB/IRPF2026\n"));
+        let apps = home.join("data/applications");
+        std::fs::create_dir_all(&apps).unwrap();
+        let ours = apps.join("install4j_x-IRPF2026.desktop");
+        let other = apps.join("install4j_y-Outro.desktop");
+        std::fs::write(&ours, format!("Exec=\"{}/IRPF2026\"\n", dir.display())).unwrap();
+        std::fs::write(&other, "Exec=\"/opt/outro/Outro\"\n").unwrap();
+        assert_eq!(installer_desktop_files(&home.join("data"), &dir), [ours]);
     }
 }

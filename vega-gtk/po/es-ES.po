@@ -7110,3 +7110,9 @@ msgstr "En tu cuenta"
 
 msgid "Pacotes e Flatpaks"
 msgstr "Paquetes y Flatpaks"
+
+msgid "Removido. As declarações foram guardadas em {path}."
+msgstr "Eliminado. Las declaraciones se guardaron en {path}."
+
+msgid "O programa e os atalhos saem da sua conta, sem senha. As declarações são guardadas antes em ~/ProgramasRFB, numa pasta com \"declarações\" no nome."
+msgstr "El programa y sus accesos directos salen de tu cuenta, sin contraseña. Las declaraciones se guardan antes en ~/ProgramasRFB, en una carpeta con \"declarações\" en el nombre."

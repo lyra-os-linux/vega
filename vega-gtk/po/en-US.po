@@ -7110,3 +7110,9 @@ msgstr "In your account"
 
 msgid "Pacotes e Flatpaks"
 msgstr "Packages and Flatpaks"
+
+msgid "Removido. As declarações foram guardadas em {path}."
+msgstr "Removed. Your tax returns were kept in {path}."
+
+msgid "O programa e os atalhos saem da sua conta, sem senha. As declarações são guardadas antes em ~/ProgramasRFB, numa pasta com \"declarações\" no nome."
+msgstr "The program and its shortcuts are removed from your account, with no password. Your tax returns are first kept in ~/ProgramasRFB, in a folder with \"declarações\" in its name."

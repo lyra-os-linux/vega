@@ -122,6 +122,7 @@ fn main() -> ExitCode {
             appimage_apps::appimage_remove,
             receita_apps::receita_installed,
             receita_apps::receita_install,
+            receita_apps::receita_remove,
             easyeffects_presets::easyeffects_presets_installed,
             easyeffects_presets::easyeffects_preset_install,
             easyeffects_presets::easyeffects_preset_remove,

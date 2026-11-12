@@ -134,10 +134,10 @@ export async function runAppImage(install, id, title) {
 }
 
 /** Programa da Receita Federal na conta do usuário (receita_apps.rs). */
-export async function runReceita(id, title) {
-  const callId = await call("receita_install", { id });
+export async function runReceita(install, id, title) {
+  const callId = await call(install ? "receita_install" : "receita_remove", { id });
   const started = track(`software:${callId}`, title, "software");
-  started.task.action = { kind: "install", origin: "receita", id };
+  started.task.action = { kind: install ? "install" : "remove", origin: "receita", id };
   return started;
 }
 
