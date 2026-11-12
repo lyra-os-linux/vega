@@ -6761,304 +6761,343 @@ msgid "Declaração de 2025, para retificar a que já foi entregue"
 msgstr "2025 tax return, to amend the one already filed"
 
 msgid "Ajusta tempo e estilo das legendas"
-msgstr "None"
+msgstr "Adjusts subtitle timing and style"
 
 msgid "Animação 2D vetorial"
-msgstr "None"
+msgstr "2D vector animation"
 
 msgid "animação vetorial"
-msgstr "None"
+msgstr "vector animation"
 
 msgid "Animação vetorial e Lottie, integrada ao Kdenlive"
-msgstr "None"
+msgstr "Vector and Lottie animation, integrated with Kdenlive"
 
 msgid "Aumenta a resolução de imagens com IA local"
-msgstr "None"
+msgstr "Upscales images with local AI"
 
 msgid "aumentar resolução"
-msgstr "None"
+msgstr "upscale"
 
 msgid "baixar vídeo"
-msgstr "None"
+msgstr "download video"
 
 msgid "Baixa vídeos que você publicou para arquivo"
-msgstr "None"
+msgstr "Downloads videos you published to a file"
 
 msgid "captura de tela"
-msgstr "None"
+msgstr "screenshot"
 
 msgid "Captura de tela com anotações"
-msgstr "None"
+msgstr "Screenshots with annotations"
 
 msgid "composição"
-msgstr "None"
+msgstr "compositing"
 
 msgid "Composição e efeitos visuais (VFX)"
-msgstr "None"
+msgstr "Compositing and visual effects (VFX)"
 
 msgid "Corta o começo e o fim de um vídeo"
-msgstr "None"
+msgstr "Trims the start and end of a video"
 
 msgid "cortar vídeo"
-msgstr "None"
+msgstr "trim video"
 
 msgid "Corta vídeos sem recodificar, em segundos"
-msgstr "None"
+msgstr "Cuts videos without re-encoding, in seconds"
 
 msgid "Deixa capturas de tela prontas para publicar"
-msgstr "None"
+msgstr "Makes screenshots ready to publish"
 
 msgid "ditado"
-msgstr "None"
+msgstr "dictation"
 
 msgid "Edição rápida de imagens"
-msgstr "None"
+msgstr "Quick image editing"
 
 msgid "Edita os metadados de arquivos de áudio"
-msgstr "None"
+msgstr "Edits audio file metadata"
 
 msgid "Editar e publicar"
-msgstr "None"
+msgstr "Edit and publish"
 
 msgid "Editor de legendas com forma de onda do áudio"
-msgstr "None"
+msgstr "Subtitle editor with audio waveform"
 
 msgid "Editor de legendas simples"
-msgstr "None"
+msgstr "Simple subtitle editor"
 
 msgid "Editor de vídeo simples"
-msgstr "None"
+msgstr "Simple video editor"
 
 msgid "efeitos visuais"
-msgstr "None"
+msgstr "visual effects"
 
 msgid "Fala para texto e texto para fala, offline"
-msgstr "None"
+msgstr "Speech to text and text to speech, offline"
 
 msgid "fotografia"
-msgstr "None"
+msgstr "photography"
 
 msgid "IA"
-msgstr "None"
+msgstr "AI"
 
 msgid "legendas"
-msgstr "None"
+msgstr "subtitles"
 
 msgid "leitura em voz alta"
-msgstr "None"
+msgstr "read aloud"
 
 msgid "Lottie"
-msgstr "None"
+msgstr "Lottie"
 
 msgid "metadados"
-msgstr "None"
+msgstr "metadata"
 
 msgid "miniaturas"
-msgstr "None"
+msgstr "thumbnails"
 
 msgid "sem recodificar"
-msgstr "None"
+msgstr "no re-encoding"
 
 msgid "tags de áudio"
-msgstr "None"
+msgstr "audio tags"
 
 msgid "Transcreve e traduz áudio e vídeo offline, com o Whisper, e gera legendas"
-msgstr "None"
+msgstr "Transcribes and translates audio and video offline with Whisper, and creates subtitles"
 
 msgid "transcrição"
-msgstr "None"
+msgstr "transcription"
 
 msgid "Whisper"
-msgstr "None"
+msgstr "Whisper"
 
 msgid "Áudio e podcast"
-msgstr "None"
+msgstr "Audio and podcast"
 
 msgid "DAW"
-msgstr "None"
+msgstr "DAW"
 
 msgid "DJ"
-msgstr "None"
+msgstr "DJ"
 
 msgid "editor de áudio"
-msgstr "None"
+msgstr "audio editor"
 
 msgid "efeitos"
-msgstr "None"
+msgstr "effects"
 
 msgid "Efeitos de áudio profissionais para o Ardour e outros programas"
-msgstr "None"
+msgstr "Professional audio effects for Ardour and other programs"
 
 msgid "estúdio"
-msgstr "None"
+msgstr "studio"
 
 msgid "Estúdio de gravação e mixagem multipista"
-msgstr "None"
+msgstr "Multitrack recording and mixing studio"
 
 msgid "Gravação e edição de áudio, derivado do Audacity"
-msgstr "None"
+msgstr "Audio recording and editing, a fork of Audacity"
 
 msgid "gravação multipista"
-msgstr "None"
+msgstr "multitrack recording"
 
 msgid "Liga as saídas e entradas de áudio do PipeWire, por exemplo para mandar o jogo e a chamada separados ao OBS"
-msgstr "None"
+msgstr "Connects PipeWire audio outputs and inputs, for example to send game and call audio separately to OBS"
 
 msgid "Limpa a voz do microfone: redução de ruído, compressor e equalizador"
-msgstr "None"
+msgstr "Cleans up your microphone voice: noise reduction, compressor and equalizer"
 
 msgid "microfone"
-msgstr "None"
+msgstr "microphone"
 
 msgid "Mixagem para DJs e lives"
-msgstr "None"
+msgstr "Mixing for DJs and live streams"
 
 msgid "PipeWire"
-msgstr "None"
+msgstr "PipeWire"
 
 msgid "plugins de áudio"
-msgstr "None"
+msgstr "audio plugins"
 
 msgid "produção musical"
-msgstr "None"
+msgstr "music production"
 
 msgid "Produção musical: batidas, sintetizadores e trilhas"
-msgstr "None"
+msgstr "Music production: beats, synthesizers and soundtracks"
 
 msgid "redução de ruído"
-msgstr "None"
+msgstr "noise reduction"
 
 msgid "roteamento de áudio"
-msgstr "None"
+msgstr "audio routing"
 
 msgid "Roteamento de áudio do PipeWire, mais simples"
-msgstr "None"
+msgstr "Simpler PipeWire audio routing"
 
 msgid "atalhos"
-msgstr "None"
+msgstr "shortcuts"
 
 msgid "Atalhos do OBS funcionando com a janela fora de foco"
-msgstr "None"
+msgstr "OBS shortcuts that work when the window is not focused"
 
 msgid "câmera virtual"
-msgstr "None"
+msgstr "virtual camera"
 
 msgid "Câmera virtual do OBS para Meet, Zoom e Discord (módulo do kernel assinado pelo openSUSE)"
-msgstr "None"
+msgstr "OBS virtual camera for Meet, Zoom and Discord (kernel module signed by openSUSE)"
 
 msgid "Captura jogos Vulkan e OpenGL com pouco custo"
-msgstr "None"
+msgstr "Captures Vulkan and OpenGL games with low overhead"
 
 msgid "celular como webcam"
-msgstr "None"
+msgstr "phone as webcam"
 
 msgid "Cena vertical para Shorts, Reels e TikTok"
-msgstr "None"
+msgstr "Vertical scene for Shorts, Reels and TikTok"
 
 msgid "Configura o Elgato Stream Deck"
-msgstr "None"
+msgstr "Configures the Elgato Stream Deck"
 
 msgid "Controle do OBS pela rede, usado pelo StreamController"
-msgstr "None"
+msgstr "Controls OBS over the network, used by StreamController"
 
 msgid "desfoque"
-msgstr "None"
+msgstr "blur"
 
 msgid "Desfoque de fundo e de partes da cena"
-msgstr "None"
+msgstr "Blurs the background and parts of the scene"
 
 msgid "Escolhe a transição para cada par de cenas"
-msgstr "None"
+msgstr "Picks the transition for each pair of scenes"
 
 msgid "Fontes e codificadores do GStreamer no OBS"
-msgstr "None"
+msgstr "GStreamer sources and encoders in OBS"
 
 msgid "fundo virtual"
-msgstr "None"
+msgstr "virtual background"
 
 msgid "Grava a câmera e a tela em arquivos separados, para editar depois"
-msgstr "None"
+msgstr "Records the camera and the screen to separate files, for editing later"
 
 msgid "Gravação de tela simples, para quem não precisa do OBS"
-msgstr "None"
+msgstr "Simple screen recording, for those who don't need OBS"
 
 msgid "Grava jogos pela placa de vídeo, com replay instantâneo"
-msgstr "None"
+msgstr "Records games using the graphics card, with instant replay"
 
 msgid "Gravar e transmitir"
-msgstr "None"
+msgstr "Record and stream"
 
 msgid "gravar jogos"
-msgstr "None"
+msgstr "record games"
 
 msgid "Logos e letreiros por cima de todas as cenas"
-msgstr "None"
+msgstr "Logos and lower thirds on top of every scene"
 
 msgid "Meet"
-msgstr "None"
+msgstr "Meet"
 
 msgid "Mostra o teclado e o mouse na tela, para tutoriais"
-msgstr "None"
+msgstr "Shows the keyboard and mouse on screen, for tutorials"
 
 msgid "multistream"
-msgstr "None"
+msgstr "multistream"
 
 msgid "OpenGL"
-msgstr "None"
+msgstr "OpenGL"
 
 msgid "plugin do OBS"
-msgstr "None"
+msgstr "OBS plugin"
 
 msgid "Recebe a câmera do celular direto no OBS"
-msgstr "None"
+msgstr "Brings the phone camera straight into OBS"
 
 msgid "Reels"
-msgstr "None"
+msgstr "Reels"
 
 msgid "Remove o fundo da câmera sem tela verde"
-msgstr "None"
+msgstr "Removes the camera background without a green screen"
 
 msgid "replay"
-msgstr "None"
+msgstr "replay"
 
 msgid "Shorts"
-msgstr "None"
+msgstr "Shorts"
 
 msgid "sobreposição"
-msgstr "None"
+msgstr "overlay"
 
 msgid "Stream Deck"
-msgstr "None"
+msgstr "Stream Deck"
 
 msgid "teleprompter"
-msgstr "None"
+msgstr "teleprompter"
 
 msgid "Teleprompter para gravar e apresentar"
-msgstr "None"
+msgstr "Teleprompter for recording and presenting"
 
 msgid "TikTok"
-msgstr "None"
+msgstr "TikTok"
 
 msgid "transições"
-msgstr "None"
+msgstr "transitions"
 
 msgid "Transições que movem e animam as fontes"
-msgstr "None"
+msgstr "Transitions that move and animate sources"
 
 msgid "Transmite em várias plataformas ao mesmo tempo"
-msgstr "None"
+msgstr "Streams to several platforms at once"
 
 msgid "Troca de cena sozinho, por regras"
-msgstr "None"
+msgstr "Switches scenes automatically, by rules"
 
 msgid "tutoriais"
-msgstr "None"
+msgstr "tutorials"
 
 msgid "Usa o celular como câmera; instale o app DroidCam no celular"
-msgstr "None"
+msgstr "Uses your phone as a camera; install the DroidCam app on the phone"
 
 msgid "Vulkan"
-msgstr "None"
+msgstr "Vulkan"
 
 msgid "Zoom"
-msgstr "None"
+msgstr "Zoom"
+
+msgid "Instale o Easy Effects antes de instalar o perfil."
+msgstr "Install Easy Effects before installing the profile."
+
+msgid "Easy Effects"
+msgstr "Easy Effects"
+
+msgid "Perfil do Easy Effects para o microfone: tira ruído, nivela e deixa a voz clara"
+msgstr "Easy Effects profile for the microphone: removes noise, evens out levels and makes your voice clear"
+
+msgid "Perfil instalado. No Easy Effects, abra Entrada → Presets e escolha \"{name}\"; depois selecione o seu microfone."
+msgstr "Profile installed. In Easy Effects, open Input → Presets and choose \"{name}\"; then select your microphone."
+
+msgid "NDI"
+msgstr "NDI"
+
+msgid "vídeo pela rede"
+msgstr "video over the network"
+
+msgid "Vídeo e áudio pela rede local com NDI; inclui o runtime NDI, que é proprietário"
+msgstr "Video and audio over the local network with NDI; includes the NDI runtime, which is proprietary"
+
+msgid "Placa NVIDIA sem o driver da NVIDIA"
+msgstr "NVIDIA card without the NVIDIA driver"
+
+msgid "Sem ele, o OBS grava e transmite pelo processador. Instale o driver em Vega → Hardware para usar o NVENC."
+msgstr "Without it, OBS records and streams using the processor. Install the driver in Vega → Hardware to use NVENC."
+
+msgid "Codificação por hardware: {encoders}"
+msgstr "Hardware encoding: {encoders}"
+
+msgid "No OBS, escolha esse codificador em Configurações → Saída. A gravação pesa menos no processador."
+msgstr "In OBS, choose this encoder in Settings → Output. Recording puts less load on the processor."
+
+msgid "Sem codificação por hardware"
+msgstr "No hardware encoding"
+
+msgid "O OBS usa o processador (x264). Para gravar em alta resolução, prefira presets mais leves."
+msgstr "OBS uses the processor (x264). To record in high resolution, prefer lighter presets."

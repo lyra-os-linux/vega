@@ -53,7 +53,7 @@ const SHOWCASES = {
 /** Cartões de todas as vitrines, para a busca offline do catálogo curado. */
 const CURATED = curatedEntries(Object.entries(SHOWCASES).map(([tab, { label, catalog }]) => ({ tab, label, catalog })));
 /** Origens instaladas na conta do usuário: sem detalhes no vegad, removidas pelo cartão. */
-const USER_ORIGINS = new Set(["windows", "npm", "appimage", "receita"]);
+const USER_ORIGINS = new Set(["windows", "npm", "appimage", "receita", "preset"]);
 const ORIGIN_RANK = { official: 0, flathub: 1 };
 
 // Estado que sobrevive à troca de página, como os widgets do vega-gtk.
@@ -69,7 +69,7 @@ const memory = {
 };
 
 const queueKey = (pkg) => `${pkg.origin}\u0000${pkg.id}`;
-const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "appimage" ? "AppImage" : origin === "receita" ? t("Receita Federal") : origin);
+const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "appimage" ? "AppImage" : origin === "receita" ? t("Receita Federal") : origin === "preset" ? t("Perfil") : origin);
 const rankOrigin = (a, b) => (ORIGIN_RANK[a.origin] ?? 2) - (ORIGIN_RANK[b.origin] ?? 2);
 
 function packageIcon(pkg, size = 40) {
@@ -143,6 +143,7 @@ export default {
     // Kernel em execução roda 32 bits? E a configuração de boot (para saber
     // se ia32_emulation=1 já foi aplicado e só falta reiniciar).
     let windowsIa32 = null;
+    let obsEncoders = null;
     let bootStatus = null;
     let searching = false;
     let searchStatus = "";
@@ -460,6 +461,7 @@ export default {
         else if (app.origin === "npm") installNpm(app);
         else if (app.origin === "appimage") installAppImage(app);
         else if (app.origin === "receita") installReceita(app);
+        else if (app.origin === "preset") installPreset(app);
         else if (app.repo?.package) installFromRepoPackage(app);
         else if (app.repo) installFromRepo(app);
         else packageAction(pkg);
@@ -536,6 +538,7 @@ export default {
                 h("p", { class: "small muted" }, t("Escolha o instalador (.exe ou .msi) que você baixou do site do fabricante. Ele roda pelo Wine, na sua conta, sem senha."))),
               button(t("Escolher arquivo…"), { kind: "primary", icon: "folder", disabled: busy, onClick: runExe })))),
         catalog.map((category) => section(t(category.title), { sub: String(category.apps.length), id: `section-${category.id}` },
+          category.encoders && encodersBanner(),
           h("div", { class: "grid auto sw-cards" }, category.apps.map((app) => popularCard(app, { gateNote: category.gated ? gate?.note : null }))))));
     }
 
@@ -638,8 +641,27 @@ export default {
       load();
     }
 
+    /** Codificação por hardware para o OBS (backend/encoders.rs, vega#196). */
+    function encodersBanner() {
+      const found = obsEncoders;
+      if (!found) return null;
+      if (found.nvidia_without_driver) return banner("warn", "alert", t("Placa NVIDIA sem o driver da NVIDIA"), t("Sem ele, o OBS grava e transmite pelo processador. Instale o driver em Vega → Hardware para usar o NVENC."));
+      const names = [found.nvenc && "NVENC (NVIDIA)", found.vaapi && "VA-API (AMD/Intel)"].filter(Boolean);
+      if (names.length) return banner("info", "cpu", t("Codificação por hardware: {encoders}", { encoders: names.join(", ") }), t("No OBS, escolha esse codificador em Configurações → Saída. A gravação pesa menos no processador."));
+      return banner("info", "cpu", t("Sem codificação por hardware"), t("O OBS usa o processador (x264). Para gravar em alta resolução, prefira presets mais leves."));
+    }
+
     /** Remove um app instalado na conta do usuário (Windows, npm ou AppImage). */
     async function removeUserApp(app) {
+      if (app.origin === "preset") {
+        try {
+          await call("easyeffects_preset_remove", { id: app.id });
+        } catch (error) {
+          return fail(error, t("Não foi possível concluir a operação"));
+        }
+        popularInstalled = null;
+        return load();
+      }
       const npm = app.origin === "npm";
       const appimage = app.origin === "appimage";
       const ok = await confirm({
@@ -772,6 +794,21 @@ export default {
       load();
     }
 
+    /**
+     * Perfil do Easy Effects (easyeffects_presets.rs): só grava um arquivo na
+     * conta do usuário, sem senha; o perfil é escolhido no Easy Effects.
+     */
+    async function installPreset(app) {
+      try {
+        await call("easyeffects_preset_install", { id: app.id });
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      toast(t("Perfil instalado. No Easy Effects, abra Entrada → Presets e escolha \"{name}\"; depois selecione o seu microfone.", { name: app.presetName }));
+      popularInstalled = null;
+      load();
+    }
+
     async function installWindows(app) {
       const ok = await confirm({
         title: t("Instalar {name}?", { name: app.name }),
@@ -800,18 +837,21 @@ export default {
       // (instalador próprio na conta do usuário); se o comando existe, o
       // cartão mostra "Instalado".
       const byCommand = Object.values(SHOWCASES).flatMap((showcase) => showcase.catalog.flatMap((section) => section.apps)).filter((app) => app.command);
-      const [details, packages, windows, npmApps, appImages, receita, ia32, boot, commands] = await Promise.all([
+      const [details, packages, windows, npmApps, appImages, receita, presets, encoders, ia32, boot, commands] = await Promise.all([
         call("software_details", { origin: "official", id: "flatpak" }).catch(() => null),
         call("software_installed"),
         call("windows_installed").catch(() => []),
         call("npm_installed").catch(() => []),
         call("appimage_installed").catch(() => []),
         call("receita_installed").catch(() => []),
+        call("easyeffects_presets_installed").catch(() => []),
+        call("obs_encoders").catch(() => null),
         call("windows_ia32").catch(() => true),
         call("kernel_boot_status").catch(() => null),
         byCommand.length ? call("commands_present", { names: [...new Set(byCommand.map((app) => app.command))] }).catch(() => []) : [],
       ]);
       windowsIa32 = ia32;
+      obsEncoders = encoders;
       bootStatus = boot;
       flatpakEnabled = Boolean(details?.installed);
       popularInstalled = new Set([
@@ -820,6 +860,7 @@ export default {
         ...npmApps.map((id) => queueKey({ origin: "npm", id })),
         ...appImages.map((id) => queueKey({ origin: "appimage", id })),
         ...receita.map((id) => queueKey({ origin: "receita", id })),
+        ...presets.map((id) => queueKey({ origin: "preset", id })),
       ]);
       const found = new Set(commands);
       popularExternal = new Set(byCommand

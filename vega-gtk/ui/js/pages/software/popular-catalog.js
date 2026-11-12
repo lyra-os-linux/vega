@@ -78,11 +78,12 @@ export const POPULAR = [
   {
     // vega#196: kit do OBS. Os plugins são extensões Flatpak do OBS
     // (com.obsproject.Studio.Plugin.*), instaladas pelo vegad com --runtime
-    // (vegad#157). O DistroAV (NDI) fica de fora até conferir como o
-    // Flatpak obtém o runtime NDI, que é proprietário.
+    // (vegad#157). O DistroAV traz o runtime NDI, que é proprietário.
     id: "obs-kit",
     title: N_("Gravar e transmitir"),
     tasks: ["record"],
+    // Mostra qual codificador por hardware o OBS pode usar (backend/encoders.rs).
+    encoders: true,
     apps: [
       { name: "v4l2loopback", origin: "official", id: "v4l2loopback-autoload", tags: [N_("câmera virtual"), N_("Meet"), N_("Zoom")], text: N_("Câmera virtual do OBS para Meet, Zoom e Discord (módulo do kernel assinado pelo openSUSE)") },
       { name: "DroidCam", origin: "official", id: "droidcam", tags: [N_("celular como webcam")], text: N_("Usa o celular como câmera; instale o app DroidCam no celular") },
@@ -100,6 +101,7 @@ export const POPULAR = [
       { name: "Wayland Hotkeys", origin: "flathub", id: "com.obsproject.Studio.Plugin.WaylandHotkeys", tags: [N_("plugin do OBS"), N_("atalhos")], text: N_("Atalhos do OBS funcionando com a janela fora de foco") },
       { name: "OBS Vkcapture", origin: "flathub", id: "com.obsproject.Studio.Plugin.OBSVkCapture", tags: [N_("plugin do OBS"), N_("Vulkan"), N_("OpenGL")], text: N_("Captura jogos Vulkan e OpenGL com pouco custo") },
       { name: "obs-websocket", origin: "flathub", id: "com.obsproject.Studio.Plugin.WebSocket", tags: [N_("plugin do OBS"), N_("Stream Deck")], text: N_("Controle do OBS pela rede, usado pelo StreamController") },
+      { name: "DistroAV", origin: "flathub", id: "com.obsproject.Studio.Plugin.DistroAV", tags: [N_("plugin do OBS"), N_("NDI"), N_("vídeo pela rede")], text: N_("Vídeo e áudio pela rede local com NDI; inclui o runtime NDI, que é proprietário") },
       { name: "obs-gstreamer", origin: "flathub", id: "com.obsproject.Studio.Plugin.Gstreamer", tags: [N_("plugin do OBS")], text: N_("Fontes e codificadores do GStreamer no OBS") },
       { name: "StreamController", origin: "flathub", id: "com.core447.StreamController", logo: "com.core447.StreamController", tags: [N_("Stream Deck")], text: N_("Configura o Elgato Stream Deck") },
       { name: "QPrompt", origin: "flathub", id: "com.cuperino.qprompt", logo: "com.cuperino.qprompt", tags: [N_("teleprompter")], text: N_("Teleprompter para gravar e apresentar") },
@@ -140,6 +142,9 @@ export const POPULAR = [
     tasks: ["record", "edit"],
     apps: [
       { name: "Easy Effects", origin: "flathub", id: "com.github.wwmm.easyeffects", logo: "com.github.wwmm.easyeffects", tags: [N_("redução de ruído"), N_("microfone")], text: N_("Limpa a voz do microfone: redução de ruído, compressor e equalizador") },
+      // Perfil "Voz para gravação" (backend/easyeffects_presets.rs): passa-alta,
+      // RNNoise com detecção de voz, compressor, equalizador e limitador.
+      { name: "Voz para gravação", origin: "preset", id: "easyeffects-voice", presetName: "Voz para gravação", tags: [N_("Easy Effects"), N_("microfone"), N_("redução de ruído")], text: N_("Perfil do Easy Effects para o microfone: tira ruído, nivela e deixa a voz clara") },
       { name: "qpwgraph", origin: "official", id: "qpwgraph", logo: "org.rncbc.qpwgraph", tags: [N_("roteamento de áudio"), N_("PipeWire")], text: N_("Liga as saídas e entradas de áudio do PipeWire, por exemplo para mandar o jogo e a chamada separados ao OBS") },
       { name: "Helvum", origin: "official", id: "helvum", logo: "org.pipewire.Helvum", tags: [N_("roteamento de áudio"), N_("PipeWire")], text: N_("Roteamento de áudio do PipeWire, mais simples") },
       { name: "Ardour", origin: "official", id: "ardour", logo: "org.ardour.Ardour", tags: [N_("estúdio"), N_("gravação multipista"), N_("DAW")], text: N_("Estúdio de gravação e mixagem multipista") },

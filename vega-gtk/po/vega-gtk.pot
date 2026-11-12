@@ -7717,3 +7717,45 @@ msgstr ""
 
 msgid "Zoom"
 msgstr ""
+
+msgid "Instale o Easy Effects antes de instalar o perfil."
+msgstr ""
+
+msgid "Easy Effects"
+msgstr ""
+
+msgid "Perfil do Easy Effects para o microfone: tira ruído, nivela e deixa a voz clara"
+msgstr ""
+
+msgid "Perfil instalado. No Easy Effects, abra Entrada → Presets e escolha \"{name}\"; depois selecione o seu microfone."
+msgstr ""
+
+msgid "Perfil"
+msgstr ""
+
+msgid "NDI"
+msgstr ""
+
+msgid "vídeo pela rede"
+msgstr ""
+
+msgid "Vídeo e áudio pela rede local com NDI; inclui o runtime NDI, que é proprietário"
+msgstr ""
+
+msgid "Placa NVIDIA sem o driver da NVIDIA"
+msgstr ""
+
+msgid "Sem ele, o OBS grava e transmite pelo processador. Instale o driver em Vega → Hardware para usar o NVENC."
+msgstr ""
+
+msgid "Codificação por hardware: {encoders}"
+msgstr ""
+
+msgid "No OBS, escolha esse codificador em Configurações → Saída. A gravação pesa menos no processador."
+msgstr ""
+
+msgid "Sem codificação por hardware"
+msgstr ""
+
+msgid "O OBS usa o processador (x264). Para gravar em alta resolução, prefira presets mais leves."
+msgstr ""

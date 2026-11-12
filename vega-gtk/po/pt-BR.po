@@ -7061,3 +7061,42 @@ msgstr "Vulkan"
 
 msgid "Zoom"
 msgstr "Zoom"
+
+msgid "Instale o Easy Effects antes de instalar o perfil."
+msgstr "Instale o Easy Effects antes de instalar o perfil."
+
+msgid "Easy Effects"
+msgstr "Easy Effects"
+
+msgid "Perfil do Easy Effects para o microfone: tira ruído, nivela e deixa a voz clara"
+msgstr "Perfil do Easy Effects para o microfone: tira ruído, nivela e deixa a voz clara"
+
+msgid "Perfil instalado. No Easy Effects, abra Entrada → Presets e escolha \"{name}\"; depois selecione o seu microfone."
+msgstr "Perfil instalado. No Easy Effects, abra Entrada → Presets e escolha \"{name}\"; depois selecione o seu microfone."
+
+msgid "NDI"
+msgstr "NDI"
+
+msgid "vídeo pela rede"
+msgstr "vídeo pela rede"
+
+msgid "Vídeo e áudio pela rede local com NDI; inclui o runtime NDI, que é proprietário"
+msgstr "Vídeo e áudio pela rede local com NDI; inclui o runtime NDI, que é proprietário"
+
+msgid "Placa NVIDIA sem o driver da NVIDIA"
+msgstr "Placa NVIDIA sem o driver da NVIDIA"
+
+msgid "Sem ele, o OBS grava e transmite pelo processador. Instale o driver em Vega → Hardware para usar o NVENC."
+msgstr "Sem ele, o OBS grava e transmite pelo processador. Instale o driver em Vega → Hardware para usar o NVENC."
+
+msgid "Codificação por hardware: {encoders}"
+msgstr "Codificação por hardware: {encoders}"
+
+msgid "No OBS, escolha esse codificador em Configurações → Saída. A gravação pesa menos no processador."
+msgstr "No OBS, escolha esse codificador em Configurações → Saída. A gravação pesa menos no processador."
+
+msgid "Sem codificação por hardware"
+msgstr "Sem codificação por hardware"
+
+msgid "O OBS usa o processador (x264). Para gravar em alta resolução, prefira presets mais leves."
+msgstr "O OBS usa o processador (x264). Para gravar em alta resolução, prefira presets mais leves."

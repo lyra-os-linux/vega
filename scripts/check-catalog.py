@@ -46,7 +46,7 @@ import urllib.request
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 GTK = ROOT / "vega-gtk"
 CATALOGS = sorted((GTK / "ui" / "js" / "pages" / "software").glob("*-catalog.js"))
-ORIGINS = {"official", "flathub", "windows", "npm", "appimage", "receita"}
+ORIGINS = {"official", "flathub", "windows", "npm", "appimage", "receita", "preset"}
 FLATHUB_ID = re.compile(r"^[A-Za-z_][\w-]*(\.[A-Za-z_][\w-]*){2,}$")
 REPOS = [
     "https://download.opensuse.org/distribution/leap/16.1/repo/oss/",
@@ -183,6 +183,8 @@ def check_offline(entries):
             errors.append(f"{label}: {app_id!r} não está em VERBS nem em RECIPES (windows_apps.rs)")
         if origin == "appimage" and app_id not in appimage_ids:
             errors.append(f"{label}: {app_id!r} não está em APPS (appimage_apps.rs)")
+        if origin == "preset" and f'id: "{app_id}"' not in (GTK / "src" / "backend" / "easyeffects_presets.rs").read_text(encoding="utf-8"):
+            errors.append(f"{label}: {app_id!r} não está em PRESETS (easyeffects_presets.rs)")
         if origin == "receita" and app_id not in receita_ids:
             errors.append(f"{label}: {app_id!r} não está em PROGRAMS (receita_apps.rs)")
         repo = app.get("repo")

@@ -13,6 +13,8 @@ pub mod cleanup;
 pub mod commands_present;
 pub mod datetime;
 pub mod diagnostics;
+pub mod easyeffects_presets;
+pub mod encoders;
 pub mod flatpak_session;
 pub mod fwupd_update;
 pub mod gpu_bench;
