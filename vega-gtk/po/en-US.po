@@ -6870,3 +6870,66 @@ msgstr "None"
 
 msgid "Whisper"
 msgstr "None"
+
+msgid "Áudio e podcast"
+msgstr "None"
+
+msgid "DAW"
+msgstr "None"
+
+msgid "DJ"
+msgstr "None"
+
+msgid "editor de áudio"
+msgstr "None"
+
+msgid "efeitos"
+msgstr "None"
+
+msgid "Efeitos de áudio profissionais para o Ardour e outros programas"
+msgstr "None"
+
+msgid "estúdio"
+msgstr "None"
+
+msgid "Estúdio de gravação e mixagem multipista"
+msgstr "None"
+
+msgid "Gravação e edição de áudio, derivado do Audacity"
+msgstr "None"
+
+msgid "gravação multipista"
+msgstr "None"
+
+msgid "Liga as saídas e entradas de áudio do PipeWire, por exemplo para mandar o jogo e a chamada separados ao OBS"
+msgstr "None"
+
+msgid "Limpa a voz do microfone: redução de ruído, compressor e equalizador"
+msgstr "None"
+
+msgid "microfone"
+msgstr "None"
+
+msgid "Mixagem para DJs e lives"
+msgstr "None"
+
+msgid "PipeWire"
+msgstr "None"
+
+msgid "plugins de áudio"
+msgstr "None"
+
+msgid "produção musical"
+msgstr "None"
+
+msgid "Produção musical: batidas, sintetizadores e trilhas"
+msgstr "None"
+
+msgid "redução de ruído"
+msgstr "None"
+
+msgid "roteamento de áudio"
+msgstr "None"
+
+msgid "Roteamento de áudio do PipeWire, mais simples"
+msgstr "None"

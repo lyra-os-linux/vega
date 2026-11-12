@@ -102,6 +102,22 @@ export const POPULAR = [
     ],
   },
   {
+    // vega#198: áudio e podcast. O Audacity está em Vídeo, áudio e gravação.
+    id: "podcast",
+    title: N_("Áudio e podcast"),
+    tasks: ["record", "edit"],
+    apps: [
+      { name: "Easy Effects", origin: "flathub", id: "com.github.wwmm.easyeffects", logo: "com.github.wwmm.easyeffects", tags: [N_("redução de ruído"), N_("microfone")], text: N_("Limpa a voz do microfone: redução de ruído, compressor e equalizador") },
+      { name: "qpwgraph", origin: "official", id: "qpwgraph", logo: "org.rncbc.qpwgraph", tags: [N_("roteamento de áudio"), N_("PipeWire")], text: N_("Liga as saídas e entradas de áudio do PipeWire, por exemplo para mandar o jogo e a chamada separados ao OBS") },
+      { name: "Helvum", origin: "official", id: "helvum", logo: "org.pipewire.Helvum", tags: [N_("roteamento de áudio"), N_("PipeWire")], text: N_("Roteamento de áudio do PipeWire, mais simples") },
+      { name: "Ardour", origin: "official", id: "ardour", logo: "org.ardour.Ardour", tags: [N_("estúdio"), N_("gravação multipista"), N_("DAW")], text: N_("Estúdio de gravação e mixagem multipista") },
+      { name: "Tenacity", origin: "flathub", id: "org.tenacityaudio.Tenacity", logo: "org.tenacityaudio.Tenacity", tags: [N_("editor de áudio"), N_("podcast")], text: N_("Gravação e edição de áudio, derivado do Audacity") },
+      { name: "LMMS", origin: "flathub", id: "io.lmms.LMMS", logo: "io.lmms.LMMS", tags: [N_("produção musical"), N_("trilha sonora")], text: N_("Produção musical: batidas, sintetizadores e trilhas") },
+      { name: "Mixxx", origin: "flathub", id: "org.mixxx.Mixxx", logo: "org.mixxx.Mixxx", tags: [N_("DJ"), N_("live")], text: N_("Mixagem para DJs e lives") },
+      { name: "LSP Plugins", origin: "official", id: "lsp-plugins", tags: [N_("plugins de áudio"), N_("efeitos")], text: N_("Efeitos de áudio profissionais para o Ardour e outros programas") },
+    ],
+  },
+  {
     id: "graphics",
     title: N_("Imagem, fotos e 3D"),
 
