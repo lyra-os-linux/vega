@@ -7759,3 +7759,12 @@ msgstr ""
 
 msgid "O OBS usa o processador (x264). Para gravar em alta resolução, prefira presets mais leves."
 msgstr ""
+
+msgid "Os pacotes que dependem dele também são removidos."
+msgstr ""
+
+msgid "Na sua conta"
+msgstr ""
+
+msgid "Pacotes e Flatpaks"
+msgstr ""

@@ -144,6 +144,9 @@ export default {
     // se ia32_emulation=1 já foi aplicado e só falta reiniciar).
     let windowsIa32 = null;
     let obsEncoders = null;
+    // Apps instalados na conta do usuário (Windows, npm, AppImage, Receita,
+    // perfis), mostrados na aba Instalados ao lado dos pacotes e Flatpaks.
+    let userInstalled = null;
     let bootStatus = null;
     let searching = false;
     let searchStatus = "";
@@ -192,7 +195,8 @@ export default {
       const verb = pkg.installed ? t("Remover") : t("Instalar");
       const ok = await confirm({
         title: t("{verb} {name}?", { verb, name: pkg.name }),
-        text: t("A operação será autorizada pelo polkit e acompanhada até a conclusão."),
+        text: t("A operação será autorizada pelo polkit e acompanhada até a conclusão.")
+          + (pkg.installed && pkg.origin === "official" ? " " + t("Os pacotes que dependem dele também são removidos.") : ""),
         ic: pkg.installed ? "trash" : "download",
         tone: pkg.installed ? "danger" : "",
         confirmLabel: verb,
@@ -449,9 +453,15 @@ export default {
       else if (external) action = button(t("Instalado"), { size: "sm", icon: "check", disabled: true, title: t("Já instalado fora do Vega") });
       // O Vega não remove os programas da Receita: as declarações ficam na
       // pasta do programa (receita_apps.rs).
-      else if (installed && USER_ORIGINS.has(app.origin) && app.origin !== "receita") action = [
+      // Todo app instalado pode ser removido no próprio cartão, pelo caminho
+      // da origem; os da Receita não (as declarações ficam na pasta deles).
+      else if (installed && app.origin !== "receita") action = [
         badge(t("Instalado"), "green", "check"),
-        button(t("Remover"), { size: "sm", icon: "trash", kind: "danger", disabled: busy, onClick: (e) => { e.stopPropagation(); removeUserApp(app); } }),
+        button(t("Remover"), { size: "sm", icon: "trash", kind: "danger", disabled: busy, onClick: (e) => {
+          e.stopPropagation();
+          if (USER_ORIGINS.has(app.origin)) removeUserApp(app);
+          else packageAction({ ...pkg, installed: true });
+        } }),
       ];
       else if (installed) action = button(t("Instalado"), { size: "sm", icon: "check", disabled: true });
       else if (locked) action = button(t("Instalar"), { size: "sm", icon: "download", disabled: true, title: needsFlatpak ? t("Habilite o Flatpak para instalar") : gateNote });
@@ -660,6 +670,7 @@ export default {
           return fail(error, t("Não foi possível concluir a operação"));
         }
         popularInstalled = null;
+        userInstalled = null;
         return load();
       }
       const npm = app.origin === "npm";
@@ -692,6 +703,7 @@ export default {
       const result = await started.done;
       if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
       popularInstalled = null;
+      userInstalled = null;
       load();
     }
 
@@ -907,15 +919,59 @@ export default {
       return section(t("Pacotes e Flathub"), {}, content);
     }
 
+    /** Apps dos catálogos instalados na conta do usuário, sem repetir. */
+    async function loadUserInstalled() {
+      const [windows, npmApps, appImages, receita, presets] = await Promise.all([
+        call("windows_installed").catch(() => []),
+        call("npm_installed").catch(() => []),
+        call("appimage_installed").catch(() => []),
+        call("receita_installed").catch(() => []),
+        call("easyeffects_presets_installed").catch(() => []),
+      ]);
+      const keys = new Set([
+        ...windows.map((id) => queueKey({ origin: "windows", id })),
+        ...npmApps.map((id) => queueKey({ origin: "npm", id })),
+        ...appImages.map((id) => queueKey({ origin: "appimage", id })),
+        ...receita.map((id) => queueKey({ origin: "receita", id })),
+        ...presets.map((id) => queueKey({ origin: "preset", id })),
+      ]);
+      const apps = new Map();
+      for (const showcase of Object.values(SHOWCASES)) {
+        for (const category of showcase.catalog) {
+          for (const app of category.apps) {
+            const key = queueKey(app);
+            if (USER_ORIGINS.has(app.origin) && keys.has(key) && !apps.has(key)) apps.set(key, app);
+          }
+        }
+      }
+      return [...apps.values()];
+    }
+
+    function drawUserInstalled(q) {
+      const apps = (userInstalled || []).filter((app) => !q || normalize(`${app.name} ${app.id} ${t(app.text)}`).includes(q));
+      if (!apps.length) return null;
+      const busy = runningTasks().some((task) => task.kind === "software");
+      return section(t("Na sua conta"), { sub: String(apps.length) }, collection(apps.map((app) => item(
+        { name: app.name, id: app.id, origin: app.origin, logo: app.logo },
+        {
+          description: `${originLabel(app.origin)} · ${t(app.text)}`,
+          suffix: app.origin === "receita"
+            ? [badge(t("Instalado"), "green", "check")]
+            : [button(t("Remover"), { size: "sm", icon: "trash", kind: "danger", disabled: busy, onClick: (e) => { e.stopPropagation(); removeUserApp(app); } })],
+        }))));
+    }
+
     function drawInstalled() {
       if (loadError) return empty("alert-circle", t("Falha: {message}", { message: loadError }));
       if (!installed) return h("div", {}, h("p", { class: "sw-status" }, t("Carregando pacotes instalados…")), skeletonRows(6));
       const q = normalize(installedFilter);
       const items = installed.filter((pkg) => !q || normalize(`${pkg.name} ${pkg.id} ${pkg.description}`).includes(q));
-      if (!items.length) return empty("search", t("Nenhum resultado encontrado"));
+      const userApps = drawUserInstalled(q);
+      if (!items.length && !userApps) return empty("search", t("Nenhum resultado encontrado"));
       const shown = items.slice(0, 400);
       return h("div", {},
-        collection(shown.map((pkg) => item(pkg, { onOpen: () => openDetails(pkg) }))),
+        userApps,
+        section(t("Pacotes e Flatpaks"), { sub: String(items.length) }, collection(shown.map((pkg) => item(pkg, { onOpen: () => openDetails(pkg) })))),
         items.length > shown.length && h("p", { class: "sw-status" }, t("Mostrando {shown} de {total}", { shown: shown.length, total: items.length })));
     }
 
@@ -1208,7 +1264,7 @@ export default {
       try {
         // A busca mostra os cartões curados, que precisam do mesmo estado das vitrines.
         if ((SHOWCASES[current] || current === "search") && !popularInstalled) await loadPopular();
-        else if (current === "installed" && !installed) installed = await call("software_installed");
+        else if (current === "installed" && (!installed || !userInstalled)) [installed, userInstalled] = await Promise.all([call("software_installed"), loadUserInstalled()]);
         else if (current === "updates" && !updates) updates = await call("software_updates");
         else return;
         loadError = null;

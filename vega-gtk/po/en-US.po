@@ -7101,3 +7101,12 @@ msgstr "No hardware encoding"
 
 msgid "O OBS usa o processador (x264). Para gravar em alta resolução, prefira presets mais leves."
 msgstr "OBS uses the processor (x264). To record in high resolution, prefer lighter presets."
+
+msgid "Os pacotes que dependem dele também são removidos."
+msgstr "Packages that depend on it are removed too."
+
+msgid "Na sua conta"
+msgstr "In your account"
+
+msgid "Pacotes e Flatpaks"
+msgstr "Packages and Flatpaks"
