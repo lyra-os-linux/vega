@@ -6759,3 +6759,114 @@ msgstr "amended return"
 
 msgid "Declaração de 2025, para retificar a que já foi entregue"
 msgstr "2025 tax return, to amend the one already filed"
+
+msgid "Ajusta tempo e estilo das legendas"
+msgstr "None"
+
+msgid "Animação 2D vetorial"
+msgstr "None"
+
+msgid "animação vetorial"
+msgstr "None"
+
+msgid "Animação vetorial e Lottie, integrada ao Kdenlive"
+msgstr "None"
+
+msgid "Aumenta a resolução de imagens com IA local"
+msgstr "None"
+
+msgid "aumentar resolução"
+msgstr "None"
+
+msgid "baixar vídeo"
+msgstr "None"
+
+msgid "Baixa vídeos que você publicou para arquivo"
+msgstr "None"
+
+msgid "captura de tela"
+msgstr "None"
+
+msgid "Captura de tela com anotações"
+msgstr "None"
+
+msgid "composição"
+msgstr "None"
+
+msgid "Composição e efeitos visuais (VFX)"
+msgstr "None"
+
+msgid "Corta o começo e o fim de um vídeo"
+msgstr "None"
+
+msgid "cortar vídeo"
+msgstr "None"
+
+msgid "Corta vídeos sem recodificar, em segundos"
+msgstr "None"
+
+msgid "Deixa capturas de tela prontas para publicar"
+msgstr "None"
+
+msgid "ditado"
+msgstr "None"
+
+msgid "Edição rápida de imagens"
+msgstr "None"
+
+msgid "Edita os metadados de arquivos de áudio"
+msgstr "None"
+
+msgid "Editar e publicar"
+msgstr "None"
+
+msgid "Editor de legendas com forma de onda do áudio"
+msgstr "None"
+
+msgid "Editor de legendas simples"
+msgstr "None"
+
+msgid "Editor de vídeo simples"
+msgstr "None"
+
+msgid "efeitos visuais"
+msgstr "None"
+
+msgid "Fala para texto e texto para fala, offline"
+msgstr "None"
+
+msgid "fotografia"
+msgstr "None"
+
+msgid "IA"
+msgstr "None"
+
+msgid "legendas"
+msgstr "None"
+
+msgid "leitura em voz alta"
+msgstr "None"
+
+msgid "Lottie"
+msgstr "None"
+
+msgid "metadados"
+msgstr "None"
+
+msgid "miniaturas"
+msgstr "None"
+
+msgid "sem recodificar"
+msgstr "None"
+
+msgid "tags de áudio"
+msgstr "None"
+
+msgid "Transcreve e traduz áudio e vídeo offline, com o Whisper, e gera legendas"
+msgstr "None"
+
+msgid "transcrição"
+msgstr "None"
+
+msgid "Whisper"
+msgstr "None"

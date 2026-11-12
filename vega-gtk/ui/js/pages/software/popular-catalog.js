@@ -76,6 +76,32 @@ export const POPULAR = [
     ],
   },
   {
+    // vega#197: editar e publicar. Apps conferidos no Flathub em 12/11/2026.
+    id: "publish-video",
+    title: N_("Editar e publicar"),
+    tasks: ["edit"],
+    apps: [
+      { name: "LosslessCut", origin: "flathub", id: "no.mifi.losslesscut", logo: "no.mifi.losslesscut", tags: [N_("cortar vídeo"), N_("sem recodificar")], text: N_("Corta vídeos sem recodificar, em segundos") },
+      { name: "Video Trimmer", origin: "flathub", id: "org.gnome.gitlab.YaLTeR.VideoTrimmer", logo: "org.gnome.gitlab.YaLTeR.VideoTrimmer", tags: [N_("cortar vídeo")], text: N_("Corta o começo e o fim de um vídeo") },
+      { name: "Pitivi", origin: "flathub", id: "org.pitivi.Pitivi", logo: "org.pitivi.Pitivi", tags: [N_("editor de vídeo")], text: N_("Editor de vídeo simples") },
+      { name: "Buzz", origin: "flathub", id: "io.github.chidiwilliams.Buzz", logo: "io.github.chidiwilliams.Buzz", tags: [N_("legendas"), N_("transcrição"), N_("Whisper")], text: N_("Transcreve e traduz áudio e vídeo offline, com o Whisper, e gera legendas") },
+      { name: "Speech Note", origin: "flathub", id: "net.mkiol.SpeechNote", logo: "net.mkiol.SpeechNote", tags: [N_("transcrição"), N_("ditado"), N_("leitura em voz alta")], text: N_("Fala para texto e texto para fala, offline") },
+      { name: "Aegisub", origin: "flathub", id: "org.aegisub.Aegisub", logo: "org.aegisub.Aegisub", tags: [N_("legendas")], text: N_("Ajusta tempo e estilo das legendas") },
+      { name: "Subtitle Composer", origin: "flathub", id: "org.kde.subtitlecomposer", logo: "org.kde.subtitlecomposer", tags: [N_("legendas")], text: N_("Editor de legendas com forma de onda do áudio") },
+      { name: "Gaupol", origin: "flathub", id: "io.otsaloma.gaupol", logo: "io.otsaloma.gaupol", tags: [N_("legendas")], text: N_("Editor de legendas simples") },
+      { name: "Upscayl", origin: "flathub", id: "org.upscayl.Upscayl", logo: "org.upscayl.Upscayl", tags: [N_("IA"), N_("aumentar resolução"), N_("miniaturas")], text: N_("Aumenta a resolução de imagens com IA local") },
+      { name: "Glaxnimate", origin: "flathub", id: "org.kde.glaxnimate", logo: "org.kde.glaxnimate", tags: [N_("animação vetorial"), N_("Lottie")], text: N_("Animação vetorial e Lottie, integrada ao Kdenlive") },
+      { name: "Synfig Studio", origin: "flathub", id: "org.synfig.SynfigStudio", logo: "org.synfig.SynfigStudio", tags: [N_("animação 2D")], text: N_("Animação 2D vetorial") },
+      { name: "Natron", origin: "flathub", id: "fr.natron.Natron", logo: "fr.natron.Natron", tags: [N_("composição"), N_("efeitos visuais")], text: N_("Composição e efeitos visuais (VFX)") },
+      { name: "Flameshot", origin: "flathub", id: "org.flameshot.Flameshot", logo: "org.flameshot.Flameshot", tags: [N_("captura de tela")], text: N_("Captura de tela com anotações") },
+      { name: "Gradia", origin: "flathub", id: "be.alexandervanhee.gradia", logo: "be.alexandervanhee.gradia", tags: [N_("captura de tela")], text: N_("Deixa capturas de tela prontas para publicar") },
+      { name: "Pinta", origin: "flathub", id: "com.github.PintaProject.Pinta", logo: "com.github.PintaProject.Pinta", tags: [N_("editor de imagens")], text: N_("Edição rápida de imagens") },
+      { name: "RawTherapee", origin: "flathub", id: "com.rawtherapee.RawTherapee", logo: "com.rawtherapee.RawTherapee", tags: [N_("RAW"), N_("fotografia")], text: N_("Revelação de fotos RAW") },
+      { name: "Ear Tag", origin: "flathub", id: "app.drey.EarTag", logo: "app.drey.EarTag", tags: [N_("metadados"), N_("tags de áudio")], text: N_("Edita os metadados de arquivos de áudio") },
+      { name: "Parabolic", origin: "flathub", id: "org.nickvision.tubeconverter", logo: "org.nickvision.tubeconverter", tags: [N_("baixar vídeo")], text: N_("Baixa vídeos que você publicou para arquivo") },
+    ],
+  },
+  {
     id: "graphics",
     title: N_("Imagem, fotos e 3D"),
 

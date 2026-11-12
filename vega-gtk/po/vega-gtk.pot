@@ -7414,3 +7414,114 @@ msgstr ""
 
 msgid "Declaração de 2025, para retificar a que já foi entregue"
 msgstr ""
+
+msgid "Ajusta tempo e estilo das legendas"
+msgstr ""
+
+msgid "Animação 2D vetorial"
+msgstr ""
+
+msgid "animação vetorial"
+msgstr ""
+
+msgid "Animação vetorial e Lottie, integrada ao Kdenlive"
+msgstr ""
+
+msgid "Aumenta a resolução de imagens com IA local"
+msgstr ""
+
+msgid "aumentar resolução"
+msgstr ""
+
+msgid "baixar vídeo"
+msgstr ""
+
+msgid "Baixa vídeos que você publicou para arquivo"
+msgstr ""
+
+msgid "captura de tela"
+msgstr ""
+
+msgid "Captura de tela com anotações"
+msgstr ""
+
+msgid "composição"
+msgstr ""
+
+msgid "Composição e efeitos visuais (VFX)"
+msgstr ""
+
+msgid "Corta o começo e o fim de um vídeo"
+msgstr ""
+
+msgid "cortar vídeo"
+msgstr ""
+
+msgid "Corta vídeos sem recodificar, em segundos"
+msgstr ""
+
+msgid "Deixa capturas de tela prontas para publicar"
+msgstr ""
+
+msgid "ditado"
+msgstr ""
+
+msgid "Edição rápida de imagens"
+msgstr ""
+
+msgid "Edita os metadados de arquivos de áudio"
+msgstr ""
+
+msgid "Editar e publicar"
+msgstr ""
+
+msgid "Editor de legendas com forma de onda do áudio"
+msgstr ""
+
+msgid "Editor de legendas simples"
+msgstr ""
+
+msgid "Editor de vídeo simples"
+msgstr ""
+
+msgid "efeitos visuais"
+msgstr ""
+
+msgid "Fala para texto e texto para fala, offline"
+msgstr ""
+
+msgid "fotografia"
+msgstr ""
+
+msgid "IA"
+msgstr ""
+
+msgid "legendas"
+msgstr ""
+
+msgid "leitura em voz alta"
+msgstr ""
+
+msgid "Lottie"
+msgstr ""
+
+msgid "metadados"
+msgstr ""
+
+msgid "miniaturas"
+msgstr ""
+
+msgid "sem recodificar"
+msgstr ""
+
+msgid "tags de áudio"
+msgstr ""
+
+msgid "Transcreve e traduz áudio e vídeo offline, com o Whisper, e gera legendas"
+msgstr ""
+
+msgid "transcrição"
+msgstr ""
+
+msgid "Whisper"
+msgstr ""

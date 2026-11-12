@@ -6759,3 +6759,114 @@ msgstr "rectificación"
 
 msgid "Declaração de 2025, para retificar a que já foi entregue"
 msgstr "Declaración de 2025, para rectificar la que ya se entregó"
+
+msgid "Ajusta tempo e estilo das legendas"
+msgstr "Adjusts subtitle timing and style"
+
+msgid "Animação 2D vetorial"
+msgstr "2D vector animation"
+
+msgid "animação vetorial"
+msgstr "vector animation"
+
+msgid "Animação vetorial e Lottie, integrada ao Kdenlive"
+msgstr "Vector and Lottie animation, integrated with Kdenlive"
+
+msgid "Aumenta a resolução de imagens com IA local"
+msgstr "Upscales images with local AI"
+
+msgid "aumentar resolução"
+msgstr "upscale"
+
+msgid "baixar vídeo"
+msgstr "download video"
+
+msgid "Baixa vídeos que você publicou para arquivo"
+msgstr "Downloads videos you published to a file"
+
+msgid "captura de tela"
+msgstr "screenshot"
+
+msgid "Captura de tela com anotações"
+msgstr "Screenshots with annotations"
+
+msgid "composição"
+msgstr "compositing"
+
+msgid "Composição e efeitos visuais (VFX)"
+msgstr "Compositing and visual effects (VFX)"
+
+msgid "Corta o começo e o fim de um vídeo"
+msgstr "Trims the start and end of a video"
+
+msgid "cortar vídeo"
+msgstr "trim video"
+
+msgid "Corta vídeos sem recodificar, em segundos"
+msgstr "Cuts videos without re-encoding, in seconds"
+
+msgid "Deixa capturas de tela prontas para publicar"
+msgstr "Makes screenshots ready to publish"
+
+msgid "ditado"
+msgstr "dictation"
+
+msgid "Edição rápida de imagens"
+msgstr "Quick image editing"
+
+msgid "Edita os metadados de arquivos de áudio"
+msgstr "Edits audio file metadata"
+
+msgid "Editar e publicar"
+msgstr "Edit and publish"
+
+msgid "Editor de legendas com forma de onda do áudio"
+msgstr "Subtitle editor with audio waveform"
+
+msgid "Editor de legendas simples"
+msgstr "Simple subtitle editor"
+
+msgid "Editor de vídeo simples"
+msgstr "Simple video editor"
+
+msgid "efeitos visuais"
+msgstr "visual effects"
+
+msgid "Fala para texto e texto para fala, offline"
+msgstr "Speech to text and text to speech, offline"
+
+msgid "fotografia"
+msgstr "photography"
+
+msgid "IA"
+msgstr "AI"
+
+msgid "legendas"
+msgstr "subtitles"
+
+msgid "leitura em voz alta"
+msgstr "read aloud"
+
+msgid "Lottie"
+msgstr "Lottie"
+
+msgid "metadados"
+msgstr "metadata"
+
+msgid "miniaturas"
+msgstr "thumbnails"
+
+msgid "sem recodificar"
+msgstr "no re-encoding"
+
+msgid "tags de áudio"
+msgstr "audio tags"
+
+msgid "Transcreve e traduz áudio e vídeo offline, com o Whisper, e gera legendas"
+msgstr "Transcribes and translates audio and video offline with Whisper, and creates subtitles"
+
+msgid "transcrição"
+msgstr "transcription"
+
+msgid "Whisper"
+msgstr "Whisper"

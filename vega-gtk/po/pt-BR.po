@@ -6758,3 +6758,114 @@ msgstr "retificação"
 
 msgid "Declaração de 2025, para retificar a que já foi entregue"
 msgstr "Declaração de 2025, para retificar a que já foi entregue"
+
+msgid "Ajusta tempo e estilo das legendas"
+msgstr "Ajusta tempo e estilo das legendas"
+
+msgid "Animação 2D vetorial"
+msgstr "Animação 2D vetorial"
+
+msgid "animação vetorial"
+msgstr "animação vetorial"
+
+msgid "Animação vetorial e Lottie, integrada ao Kdenlive"
+msgstr "Animação vetorial e Lottie, integrada ao Kdenlive"
+
+msgid "Aumenta a resolução de imagens com IA local"
+msgstr "Aumenta a resolução de imagens com IA local"
+
+msgid "aumentar resolução"
+msgstr "aumentar resolução"
+
+msgid "baixar vídeo"
+msgstr "baixar vídeo"
+
+msgid "Baixa vídeos que você publicou para arquivo"
+msgstr "Baixa vídeos que você publicou para arquivo"
+
+msgid "captura de tela"
+msgstr "captura de tela"
+
+msgid "Captura de tela com anotações"
+msgstr "Captura de tela com anotações"
+
+msgid "composição"
+msgstr "composição"
+
+msgid "Composição e efeitos visuais (VFX)"
+msgstr "Composição e efeitos visuais (VFX)"
+
+msgid "Corta o começo e o fim de um vídeo"
+msgstr "Corta o começo e o fim de um vídeo"
+
+msgid "cortar vídeo"
+msgstr "cortar vídeo"
+
+msgid "Corta vídeos sem recodificar, em segundos"
+msgstr "Corta vídeos sem recodificar, em segundos"
+
+msgid "Deixa capturas de tela prontas para publicar"
+msgstr "Deixa capturas de tela prontas para publicar"
+
+msgid "ditado"
+msgstr "ditado"
+
+msgid "Edição rápida de imagens"
+msgstr "Edição rápida de imagens"
+
+msgid "Edita os metadados de arquivos de áudio"
+msgstr "Edita os metadados de arquivos de áudio"
+
+msgid "Editar e publicar"
+msgstr "Editar e publicar"
+
+msgid "Editor de legendas com forma de onda do áudio"
+msgstr "Editor de legendas com forma de onda do áudio"
+
+msgid "Editor de legendas simples"
+msgstr "Editor de legendas simples"
+
+msgid "Editor de vídeo simples"
+msgstr "Editor de vídeo simples"
+
+msgid "efeitos visuais"
+msgstr "efeitos visuais"
+
+msgid "Fala para texto e texto para fala, offline"
+msgstr "Fala para texto e texto para fala, offline"
+
+msgid "fotografia"
+msgstr "fotografia"
+
+msgid "IA"
+msgstr "IA"
+
+msgid "legendas"
+msgstr "legendas"
+
+msgid "leitura em voz alta"
+msgstr "leitura em voz alta"
+
+msgid "Lottie"
+msgstr "Lottie"
+
+msgid "metadados"
+msgstr "metadados"
+
+msgid "miniaturas"
+msgstr "miniaturas"
+
+msgid "sem recodificar"
+msgstr "sem recodificar"
+
+msgid "tags de áudio"
+msgstr "tags de áudio"
+
+msgid "Transcreve e traduz áudio e vídeo offline, com o Whisper, e gera legendas"
+msgstr "Transcreve e traduz áudio e vídeo offline, com o Whisper, e gera legendas"
+
+msgid "transcrição"
+msgstr "transcrição"
+
+msgid "Whisper"
+msgstr "Whisper"
