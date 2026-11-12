@@ -6753,3 +6753,9 @@ msgstr "2026 Brazilian income tax return, from the Receita Federal website"
 
 msgid "O Vega baixa o programa do site da Receita Federal, confere se é a versão {version} verificada pelo Lyra e instala na sua conta, em ~/ProgramasRFB, sem senha. As declarações ficam nessa pasta."
 msgstr "Vega downloads the program from the Receita Federal website, checks that it is version {version} verified by Lyra and installs it in your account, in ~/ProgramasRFB, with no password. Your tax returns are kept in that folder."
+
+msgid "retificação"
+msgstr "amended return"
+
+msgid "Declaração de 2025, para retificar a que já foi entregue"
+msgstr "2025 tax return, to amend the one already filed"

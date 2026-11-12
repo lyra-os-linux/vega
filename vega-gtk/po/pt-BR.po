@@ -6752,3 +6752,9 @@ msgstr "Declaração do Imposto de Renda 2026, do site da Receita Federal"
 
 msgid "O Vega baixa o programa do site da Receita Federal, confere se é a versão {version} verificada pelo Lyra e instala na sua conta, em ~/ProgramasRFB, sem senha. As declarações ficam nessa pasta."
 msgstr "O Vega baixa o programa do site da Receita Federal, confere se é a versão {version} verificada pelo Lyra e instala na sua conta, em ~/ProgramasRFB, sem senha. As declarações ficam nessa pasta."
+
+msgid "retificação"
+msgstr "retificação"
+
+msgid "Declaração de 2025, para retificar a que já foi entregue"
+msgstr "Declaração de 2025, para retificar a que já foi entregue"

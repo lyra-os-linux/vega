@@ -31,20 +31,37 @@ pub struct Program {
     pub comment: &'static str,
 }
 
-pub const PROGRAMS: &[Program] = &[Program {
-    id: "irpf2026",
-    name: "IRPF 2026",
-    dir: "IRPF2026",
-    url: "https://downloadirpf.receita.fazenda.gov.br/irpf/2026/irpf/arquivos/IRPF2026Linux-x86_64v1.5.sh.bin",
-    installer: Expected {
-        page: "https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/download/pgd/dirpf",
-        file: "IRPF2026Linux-x86_64v1.5.sh.bin",
-        size: 110_149_481,
-        sha256: "fada62389c323bee32129de26e5769367f24dfb4effb0243d2fc690d50ea08e2",
-        version: "1.5",
+pub const PROGRAMS: &[Program] = &[
+    Program {
+        id: "irpf2026",
+        name: "IRPF 2026",
+        dir: "IRPF2026",
+        url: "https://downloadirpf.receita.fazenda.gov.br/irpf/2026/irpf/arquivos/IRPF2026Linux-x86_64v1.5.sh.bin",
+        installer: Expected {
+            page: "https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/download/pgd/dirpf",
+            file: "IRPF2026Linux-x86_64v1.5.sh.bin",
+            size: 110_149_481,
+            sha256: "fada62389c323bee32129de26e5769367f24dfb4effb0243d2fc690d50ea08e2",
+            version: "1.5",
+        },
+        comment: "Declaração do Imposto de Renda Pessoa Física 2026",
     },
-    comment: "Declaração do Imposto de Renda Pessoa Física 2026",
-}];
+    // Ano anterior, para retificar a declaração já entregue.
+    Program {
+        id: "irpf2025",
+        name: "IRPF 2025",
+        dir: "IRPF2025",
+        url: "https://downloadirpf.receita.fazenda.gov.br/irpf/2025/irpf/arquivos/IRPF2025Linux-x86_64v1.8.sh.bin",
+        installer: Expected {
+            page: "https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/download/pgd/dirpf",
+            file: "IRPF2025Linux-x86_64v1.8.sh.bin",
+            size: 87_854_766,
+            sha256: "e5812fe4246ef0bc5e75f2a727ccae399ab3342a148d2b62abd125100f499856",
+            version: "1.8",
+        },
+        comment: "Declaração do Imposto de Renda Pessoa Física 2025",
+    },
+];
 
 pub fn program(id: &str) -> Option<&'static Program> {
     PROGRAMS.iter().find(|program| program.id == id)

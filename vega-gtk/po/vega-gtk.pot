@@ -7408,3 +7408,9 @@ msgstr ""
 
 msgid "O Vega baixa o programa do site da Receita Federal, confere se é a versão {version} verificada pelo Lyra e instala na sua conta, em ~/ProgramasRFB, sem senha. As declarações ficam nessa pasta."
 msgstr ""
+
+msgid "retificação"
+msgstr ""
+
+msgid "Declaração de 2025, para retificar a que já foi entregue"
+msgstr ""
