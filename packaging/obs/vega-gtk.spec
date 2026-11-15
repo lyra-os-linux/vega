@@ -87,6 +87,9 @@ install -Dm755 target/release/vega-gtk \
 install -Dm755 target/release/vega-update-notifier \
   %{buildroot}%{_bindir}/vega-update-notifier
 ln -s vega-gtk %{buildroot}%{_bindir}/lyra-vega-gtk
+# Webapps de bancos (vega#210): abre o site e liga o Warsaw enquanto aberto.
+install -Dm755 packaging/vega/vega-bank-webapp \
+  %{buildroot}%{_bindir}/vega-bank-webapp
 
 install -Dm644 packaging/vega/vega.desktop \
   %{buildroot}%{_datadir}/applications/vega.desktop
@@ -107,6 +110,7 @@ done
 %{_bindir}/vega-gtk
 %{_bindir}/vega-update-notifier
 %{_bindir}/lyra-vega-gtk
+%{_bindir}/vega-bank-webapp
 %{_datadir}/applications/vega.desktop
 %{_datadir}/applications/org.lyraos.Vega.UpdateNotifier.desktop
 %{_sysconfdir}/xdg/autostart/vega-update-notifier.desktop

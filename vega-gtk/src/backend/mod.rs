@@ -8,6 +8,7 @@
 
 pub mod appimage_apps;
 pub mod backup;
+pub mod banks;
 pub mod bluetooth;
 pub mod cleanup;
 pub mod commands_present;
@@ -36,6 +37,7 @@ pub mod software;
 pub mod storage;
 pub mod system;
 pub mod users;
+pub mod webapps;
 pub mod windows_apps;
 
 use async_lock::Mutex;

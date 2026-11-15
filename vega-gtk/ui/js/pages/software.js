@@ -12,6 +12,7 @@ import { preparationPanel } from "./software/preparation.js";
 import { requireRestart } from "../restart.js";
 import { flatpakPanel } from "./software/flatpak.js";
 import { POPULAR } from "./software/popular-catalog.js";
+import { bankSection, resetBankSection, ensureBankModule } from "./software/banks.js";
 import { DEVELOPER } from "./software/developer-catalog.js";
 import { NETWORK } from "./software/network-catalog.js";
 import { WINDOWS, WINDOWS_BASE } from "./software/windows-catalog.js";
@@ -53,7 +54,7 @@ const SHOWCASES = {
 /** Cartões de todas as vitrines, para a busca offline do catálogo curado. */
 const CURATED = curatedEntries(Object.entries(SHOWCASES).map(([tab, { label, catalog }]) => ({ tab, label, catalog })));
 /** Origens instaladas na conta do usuário: sem detalhes no vegad, removidas pelo cartão. */
-const USER_ORIGINS = new Set(["windows", "npm", "appimage", "receita", "preset"]);
+const USER_ORIGINS = new Set(["windows", "npm", "appimage", "receita", "preset", "webapp"]);
 const ORIGIN_RANK = { official: 0, flathub: 1 };
 
 // Estado que sobrevive à troca de página, como os widgets do vega-gtk.
@@ -69,7 +70,7 @@ const memory = {
 };
 
 const queueKey = (pkg) => `${pkg.origin}\u0000${pkg.id}`;
-const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "appimage" ? "AppImage" : origin === "receita" ? t("Receita Federal") : origin === "preset" ? t("Perfil") : origin);
+const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "appimage" ? "AppImage" : origin === "receita" ? t("Receita Federal") : origin === "preset" ? t("Perfil") : origin === "webapp" ? t("Webapp") : origin);
 const rankOrigin = (a, b) => (ORIGIN_RANK[a.origin] ?? 2) - (ORIGIN_RANK[b.origin] ?? 2);
 
 function packageIcon(pkg, size = 40) {
@@ -472,6 +473,7 @@ export default {
         else if (app.origin === "appimage") installAppImage(app);
         else if (app.origin === "receita") installReceita(app);
         else if (app.origin === "preset") installPreset(app);
+        else if (app.origin === "webapp") installWebapp(app);
         else if (app.repo?.package) installFromRepoPackage(app);
         else if (app.repo) installFromRepo(app);
         else packageAction(pkg);
@@ -547,8 +549,8 @@ export default {
                 h("strong", {}, t("Rodar um programa do Windows")),
                 h("p", { class: "small muted" }, t("Escolha o instalador (.exe ou .msi) que você baixou do site do fabricante. Ele roda pelo Wine, na sua conta, sem senha."))),
               button(t("Escolher arquivo…"), { kind: "primary", icon: "folder", disabled: busy, onClick: runExe })))),
-        catalog.map((category) => section(t(category.title), { sub: String(category.apps.length), id: `section-${category.id}` },
-          category.encoders && encodersBanner(),
+        catalog.map((category) => category.bank ? bankSection({ transact, ensureRepo, repaint: paint, busy, hasWebapps: category.apps.some(isInstalled), cards: h("div", { class: "grid auto sw-cards" }, category.apps.map((app) => popularCard(app))) }) : section(t(category.title), { sub: String(category.apps.length), id: `section-${category.id}` },
+          category.encoders && h("div", { class: "sw-encoders" }, encodersBanner()),
           h("div", { class: "grid auto sw-cards" }, category.apps.map((app) => popularCard(app, { gateNote: category.gated ? gate?.note : null }))))));
     }
 
@@ -663,9 +665,9 @@ export default {
 
     /** Remove um app instalado na conta do usuário (Windows, npm ou AppImage). */
     async function removeUserApp(app) {
-      if (app.origin === "preset") {
+      if (app.origin === "preset" || app.origin === "webapp") {
         try {
-          await call("easyeffects_preset_remove", { id: app.id });
+          await call(app.origin === "webapp" ? "webapp_remove" : "easyeffects_preset_remove", { id: app.id });
         } catch (error) {
           return fail(error, t("Não foi possível concluir a operação"));
         }
@@ -826,6 +828,23 @@ export default {
       load();
     }
 
+    /**
+     * Webapp de banco (webapps.rs): instala o módulo de segurança, se faltar,
+     * e grava o atalho no menu, na conta do usuário, sem senha.
+     */
+    async function installWebapp(app) {
+      // Todo webapp de banco liga o módulo de segurança antes de abrir o site.
+      if (!(await ensureBankModule({ transact, ensureRepo }))) return;
+      try {
+        await call("webapp_install", { id: app.id });
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      toast(t("{name} está no menu de aplicativos e no dock.", { name: app.name }));
+      popularInstalled = null;
+      load();
+    }
+
     async function installWindows(app) {
       const ok = await confirm({
         title: t("Instalar {name}?", { name: app.name }),
@@ -854,7 +873,7 @@ export default {
       // (instalador próprio na conta do usuário); se o comando existe, o
       // cartão mostra "Instalado".
       const byCommand = Object.values(SHOWCASES).flatMap((showcase) => showcase.catalog.flatMap((section) => section.apps)).filter((app) => app.command);
-      const [details, packages, windows, npmApps, appImages, receita, presets, encoders, ia32, boot, commands] = await Promise.all([
+      const [details, packages, windows, npmApps, appImages, receita, presets, webapps, encoders, ia32, boot, commands] = await Promise.all([
         call("software_details", { origin: "official", id: "flatpak" }).catch(() => null),
         call("software_installed"),
         call("windows_installed").catch(() => []),
@@ -862,6 +881,7 @@ export default {
         call("appimage_installed").catch(() => []),
         call("receita_installed").catch(() => []),
         call("easyeffects_presets_installed").catch(() => []),
+        call("webapps_installed").catch(() => []),
         call("obs_encoders").catch(() => null),
         call("windows_ia32").catch(() => true),
         call("kernel_boot_status").catch(() => null),
@@ -878,6 +898,7 @@ export default {
         ...appImages.map((id) => queueKey({ origin: "appimage", id })),
         ...receita.map((id) => queueKey({ origin: "receita", id })),
         ...presets.map((id) => queueKey({ origin: "preset", id })),
+        ...webapps.map((id) => queueKey({ origin: "webapp", id })),
       ]);
       const found = new Set(commands);
       popularExternal = new Set(byCommand
@@ -926,12 +947,13 @@ export default {
 
     /** Apps dos catálogos instalados na conta do usuário, sem repetir. */
     async function loadUserInstalled() {
-      const [windows, npmApps, appImages, receita, presets] = await Promise.all([
+      const [windows, npmApps, appImages, receita, presets, webapps] = await Promise.all([
         call("windows_installed").catch(() => []),
         call("npm_installed").catch(() => []),
         call("appimage_installed").catch(() => []),
         call("receita_installed").catch(() => []),
         call("easyeffects_presets_installed").catch(() => []),
+        call("webapps_installed").catch(() => []),
       ]);
       const keys = new Set([
         ...windows.map((id) => queueKey({ origin: "windows", id })),
@@ -939,6 +961,7 @@ export default {
         ...appImages.map((id) => queueKey({ origin: "appimage", id })),
         ...receita.map((id) => queueKey({ origin: "receita", id })),
         ...presets.map((id) => queueKey({ origin: "preset", id })),
+        ...webapps.map((id) => queueKey({ origin: "webapp", id })),
       ]);
       const apps = new Map();
       for (const showcase of Object.values(SHOWCASES)) {
@@ -1157,6 +1180,30 @@ export default {
      * Microsoft): adiciona o repositório se faltar (ou o reativa), com a chave
      * aprovada pelo usuário, e então instala o pacote.
      */
+    /**
+     * Garante o repositório `{ name, url }` no sistema e habilitado: adiciona
+     * com a aprovação da chave (addRepo) ou habilita o que estava desligado.
+     */
+    async function ensureRepo({ name, url }) {
+      let current;
+      try {
+        current = await call("software_repos");
+      } catch (error) {
+        fail(error, t("Não foi possível concluir a operação"));
+        return false;
+      }
+      const existing = current.find((repo) => repo.name === name);
+      if (!existing) return Boolean(await addRepo(name, url));
+      if (existing.enabled) return true;
+      try {
+        await call("software_set_repo_enabled", { repo: existing.name, enabled: true });
+        return true;
+      } catch (error) {
+        fail(error, t("Não foi possível concluir a operação"));
+        return false;
+      }
+    }
+
     async function installFromRepo(app) {
       const ok = await confirm({
         title: t("Instalar {name}?", { name: app.name }),
@@ -1166,22 +1213,7 @@ export default {
         required: true,
       });
       if (!ok) return;
-      let current;
-      try {
-        current = await call("software_repos");
-      } catch (error) {
-        return fail(error, t("Não foi possível concluir a operação"));
-      }
-      const existing = current.find((repo) => repo.name === app.repo.name);
-      if (!existing) {
-        if (!(await addRepo(app.repo.name, app.repo.url))) return;
-      } else if (!existing.enabled) {
-        try {
-          await call("software_set_repo_enabled", { repo: existing.name, enabled: true });
-        } catch (error) {
-          return fail(error, t("Não foi possível concluir a operação"));
-        }
-      }
+      if (!(await ensureRepo(app.repo))) return;
       await transact({ kind: "install", origin: app.origin, id: app.id }, t("{verb} {name}", { verb: t("Instalar"), name: app.name }));
     }
 
@@ -1300,6 +1332,7 @@ export default {
       // O Flatpak pode ter sido habilitado agora (painel acima).
       popularInstalled = null;
       flatpakEnabled = null;
+      resetBankSection();
       if (tab === "search" && memory.query) runSearch();
       paintToolbar();
       paint();
@@ -1317,6 +1350,12 @@ export default {
       panelHost,
       toolbarHost,
       body);
+    // O painel de transação fica preso logo abaixo das abas, que main.js
+    // (pinTabs) move para uma faixa própria depois de a página montar.
+    requestAnimationFrame(() => {
+      const band = el.querySelector(":scope > .page-tabs");
+      if (band) el.style.setProperty("--sw-tabs-h", `${band.offsetHeight}px`);
+    });
     // "Repositórios do sistema" na busca do Vega abre a janela.
     if (ctx.sub === "repos") requestAnimationFrame(openRepos);
     return { el, actions: [h("button", { class: "icon-btn", "aria-label": t("Atualizar"), title: t("Atualizar"), onclick: reload }, icon("refresh", 17))] };

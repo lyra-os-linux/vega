@@ -1,0 +1,85 @@
+#!/bin/bash
+# Webapp de banco do Vega (vega#210): liga o módulo de segurança dos bancos
+# (warsaw.service), espera ele responder e só então abre o site do banco no
+# Chromium em modo app, numa janela própria, sem abas nem barra de endereço.
+# Quando o último webapp de banco fecha, desliga o serviço. A regra
+# 50-warsaw.rules do pacote warsaw deixa a sessão local ativa iniciar e parar
+# só esse serviço, sem senha.
+#
+# Sem o módulo ou o Chromium, ou se o módulo não ligar, o site não abre: o Vega
+# abre na seção Bancos, onde o usuário habilita ou repara o módulo.
+#
+# Uso: vega-bank-webapp ID URL
+#
+# Cada banco tem o próprio perfil do Chromium e a própria classe de janela
+# (lyra-banco-ID, a StartupWMClass do atalho), para aparecer como um app
+# separado no dock. O Chromium usa o NSS do sistema (~/.pki/nssdb), onde o
+# Warsaw instala o certificado dele.
+#
+# Cada webapp aberto segura a trava em modo compartilhado. Ao fechar, solta e
+# tenta a trava exclusiva: só consegue se nenhum outro webapp estiver aberto,
+# e então desliga o serviço.
+set -u
+
+id=${1:?uso: vega-bank-webapp ID URL}
+url=${2:?uso: vega-bank-webapp ID URL}
+case $id in
+    *[!a-z0-9-]*) echo "vega-bank-webapp: id inválido: $id" >&2; exit 2 ;;
+esac
+
+unit=warsaw.service
+vega_banks=vega://software/popular/banks
+profile="${XDG_DATA_HOME:-$HOME/.local/share}/lyra-bancos/$id"
+state="${XDG_RUNTIME_DIR:-/tmp/vega-bank-webapp-$UID}/vega-bank-webapp"
+mkdir -p "$profile" "$state"
+
+notify() {
+    command -v notify-send >/dev/null && notify-send -a Vega -i dialog-warning "$1" "$2"
+}
+
+# Abre o Vega na seção Bancos e encerra sem abrir o site.
+give_up() {
+    notify "$1" "$2"
+    setsid vega-gtk "$vega_banks" >/dev/null 2>&1 &
+    exit 1
+}
+
+if ! command -v chromium >/dev/null; then
+    give_up "Os webapps de bancos precisam do Chromium" \
+        "O Vega vai abrir na seção Bancos: instale o webapp de novo para instalar o Chromium."
+fi
+if ! systemctl cat "$unit" >/dev/null 2>&1; then
+    give_up "Módulo de segurança dos bancos não instalado" \
+        "O Vega vai abrir na seção Bancos: clique em Habilitar segurança de bancos."
+fi
+
+exec 9>"$state/lock"
+flock -s 9
+
+systemctl start "$unit" ||
+    give_up "O módulo de segurança dos bancos não ligou" \
+        "O Vega vai abrir na seção Bancos para mostrar o problema."
+# O site do banco procura o módulo ao carregar: espera o core atender na
+# porta local, por até 15 s.
+ready=0
+for _ in $(seq 30); do
+    if (exec 3<>/dev/tcp/127.0.0.1/30900) 2>/dev/null; then
+        ready=1
+        break
+    fi
+    sleep 0.5
+done
+[ "$ready" = 1 ] ||
+    give_up "O módulo de segurança dos bancos não respondeu" \
+        "O Vega vai abrir na seção Bancos para mostrar o problema."
+
+# --ozone-platform=x11: no Wayland, o Chromium em modo app ignora --class e o
+# GNOME liga a janela ao app Chromium, com o ícone dele. Pelo XWayland a classe
+# vale e o dock mostra o webapp com o nome e o ícone do banco.
+chromium --ozone-platform=x11 --user-data-dir="$profile" --class="lyra-banco-$id" \
+    --start-maximized --no-first-run --no-default-browser-check --app="$url"
+
+flock -u 9
+if flock -n -x 9; then
+    systemctl stop "$unit"
+fi
