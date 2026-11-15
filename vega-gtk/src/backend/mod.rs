@@ -8,6 +8,7 @@
 
 pub mod appimage_apps;
 pub mod backup;
+pub mod banks;
 pub mod bluetooth;
 pub mod cleanup;
 pub mod commands_present;

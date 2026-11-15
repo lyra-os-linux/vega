@@ -120,6 +120,7 @@ fn main() -> ExitCode {
             appimage_apps::appimage_installed,
             appimage_apps::appimage_install,
             appimage_apps::appimage_remove,
+            banks::bank_module_status,
             receita_apps::receita_installed,
             receita_apps::receita_install,
             receita_apps::receita_remove,
