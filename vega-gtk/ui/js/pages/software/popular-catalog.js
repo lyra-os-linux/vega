@@ -245,6 +245,37 @@ export const POPULAR = [
     ],
   },
   {
+    // vega#210: módulo de segurança dos bancos (Warsaw) e guia por banco.
+    // Não é cartão de app: software.js desenha a seção com bankSection().
+    id: "banks",
+    title: N_("Bancos"),
+    bank: true,
+    // Webapps: atalhos no menu que abrem o site oficial no Chromium em modo app
+    // `logo`: ícone do banco, do site dele ou do Wikimedia Commons (decisão do
+    // mantenedor em 15/11/2026: é só um atalho para o banco).
+    // (backend/webapps.rs); todo webapp liga o módulo de segurança (Warsaw)
+    // antes de abrir o site e o desliga quando fecha.
+    apps: [
+      { name: "Banco do Brasil", origin: "webapp", id: "banco-do-brasil", logo: "lyra-banco-banco-do-brasil", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
+      { name: "Caixa", origin: "webapp", id: "caixa", logo: "lyra-banco-caixa", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
+      { name: "Itaú", origin: "webapp", id: "itau", logo: "lyra-banco-itau", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
+      { name: "Sicredi", origin: "webapp", id: "sicredi", logo: "lyra-banco-sicredi", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
+      { name: "Safra", origin: "webapp", id: "safra", logo: "lyra-banco-safra", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
+      { name: "Banese", origin: "webapp", id: "banese", logo: "lyra-banco-banese", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
+      { name: "Banco do Nordeste", origin: "webapp", id: "bnb", logo: "lyra-banco-bnb", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
+      { name: "BRB", origin: "webapp", id: "brb", logo: "lyra-banco-brb", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
+      { name: "Banco da Amazônia", origin: "webapp", id: "banco-da-amazonia", logo: "lyra-banco-banco-da-amazonia", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
+      { name: "Bradesco", origin: "webapp", id: "bradesco", logo: "lyra-banco-bradesco", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
+      { name: "Banrisul", origin: "webapp", id: "banrisul", logo: "lyra-banco-banrisul", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
+      { name: "Santander", origin: "webapp", id: "santander", logo: "lyra-banco-santander", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
+      { name: "Nubank", origin: "webapp", id: "nubank", logo: "lyra-banco-nubank", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
+      { name: "Sicoob", origin: "webapp", id: "sicoob", logo: "lyra-banco-sicoob", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
+      { name: "Inter", origin: "webapp", id: "inter", logo: "lyra-banco-inter", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
+      { name: "C6 Bank", origin: "webapp", id: "c6", logo: "lyra-banco-c6", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
+      { name: "BTG Pactual", origin: "webapp", id: "btg", logo: "lyra-banco-btg", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
+    ],
+  },
+  {
     id: "games",
     title: N_("Jogos"),
 

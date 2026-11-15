@@ -6575,7 +6575,6 @@ msgstr "proyección"
 
 #: ui/js/pages/software/popular-catalog.js
 
-
 #: ui/js/pages/software/popular-catalog.js
 msgid "letras de músicas"
 msgstr "letras de canciones"
@@ -7116,3 +7115,91 @@ msgstr "Eliminado. Las declaraciones se guardaron en {path}."
 
 msgid "O programa e os atalhos saem da sua conta, sem senha. As declarações são guardadas antes em ~/ProgramasRFB, numa pasta com \"declarações\" no nome."
 msgstr "El programa y sus accesos directos salen de tu cuenta, sin contraseña. Las declaraciones se guardan antes en ~/ProgramasRFB, en una carpeta con \"declarações\" en el nombre."
+
+msgid "módulo de segurança dos bancos"
+msgstr "módulo de seguridad de los bancos"
+
+
+
+msgid "Reparar"
+msgstr "Reparar"
+
+msgid "Não foi possível ler o estado do módulo"
+msgstr "No se pudo leer el estado del módulo"
+
+msgid "Bancos"
+msgstr "Bancos"
+
+
+
+msgid "Sobraram arquivos do Warsaw sem o pacote"
+msgstr "Quedaron archivos de Warsaw sin el paquete"
+
+msgid "Isso costuma acontecer depois de voltar a um snapshot antigo. Reparar instala o pacote de novo e deixa tudo coerente."
+msgstr "Esto suele pasar después de volver a una instantánea antigua. Reparar instala el paquete de nuevo y deja todo coherente."
+
+msgid "A instalação do Warsaw está incompleta"
+msgstr "La instalación de Warsaw está incompleta"
+
+msgid "Faltam arquivos ou eles não batem com o pacote. Isso costuma acontecer depois de voltar a um snapshot antigo."
+msgstr "Faltan archivos o no coinciden con el paquete. Esto suele pasar después de volver a una instantánea antigua."
+
+msgid "Ver os arquivos com problema ({count})"
+msgstr "Ver los archivos con problemas ({count})"
+
+
+
+
+
+
+msgid "Habilitar a segurança de bancos?"
+msgstr "¿Habilitar la seguridad de los bancos?"
+
+msgid "Habilitar segurança de bancos"
+msgstr "Habilitar seguridad de los bancos"
+
+msgid "O Vega adiciona o repositório do módulo, só com o Warsaw, e mostra a chave de assinatura para você aprovar."
+msgstr "Vega agrega el repositorio del módulo, que solo contiene Warsaw, y le muestra la clave de firma para que la apruebe."
+
+
+msgid "Site oficial do banco, numa janela própria"
+msgstr "Sitio oficial del banco, en su propia ventana"
+
+msgid "banco"
+msgstr "banco"
+
+msgid "internet banking"
+msgstr "banca en línea"
+
+msgid "Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto"
+msgstr "Sitio del banco en su propia ventana; enciende el módulo de seguridad mientras está abierto"
+
+msgid "Webapp"
+msgstr "Aplicación web"
+
+msgid "{name} está no menu de aplicativos e no dock."
+msgstr "{name} está en el menú de aplicaciones y en el dock."
+
+msgid "Os webapps de bancos ligam o módulo de segurança (Warsaw) antes de abrir o site. Ele ainda não está instalado, e o Vega instala agora."
+msgstr "Las aplicaciones web de los bancos encienden el módulo de seguridad (Warsaw) antes de abrir el sitio. Aún no está instalado, y Vega lo instala ahora."
+
+msgid "Módulo de segurança dos bancos não instalado"
+msgstr "Módulo de seguridad de los bancos no instalado"
+
+msgid "Os webapps de bancos ligam o módulo antes de abrir o site. Instale de novo para usá-los."
+msgstr "Las aplicaciones web de los bancos encienden el módulo antes de abrir el sitio. Instálelo de nuevo para usarlas."
+
+msgid "O módulo de segurança dos bancos não conseguiu ligar"
+msgstr "El módulo de seguridad de los bancos no pudo encenderse"
+
+msgid "Feche os webapps de bancos e abra de novo. Se continuar, remova o webapp e instale outra vez."
+msgstr "Cierre las aplicaciones web de los bancos y ábralas de nuevo. Si sigue fallando, quite la aplicación web e instálela otra vez."
+
+msgid "Instalar o Chromium?"
+msgstr "¿Instalar Chromium?"
+
+msgid "Os webapps de bancos abrem o site numa janela própria do Chromium. O Vega instala o Chromium dos repositórios do openSUSE."
+msgstr "Las aplicaciones web de los bancos abren el sitio en su propia ventana de Chromium. Vega instala Chromium desde los repositorios de openSUSE."
+
+msgid "Também instala o Chromium, onde os webapps abrem numa janela própria."
+msgstr "También instala Chromium, donde las aplicaciones web abren en su propia ventana."

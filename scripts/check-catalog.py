@@ -6,7 +6,7 @@ Sem opções, só a validação offline, usada na CI de PR:
 - ids únicos por seção e seções únicas por catálogo;
 - id do Flathub no formato de id de app (com.empresa.App);
 - apps do Windows, AppImages e programas da Receita existem em
-  windows_apps.rs, appimage_apps.rs e receita_apps.rs;
+  windows_apps.rs, appimage_apps.rs e receita_apps.rs; webapps em webapps.rs;
 - `tasks` (seção ou cartão) entre as de TASKS (catalog-search.js) e `tags`
   como lista de textos;
 - textos e tags com tradução em en-US e es-ES (po/*.po).
@@ -46,7 +46,7 @@ import urllib.request
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 GTK = ROOT / "vega-gtk"
 CATALOGS = sorted((GTK / "ui" / "js" / "pages" / "software").glob("*-catalog.js"))
-ORIGINS = {"official", "flathub", "windows", "npm", "appimage", "receita", "preset"}
+ORIGINS = {"official", "flathub", "windows", "npm", "appimage", "receita", "preset", "webapp"}
 FLATHUB_ID = re.compile(r"^[A-Za-z_][\w-]*(\.[A-Za-z_][\w-]*){2,}$")
 REPOS = [
     "https://download.opensuse.org/distribution/leap/16.1/repo/oss/",
@@ -185,6 +185,8 @@ def check_offline(entries):
             errors.append(f"{label}: {app_id!r} não está em APPS (appimage_apps.rs)")
         if origin == "preset" and f'id: "{app_id}"' not in (GTK / "src" / "backend" / "easyeffects_presets.rs").read_text(encoding="utf-8"):
             errors.append(f"{label}: {app_id!r} não está em PRESETS (easyeffects_presets.rs)")
+        if origin == "webapp" and f'id: "{app_id}"' not in (GTK / "src" / "backend" / "webapps.rs").read_text(encoding="utf-8"):
+            errors.append(f"{label}: {app_id!r} não está em WEBAPPS (webapps.rs)")
         if origin == "receita" and app_id not in receita_ids:
             errors.append(f"{label}: {app_id!r} não está em PROGRAMS (receita_apps.rs)")
         repo = app.get("repo")

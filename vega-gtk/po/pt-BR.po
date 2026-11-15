@@ -6574,7 +6574,6 @@ msgstr "projeção"
 
 #: ui/js/pages/software/popular-catalog.js
 
-
 #: ui/js/pages/software/popular-catalog.js
 msgid "letras de músicas"
 msgstr "letras de músicas"
@@ -7115,3 +7114,91 @@ msgstr "Removido. As declarações foram guardadas em {path}."
 
 msgid "O programa e os atalhos saem da sua conta, sem senha. As declarações são guardadas antes em ~/ProgramasRFB, numa pasta com \"declarações\" no nome."
 msgstr "O programa e os atalhos saem da sua conta, sem senha. As declarações são guardadas antes em ~/ProgramasRFB, numa pasta com \"declarações\" no nome."
+
+msgid "módulo de segurança dos bancos"
+msgstr "módulo de segurança dos bancos"
+
+
+
+msgid "Reparar"
+msgstr "Reparar"
+
+msgid "Não foi possível ler o estado do módulo"
+msgstr "Não foi possível ler o estado do módulo"
+
+msgid "Bancos"
+msgstr "Bancos"
+
+
+
+msgid "Sobraram arquivos do Warsaw sem o pacote"
+msgstr "Sobraram arquivos do Warsaw sem o pacote"
+
+msgid "Isso costuma acontecer depois de voltar a um snapshot antigo. Reparar instala o pacote de novo e deixa tudo coerente."
+msgstr "Isso costuma acontecer depois de voltar a um snapshot antigo. Reparar instala o pacote de novo e deixa tudo coerente."
+
+msgid "A instalação do Warsaw está incompleta"
+msgstr "A instalação do Warsaw está incompleta"
+
+msgid "Faltam arquivos ou eles não batem com o pacote. Isso costuma acontecer depois de voltar a um snapshot antigo."
+msgstr "Faltam arquivos ou eles não batem com o pacote. Isso costuma acontecer depois de voltar a um snapshot antigo."
+
+msgid "Ver os arquivos com problema ({count})"
+msgstr "Ver os arquivos com problema ({count})"
+
+
+
+
+
+
+msgid "Habilitar a segurança de bancos?"
+msgstr "Habilitar a segurança de bancos?"
+
+msgid "Habilitar segurança de bancos"
+msgstr "Habilitar segurança de bancos"
+
+msgid "O Vega adiciona o repositório do módulo, só com o Warsaw, e mostra a chave de assinatura para você aprovar."
+msgstr "O Vega adiciona o repositório do módulo, só com o Warsaw, e mostra a chave de assinatura para você aprovar."
+
+
+msgid "Site oficial do banco, numa janela própria"
+msgstr "Site oficial do banco, numa janela própria"
+
+msgid "banco"
+msgstr "banco"
+
+msgid "internet banking"
+msgstr "internet banking"
+
+msgid "Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto"
+msgstr "Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto"
+
+msgid "Webapp"
+msgstr "Webapp"
+
+msgid "{name} está no menu de aplicativos e no dock."
+msgstr "{name} está no menu de aplicativos e no dock."
+
+msgid "Os webapps de bancos ligam o módulo de segurança (Warsaw) antes de abrir o site. Ele ainda não está instalado, e o Vega instala agora."
+msgstr "Os webapps de bancos ligam o módulo de segurança (Warsaw) antes de abrir o site. Ele ainda não está instalado, e o Vega instala agora."
+
+msgid "Módulo de segurança dos bancos não instalado"
+msgstr "Módulo de segurança dos bancos não instalado"
+
+msgid "Os webapps de bancos ligam o módulo antes de abrir o site. Instale de novo para usá-los."
+msgstr "Os webapps de bancos ligam o módulo antes de abrir o site. Instale de novo para usá-los."
+
+msgid "O módulo de segurança dos bancos não conseguiu ligar"
+msgstr "O módulo de segurança dos bancos não conseguiu ligar"
+
+msgid "Feche os webapps de bancos e abra de novo. Se continuar, remova o webapp e instale outra vez."
+msgstr "Feche os webapps de bancos e abra de novo. Se continuar, remova o webapp e instale outra vez."
+
+msgid "Instalar o Chromium?"
+msgstr "Instalar o Chromium?"
+
+msgid "Os webapps de bancos abrem o site numa janela própria do Chromium. O Vega instala o Chromium dos repositórios do openSUSE."
+msgstr "Os webapps de bancos abrem o site numa janela própria do Chromium. O Vega instala o Chromium dos repositórios do openSUSE."
+
+msgid "Também instala o Chromium, onde os webapps abrem numa janela própria."
+msgstr "Também instala o Chromium, onde os webapps abrem numa janela própria."
