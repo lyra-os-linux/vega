@@ -70,7 +70,7 @@ const memory = {
 };
 
 const queueKey = (pkg) => `${pkg.origin}\u0000${pkg.id}`;
-const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "vscode" ? "VS Code" : origin === "appimage" ? "AppImage" : origin === "receita" ? t("Receita Federal") : origin === "preset" ? t("Perfil") : origin === "webapp" ? t("Webapp") : origin);
+const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "vscode" ? "VS Code" : origin === "link" ? t("Site") : origin === "appimage" ? "AppImage" : origin === "receita" ? t("Receita Federal") : origin === "preset" ? t("Perfil") : origin === "webapp" ? t("Webapp") : origin);
 const rankOrigin = (a, b) => (ORIGIN_RANK[a.origin] ?? 2) - (ORIGIN_RANK[b.origin] ?? 2);
 
 function packageIcon(pkg, size = 40) {
@@ -448,7 +448,12 @@ export default {
         : packageIcon(app, 48);
       const progress = cardProgress(app);
       let action;
-      if (progress) action = progress;
+      // `link`: serviço remoto, nada a instalar; o cartão só abre o site.
+      if (app.origin === "link") action = button(t("Abrir site"), { size: "sm", icon: "external", onClick: (e) => {
+        e.stopPropagation();
+        call("open_uri", { uri: app.url }).catch((error) => fail(error, t("Não foi possível abrir o site")));
+      } });
+      else if (progress) action = progress;
       // Apps do Windows instalados podem ser removidos aqui mesmo: não
       // aparecem na aba Instalados, que lista pacotes e Flatpaks.
       else if (external) action = button(t("Instalado"), { size: "sm", icon: "check", disabled: true, title: t("Já instalado fora do Vega") });
@@ -480,7 +485,7 @@ export default {
         else packageAction(pkg);
       } });
       // Apps instalados na conta do usuário não têm detalhes no vegad.
-      const open = disabled || USER_ORIGINS.has(app.origin) ? undefined : () => openDetails(pkg);
+      const open = disabled || USER_ORIGINS.has(app.origin) || app.origin === "link" ? undefined : () => openDetails(pkg);
       // div, e não button: o cartão contém o botão Instalar.
       return h("div", {
         class: `card sw-card sw-popular ${locked ? "locked" : installed ? "installed" : "interactive"}`,

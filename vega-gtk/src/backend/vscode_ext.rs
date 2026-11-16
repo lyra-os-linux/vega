@@ -21,7 +21,10 @@ use tauri::AppHandle;
 use super::flatpak_session::follow_then;
 
 /// Extensões que a vitrine oferece, no formato `editor.nome` do Marketplace.
-pub const EXTENSIONS: &[&str] = &["broadcomMFD.code4z-extension-pack"];
+pub const EXTENSIONS: &[&str] = &[
+    "broadcomMFD.code4z-extension-pack",
+    "Zowe.vscode-extension-for-zowe",
+];
 
 /// `~/.vscode/extensions/extensions.json`.
 fn registry() -> Option<PathBuf> {

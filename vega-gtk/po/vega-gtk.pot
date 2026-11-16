@@ -7804,3 +7804,24 @@ msgstr ""
 
 msgid "A extensão é instalada na sua conta pelo VS Code, sem senha."
 msgstr ""
+
+msgid "Abrir site"
+msgstr ""
+
+msgid "Não foi possível abrir o site"
+msgstr ""
+
+msgid "Terminais 3270 para mainframes IBM (TSO/ISPF, CICS), em janela e no terminal"
+msgstr ""
+
+msgid "Terminal 5250 para o IBM i (AS/400)"
+msgstr ""
+
+msgid "Linha de comando da Open Mainframe Project para z/OS: jobs, datasets e USS"
+msgstr ""
+
+msgid "Datasets, jobs e USS do z/OS no VS Code; já vem no Code4z"
+msgstr ""
+
+msgid "z/OS real, remoto e gratuito da IBM para aprender JCL, COBOL, REXX e Db2 com o VS Code e o Zowe"
+msgstr ""

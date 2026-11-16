@@ -7233,3 +7233,24 @@ msgstr "Vega first installs VS Code from Microsoft's official repository, with t
 
 msgid "A extensão é instalada na sua conta pelo VS Code, sem senha."
 msgstr "VS Code installs the extension in your account, without a password."
+
+msgid "Abrir site"
+msgstr "Open website"
+
+msgid "Não foi possível abrir o site"
+msgstr "Could not open the website"
+
+msgid "Terminais 3270 para mainframes IBM (TSO/ISPF, CICS), em janela e no terminal"
+msgstr "3270 terminals for IBM mainframes (TSO/ISPF, CICS), in a window and in the terminal"
+
+msgid "Terminal 5250 para o IBM i (AS/400)"
+msgstr "5250 terminal for IBM i (AS/400)"
+
+msgid "Linha de comando da Open Mainframe Project para z/OS: jobs, datasets e USS"
+msgstr "Open Mainframe Project command line for z/OS: jobs, datasets and USS"
+
+msgid "Datasets, jobs e USS do z/OS no VS Code; já vem no Code4z"
+msgstr "z/OS datasets, jobs and USS in VS Code; already included in Code4z"
+
+msgid "z/OS real, remoto e gratuito da IBM para aprender JCL, COBOL, REXX e Db2 com o VS Code e o Zowe"
+msgstr "IBM's free, remote, real z/OS to learn JCL, COBOL, REXX and Db2 with VS Code and Zowe"
