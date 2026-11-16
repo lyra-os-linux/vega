@@ -26,6 +26,7 @@ pub const EXTENSIONS: &[&str] = &[
     "Zowe.vscode-extension-for-zowe",
     "Oracle.sql-developer",
     "Oracle.oracledevtools",
+    "salesforce.salesforcedx-vscode",
 ];
 
 /// `~/.vscode/extensions/extensions.json`.

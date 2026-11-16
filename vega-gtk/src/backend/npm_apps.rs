@@ -32,6 +32,7 @@ pub const PACKAGES: &[&str] = &[
     "opencode-ai",
     "@mermaid-js/mermaid-cli",
     "@zowe/cli",
+    "@salesforce/cli",
 ];
 
 /// `~/.local`, o prefixo do npm na conta do usuário.

@@ -7442,3 +7442,18 @@ msgstr "Serviços disponíveis"
 
 msgid "Serviços de estudo e desenvolvimento em contêiner, com o Podman na sua conta, sem root"
 msgstr "Serviços de estudo e desenvolvimento em contêiner, com o Podman na sua conta, sem root"
+
+msgid "Corporativo: COBOL, mainframe, Oracle, ERP e Salesforce"
+msgstr "Corporativo: COBOL, mainframe, Oracle, ERP e Salesforce"
+
+msgid "Linha de comando oficial (sf) para criar orgs de teste, implantar metadados e rodar Apex"
+msgstr "Linha de comando oficial (sf) para criar orgs de teste, implantar metadados e rodar Apex"
+
+msgid "Apex, Lightning Web Components, SOQL e depuração no VS Code; pede o Java 21"
+msgstr "Apex, Lightning Web Components, SOQL e depuração no VS Code; pede o Java 21"
+
+msgid "Trilhas gratuitas oficiais para estudar Salesforce e se preparar para as certificações"
+msgstr "Trilhas gratuitas oficiais para estudar Salesforce e se preparar para as certificações"
+
+msgid "Org gratuita da Salesforce para desenvolver e testar, sem prazo de validade"
+msgstr "Org gratuita da Salesforce para desenvolver e testar, sem prazo de validade"
