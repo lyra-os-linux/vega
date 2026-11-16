@@ -12,6 +12,7 @@ pub mod banks;
 pub mod bluetooth;
 pub mod cleanup;
 pub mod commands_present;
+pub mod containers;
 pub mod datetime;
 pub mod diagnostics;
 pub mod easyeffects_presets;

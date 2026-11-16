@@ -149,6 +149,14 @@ export async function runNpm(install, id, title) {
   return started;
 }
 
+/** Serviço em contêiner (Podman sem root): baixa a imagem do catálogo. */
+export async function runContainerInstall(id, title) {
+  const callId = await call("containers_install", { id });
+  const started = track(`software:${callId}`, title, "software");
+  started.task.action = { kind: "install", origin: "container", id };
+  return started;
+}
+
 /** Mainframe de treinamento (MVS 3.8j TK5), na conta do usuário. */
 export async function runMainframe(install, id, title) {
   const callId = await call(install ? "mainframe_install" : "mainframe_remove", { id });

@@ -3,6 +3,7 @@ import dashboard from "./dashboard.js";
 import software from "./software.js";
 import backup from "./backup.js";
 import virtualization from "./virtualization.js";
+import containers from "./containers.js";
 import assistant from "./assistant.js";
 import hardware from "./hardware.js";
 import datetime from "./datetime.js";
@@ -21,4 +22,4 @@ export const groups = [
   { id: "system", title: N_("Sistema") },
 ];
 
-export const pages = [dashboard, software, backup, virtualization, assistant, hardware, datetime, personalization, monitor, storage, network, bluetooth, services, users, logs];
+export const pages = [dashboard, software, backup, virtualization, containers, assistant, hardware, datetime, personalization, monitor, storage, network, bluetooth, services, users, logs];

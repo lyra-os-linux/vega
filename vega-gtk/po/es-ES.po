@@ -7350,3 +7350,96 @@ msgstr "Manuales oficiales de Oracle Fusion Cloud Financials: implantación, uso
 
 msgid "Conta gratuita na nuvem da Oracle com Autonomous Database e APEX, para praticar SQL, PL/SQL e extensões do ERP"
 msgstr "Cuenta gratuita en la nube de Oracle con Autonomous Database y APEX, para practicar SQL, PL/SQL y extensiones del ERP"
+
+msgid "Serviço desconhecido."
+msgstr "Servicio desconocido."
+
+msgid "O serviço ainda não foi instalado."
+msgstr "El servicio aún no está instalado."
+
+msgid "Senha não encontrada."
+msgstr "Contraseña no encontrada."
+
+msgid "Este computador não tem memória suficiente para o serviço."
+msgstr "Este equipo no tiene memoria suficiente para el servicio."
+
+msgid "Não há espaço livre suficiente na pasta pessoal para o serviço."
+msgstr "No hay espacio libre suficiente en la carpeta personal para el servicio."
+
+msgid "O download da imagem falhou. Tente de novo: o Podman reaproveita o que já baixou."
+msgstr "La descarga de la imagen falló. Inténtalo de nuevo: Podman reaprovecha lo que ya descargó."
+
+msgid "Ação desconhecida."
+msgstr "Acción desconocida."
+
+msgid "O systemd do usuário recusou a ação."
+msgstr "El systemd del usuario rechazó la acción."
+
+msgid "Não instalado"
+msgstr "No instalado"
+
+msgid "Pronto para uso"
+msgstr "Listo para usar"
+
+msgid "Iniciando (a primeira vez cria o banco e leva alguns minutos)"
+msgstr "Iniciando (la primera vez crea la base de datos y tarda unos minutos)"
+
+msgid "Falhou; veja journalctl --user -u {unit}"
+msgstr "Falló; mira journalctl --user -u {unit}"
+
+msgid "{name} precisa de {ram} GB de memória e {disk} GB livres na pasta pessoal. Este computador tem {haveRam} GB de memória e {haveDisk} GB livres."
+msgstr "{name} necesita {ram} GB de memoria y {disk} GB libres en la carpeta personal. Este equipo tiene {haveRam} GB de memoria y {haveDisk} GB libres."
+
+msgid "Requisitos não atendidos"
+msgstr "Requisitos no cumplidos"
+
+msgid "O Vega baixa a imagem oficial ({image}) com o Podman, na sua conta, sem senha, e cria o serviço. O download tem alguns GB; se falhar, tente de novo que o Podman reaproveita o que já baixou."
+msgstr "Vega descarga la imagen oficial ({image}) con Podman, en tu cuenta, sin contraseña, y crea el servicio. La descarga tiene algunos GB; si falla, inténtalo de nuevo y Podman reaprovecha lo que ya descargó."
+
+msgid "Antes, instala o Podman, com a senha de administrador."
+msgstr "Antes instala Podman, con la contraseña de administrador."
+
+msgid "A senha do administrador (SYS, SYSTEM e PDBADMIN) é gerada pelo Vega e fica só na sua conta; copie-a aqui depois."
+msgstr "La contraseña de administrador (SYS, SYSTEM y PDBADMIN) la genera Vega y queda solo en tu cuenta; cópiala aquí después."
+
+msgid "Conexão: {connection}, só deste computador."
+msgstr "Conexión: {connection}, solo desde este equipo."
+
+msgid "O serviço não liga sozinho com o computador; use Iniciar."
+msgstr "El servicio no se inicia solo con el equipo; usa Iniciar."
+
+msgid "Baixando {name}…"
+msgstr "Descargando {name}…"
+
+msgid "{name} instalado. Use Iniciar para ligar o banco."
+msgstr "{name} instalado. Usa Iniciar para encender la base de datos."
+
+msgid "Senha copiada"
+msgstr "Contraseña copiada"
+
+msgid "O serviço para e a imagem sai do computador, sem senha."
+msgstr "El servicio se detiene y la imagen sale del equipo, sin contraseña."
+
+msgid "Manter os dados (o banco volta igual se instalar de novo)"
+msgstr "Mantener los datos (la base de datos vuelve igual si instalas de nuevo)"
+
+msgid "Copiar senha"
+msgstr "Copiar contraseña"
+
+msgid "Pare o serviço antes de remover"
+msgstr "Detén el servicio antes de eliminarlo"
+
+msgid "Conexão: {connection} (usuário SYSTEM ou PDBADMIN)"
+msgstr "Conexión: {connection} (usuario SYSTEM o PDBADMIN)"
+
+msgid "O Podman ainda não está instalado"
+msgstr "Podman aún no está instalado"
+
+msgid "Ele é instalado junto com o primeiro serviço, com a senha de administrador."
+msgstr "Se instala con el primer servicio, con la contraseña de administrador."
+
+msgid "Serviços disponíveis"
+msgstr "Servicios disponibles"
+
+msgid "Serviços de estudo e desenvolvimento em contêiner, com o Podman na sua conta, sem root"
+msgstr "Servicios de estudio y desarrollo en contenedores, con Podman en tu cuenta, sin root"
