@@ -7500,3 +7500,33 @@ msgstr "Preparing the Instant Client for Windows…"
 
 msgid "IDE de PL/SQL para Oracle (avaliação de 30 dias); já vem com o Instant Client e as conexões do Oracle Free local"
 msgstr "PL/SQL IDE for Oracle (30-day trial); comes with the Instant Client and the local Oracle Free connections"
+
+msgid "Este instalador é baixado por você no site do fabricante."
+msgstr "You download this installer yourself from the vendor's website."
+
+msgid "Pasta de downloads não encontrada."
+msgstr "Downloads folder not found."
+
+msgid "Aguardando {file} na pasta de downloads…"
+msgstr "Waiting for {file} in the downloads folder…"
+
+msgid "Cancelado."
+msgstr "Cancelled."
+
+msgid "O arquivo não chegou. Confira o login no site do fabricante e tente de novo, ou escolha o arquivo já baixado."
+msgstr "The file did not arrive. Check your login on the vendor's website and try again, or choose the file you already downloaded."
+
+msgid "O {name} só é baixado no site do fabricante, com a sua conta. O Vega abre a página no navegador, espera o arquivo chegar na pasta de downloads, confere o SHA-256 verificado pelo Lyra e instala pelo Wine, na sua conta. O Vega não vê a sua senha do site."
+msgstr "{name} can only be downloaded from the vendor's website, with your account. Vega opens the page in the browser, waits for the file in the downloads folder, checks the SHA-256 verified by Lyra and installs it with Wine, in your account. Vega never sees your website password."
+
+msgid "Já baixei: escolher o arquivo"
+msgstr "Already downloaded: choose the file"
+
+msgid "Escolha o instalador baixado"
+msgstr "Choose the downloaded installer"
+
+msgid "Aguardando o download"
+msgstr "Waiting for the download"
+
+msgid "Baixe o instalador no site que abriu no navegador. A instalação começa sozinha quando o arquivo chegar na pasta de downloads."
+msgstr "Download the installer from the website that opened in the browser. The installation starts by itself when the file reaches the downloads folder."

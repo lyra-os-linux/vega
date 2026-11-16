@@ -282,9 +282,24 @@ pub fn recipe(id: &str) -> Option<&'static Recipe> {
     RECIPES.iter().find(|recipe| recipe.id == id)
 }
 
+/// Instalador que só sai do site do fabricante depois de login ou aceite
+/// (Toad, vega#191): o usuário baixa e o download guiado (vega#208) confere
+/// tamanho e SHA-256 antes de instalar. `recipe.url` fica vazio.
+#[derive(Debug, Clone, Copy)]
+pub struct Guided {
+    pub recipe: Recipe,
+    pub expected: super::guided_download::Expected,
+}
+
+pub const GUIDED: &[Guided] = &[];
+
+pub fn guided(id: &str) -> Option<&'static Guided> {
+    GUIDED.iter().find(|guided| guided.recipe.id == id)
+}
+
 /// Id oferecido pela vitrine (verbo do winetricks ou receita do Vega)?
 pub fn offered(id: &str) -> bool {
-    VERBS.contains(&id) || recipe(id).is_some()
+    VERBS.contains(&id) || recipe(id).is_some() || guided(id).is_some()
 }
 
 /// Verbos cujo instalador o winetricks conduz com um script do AutoHotkey,
@@ -798,26 +813,35 @@ fn record_installed(prefix: &Path, id: &str) {
 }
 
 fn run_recipe(app: &AppHandle, tx: u32, recipe: &Recipe, prefix: &Path) {
+    let _ = app.emit(
+        "software-transaction",
+        TransactionEvent::Progress {
+            id: tx,
+            percent: 5,
+            message: gettext("Baixando {file}…").replace("{file}", recipe.file),
+        },
+    );
+    match fetch_verified(recipe) {
+        Ok(file) => install_file(app, tx, recipe, prefix, &file),
+        Err(message) => {
+            let _ = app.emit(
+                "software-transaction",
+                TransactionEvent::Finished {
+                    id: tx,
+                    success: false,
+                    message,
+                },
+            );
+        }
+    }
+}
+
+/// Instala a partir do arquivo já conferido.
+fn install_file(app: &AppHandle, tx: u32, recipe: &Recipe, prefix: &Path, file: &Path) {
     let emit = |event: TransactionEvent| {
         let _ = app.emit("software-transaction", event);
     };
     let failed = gettext("A instalação do aplicativo do Windows falhou.");
-    emit(TransactionEvent::Progress {
-        id: tx,
-        percent: 5,
-        message: gettext("Baixando {file}…").replace("{file}", recipe.file),
-    });
-    let file = match fetch_verified(recipe) {
-        Ok(file) => file,
-        Err(message) => {
-            emit(TransactionEvent::Finished {
-                id: tx,
-                success: false,
-                message,
-            });
-            return;
-        }
-    };
     emit(TransactionEvent::Progress {
         id: tx,
         percent: 30,
@@ -827,7 +851,7 @@ fn run_recipe(app: &AppHandle, tx: u32, recipe: &Recipe, prefix: &Path) {
         Kind::Installer(args) => {
             let mut command = Command::new("wine");
             command
-                .arg(&file)
+                .arg(file)
                 .args(args)
                 .env("WINEPREFIX", prefix)
                 .env("WINEDEBUG", "-all");
@@ -844,7 +868,7 @@ fn run_recipe(app: &AppHandle, tx: u32, recipe: &Recipe, prefix: &Path) {
             command
                 .arg("msiexec")
                 .arg("/i")
-                .arg(&file)
+                .arg(file)
                 .arg("/qn")
                 .env("WINEPREFIX", prefix)
                 .env("WINEDEBUG", "-all");
@@ -874,7 +898,7 @@ fn run_recipe(app: &AppHandle, tx: u32, recipe: &Recipe, prefix: &Path) {
             command
                 .arg("msiexec")
                 .arg("/i")
-                .arg(&file)
+                .arg(file)
                 .arg("/qn")
                 .env("WINEPREFIX", prefix)
                 .env("WINEDEBUG", "-all");
@@ -887,7 +911,7 @@ fn run_recipe(app: &AppHandle, tx: u32, recipe: &Recipe, prefix: &Path) {
             });
         }
         Kind::Portable { dir, name } => {
-            let result = install_portable(prefix, recipe, dir, name, &file);
+            let result = install_portable(prefix, recipe, dir, name, file);
             let success = result.is_ok();
             if success {
                 record_installed(prefix, recipe.id);
@@ -919,6 +943,11 @@ fn ready_prefix() -> Result<PathBuf, String> {
 pub fn windows_install(app: AppHandle, verb: String) -> Result<u32, String> {
     if !offered(&verb) {
         return Err(gettext("Aplicativo do Windows desconhecido."));
+    }
+    if guided(&verb).is_some() {
+        return Err(gettext(
+            "Este instalador é baixado por você no site do fabricante.",
+        ));
     }
     let prefix = ready_prefix()?;
     let tx = super::session_tx::next();
@@ -1488,6 +1517,130 @@ pub fn windows_run_file(app: AppHandle, path: String) -> Result<u32, String> {
         );
     });
     Ok(tx)
+}
+
+/// Esperas do download guiado em andamento, por id, para o Cancelar.
+static GUIDED_WAITS: std::sync::Mutex<
+    Vec<(String, std::sync::Arc<std::sync::atomic::AtomicBool>)>,
+> = std::sync::Mutex::new(Vec::new());
+
+fn finish_failed(app: &AppHandle, tx: u32, message: String) {
+    let _ = app.emit(
+        "software-transaction",
+        TransactionEvent::Finished {
+            id: tx,
+            success: false,
+            message,
+        },
+    );
+}
+
+/// Copia o arquivo conferido para o cache e instala.
+fn install_guided(app: &AppHandle, tx: u32, guided: &Guided, path: &Path) {
+    let installed = cache_dir()
+        .ok_or_else(|| gettext("Pasta pessoal não encontrada."))
+        .and_then(|dir| {
+            std::fs::create_dir_all(&dir).map_err(|error| error.to_string())?;
+            let target = dir.join(guided.recipe.file);
+            std::fs::copy(path, &target).map_err(|error| error.to_string())?;
+            Ok(target)
+        })
+        .and_then(|file| ready_prefix().map(|prefix| (file, prefix)));
+    match installed {
+        Ok((file, prefix)) => {
+            prepare_prefix(&prefix);
+            install_file(app, tx, &guided.recipe, &prefix, &file);
+        }
+        Err(message) => finish_failed(app, tx, message),
+    }
+}
+
+/// Abre a página do fabricante e espera o arquivo chegar em Downloads.
+#[tauri::command]
+pub fn windows_guided_wait(app: AppHandle, id: String) -> Result<u32, String> {
+    use super::guided_download::{self, Outcome, Watcher};
+    use std::sync::atomic::AtomicBool;
+    let guided = guided(&id).ok_or_else(|| gettext("Aplicativo do Windows desconhecido."))?;
+    let dir = guided_download::downloads_dir()
+        .ok_or_else(|| gettext("Pasta de downloads não encontrada."))?;
+    crate::app::open_uri(guided.expected.page.to_owned())?;
+    let cancel = std::sync::Arc::new(AtomicBool::new(false));
+    if let Ok(mut waits) = GUIDED_WAITS.lock() {
+        waits.retain(|(other, _)| other != &id);
+        waits.push((id.clone(), cancel.clone()));
+    }
+    let tx = super::session_tx::next();
+    std::thread::spawn(move || {
+        let _ = app.emit(
+            "software-transaction",
+            TransactionEvent::Progress {
+                id: tx,
+                percent: 0,
+                message: gettext("Aguardando {file} na pasta de downloads…")
+                    .replace("{file}", guided.expected.file),
+            },
+        );
+        let mut watcher = Watcher::new(dir, guided.expected);
+        let outcome = guided_download::wait(
+            &mut watcher,
+            &cancel,
+            std::time::Duration::from_secs(2),
+            std::time::Duration::from_secs(45 * 60),
+            &|path, rejection| {
+                let _ = app.emit(
+                    "software-transaction",
+                    TransactionEvent::Progress {
+                        id: tx,
+                        percent: 0,
+                        message: format!(
+                            "{}: {}",
+                            path.file_name().unwrap_or_default().to_string_lossy(),
+                            rejection.message(&guided.expected)
+                        ),
+                    },
+                );
+            },
+        );
+        if let Ok(mut waits) = GUIDED_WAITS.lock() {
+            waits.retain(|(other, _)| other != &id);
+        }
+        match outcome {
+            Outcome::Accepted(path) => install_guided(&app, tx, guided, &path),
+            Outcome::Cancelled => finish_failed(&app, tx, gettext("Cancelado.")),
+            Outcome::TimedOut => finish_failed(
+                &app,
+                tx,
+                gettext(
+                    "O arquivo não chegou. Confira o login no site do fabricante e tente de novo, ou escolha o arquivo já baixado.",
+                ),
+            ),
+        }
+    });
+    Ok(tx)
+}
+
+/// "Já baixei — escolher arquivo": confere o arquivo escolhido e instala.
+#[tauri::command]
+pub fn windows_guided_file(app: AppHandle, id: String, path: String) -> Result<u32, String> {
+    let guided = guided(&id).ok_or_else(|| gettext("Aplicativo do Windows desconhecido."))?;
+    let path = PathBuf::from(path);
+    super::guided_download::verify(&guided.expected, &path)
+        .map_err(|rejection| rejection.message(&guided.expected))?;
+    windows_guided_cancel(id);
+    let tx = super::session_tx::next();
+    std::thread::spawn(move || install_guided(&app, tx, guided, &path));
+    Ok(tx)
+}
+
+#[tauri::command]
+pub fn windows_guided_cancel(id: String) {
+    if let Ok(waits) = GUIDED_WAITS.lock() {
+        for (other, cancel) in waits.iter() {
+            if other == &id {
+                cancel.store(true, std::sync::atomic::Ordering::SeqCst);
+            }
+        }
+    }
 }
 
 #[cfg(test)]

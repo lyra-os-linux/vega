@@ -181,6 +181,19 @@ export async function runVscodeExtension(install, id, title) {
   return started;
 }
 
+/**
+ * Instalador do Windows baixado pelo usuário no site do fabricante (download
+ * guiado): espera o arquivo em Downloads ou confere o arquivo escolhido.
+ */
+export async function runWindowsGuided(id, path, title) {
+  const callId = path
+    ? await call("windows_guided_file", { id, path })
+    : await call("windows_guided_wait", { id });
+  const started = track(`software:${callId}`, title, "software");
+  started.task.action = { kind: "install", origin: "windows", id };
+  return started;
+}
+
 /** Programa do Windows escolhido pelo usuário, rodado na sessão. */
 export async function runWindowsFile(path, title) {
   const id = await call("windows_run_file", { path });

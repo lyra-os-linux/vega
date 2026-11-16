@@ -6,7 +6,7 @@ import { call, pick } from "../api.js";
 import { refreshUpdates } from "../health.js";
 import { N_, t } from "../i18n.js";
 import { local, saveLocal } from "../store.js";
-import { runSoftware, runWindows, runWindowsFile, runWindowsRemove, runNpm, runVscodeExtension, runMainframe, runOracle, runAppImage, runReceita, runningTasks, onTasks, transactionPanel } from "../tasks.js";
+import { runSoftware, runWindows, runWindowsGuided, runWindowsFile, runWindowsRemove, runNpm, runVscodeExtension, runMainframe, runOracle, runAppImage, runReceita, runningTasks, onTasks, transactionPanel } from "../tasks.js";
 import { h, icon, clear, button, badge, segmented, list, section, empty, skeletonRows, confirm, sheet, toast, fail, tile, normalize, meter, banner } from "../ui.js";
 import { preparationPanel } from "./software/preparation.js";
 import { requireRestart } from "../restart.js";
@@ -777,6 +777,50 @@ export default {
     }
 
     /**
+     * Instalador do Windows que só sai do site do fabricante com login
+     * (download guiado, vega#208): o Vega abre a página e espera o arquivo em
+     * Downloads, ou o usuário escolhe o arquivo já baixado. Nos dois casos o
+     * backend confere tamanho e SHA-256 antes de instalar pelo Wine. O Vega
+     * nunca vê a senha do site.
+     */
+    async function installWindowsGuided(app) {
+      const already = h("input", { type: "checkbox", id: "sw-guided-already" });
+      const ok = await confirm({
+        title: t("Instalar {name}?", { name: app.name }),
+        text: t("O {name} só é baixado no site do fabricante, com a sua conta. O Vega abre a página no navegador, espera o arquivo chegar na pasta de downloads, confere o SHA-256 verificado pelo Lyra e instala pelo Wine, na sua conta. O Vega não vê a sua senha do site.", { name: app.name }),
+        extra: h("label", { class: "row-flex", for: "sw-guided-already" }, already, t("Já baixei: escolher o arquivo")),
+        ic: "download",
+        confirmLabel: t("Continuar"),
+        required: true,
+      });
+      if (!ok) return;
+      let path = null;
+      if (already.checked) {
+        path = await pick({ title: t("Escolha o instalador baixado"), filters: [{ name: t("Programas do Windows"), extensions: ["exe", "msi", "zip", "EXE", "MSI", "ZIP"] }] });
+        if (!path || Array.isArray(path)) return;
+      }
+      let started;
+      try {
+        started = await runWindowsGuided(app.id, path, t("Instalando {name}…", { name: app.name }));
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      showTask(started.task);
+      paint();
+      // Enquanto espera o download, uma janela permite cancelar.
+      const closeWait = path ? null : sheet(t("Aguardando o download"), h("div", {},
+        h("p", {}, t("Baixe o instalador no site que abriu no navegador. A instalação começa sozinha quando o arquivo chegar na pasta de downloads.")),
+        h("div", { class: "row-flex" }, button(t("Cancelar"), { icon: "x", onClick: () => { call("windows_guided_cancel", { id: app.id }); closeWait?.(); } }))),
+        { wide: false });
+      const result = await started.done;
+      closeWait?.();
+      if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
+      popularInstalled = null;
+      userInstalled = null;
+      load();
+    }
+
+    /**
      * Ferramenta Oracle (vega#189): o Vega baixa de download.oracle.com a
      * versão conferida pelo Lyra e instala na conta do usuário; antes, instala
      * do Leap o que ela exige (libaio ou Java 21), com a senha.
@@ -989,6 +1033,7 @@ export default {
     }
 
     async function installWindows(app) {
+      if (app.guided) return installWindowsGuided(app);
       const ok = await confirm({
         title: t("Instalar {name}?", { name: app.name }),
         text: t("O instalador é baixado do site do fabricante e roda pelo Wine, na sua conta, sem senha. O app aparece no menu de aplicativos."),
