@@ -155,6 +155,64 @@ export const POPULAR = [
     ],
   },
   {
+    // vega#217: produção musical, inspirada no Ubuntu Studio (vega#216). O RPM
+    // do Leap vem primeiro quando existe; senão, o Flathub. O cartão do topo
+    // liga o modo estúdio (perfis do vegad, software/studio-mode.js). Ardour,
+    // LMMS, Mixxx, qpwgraph, Helvum e LSP Plugins também estão em Áudio e
+    // podcast; a busca mostra cada app uma vez só.
+    id: "music",
+    title: N_("Música"),
+    studio: true,
+    tasks: ["record", "edit"],
+    apps: [
+      { name: "Ardour", origin: "official", id: "ardour", logo: "org.ardour.Ardour", tags: [N_("DAW"), N_("gravação multipista"), N_("plugins RPM")], text: N_("Estúdio de gravação e mixagem multipista; usa os plugins RPM, como o LSP Plugins") },
+      { name: "Qtractor", origin: "official", id: "qtractor", logo: "org.rncbc.qtractor", tags: [N_("DAW"), N_("MIDI"), N_("plugins RPM")], text: N_("Gravação de áudio e MIDI multipista, leve; usa os plugins RPM") },
+      { name: "LMMS", origin: "flathub", id: "io.lmms.LMMS", logo: "io.lmms.LMMS", tags: [N_("produção musical"), N_("batidas"), N_("plugins Flatpak")], text: N_("Batidas, sintetizadores e trilhas; usa os plugins Flatpak abaixo") },
+      { name: "Mixxx", origin: "flathub", id: "org.mixxx.Mixxx", logo: "org.mixxx.Mixxx", tags: [N_("DJ")], text: N_("Mixagem para DJs, com controladoras") },
+      { name: "ZynAddSubFX", origin: "official", id: "zynaddsubfx", tags: [N_("sintetizador")], text: N_("Sintetizador com muitos timbres prontos") },
+      { name: "Qsynth", origin: "official", id: "qsynth", logo: "org.rncbc.qsynth", tags: [N_("sintetizador"), N_("SoundFont"), N_("teclado MIDI")], text: N_("Toca SoundFonts pelo FluidSynth, com teclado MIDI") },
+      { name: "Surge XT", origin: "flathub", id: "org.surge_synth_team.surge-xt", logo: "org.surge_synth_team.surge-xt", tags: [N_("sintetizador")], text: N_("Sintetizador híbrido completo") },
+      { name: "Bespoke Synth", origin: "flathub", id: "com.bespokesynth.BespokeSynth", logo: "com.bespokesynth.BespokeSynth", tags: [N_("sintetizador modular")], text: N_("Sintetizador modular para montar e tocar ao vivo") },
+      { name: "Hydrogen", origin: "flathub", id: "org.hydrogenmusic.Hydrogen", logo: "org.hydrogenmusic.Hydrogen", tags: [N_("bateria eletrônica")], text: N_("Bateria eletrônica e sequenciador de padrões") },
+      { name: "Polyphone", origin: "flathub", id: "com.polyphone_soundfonts.polyphone", logo: "com.polyphone_soundfonts.polyphone", tags: [N_("SoundFont"), N_("sampler")], text: N_("Cria e edita SoundFonts") },
+      { name: "Guitarix", origin: "flathub", id: "org.guitarix.Guitarix", logo: "org.guitarix.Guitarix", tags: [N_("guitarra"), N_("amplificador virtual")], text: N_("Amplificador e pedais virtuais para guitarra") },
+      { name: "MuseScore", origin: "official", id: "musescore", tags: [N_("partitura")], text: N_("Escreve, toca e imprime partituras") },
+      { name: "SuperCollider", origin: "official", id: "supercollider", tags: [N_("programação musical"), N_("live coding")], text: N_("Linguagem para síntese e composição algorítmica") },
+      { name: "Csound", origin: "official", id: "csound", tags: [N_("programação musical")], text: N_("Linguagem clássica de síntese sonora") },
+      { name: "Sonic Pi", origin: "flathub", id: "net.sonic_pi.SonicPi", logo: "net.sonic_pi.SonicPi", tags: [N_("live coding"), N_("ensino de música")], tasks: ["record", "edit", "study"], text: N_("Programa música ao vivo; ótimo para aprender") },
+      { name: "Pure Data", origin: "flathub", id: "info.puredata.Pd", logo: "info.puredata.Pd", tags: [N_("programação musical visual")], text: N_("Programação musical visual, por blocos") },
+      { name: "Carla", origin: "flathub", id: "studio.kx.carla", logo: "studio.kx.carla", tags: [N_("rack de plugins"), N_("plugins Flatpak")], text: N_("Rack de plugins: abre e liga plugins de áudio fora de uma DAW") },
+      { name: "QjackCtl", origin: "official", id: "qjackctl", tags: [N_("JACK"), N_("conexões de áudio")], text: N_("Painel do JACK: conexões, transporte e latência") },
+      { name: "qpwgraph", origin: "official", id: "qpwgraph", logo: "org.rncbc.qpwgraph", tags: [N_("conexões de áudio"), N_("PipeWire")], text: N_("Liga as saídas e entradas de áudio e MIDI do PipeWire") },
+      { name: "Helvum", origin: "official", id: "helvum", logo: "org.pipewire.Helvum", tags: [N_("conexões de áudio"), N_("PipeWire")], text: N_("Conexões do PipeWire, mais simples") },
+      { name: "JackTrip", origin: "official", id: "jacktrip", tags: [N_("tocar pela rede"), N_("ensaio remoto")], text: N_("Toca com outros músicos pela internet, com pouca latência") },
+      { name: "Kid3", origin: "official", id: "kid3-qt", tags: [N_("etiquetas de áudio"), N_("metadados")], text: N_("Edita as etiquetas (título, artista, capa) de muitos arquivos de uma vez") },
+    ],
+  },
+  {
+    // vega#217: plugins. RPM e Flatpak não compartilham plugins: o Ardour e o
+    // Qtractor (RPM) enxergam o LSP Plugins RPM; os apps Flatpak (LMMS,
+    // Carla, Hydrogen...) enxergam as extensões org.freedesktop.LinuxAudio,
+    // que o vegad instala nos ramos que esses apps declaram.
+    id: "music-plugins",
+    title: N_("Plugins de áudio"),
+    pluginNote: true,
+    tasks: ["record", "edit"],
+    apps: [
+      { name: "LSP Plugins", origin: "official", id: "lsp-plugins", tags: [N_("plugins RPM"), N_("efeitos")], text: N_("Efeitos profissionais para o Ardour e o Qtractor (RPM)") },
+      { name: "x42 Plugins", origin: "flathub", id: "org.freedesktop.LinuxAudio.Plugins.x42Plugins", tags: [N_("plugins Flatpak"), N_("medidores"), N_("efeitos")], text: N_("Medidores, equalizador, compressor e mais, da x42") },
+      { name: "ZAM Plugins", origin: "flathub", id: "org.freedesktop.LinuxAudio.Plugins.ZamPlugins", tags: [N_("plugins Flatpak"), N_("compressor")], text: N_("Compressores, equalizadores e saturação") },
+      { name: "Dragonfly Reverb", origin: "flathub", id: "org.freedesktop.LinuxAudio.Plugins.DragonflyReverb", tags: [N_("plugins Flatpak"), N_("reverb")], text: N_("Reverbs de sala, salão e placa") },
+      { name: "LSP (Flatpak)", origin: "flathub", id: "org.freedesktop.LinuxAudio.Plugins.LSP", tags: [N_("plugins Flatpak"), N_("efeitos")], text: N_("Os efeitos do LSP Plugins para os apps Flatpak") },
+      { name: "Calf", origin: "flathub", id: "org.freedesktop.LinuxAudio.Plugins.Calf", tags: [N_("plugins Flatpak"), N_("efeitos"), N_("sintetizador")], text: N_("Efeitos e instrumentos clássicos") },
+      { name: "SWH", origin: "flathub", id: "org.freedesktop.LinuxAudio.Plugins.swh", tags: [N_("plugins Flatpak"), N_("efeitos")], text: N_("Coleção de efeitos LADSPA/LV2 de Steve Harris") },
+      { name: "TAP", origin: "flathub", id: "org.freedesktop.LinuxAudio.Plugins.TAP", tags: [N_("plugins Flatpak"), N_("efeitos")], text: N_("Efeitos de estúdio: reverb, eco, equalizador") },
+      { name: "Guitarix (plugins)", origin: "flathub", id: "org.freedesktop.LinuxAudio.Plugins.Guitarix", tags: [N_("plugins Flatpak"), N_("guitarra")], text: N_("Os amplificadores e pedais do Guitarix como plugins") },
+      { name: "Geonkick", origin: "flathub", id: "org.freedesktop.LinuxAudio.Plugins.Geonkick", tags: [N_("plugins Flatpak"), N_("bateria")], text: N_("Sintetizador de percussão (bumbo, caixa)") },
+      { name: "Dexed", origin: "flathub", id: "org.freedesktop.LinuxAudio.Plugins.Dexed", tags: [N_("plugins Flatpak"), N_("sintetizador"), N_("DX7")], text: N_("Sintetizador FM no estilo do Yamaha DX7") },
+    ],
+  },
+  {
     id: "graphics",
     title: N_("Imagem, fotos e 3D"),
 

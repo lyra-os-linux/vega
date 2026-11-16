@@ -12,6 +12,7 @@ import { preparationPanel } from "./software/preparation.js";
 import { requireRestart } from "../restart.js";
 import { flatpakPanel } from "./software/flatpak.js";
 import { POPULAR } from "./software/popular-catalog.js";
+import { studioBanner } from "./software/studio-mode.js";
 import { bankSection, resetBankSection, ensureBankModule } from "./software/banks.js";
 import { DEVELOPER } from "./software/developer-catalog.js";
 import { NETWORK } from "./software/network-catalog.js";
@@ -559,6 +560,9 @@ export default {
               button(t("Escolher arquivo…"), { kind: "primary", icon: "folder", disabled: busy, onClick: runExe })))),
         catalog.map((category) => category.bank ? bankSection({ transact, ensureRepo, repaint: paint, busy, hasWebapps: category.apps.some(isInstalled), cards: h("div", { class: "grid auto sw-cards" }, category.apps.map((app) => popularCard(app))) }) : section(t(category.title), { sub: String(category.apps.length), id: `section-${category.id}` },
           category.encoders && h("div", { class: "sw-encoders" }, encodersBanner()),
+          category.studio && h("div", { class: "sw-encoders" }, studioBanner(paint, busy)),
+          category.pluginNote && h("div", { class: "sw-encoders" }, banner("info", "plug", t("RPM e Flatpak não compartilham plugins"),
+            t("O Ardour e o Qtractor (RPM) enxergam o LSP Plugins RPM. Os apps Flatpak (LMMS, Carla, Hydrogen…) enxergam só os plugins Flatpak, e cada plugin Flatpak exige antes um desses apps instalado. Prefira um lado só."))),
           h("div", { class: "grid auto sw-cards" }, category.apps.map((app) => popularCard(app, { gateNote: category.gated ? gate?.note : null }))))));
     }
 

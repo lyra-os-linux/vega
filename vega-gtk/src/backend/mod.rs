@@ -11,6 +11,7 @@ pub mod backup;
 pub mod banks;
 pub mod bluetooth;
 pub mod cleanup;
+pub mod profiles;
 pub mod commands_present;
 pub mod datetime;
 pub mod diagnostics;

@@ -165,6 +165,8 @@ fn main() -> ExitCode {
             cleanup::cleanup_start,
             cleanup::cleanup_user_scan,
             cleanup::cleanup_user_clean,
+            profiles::profiles_list,
+            profiles::profiles_set,
             network::network_interfaces,
             network::network_wifi,
             network::network_proxy,

@@ -7332,3 +7332,270 @@ msgstr "IBMUSER, password IBMPASS, for recovery only"
 
 msgid "São as senhas padrão do TK5, iguais em toda instalação. O terminal só aceita conexões deste computador; troque-as pelo RAKF, logado como HERC01."
 msgstr "These are the TK5 default passwords, the same in every installation. The terminal only accepts connections from this computer; change them with RAKF, logged on as HERC01."
+
+msgid "Amplificador e pedais virtuais para guitarra"
+msgstr "Virtual amp and pedals for guitar"
+
+msgid "Bateria eletrônica e sequenciador de padrões"
+msgstr "Drum machine and pattern sequencer"
+
+msgid "Batidas, sintetizadores e trilhas; usa os plugins Flatpak abaixo"
+msgstr "Beats, synths and soundtracks; uses the Flatpak plugins below"
+
+msgid "Coleção de efeitos LADSPA/LV2 de Steve Harris"
+msgstr "Steve Harris's collection of LADSPA/LV2 effects"
+
+msgid "Compressores, equalizadores e saturação"
+msgstr "Compressors, equalizers and saturation"
+
+msgid "Conexões do PipeWire, mais simples"
+msgstr "PipeWire connections, simpler"
+
+msgid "Cria e edita SoundFonts"
+msgstr "Creates and edits SoundFonts"
+
+msgid "DX7"
+msgstr "DX7"
+
+msgid "Edita as etiquetas (título, artista, capa) de muitos arquivos de uma vez"
+msgstr "Edits the tags (title, artist, cover) of many files at once"
+
+msgid "Efeitos de estúdio: reverb, eco, equalizador"
+msgstr "Studio effects: reverb, echo, equalizer"
+
+msgid "Efeitos e instrumentos clássicos"
+msgstr "Classic effects and instruments"
+
+msgid "Efeitos profissionais para o Ardour e o Qtractor (RPM)"
+msgstr "Professional effects for Ardour and Qtractor (RPM)"
+
+msgid "Escreve, toca e imprime partituras"
+msgstr "Writes, plays and prints sheet music"
+
+msgid "Estúdio de gravação e mixagem multipista; usa os plugins RPM, como o LSP Plugins"
+msgstr "Multitrack recording and mixing studio; uses RPM plugins such as LSP Plugins"
+
+msgid "Gravação de áudio e MIDI multipista, leve; usa os plugins RPM"
+msgstr "Lightweight multitrack audio and MIDI recording; uses RPM plugins"
+
+msgid "Liga as saídas e entradas de áudio e MIDI do PipeWire"
+msgstr "Connects PipeWire audio and MIDI outputs and inputs"
+
+msgid "Linguagem clássica de síntese sonora"
+msgstr "Classic sound synthesis language"
+
+msgid "Linguagem para síntese e composição algorítmica"
+msgstr "Language for synthesis and algorithmic composition"
+
+msgid "MIDI"
+msgstr "MIDI"
+
+msgid "Medidores, equalizador, compressor e mais, da x42"
+msgstr "Meters, equalizer, compressor and more, by x42"
+
+msgid "Mixagem para DJs, com controladoras"
+msgstr "Mixing for DJs, with controllers"
+
+msgid "Música"
+msgstr "Music"
+
+msgid "O Ardour e o Qtractor (RPM) enxergam o LSP Plugins RPM. Os apps Flatpak (LMMS, Carla, Hydrogen…) enxergam só os plugins Flatpak, e cada plugin Flatpak exige antes um desses apps instalado. Prefira um lado só."
+msgstr "Ardour and Qtractor (RPM) see the LSP Plugins RPM. Flatpak apps (LMMS, Carla, Hydrogen…) see only Flatpak plugins, and each Flatpak plugin needs one of those apps installed first. Stick to one side."
+
+msgid "Os amplificadores e pedais do Guitarix como plugins"
+msgstr "Guitarix amps and pedals as plugins"
+
+msgid "Os efeitos do LSP Plugins para os apps Flatpak"
+msgstr "LSP Plugins effects for Flatpak apps"
+
+msgid "Painel do JACK: conexões, transporte e latência"
+msgstr "JACK control panel: connections, transport and latency"
+
+msgid "Plugins de áudio"
+msgstr "Audio plugins"
+
+msgid "Programa música ao vivo; ótimo para aprender"
+msgstr "Code music live; great for learning"
+
+msgid "Programação musical visual, por blocos"
+msgstr "Visual music programming, with blocks"
+
+msgid "RPM e Flatpak não compartilham plugins"
+msgstr "RPM and Flatpak do not share plugins"
+
+msgid "Rack de plugins: abre e liga plugins de áudio fora de uma DAW"
+msgstr "Plugin rack: loads and connects audio plugins outside a DAW"
+
+msgid "Reverbs de sala, salão e placa"
+msgstr "Room, hall and plate reverbs"
+
+msgid "Sintetizador FM no estilo do Yamaha DX7"
+msgstr "FM synth in the style of the Yamaha DX7"
+
+msgid "Sintetizador com muitos timbres prontos"
+msgstr "Synth with many ready-made sounds"
+
+msgid "Sintetizador de percussão (bumbo, caixa)"
+msgstr "Percussion synth (kick, snare)"
+
+msgid "Sintetizador híbrido completo"
+msgstr "Full-featured hybrid synth"
+
+msgid "Sintetizador modular para montar e tocar ao vivo"
+msgstr "Modular synth to build and play live"
+
+msgid "SoundFont"
+msgstr "SoundFont"
+
+msgid "Toca SoundFonts pelo FluidSynth, com teclado MIDI"
+msgstr "Plays SoundFonts through FluidSynth, with a MIDI keyboard"
+
+msgid "Toca com outros músicos pela internet, com pouca latência"
+msgstr "Play with other musicians over the internet, with low latency"
+
+msgid "amplificador virtual"
+msgstr "virtual amp"
+
+msgid "bateria"
+msgstr "drums"
+
+msgid "bateria eletrônica"
+msgstr "drum machine"
+
+msgid "batidas"
+msgstr "beats"
+
+msgid "compressor"
+msgstr "compressor"
+
+msgid "conexões de áudio"
+msgstr "audio connections"
+
+msgid "ensaio remoto"
+msgstr "remote rehearsal"
+
+msgid "ensino de música"
+msgstr "music education"
+
+msgid "etiquetas de áudio"
+msgstr "audio tags"
+
+msgid "guitarra"
+msgstr "guitar"
+
+msgid "live coding"
+msgstr "live coding"
+
+msgid "medidores"
+msgstr "meters"
+
+msgid "partitura"
+msgstr "sheet music"
+
+msgid "plugins Flatpak"
+msgstr "Flatpak plugins"
+
+msgid "plugins RPM"
+msgstr "RPM plugins"
+
+msgid "programação musical"
+msgstr "music programming"
+
+msgid "programação musical visual"
+msgstr "visual music programming"
+
+msgid "rack de plugins"
+msgstr "plugin rack"
+
+msgid "reverb"
+msgstr "reverb"
+
+msgid "sampler"
+msgstr "sampler"
+
+msgid "sintetizador"
+msgstr "synth"
+
+msgid "sintetizador modular"
+msgstr "modular synth"
+
+msgid "teclado MIDI"
+msgstr "MIDI keyboard"
+
+msgid "tocar pela rede"
+msgstr "play over the network"
+
+msgid "O vegad desfez as mudanças"
+msgstr "vegad undid the changes"
+
+msgid "Não foi possível mudar o modo estúdio"
+msgstr "Could not change studio mode"
+
+msgid "Ligar o modo estúdio?"
+msgstr "Turn on studio mode?"
+
+msgid "O Vega instala o JACK do PipeWire, dá prioridade de tempo real ao grupo audio e coloca você nele. Antes, cria um snapshot. Vale a partir do próximo login."
+msgstr "Vega installs PipeWire's JACK, gives the audio group real-time priority and adds you to it. It takes a snapshot first. Takes effect from your next login."
+
+msgid "Modo estúdio ligado. Saia e entre de novo na sessão para valer."
+msgstr "Studio mode on. Log out and back in for it to take effect."
+
+msgid "Modo estúdio desligado."
+msgstr "Studio mode off."
+
+msgid "Ajustar o kernel para áudio?"
+msgstr "Tune the kernel for audio?"
+
+msgid "Acrescenta preempt=full e threadirqs ao boot do sistema inteiro, como no Ubuntu Studio. Reduz a latência em gravações exigentes. O Vega cria um snapshot antes, e desligar restaura a linha de boot anterior. Vale depois de reiniciar."
+msgstr "Adds preempt=full and threadirqs to the boot of the whole system, as in Ubuntu Studio. Lowers latency in demanding recordings. Vega takes a snapshot first, and turning it off restores the previous boot line. Takes effect after a restart."
+
+msgid "Ajustar o kernel"
+msgstr "Tune the kernel"
+
+msgid "Ajuste do kernel desfeito. Reinicie para valer."
+msgstr "Kernel tuning undone. Restart for it to take effect."
+
+msgid "Kernel ajustado. Reinicie para valer."
+msgstr "Kernel tuned. Restart for it to take effect."
+
+msgid "Modo estúdio"
+msgstr "Studio mode"
+
+msgid "Atualize o Lyra OS para ligar o áudio de baixa latência pelo Vega."
+msgstr "Update Lyra OS to turn on low-latency audio from Vega."
+
+msgid "Modo estúdio desligado"
+msgstr "Studio mode off"
+
+msgid "Para gravar com pouca latência: JACK pelo PipeWire (o Ardour e o Qtractor abrem sem configurar nada) e prioridade de tempo real para o grupo audio, como no Ubuntu Studio."
+msgstr "For low-latency recording: JACK through PipeWire (Ardour and Qtractor open with no setup) and real-time priority for the audio group, as in Ubuntu Studio."
+
+msgid "Ligando…"
+msgstr "Turning on…"
+
+msgid "Ligar o modo estúdio"
+msgstr "Turn on studio mode"
+
+msgid "Saia e entre de novo na sessão para valer."
+msgstr "Log out and back in for it to take effect."
+
+msgid "Reinicie para o ajuste do kernel valer."
+msgstr "Restart for the kernel tuning to take effect."
+
+msgid "Modo estúdio ligado"
+msgstr "Studio mode on"
+
+msgid "JACK pelo PipeWire e tempo real para o grupo audio."
+msgstr "JACK through PipeWire and real-time for the audio group."
+
+msgid "Kernel ajustado para áudio (preempt=full, threadirqs)."
+msgstr "Kernel tuned for audio (preempt=full, threadirqs)."
+
+msgid "Opcional: ajuste o kernel para latência ainda menor."
+msgstr "Optional: tune the kernel for even lower latency."
+
+msgid "Desfazer ajuste do kernel"
+msgstr "Undo kernel tuning"
+
+msgid "Aplicando…"
+msgstr "Applying…"
