@@ -60,7 +60,21 @@ pub enum Kind {
         dir: &'static str,
         name: &'static str,
     },
+    /// MSI de ferramenta Oracle (vega#191): antes, o Instant Client para
+    /// Windows (`ORACLE_CLIENT`) vai para `C:\oracle`, com o `tnsnames.ora` do
+    /// Oracle Database Free local, e entra no PATH e no TNS_ADMIN do prefixo.
+    OracleMsi,
 }
+
+/// Instant Client para Windows 64 bits, pré-requisito do PL/SQL Developer e
+/// do Toad. Não é oferecido sozinho (não está em `RECIPES`).
+pub const ORACLE_CLIENT: Recipe = Recipe {
+    id: "oracle-instantclient-win",
+    url: "https://download.oracle.com/otn_software/nt/instantclient/2326400/instantclient-basic-windows.x64-23.26.4.0.0.zip",
+    sha256: "09e9b81cd492f5ce6f671317c23a0e1f5dee5e786258149d216321c3dad3023f",
+    file: "instantclient-basic-windows.x64-23.26.4.0.0.zip",
+    kind: Kind::Msi,
+};
 
 /// Receita do Vega: instalador oficial com checksum fixado.
 #[derive(Debug, Clone, Copy)]
@@ -229,6 +243,15 @@ pub const RECIPES: &[Recipe] = &[
         file: "WinDirStat-x64.msi",
         kind: Kind::Msi,
     },
+    // PL/SQL Developer 17 (Allround Automations): versão de avaliação de 30
+    // dias, comercial; o MSI vem do site do fabricante (vega#191).
+    Recipe {
+        id: "plsqldev",
+        url: "https://www.allroundautomations.com/files/trial/plsqldev1704x64.msi",
+        sha256: "45bfa3899727147a8b6c1d0fdb94fd08c141aab067ffcf056d809117039c865e",
+        file: "plsqldev1704x64.msi",
+        kind: Kind::OracleMsi,
+    },
     Recipe {
         id: "dude",
         url: "https://download.mikrotik.com/routeros/7.25/dude-install-7.25.exe",
@@ -259,9 +282,24 @@ pub fn recipe(id: &str) -> Option<&'static Recipe> {
     RECIPES.iter().find(|recipe| recipe.id == id)
 }
 
+/// Instalador que só sai do site do fabricante depois de login ou aceite
+/// (Toad, vega#191): o usuário baixa e o download guiado (vega#208) confere
+/// tamanho e SHA-256 antes de instalar. `recipe.url` fica vazio.
+#[derive(Debug, Clone, Copy)]
+pub struct Guided {
+    pub recipe: Recipe,
+    pub expected: super::guided_download::Expected,
+}
+
+pub const GUIDED: &[Guided] = &[];
+
+pub fn guided(id: &str) -> Option<&'static Guided> {
+    GUIDED.iter().find(|guided| guided.recipe.id == id)
+}
+
 /// Id oferecido pela vitrine (verbo do winetricks ou receita do Vega)?
 pub fn offered(id: &str) -> bool {
-    VERBS.contains(&id) || recipe(id).is_some()
+    VERBS.contains(&id) || recipe(id).is_some() || guided(id).is_some()
 }
 
 /// Verbos cujo instalador o winetricks conduz com um script do AutoHotkey,
@@ -698,6 +736,72 @@ fn install_portable(
     )
 }
 
+/// Instant Client para Windows no prefixo, com as conexões do Oracle Free
+/// local e as variáveis de ambiente do usuário do Wine.
+fn prepare_oracle_client(prefix: &Path) -> Result<(), String> {
+    if !prefix.join("system.reg").is_file() {
+        let mut boot = Command::new("wineboot");
+        boot.arg("-i")
+            .env("WINEPREFIX", prefix)
+            .env("WINEDEBUG", "-all");
+        crate::webkit_env::clean_command(&mut boot);
+        boot.status().map_err(|error| error.to_string())?;
+    }
+    let oracle = prefix.join("drive_c/oracle");
+    if !oracle.join("instantclient_23_26/oci.dll").is_file() {
+        let zip = fetch_verified(&ORACLE_CLIENT)?;
+        std::fs::create_dir_all(&oracle).map_err(|error| error.to_string())?;
+        let mut unzip = Command::new("unzip");
+        unzip.arg("-q").arg("-o").arg(&zip).arg("-d").arg(&oracle);
+        crate::webkit_env::clean_command(&mut unzip);
+        let status = unzip.status().map_err(|error| error.to_string())?;
+        if !status.success() {
+            return Err(gettext(
+                "Não foi possível extrair o Instant Client para Windows.",
+            ));
+        }
+    }
+    let tnsnames = oracle.join("network/admin/tnsnames.ora");
+    if !tnsnames.is_file() {
+        std::fs::create_dir_all(tnsnames.parent().unwrap_or(&oracle))
+            .map_err(|error| error.to_string())?;
+        std::fs::write(
+            &tnsnames,
+            super::oracle_tools::TNSNAMES.replace('\n', "\r\n"),
+        )
+        .map_err(|error| error.to_string())?;
+    }
+    for (name, value) in oracle_environment() {
+        let mut reg = Command::new("wine");
+        reg.args([
+            "reg",
+            "add",
+            "HKCU\\Environment",
+            "/v",
+            name,
+            "/t",
+            "REG_EXPAND_SZ",
+            "/d",
+            value,
+            "/f",
+        ])
+        .env("WINEPREFIX", prefix)
+        .env("WINEDEBUG", "-all");
+        crate::webkit_env::clean_command(&mut reg);
+        reg.status().map_err(|error| error.to_string())?;
+    }
+    Ok(())
+}
+
+/// Variáveis de ambiente do usuário do Wine para achar o Instant Client
+/// (`oci.dll`) e as conexões.
+pub fn oracle_environment() -> [(&'static str, &'static str); 2] {
+    [
+        ("PATH", "C:\\oracle\\instantclient_23_26;%PATH%"),
+        ("TNS_ADMIN", "C:\\oracle\\network\\admin"),
+    ]
+}
+
 fn record_installed(prefix: &Path, id: &str) {
     if let Ok(mut log) = std::fs::OpenOptions::new()
         .create(true)
@@ -709,26 +813,35 @@ fn record_installed(prefix: &Path, id: &str) {
 }
 
 fn run_recipe(app: &AppHandle, tx: u32, recipe: &Recipe, prefix: &Path) {
+    let _ = app.emit(
+        "software-transaction",
+        TransactionEvent::Progress {
+            id: tx,
+            percent: 5,
+            message: gettext("Baixando {file}…").replace("{file}", recipe.file),
+        },
+    );
+    match fetch_verified(recipe) {
+        Ok(file) => install_file(app, tx, recipe, prefix, &file),
+        Err(message) => {
+            let _ = app.emit(
+                "software-transaction",
+                TransactionEvent::Finished {
+                    id: tx,
+                    success: false,
+                    message,
+                },
+            );
+        }
+    }
+}
+
+/// Instala a partir do arquivo já conferido.
+fn install_file(app: &AppHandle, tx: u32, recipe: &Recipe, prefix: &Path, file: &Path) {
     let emit = |event: TransactionEvent| {
         let _ = app.emit("software-transaction", event);
     };
     let failed = gettext("A instalação do aplicativo do Windows falhou.");
-    emit(TransactionEvent::Progress {
-        id: tx,
-        percent: 5,
-        message: gettext("Baixando {file}…").replace("{file}", recipe.file),
-    });
-    let file = match fetch_verified(recipe) {
-        Ok(file) => file,
-        Err(message) => {
-            emit(TransactionEvent::Finished {
-                id: tx,
-                success: false,
-                message,
-            });
-            return;
-        }
-    };
     emit(TransactionEvent::Progress {
         id: tx,
         percent: 30,
@@ -738,7 +851,7 @@ fn run_recipe(app: &AppHandle, tx: u32, recipe: &Recipe, prefix: &Path) {
         Kind::Installer(args) => {
             let mut command = Command::new("wine");
             command
-                .arg(&file)
+                .arg(file)
                 .args(args)
                 .env("WINEPREFIX", prefix)
                 .env("WINEDEBUG", "-all");
@@ -755,7 +868,37 @@ fn run_recipe(app: &AppHandle, tx: u32, recipe: &Recipe, prefix: &Path) {
             command
                 .arg("msiexec")
                 .arg("/i")
-                .arg(&file)
+                .arg(file)
+                .arg("/qn")
+                .env("WINEPREFIX", prefix)
+                .env("WINEDEBUG", "-all");
+            crate::webkit_env::clean_command(&mut command);
+            follow_then(app, tx, command, "wine", failed, |success| {
+                if success {
+                    record_installed(prefix, recipe.id);
+                }
+                after_install(prefix);
+            });
+        }
+        Kind::OracleMsi => {
+            emit(TransactionEvent::Progress {
+                id: tx,
+                percent: 20,
+                message: gettext("Preparando o Instant Client para Windows…"),
+            });
+            if let Err(message) = prepare_oracle_client(prefix) {
+                emit(TransactionEvent::Finished {
+                    id: tx,
+                    success: false,
+                    message,
+                });
+                return;
+            }
+            let mut command = Command::new("wine");
+            command
+                .arg("msiexec")
+                .arg("/i")
+                .arg(file)
                 .arg("/qn")
                 .env("WINEPREFIX", prefix)
                 .env("WINEDEBUG", "-all");
@@ -768,7 +911,7 @@ fn run_recipe(app: &AppHandle, tx: u32, recipe: &Recipe, prefix: &Path) {
             });
         }
         Kind::Portable { dir, name } => {
-            let result = install_portable(prefix, recipe, dir, name, &file);
+            let result = install_portable(prefix, recipe, dir, name, file);
             let success = result.is_ok();
             if success {
                 record_installed(prefix, recipe.id);
@@ -800,6 +943,11 @@ fn ready_prefix() -> Result<PathBuf, String> {
 pub fn windows_install(app: AppHandle, verb: String) -> Result<u32, String> {
     if !offered(&verb) {
         return Err(gettext("Aplicativo do Windows desconhecido."));
+    }
+    if guided(&verb).is_some() {
+        return Err(gettext(
+            "Este instalador é baixado por você no site do fabricante.",
+        ));
     }
     let prefix = ready_prefix()?;
     let tx = super::session_tx::next();
@@ -1068,6 +1216,13 @@ pub const REMOVALS: &[(&str, Removal)] = &[
     (
         "hercules",
         Removal::Files(&["drive_c/Program Files/Hercules"]),
+    ),
+    (
+        "plsqldev",
+        Removal::Uninstaller {
+            display: "PL/SQL Developer",
+            args: &[],
+        },
     ),
 ];
 
@@ -1362,6 +1517,130 @@ pub fn windows_run_file(app: AppHandle, path: String) -> Result<u32, String> {
         );
     });
     Ok(tx)
+}
+
+/// Esperas do download guiado em andamento, por id, para o Cancelar.
+static GUIDED_WAITS: std::sync::Mutex<
+    Vec<(String, std::sync::Arc<std::sync::atomic::AtomicBool>)>,
+> = std::sync::Mutex::new(Vec::new());
+
+fn finish_failed(app: &AppHandle, tx: u32, message: String) {
+    let _ = app.emit(
+        "software-transaction",
+        TransactionEvent::Finished {
+            id: tx,
+            success: false,
+            message,
+        },
+    );
+}
+
+/// Copia o arquivo conferido para o cache e instala.
+fn install_guided(app: &AppHandle, tx: u32, guided: &Guided, path: &Path) {
+    let installed = cache_dir()
+        .ok_or_else(|| gettext("Pasta pessoal não encontrada."))
+        .and_then(|dir| {
+            std::fs::create_dir_all(&dir).map_err(|error| error.to_string())?;
+            let target = dir.join(guided.recipe.file);
+            std::fs::copy(path, &target).map_err(|error| error.to_string())?;
+            Ok(target)
+        })
+        .and_then(|file| ready_prefix().map(|prefix| (file, prefix)));
+    match installed {
+        Ok((file, prefix)) => {
+            prepare_prefix(&prefix);
+            install_file(app, tx, &guided.recipe, &prefix, &file);
+        }
+        Err(message) => finish_failed(app, tx, message),
+    }
+}
+
+/// Abre a página do fabricante e espera o arquivo chegar em Downloads.
+#[tauri::command]
+pub fn windows_guided_wait(app: AppHandle, id: String) -> Result<u32, String> {
+    use super::guided_download::{self, Outcome, Watcher};
+    use std::sync::atomic::AtomicBool;
+    let guided = guided(&id).ok_or_else(|| gettext("Aplicativo do Windows desconhecido."))?;
+    let dir = guided_download::downloads_dir()
+        .ok_or_else(|| gettext("Pasta de downloads não encontrada."))?;
+    crate::app::open_uri(guided.expected.page.to_owned())?;
+    let cancel = std::sync::Arc::new(AtomicBool::new(false));
+    if let Ok(mut waits) = GUIDED_WAITS.lock() {
+        waits.retain(|(other, _)| other != &id);
+        waits.push((id.clone(), cancel.clone()));
+    }
+    let tx = super::session_tx::next();
+    std::thread::spawn(move || {
+        let _ = app.emit(
+            "software-transaction",
+            TransactionEvent::Progress {
+                id: tx,
+                percent: 0,
+                message: gettext("Aguardando {file} na pasta de downloads…")
+                    .replace("{file}", guided.expected.file),
+            },
+        );
+        let mut watcher = Watcher::new(dir, guided.expected);
+        let outcome = guided_download::wait(
+            &mut watcher,
+            &cancel,
+            std::time::Duration::from_secs(2),
+            std::time::Duration::from_secs(45 * 60),
+            &|path, rejection| {
+                let _ = app.emit(
+                    "software-transaction",
+                    TransactionEvent::Progress {
+                        id: tx,
+                        percent: 0,
+                        message: format!(
+                            "{}: {}",
+                            path.file_name().unwrap_or_default().to_string_lossy(),
+                            rejection.message(&guided.expected)
+                        ),
+                    },
+                );
+            },
+        );
+        if let Ok(mut waits) = GUIDED_WAITS.lock() {
+            waits.retain(|(other, _)| other != &id);
+        }
+        match outcome {
+            Outcome::Accepted(path) => install_guided(&app, tx, guided, &path),
+            Outcome::Cancelled => finish_failed(&app, tx, gettext("Cancelado.")),
+            Outcome::TimedOut => finish_failed(
+                &app,
+                tx,
+                gettext(
+                    "O arquivo não chegou. Confira o login no site do fabricante e tente de novo, ou escolha o arquivo já baixado.",
+                ),
+            ),
+        }
+    });
+    Ok(tx)
+}
+
+/// "Já baixei — escolher arquivo": confere o arquivo escolhido e instala.
+#[tauri::command]
+pub fn windows_guided_file(app: AppHandle, id: String, path: String) -> Result<u32, String> {
+    let guided = guided(&id).ok_or_else(|| gettext("Aplicativo do Windows desconhecido."))?;
+    let path = PathBuf::from(path);
+    super::guided_download::verify(&guided.expected, &path)
+        .map_err(|rejection| rejection.message(&guided.expected))?;
+    windows_guided_cancel(id);
+    let tx = super::session_tx::next();
+    std::thread::spawn(move || install_guided(&app, tx, guided, &path));
+    Ok(tx)
+}
+
+#[tauri::command]
+pub fn windows_guided_cancel(id: String) {
+    if let Ok(waits) = GUIDED_WAITS.lock() {
+        for (other, cancel) in waits.iter() {
+            if other == &id {
+                cancel.store(true, std::sync::atomic::Ordering::SeqCst);
+            }
+        }
+    }
 }
 
 #[cfg(test)]

@@ -93,6 +93,47 @@ export const DEVELOPER = [
     ],
   },
   {
+    // vega#187: GnuCOBOL do Leap 16.1; a extensão Code4z (Broadcom, gratuita)
+    // vai para a conta do usuário pelo próprio VS Code (backend/vscode_ext.rs).
+    // vega#188: x3270 (pacote do Lyra, link do Base:System), tn5250 do Leap,
+    // Zowe CLI pelo npm e Zowe Explorer pelo VS Code, na conta do usuário. O
+    // IBM Z Xplore é um z/OS remoto e gratuito: o cartão só abre o site.
+    // vega#194: MVS 3.8j TK5 no Hercules do Lyra (backend/mainframe.rs).
+    // E7: Oracle e Oracle ERP entram nesta seção, a pedido do mantenedor
+    // (16/11/2026): estudo e programação de sistemas corporativos num só lugar.
+    // Salesforce também (16/11/2026): CLI pelo npm e extensões pelo VS Code.
+    // As extensões da Oracle vão pela origem vscode; MyLearn, documentação e
+    // Free Tier são serviços remotos (origem link).
+    id: "corporate",
+    title: N_("Corporativo: COBOL, mainframe, Oracle, ERP e Salesforce"),
+
+    tasks: ["code"],
+    apps: [
+      { name: "GnuCOBOL", origin: "official", id: "gnucobol", text: N_("Compilador COBOL (cobc) que gera executáveis nativos; depura com o GDB") },
+      { name: "GnuCOBOL ESQL", origin: "official", id: "gnucobol-esql", text: N_("Pré-compilador de SQL embutido (EXEC SQL) para programas do GnuCOBOL") },
+      { name: "Code4z", origin: "vscode", id: "broadcomMFD.code4z-extension-pack", text: N_("Extensões gratuitas do VS Code para COBOL, JCL, HLASM e PL/I, com o Zowe Explorer") },
+      { name: "x3270 e c3270", origin: "official", id: "x3270", command: "c3270", text: N_("Terminais 3270 para mainframes IBM (TSO/ISPF, CICS), em janela e no terminal") },
+      { name: "tn5250", origin: "official", id: "tn5250", text: N_("Terminal 5250 para o IBM i (AS/400)") },
+      { name: "Zowe CLI", origin: "npm", id: "@zowe/cli", command: "zowe", text: N_("Linha de comando da Open Mainframe Project para z/OS: jobs, datasets e USS") },
+      { name: "Zowe Explorer", origin: "vscode", id: "Zowe.vscode-extension-for-zowe", text: N_("Datasets, jobs e USS do z/OS no VS Code; já vem no Code4z") },
+      { name: "Mainframe de treinamento (MVS 3.8j)", origin: "mainframe", id: "tk5", text: N_("MVS 3.8j TK5 no Hercules, com TSO, ISPF, JES2 e compiladores COBOL e Assembler; liga e desliga pelo menu") },
+      { name: "Oracle Instant Client e SQL*Plus", origin: "oracle", id: "oracle-instantclient", command: "sqlplus", text: N_("Bibliotecas cliente do Oracle, SQL*Plus e as ferramentas exp/imp e Data Pump, na sua conta") },
+      { name: "Oracle SQLcl", origin: "oracle", id: "oracle-sqlcl", command: "sql", text: N_("Linha de comando moderna do Oracle (sql), com histórico, formatação e Liquibase") },
+      { name: "Oracle SQL Developer", origin: "oracle", id: "oracle-sqldeveloper", text: N_("IDE gratuita da Oracle para SQL e PL/SQL, com depurador e relatórios") },
+      { name: "Oracle SQL Developer Data Modeler", origin: "oracle", id: "oracle-datamodeler", text: N_("Modelagem lógica e física de bancos Oracle, com engenharia reversa e DDL") },
+      { name: "Oracle SQL Developer for VS Code", origin: "vscode", id: "Oracle.sql-developer", text: N_("Conexões, consultas SQL e PL/SQL no banco Oracle, dentro do VS Code") },
+      { name: "Oracle Developer Tools for VS Code", origin: "vscode", id: "Oracle.oracledevtools", text: N_("Edição e depuração de SQL e PL/SQL, com IntelliSense para o banco Oracle") },
+      { name: "Oracle MyLearn", origin: "link", id: "oracle-mylearn", url: "https://mylearn.oracle.com/", text: N_("Cursos e trilhas oficiais da Oracle University para o Fusion Cloud ERP (Financials, SCM, Procurement); há trilhas gratuitas") },
+      { name: "Documentação do Oracle ERP", origin: "link", id: "oracle-erp-docs", url: "https://docs.oracle.com/en/cloud/saas/financials/", text: N_("Manuais oficiais do Oracle Fusion Cloud Financials: implantação, uso e extensões") },
+      { name: "Oracle Cloud Free Tier", origin: "link", id: "oracle-cloud-free", url: "https://www.oracle.com/cloud/free/", text: N_("Conta gratuita na nuvem da Oracle com Autonomous Database e APEX, para praticar SQL, PL/SQL e extensões do ERP") },
+      { name: "Salesforce CLI", origin: "npm", id: "@salesforce/cli", command: "sf", text: N_("Linha de comando oficial (sf) para criar orgs de teste, implantar metadados e rodar Apex") },
+      { name: "Salesforce Extension Pack", origin: "vscode", id: "salesforce.salesforcedx-vscode", text: N_("Apex, Lightning Web Components, SOQL e depuração no VS Code; pede o Java 21") },
+      { name: "Trailhead", origin: "link", id: "salesforce-trailhead", url: "https://trailhead.salesforce.com/", text: N_("Trilhas gratuitas oficiais para estudar Salesforce e se preparar para as certificações") },
+      { name: "Salesforce Developer Edition", origin: "link", id: "salesforce-developer-org", url: "https://developer.salesforce.com/signup", text: N_("Org gratuita da Salesforce para desenvolver e testar, sem prazo de validade") },
+      { name: "IBM Z Xplore", origin: "link", id: "ibm-z-xplore", url: "https://www.ibm.com/products/z/resources/zxplore", text: N_("z/OS real, remoto e gratuito da IBM para aprender JCL, COBOL, REXX e Db2 com o VS Code e o Zowe") },
+    ],
+  },
+  {
     // Os métodos seguem a documentação de cada fabricante,
     // adaptada ao openSUSE: Claude Code e Cursor pelos repositórios RPM
     // oficiais (pacotes claude-code-repo e cursor-repo, com a chave fixada);
@@ -218,29 +259,6 @@ export const DEVELOPER = [
       { name: "Postman", origin: "flathub", id: "com.getpostman.Postman", tags: [N_("API REST")], text: N_("Testa e documenta APIs") },
       { name: "Bruno", origin: "flathub", id: "com.usebruno.Bruno", tags: [N_("API REST")], text: N_("Cliente de APIs de código aberto; coleções ficam no Git") },
       { name: "Insomnia", origin: "flathub", id: "rest.insomnia.Insomnia", tags: [N_("API REST")], text: N_("Cliente de APIs REST, GraphQL e gRPC") },
-    ],
-  },
-  {
-    // vega#187: GnuCOBOL do Leap 16.1; a extensão Code4z (Broadcom, gratuita)
-    // vai para a conta do usuário pelo próprio VS Code (backend/vscode_ext.rs).
-    // vega#188: x3270 (pacote do Lyra, link do Base:System), tn5250 do Leap,
-    // Zowe CLI pelo npm e Zowe Explorer pelo VS Code, na conta do usuário. O
-    // IBM Z Xplore é um z/OS remoto e gratuito: o cartão só abre o site.
-    // vega#194: MVS 3.8j TK5 no Hercules do Lyra (backend/mainframe.rs).
-    id: "mainframe",
-    title: N_("COBOL e mainframe"),
-
-    tasks: ["code"],
-    apps: [
-      { name: "GnuCOBOL", origin: "official", id: "gnucobol", text: N_("Compilador COBOL (cobc) que gera executáveis nativos; depura com o GDB") },
-      { name: "GnuCOBOL ESQL", origin: "official", id: "gnucobol-esql", text: N_("Pré-compilador de SQL embutido (EXEC SQL) para programas do GnuCOBOL") },
-      { name: "Code4z", origin: "vscode", id: "broadcomMFD.code4z-extension-pack", text: N_("Extensões gratuitas do VS Code para COBOL, JCL, HLASM e PL/I, com o Zowe Explorer") },
-      { name: "x3270 e c3270", origin: "official", id: "x3270", command: "c3270", text: N_("Terminais 3270 para mainframes IBM (TSO/ISPF, CICS), em janela e no terminal") },
-      { name: "tn5250", origin: "official", id: "tn5250", text: N_("Terminal 5250 para o IBM i (AS/400)") },
-      { name: "Zowe CLI", origin: "npm", id: "@zowe/cli", command: "zowe", text: N_("Linha de comando da Open Mainframe Project para z/OS: jobs, datasets e USS") },
-      { name: "Zowe Explorer", origin: "vscode", id: "Zowe.vscode-extension-for-zowe", text: N_("Datasets, jobs e USS do z/OS no VS Code; já vem no Code4z") },
-      { name: "Mainframe de treinamento (MVS 3.8j)", origin: "mainframe", id: "tk5", text: N_("MVS 3.8j TK5 no Hercules, com TSO, ISPF, JES2 e compiladores COBOL e Assembler; liga e desliga pelo menu") },
-      { name: "IBM Z Xplore", origin: "link", id: "ibm-z-xplore", url: "https://www.ibm.com/products/z/resources/zxplore", text: N_("z/OS real, remoto e gratuito da IBM para aprender JCL, COBOL, REXX e Db2 com o VS Code e o Zowe") },
     ],
   },
   {

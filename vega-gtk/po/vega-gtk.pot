@@ -7903,3 +7903,201 @@ msgstr ""
 
 msgid "São as senhas padrão do TK5, iguais em toda instalação. O terminal só aceita conexões deste computador; troque-as pelo RAKF, logado como HERC01."
 msgstr ""
+
+msgid "Corporativo: COBOL, mainframe, Oracle e ERP"
+msgstr ""
+
+msgid "Conexões, consultas SQL e PL/SQL no banco Oracle, dentro do VS Code"
+msgstr ""
+
+msgid "Edição e depuração de SQL e PL/SQL, com IntelliSense para o banco Oracle"
+msgstr ""
+
+msgid "Cursos e trilhas oficiais da Oracle University para o Fusion Cloud ERP (Financials, SCM, Procurement); há trilhas gratuitas"
+msgstr ""
+
+msgid "Manuais oficiais do Oracle Fusion Cloud Financials: implantação, uso e extensões"
+msgstr ""
+
+msgid "Conta gratuita na nuvem da Oracle com Autonomous Database e APEX, para praticar SQL, PL/SQL e extensões do ERP"
+msgstr ""
+
+msgid "Serviço desconhecido."
+msgstr ""
+
+msgid "O serviço ainda não foi instalado."
+msgstr ""
+
+msgid "Senha não encontrada."
+msgstr ""
+
+msgid "Este computador não tem memória suficiente para o serviço."
+msgstr ""
+
+msgid "Não há espaço livre suficiente na pasta pessoal para o serviço."
+msgstr ""
+
+msgid "O download da imagem falhou. Tente de novo: o Podman reaproveita o que já baixou."
+msgstr ""
+
+msgid "Ação desconhecida."
+msgstr ""
+
+msgid "O systemd do usuário recusou a ação."
+msgstr ""
+
+msgid "Não instalado"
+msgstr ""
+
+msgid "Pronto para uso"
+msgstr ""
+
+msgid "Iniciando (a primeira vez cria o banco e leva alguns minutos)"
+msgstr ""
+
+msgid "Falhou; veja journalctl --user -u {unit}"
+msgstr ""
+
+msgid "{name} precisa de {ram} GB de memória e {disk} GB livres na pasta pessoal. Este computador tem {haveRam} GB de memória e {haveDisk} GB livres."
+msgstr ""
+
+msgid "Requisitos não atendidos"
+msgstr ""
+
+msgid "O Vega baixa a imagem oficial ({image}) com o Podman, na sua conta, sem senha, e cria o serviço. O download tem alguns GB; se falhar, tente de novo que o Podman reaproveita o que já baixou."
+msgstr ""
+
+msgid "Antes, instala o Podman, com a senha de administrador."
+msgstr ""
+
+msgid "A senha do administrador (SYS, SYSTEM e PDBADMIN) é gerada pelo Vega e fica só na sua conta; copie-a aqui depois."
+msgstr ""
+
+msgid "Conexão: {connection}, só deste computador."
+msgstr ""
+
+msgid "O serviço não liga sozinho com o computador; use Iniciar."
+msgstr ""
+
+msgid "Baixando {name}…"
+msgstr ""
+
+msgid "{name} instalado. Use Iniciar para ligar o banco."
+msgstr ""
+
+msgid "Senha copiada"
+msgstr ""
+
+msgid "O serviço para e a imagem sai do computador, sem senha."
+msgstr ""
+
+msgid "Manter os dados (o banco volta igual se instalar de novo)"
+msgstr ""
+
+msgid "Copiar senha"
+msgstr ""
+
+msgid "Pare o serviço antes de remover"
+msgstr ""
+
+msgid "Conexão: {connection} (usuário SYSTEM ou PDBADMIN)"
+msgstr ""
+
+msgid "O Podman ainda não está instalado"
+msgstr ""
+
+msgid "Ele é instalado junto com o primeiro serviço, com a senha de administrador."
+msgstr ""
+
+msgid "Serviços disponíveis"
+msgstr ""
+
+msgid "Serviços de estudo e desenvolvimento em contêiner, com o Podman na sua conta, sem root"
+msgstr ""
+
+msgid "Corporativo: COBOL, mainframe, Oracle, ERP e Salesforce"
+msgstr ""
+
+msgid "Linha de comando oficial (sf) para criar orgs de teste, implantar metadados e rodar Apex"
+msgstr ""
+
+msgid "Apex, Lightning Web Components, SOQL e depuração no VS Code; pede o Java 21"
+msgstr ""
+
+msgid "Trilhas gratuitas oficiais para estudar Salesforce e se preparar para as certificações"
+msgstr ""
+
+msgid "Org gratuita da Salesforce para desenvolver e testar, sem prazo de validade"
+msgstr ""
+
+msgid "Não foi possível extrair {file} ({status})."
+msgstr ""
+
+msgid "Baixando {file} do site da Oracle…"
+msgstr ""
+
+msgid "Configurando…"
+msgstr ""
+
+msgid "A instalação terminou sem o arquivo esperado."
+msgstr ""
+
+msgid "Bibliotecas cliente do Oracle, SQL*Plus e as ferramentas exp/imp e Data Pump, na sua conta"
+msgstr ""
+
+msgid "Linha de comando moderna do Oracle (sql), com histórico, formatação e Liquibase"
+msgstr ""
+
+msgid "IDE gratuita da Oracle para SQL e PL/SQL, com depurador e relatórios"
+msgstr ""
+
+msgid "Modelagem lógica e física de bancos Oracle, com engenharia reversa e DDL"
+msgstr ""
+
+msgid "A ferramenta sai de ~/.local/opt/oracle, com o comando e o atalho dela, sem senha. As conexões em ~/.local/opt/oracle/network/admin ficam."
+msgstr ""
+
+msgid "O Vega baixa a ferramenta do site da Oracle, distribuída sob os Oracle Free Use Terms and Conditions, confere o SHA-256 verificado pelo Lyra e instala na sua conta, em ~/.local/opt/oracle, sem senha."
+msgstr ""
+
+msgid "As conexões FREE e FREEPDB1 com o Oracle Database Free local (Vega → Contêineres) já vêm em ~/.local/opt/oracle/network/admin/tnsnames.ora."
+msgstr ""
+
+msgid "Não foi possível extrair o Instant Client para Windows."
+msgstr ""
+
+msgid "Preparando o Instant Client para Windows…"
+msgstr ""
+
+msgid "IDE de PL/SQL para Oracle (avaliação de 30 dias); já vem com o Instant Client e as conexões do Oracle Free local"
+msgstr ""
+
+msgid "Este instalador é baixado por você no site do fabricante."
+msgstr ""
+
+msgid "Pasta de downloads não encontrada."
+msgstr ""
+
+msgid "Aguardando {file} na pasta de downloads…"
+msgstr ""
+
+msgid "Cancelado."
+msgstr ""
+
+msgid "O arquivo não chegou. Confira o login no site do fabricante e tente de novo, ou escolha o arquivo já baixado."
+msgstr ""
+
+msgid "O {name} só é baixado no site do fabricante, com a sua conta. O Vega abre a página no navegador, espera o arquivo chegar na pasta de downloads, confere o SHA-256 verificado pelo Lyra e instala pelo Wine, na sua conta. O Vega não vê a sua senha do site."
+msgstr ""
+
+msgid "Já baixei: escolher o arquivo"
+msgstr ""
+
+msgid "Escolha o instalador baixado"
+msgstr ""
+
+msgid "Aguardando o download"
+msgstr ""
+
+msgid "Baixe o instalador no site que abriu no navegador. A instalação começa sozinha quando o arquivo chegar na pasta de downloads."
+msgstr ""

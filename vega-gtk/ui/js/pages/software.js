@@ -6,7 +6,7 @@ import { call, pick } from "../api.js";
 import { refreshUpdates } from "../health.js";
 import { N_, t } from "../i18n.js";
 import { local, saveLocal } from "../store.js";
-import { runSoftware, runWindows, runWindowsFile, runWindowsRemove, runNpm, runVscodeExtension, runMainframe, runAppImage, runReceita, runningTasks, onTasks, transactionPanel } from "../tasks.js";
+import { runSoftware, runWindows, runWindowsGuided, runWindowsFile, runWindowsRemove, runNpm, runVscodeExtension, runMainframe, runOracle, runAppImage, runReceita, runningTasks, onTasks, transactionPanel } from "../tasks.js";
 import { h, icon, clear, button, badge, segmented, list, section, empty, skeletonRows, confirm, sheet, toast, fail, tile, normalize, meter, banner } from "../ui.js";
 import { preparationPanel } from "./software/preparation.js";
 import { requireRestart } from "../restart.js";
@@ -55,7 +55,7 @@ const SHOWCASES = {
 /** Cartões de todas as vitrines, para a busca offline do catálogo curado. */
 const CURATED = curatedEntries(Object.entries(SHOWCASES).map(([tab, { label, catalog }]) => ({ tab, label, catalog })));
 /** Origens instaladas na conta do usuário: sem detalhes no vegad, removidas pelo cartão. */
-const USER_ORIGINS = new Set(["windows", "npm", "vscode", "mainframe", "appimage", "receita", "preset", "webapp", "fonts"]);
+const USER_ORIGINS = new Set(["windows", "npm", "vscode", "mainframe", "oracle", "appimage", "receita", "preset", "webapp", "fonts"]);
 const ORIGIN_RANK = { official: 0, flathub: 1 };
 
 // Estado que sobrevive à troca de página, como os widgets do vega-gtk.
@@ -71,7 +71,7 @@ const memory = {
 };
 
 const queueKey = (pkg) => `${pkg.origin}\u0000${pkg.id}`;
-const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "vscode" ? "VS Code" : origin === "link" ? t("Site") : origin === "mainframe" ? "TK5" : origin === "appimage" ? "AppImage" : origin === "receita" ? t("Receita Federal") : origin === "preset" ? t("Perfil") : origin === "webapp" ? t("Webapp") : origin === "fonts" ? "Microsoft" : origin === "nvidia" ? "NVIDIA" : origin);
+const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "vscode" ? "VS Code" : origin === "link" ? t("Site") : origin === "mainframe" ? "TK5" : origin === "oracle" ? "Oracle" : origin === "appimage" ? "AppImage" : origin === "receita" ? t("Receita Federal") : origin === "preset" ? t("Perfil") : origin === "webapp" ? t("Webapp") : origin === "fonts" ? "Microsoft" : origin === "nvidia" ? "NVIDIA" : origin);
 const rankOrigin = (a, b) => (ORIGIN_RANK[a.origin] ?? 2) - (ORIGIN_RANK[b.origin] ?? 2);
 
 function packageIcon(pkg, size = 40) {
@@ -490,6 +490,7 @@ export default {
         else if (app.origin === "npm") installNpm(app);
         else if (app.origin === "vscode") installVscodeExtension(app);
         else if (app.origin === "mainframe") installMainframe(app);
+        else if (app.origin === "oracle") installOracle(app);
         else if (app.origin === "appimage") installAppImage(app);
         else if (app.origin === "receita") installReceita(app);
         else if (app.origin === "preset") installPreset(app);
@@ -524,6 +525,13 @@ export default {
     /** Pacotes do FUSE 2 que um AppImage precisa para abrir (installAppImage). */
     const APPIMAGE_FUSE = ["libfuse2", "fuse"];
     const MAINFRAME_PACKAGES = ["hercules", "x3270"];
+    // Pacotes do Leap de que cada ferramenta Oracle precisa (vega#189).
+    const ORACLE_PACKAGES = {
+      "oracle-instantclient": ["libaio1"],
+      "oracle-sqlcl": ["java-21-openjdk"],
+      "oracle-sqldeveloper": ["java-21-openjdk-devel"],
+      "oracle-datamodeler": ["java-21-openjdk-devel"],
+    };
 
     const IA32_ON = /(^|\s)ia32_emulation=(1|y|yes|on|true)(\s|$)/i;
     /** ia32_emulation=1 já está no boot, mas o kernel em execução ainda é o antigo. */
@@ -703,6 +711,7 @@ export default {
       const npm = app.origin === "npm";
       const vscode = app.origin === "vscode";
       const mainframe = app.origin === "mainframe";
+      const oracle = app.origin === "oracle";
       const appimage = app.origin === "appimage";
       const receita = app.origin === "receita";
       const ok = await confirm({
@@ -711,6 +720,8 @@ export default {
           ? t("O programa e os atalhos saem da sua conta, sem senha. As declarações são guardadas antes em ~/ProgramasRFB, numa pasta com \"declarações\" no nome.")
           : npm
           ? t("A ferramenta é removida da sua conta pelo npm, sem senha. As configurações e o login dela continuam na sua pasta pessoal.")
+          : oracle
+          ? t("A ferramenta sai de ~/.local/opt/oracle, com o comando e o atalho dela, sem senha. As conexões em ~/.local/opt/oracle/network/admin ficam.")
           : mainframe
           ? t("Os volumes do MVS saem da sua conta, com tudo o que você gravou neles (datasets, JCL, programas). O Hercules e o x3270 continuam instalados.")
           : vscode
@@ -732,6 +743,7 @@ export default {
           : npm ? await runNpm(false, app.id, title)
           : vscode ? await runVscodeExtension(false, app.id, title)
           : mainframe ? await runMainframe(false, app.id, title)
+          : oracle ? await runOracle(false, app.id, title)
           : appimage ? await runAppImage(false, app.id, title)
           : await runWindowsRemove(app.id, title);
       } catch (error) {
@@ -778,6 +790,88 @@ export default {
       const result = await started.done;
       if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
       popularInstalled = null;
+      load();
+    }
+
+    /**
+     * Instalador do Windows que só sai do site do fabricante com login
+     * (download guiado, vega#208): o Vega abre a página e espera o arquivo em
+     * Downloads, ou o usuário escolhe o arquivo já baixado. Nos dois casos o
+     * backend confere tamanho e SHA-256 antes de instalar pelo Wine. O Vega
+     * nunca vê a senha do site.
+     */
+    async function installWindowsGuided(app) {
+      const already = h("input", { type: "checkbox", id: "sw-guided-already" });
+      const ok = await confirm({
+        title: t("Instalar {name}?", { name: app.name }),
+        text: t("O {name} só é baixado no site do fabricante, com a sua conta. O Vega abre a página no navegador, espera o arquivo chegar na pasta de downloads, confere o SHA-256 verificado pelo Lyra e instala pelo Wine, na sua conta. O Vega não vê a sua senha do site.", { name: app.name }),
+        extra: h("label", { class: "row-flex", for: "sw-guided-already" }, already, t("Já baixei: escolher o arquivo")),
+        ic: "download",
+        confirmLabel: t("Continuar"),
+        required: true,
+      });
+      if (!ok) return;
+      let path = null;
+      if (already.checked) {
+        path = await pick({ title: t("Escolha o instalador baixado"), filters: [{ name: t("Programas do Windows"), extensions: ["exe", "msi", "zip", "EXE", "MSI", "ZIP"] }] });
+        if (!path || Array.isArray(path)) return;
+      }
+      let started;
+      try {
+        started = await runWindowsGuided(app.id, path, t("Instalando {name}…", { name: app.name }));
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      showTask(started.task);
+      paint();
+      // Enquanto espera o download, uma janela permite cancelar.
+      const closeWait = path ? null : sheet(t("Aguardando o download"), h("div", {},
+        h("p", {}, t("Baixe o instalador no site que abriu no navegador. A instalação começa sozinha quando o arquivo chegar na pasta de downloads.")),
+        h("div", { class: "row-flex" }, button(t("Cancelar"), { icon: "x", onClick: () => { call("windows_guided_cancel", { id: app.id }); closeWait?.(); } }))),
+        { wide: false });
+      const result = await started.done;
+      closeWait?.();
+      if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
+      popularInstalled = null;
+      userInstalled = null;
+      load();
+    }
+
+    /**
+     * Ferramenta Oracle (vega#189): o Vega baixa de download.oracle.com a
+     * versão conferida pelo Lyra e instala na conta do usuário; antes, instala
+     * do Leap o que ela exige (libaio ou Java 21), com a senha.
+     */
+    async function installOracle(app) {
+      const missing = (ORACLE_PACKAGES[app.id] ?? []).filter((id) => !isInstalled({ origin: "official", id }));
+      const ok = await confirm({
+        title: t("Instalar {name}?", { name: app.name }),
+        text: t("O Vega baixa a ferramenta do site da Oracle, distribuída sob os Oracle Free Use Terms and Conditions, confere o SHA-256 verificado pelo Lyra e instala na sua conta, em ~/.local/opt/oracle, sem senha.")
+          + (missing.length ? " " + t("Antes, instala {packages}, com a senha de administrador.", { packages: missing.join(", ") }) : ""),
+        facts: [
+          { icon: "database", text: t("As conexões FREE e FREEPDB1 com o Oracle Database Free local (Vega → Contêineres) já vêm em ~/.local/opt/oracle/network/admin/tnsnames.ora.") },
+        ],
+        ic: "download",
+        confirmLabel: t("Instalar"),
+        required: true,
+      });
+      if (!ok) return;
+      for (const id of missing) {
+        const result = await transact({ kind: "install", origin: "official", id }, t("Instalando {name}…", { name: id }), { reload: false });
+        if (!result?.success) return;
+      }
+      let started;
+      try {
+        started = await runOracle(true, app.id, t("Instalando {name}…", { name: app.name }));
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      showTask(started.task);
+      paint();
+      const result = await started.done;
+      if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
+      popularInstalled = null;
+      userInstalled = null;
       load();
     }
 
@@ -983,6 +1077,7 @@ export default {
     }
 
     async function installWindows(app) {
+      if (app.guided) return installWindowsGuided(app);
       const ok = await confirm({
         title: t("Instalar {name}?", { name: app.name }),
         text: t("O instalador é baixado do site do fabricante e roda pelo Wine, na sua conta, sem senha. O app aparece no menu de aplicativos."),
@@ -1010,13 +1105,14 @@ export default {
       // (instalador próprio na conta do usuário); se o comando existe, o
       // cartão mostra "Instalado".
       const byCommand = Object.values(SHOWCASES).flatMap((showcase) => showcase.catalog.flatMap((section) => section.apps)).filter((app) => app.command);
-      const [details, packages, windows, npmApps, vscodeExtensions, mainframes, appImages, receita, presets, msFonts, webapps, encoders, ia32, boot, commands] = await Promise.all([
+      const [details, packages, windows, npmApps, vscodeExtensions, mainframes, oracleTools, appImages, receita, presets, msFonts, webapps, encoders, ia32, boot, commands] = await Promise.all([
         call("software_details", { origin: "official", id: "flatpak" }).catch(() => null),
         call("software_installed"),
         call("windows_installed").catch(() => []),
         call("npm_installed").catch(() => []),
         call("vscode_extensions_installed").catch(() => []),
         call("mainframe_installed").catch(() => []),
+        call("oracle_installed").catch(() => []),
         call("appimage_installed").catch(() => []),
         call("receita_installed").catch(() => []),
         call("easyeffects_presets_installed").catch(() => []),
@@ -1037,6 +1133,7 @@ export default {
         ...npmApps.map((id) => queueKey({ origin: "npm", id })),
         ...vscodeExtensions.map((id) => queueKey({ origin: "vscode", id })),
         ...mainframes.map((id) => queueKey({ origin: "mainframe", id })),
+        ...oracleTools.map((id) => queueKey({ origin: "oracle", id })),
         ...appImages.map((id) => queueKey({ origin: "appimage", id })),
         ...receita.map((id) => queueKey({ origin: "receita", id })),
         ...presets.map((id) => queueKey({ origin: "preset", id })),
@@ -1090,11 +1187,12 @@ export default {
 
     /** Apps dos catálogos instalados na conta do usuário, sem repetir. */
     async function loadUserInstalled() {
-      const [windows, npmApps, vscodeExtensions, mainframes, appImages, receita, presets, msFonts, webapps] = await Promise.all([
+      const [windows, npmApps, vscodeExtensions, mainframes, oracleTools, appImages, receita, presets, msFonts, webapps] = await Promise.all([
         call("windows_installed").catch(() => []),
         call("npm_installed").catch(() => []),
         call("vscode_extensions_installed").catch(() => []),
         call("mainframe_installed").catch(() => []),
+        call("oracle_installed").catch(() => []),
         call("appimage_installed").catch(() => []),
         call("receita_installed").catch(() => []),
         call("easyeffects_presets_installed").catch(() => []),
@@ -1106,6 +1204,7 @@ export default {
         ...npmApps.map((id) => queueKey({ origin: "npm", id })),
         ...vscodeExtensions.map((id) => queueKey({ origin: "vscode", id })),
         ...mainframes.map((id) => queueKey({ origin: "mainframe", id })),
+        ...oracleTools.map((id) => queueKey({ origin: "oracle", id })),
         ...appImages.map((id) => queueKey({ origin: "appimage", id })),
         ...receita.map((id) => queueKey({ origin: "receita", id })),
         ...presets.map((id) => queueKey({ origin: "preset", id })),

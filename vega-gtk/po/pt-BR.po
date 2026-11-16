@@ -7332,6 +7332,204 @@ msgstr "IBMUSER, senha IBMPASS, só para recuperação"
 msgid "São as senhas padrão do TK5, iguais em toda instalação. O terminal só aceita conexões deste computador; troque-as pelo RAKF, logado como HERC01."
 msgstr "São as senhas padrão do TK5, iguais em toda instalação. O terminal só aceita conexões deste computador; troque-as pelo RAKF, logado como HERC01."
 
+msgid "Corporativo: COBOL, mainframe, Oracle e ERP"
+msgstr "Corporativo: COBOL, mainframe, Oracle e ERP"
+
+msgid "Conexões, consultas SQL e PL/SQL no banco Oracle, dentro do VS Code"
+msgstr "Conexões, consultas SQL e PL/SQL no banco Oracle, dentro do VS Code"
+
+msgid "Edição e depuração de SQL e PL/SQL, com IntelliSense para o banco Oracle"
+msgstr "Edição e depuração de SQL e PL/SQL, com IntelliSense para o banco Oracle"
+
+msgid "Cursos e trilhas oficiais da Oracle University para o Fusion Cloud ERP (Financials, SCM, Procurement); há trilhas gratuitas"
+msgstr "Cursos e trilhas oficiais da Oracle University para o Fusion Cloud ERP (Financials, SCM, Procurement); há trilhas gratuitas"
+
+msgid "Manuais oficiais do Oracle Fusion Cloud Financials: implantação, uso e extensões"
+msgstr "Manuais oficiais do Oracle Fusion Cloud Financials: implantação, uso e extensões"
+
+msgid "Conta gratuita na nuvem da Oracle com Autonomous Database e APEX, para praticar SQL, PL/SQL e extensões do ERP"
+msgstr "Conta gratuita na nuvem da Oracle com Autonomous Database e APEX, para praticar SQL, PL/SQL e extensões do ERP"
+
+msgid "Serviço desconhecido."
+msgstr "Serviço desconhecido."
+
+msgid "O serviço ainda não foi instalado."
+msgstr "O serviço ainda não foi instalado."
+
+msgid "Senha não encontrada."
+msgstr "Senha não encontrada."
+
+msgid "Este computador não tem memória suficiente para o serviço."
+msgstr "Este computador não tem memória suficiente para o serviço."
+
+msgid "Não há espaço livre suficiente na pasta pessoal para o serviço."
+msgstr "Não há espaço livre suficiente na pasta pessoal para o serviço."
+
+msgid "O download da imagem falhou. Tente de novo: o Podman reaproveita o que já baixou."
+msgstr "O download da imagem falhou. Tente de novo: o Podman reaproveita o que já baixou."
+
+msgid "Ação desconhecida."
+msgstr "Ação desconhecida."
+
+msgid "O systemd do usuário recusou a ação."
+msgstr "O systemd do usuário recusou a ação."
+
+msgid "Não instalado"
+msgstr "Não instalado"
+
+msgid "Pronto para uso"
+msgstr "Pronto para uso"
+
+msgid "Iniciando (a primeira vez cria o banco e leva alguns minutos)"
+msgstr "Iniciando (a primeira vez cria o banco e leva alguns minutos)"
+
+msgid "Falhou; veja journalctl --user -u {unit}"
+msgstr "Falhou; veja journalctl --user -u {unit}"
+
+msgid "{name} precisa de {ram} GB de memória e {disk} GB livres na pasta pessoal. Este computador tem {haveRam} GB de memória e {haveDisk} GB livres."
+msgstr "{name} precisa de {ram} GB de memória e {disk} GB livres na pasta pessoal. Este computador tem {haveRam} GB de memória e {haveDisk} GB livres."
+
+msgid "Requisitos não atendidos"
+msgstr "Requisitos não atendidos"
+
+msgid "O Vega baixa a imagem oficial ({image}) com o Podman, na sua conta, sem senha, e cria o serviço. O download tem alguns GB; se falhar, tente de novo que o Podman reaproveita o que já baixou."
+msgstr "O Vega baixa a imagem oficial ({image}) com o Podman, na sua conta, sem senha, e cria o serviço. O download tem alguns GB; se falhar, tente de novo que o Podman reaproveita o que já baixou."
+
+msgid "Antes, instala o Podman, com a senha de administrador."
+msgstr "Antes, instala o Podman, com a senha de administrador."
+
+msgid "A senha do administrador (SYS, SYSTEM e PDBADMIN) é gerada pelo Vega e fica só na sua conta; copie-a aqui depois."
+msgstr "A senha do administrador (SYS, SYSTEM e PDBADMIN) é gerada pelo Vega e fica só na sua conta; copie-a aqui depois."
+
+msgid "Conexão: {connection}, só deste computador."
+msgstr "Conexão: {connection}, só deste computador."
+
+msgid "O serviço não liga sozinho com o computador; use Iniciar."
+msgstr "O serviço não liga sozinho com o computador; use Iniciar."
+
+msgid "Baixando {name}…"
+msgstr "Baixando {name}…"
+
+msgid "{name} instalado. Use Iniciar para ligar o banco."
+msgstr "{name} instalado. Use Iniciar para ligar o banco."
+
+msgid "Senha copiada"
+msgstr "Senha copiada"
+
+msgid "O serviço para e a imagem sai do computador, sem senha."
+msgstr "O serviço para e a imagem sai do computador, sem senha."
+
+msgid "Manter os dados (o banco volta igual se instalar de novo)"
+msgstr "Manter os dados (o banco volta igual se instalar de novo)"
+
+msgid "Copiar senha"
+msgstr "Copiar senha"
+
+msgid "Pare o serviço antes de remover"
+msgstr "Pare o serviço antes de remover"
+
+msgid "Conexão: {connection} (usuário SYSTEM ou PDBADMIN)"
+msgstr "Conexão: {connection} (usuário SYSTEM ou PDBADMIN)"
+
+msgid "O Podman ainda não está instalado"
+msgstr "O Podman ainda não está instalado"
+
+msgid "Ele é instalado junto com o primeiro serviço, com a senha de administrador."
+msgstr "Ele é instalado junto com o primeiro serviço, com a senha de administrador."
+
+msgid "Serviços disponíveis"
+msgstr "Serviços disponíveis"
+
+msgid "Serviços de estudo e desenvolvimento em contêiner, com o Podman na sua conta, sem root"
+msgstr "Serviços de estudo e desenvolvimento em contêiner, com o Podman na sua conta, sem root"
+
+msgid "Corporativo: COBOL, mainframe, Oracle, ERP e Salesforce"
+msgstr "Corporativo: COBOL, mainframe, Oracle, ERP e Salesforce"
+
+msgid "Linha de comando oficial (sf) para criar orgs de teste, implantar metadados e rodar Apex"
+msgstr "Linha de comando oficial (sf) para criar orgs de teste, implantar metadados e rodar Apex"
+
+msgid "Apex, Lightning Web Components, SOQL e depuração no VS Code; pede o Java 21"
+msgstr "Apex, Lightning Web Components, SOQL e depuração no VS Code; pede o Java 21"
+
+msgid "Trilhas gratuitas oficiais para estudar Salesforce e se preparar para as certificações"
+msgstr "Trilhas gratuitas oficiais para estudar Salesforce e se preparar para as certificações"
+
+msgid "Org gratuita da Salesforce para desenvolver e testar, sem prazo de validade"
+msgstr "Org gratuita da Salesforce para desenvolver e testar, sem prazo de validade"
+
+msgid "Não foi possível extrair {file} ({status})."
+msgstr "Não foi possível extrair {file} ({status})."
+
+msgid "Baixando {file} do site da Oracle…"
+msgstr "Baixando {file} do site da Oracle…"
+
+msgid "Configurando…"
+msgstr "Configurando…"
+
+msgid "A instalação terminou sem o arquivo esperado."
+msgstr "A instalação terminou sem o arquivo esperado."
+
+msgid "Bibliotecas cliente do Oracle, SQL*Plus e as ferramentas exp/imp e Data Pump, na sua conta"
+msgstr "Bibliotecas cliente do Oracle, SQL*Plus e as ferramentas exp/imp e Data Pump, na sua conta"
+
+msgid "Linha de comando moderna do Oracle (sql), com histórico, formatação e Liquibase"
+msgstr "Linha de comando moderna do Oracle (sql), com histórico, formatação e Liquibase"
+
+msgid "IDE gratuita da Oracle para SQL e PL/SQL, com depurador e relatórios"
+msgstr "IDE gratuita da Oracle para SQL e PL/SQL, com depurador e relatórios"
+
+msgid "Modelagem lógica e física de bancos Oracle, com engenharia reversa e DDL"
+msgstr "Modelagem lógica e física de bancos Oracle, com engenharia reversa e DDL"
+
+msgid "A ferramenta sai de ~/.local/opt/oracle, com o comando e o atalho dela, sem senha. As conexões em ~/.local/opt/oracle/network/admin ficam."
+msgstr "A ferramenta sai de ~/.local/opt/oracle, com o comando e o atalho dela, sem senha. As conexões em ~/.local/opt/oracle/network/admin ficam."
+
+msgid "O Vega baixa a ferramenta do site da Oracle, distribuída sob os Oracle Free Use Terms and Conditions, confere o SHA-256 verificado pelo Lyra e instala na sua conta, em ~/.local/opt/oracle, sem senha."
+msgstr "O Vega baixa a ferramenta do site da Oracle, distribuída sob os Oracle Free Use Terms and Conditions, confere o SHA-256 verificado pelo Lyra e instala na sua conta, em ~/.local/opt/oracle, sem senha."
+
+msgid "As conexões FREE e FREEPDB1 com o Oracle Database Free local (Vega → Contêineres) já vêm em ~/.local/opt/oracle/network/admin/tnsnames.ora."
+msgstr "As conexões FREE e FREEPDB1 com o Oracle Database Free local (Vega → Contêineres) já vêm em ~/.local/opt/oracle/network/admin/tnsnames.ora."
+
+msgid "Não foi possível extrair o Instant Client para Windows."
+msgstr "Não foi possível extrair o Instant Client para Windows."
+
+msgid "Preparando o Instant Client para Windows…"
+msgstr "Preparando o Instant Client para Windows…"
+
+msgid "IDE de PL/SQL para Oracle (avaliação de 30 dias); já vem com o Instant Client e as conexões do Oracle Free local"
+msgstr "IDE de PL/SQL para Oracle (avaliação de 30 dias); já vem com o Instant Client e as conexões do Oracle Free local"
+
+msgid "Este instalador é baixado por você no site do fabricante."
+msgstr "Este instalador é baixado por você no site do fabricante."
+
+msgid "Pasta de downloads não encontrada."
+msgstr "Pasta de downloads não encontrada."
+
+msgid "Aguardando {file} na pasta de downloads…"
+msgstr "Aguardando {file} na pasta de downloads…"
+
+msgid "Cancelado."
+msgstr "Cancelado."
+
+msgid "O arquivo não chegou. Confira o login no site do fabricante e tente de novo, ou escolha o arquivo já baixado."
+msgstr "O arquivo não chegou. Confira o login no site do fabricante e tente de novo, ou escolha o arquivo já baixado."
+
+msgid "O {name} só é baixado no site do fabricante, com a sua conta. O Vega abre a página no navegador, espera o arquivo chegar na pasta de downloads, confere o SHA-256 verificado pelo Lyra e instala pelo Wine, na sua conta. O Vega não vê a sua senha do site."
+msgstr "O {name} só é baixado no site do fabricante, com a sua conta. O Vega abre a página no navegador, espera o arquivo chegar na pasta de downloads, confere o SHA-256 verificado pelo Lyra e instala pelo Wine, na sua conta. O Vega não vê a sua senha do site."
+
+msgid "Já baixei: escolher o arquivo"
+msgstr "Já baixei: escolher o arquivo"
+
+msgid "Escolha o instalador baixado"
+msgstr "Escolha o instalador baixado"
+
+msgid "Aguardando o download"
+msgstr "Aguardando o download"
+
+msgid "Baixe o instalador no site que abriu no navegador. A instalação começa sozinha quando o arquivo chegar na pasta de downloads."
+msgstr "Baixe o instalador no site que abriu no navegador. A instalação começa sozinha quando o arquivo chegar na pasta de downloads."
+
 msgid "Amplificador e pedais virtuais para guitarra"
 msgstr "Amplificador e pedais virtuais para guitarra"
 
