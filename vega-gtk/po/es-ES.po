@@ -7635,3 +7635,48 @@ msgstr "Fuentes instaladas. Vuelve a abrir los programas abiertos para verlas."
 
 msgid "Fontes da Microsoft"
 msgstr "Fuentes de Microsoft"
+
+msgid "Placa de vídeo"
+msgstr "Tarjeta gráfica"
+
+msgid "GeForce"
+msgstr "GeForce"
+
+msgid "RTX"
+msgstr "RTX"
+
+msgid "jogos"
+msgstr "juegos"
+
+msgid "CUDA"
+msgstr "CUDA"
+
+msgid "Driver oficial da NVIDIA para GeForce e RTX, do repositório da NVIDIA; o Vega escolhe o pacote certo para a sua placa"
+msgstr "Driver oficial de NVIDIA para GeForce y RTX, del repositorio de NVIDIA; Vega elige el paquete correcto para tu tarjeta"
+
+msgid "Não foi possível identificar a placa de vídeo."
+msgstr "No se pudo identificar la tarjeta gráfica."
+
+msgid "Driver NVIDIA"
+msgstr "Driver NVIDIA"
+
+msgid "Este computador ainda tem o driver instalado pela integração antiga do Vega (lyra-nvidia). Siga a migração do guia NVIDIA no fórum; depois o cartão volta a funcionar."
+msgstr "Este equipo todavía tiene el driver instalado por la integración antigua de Vega (lyra-nvidia). Sigue la migración de la guía NVIDIA del foro; después la tarjeta vuelve a funcionar."
+
+msgid "Nenhuma placa NVIDIA foi encontrada neste computador."
+msgstr "No se encontró ninguna tarjeta NVIDIA en este equipo."
+
+msgid "A {model} é anterior à GTX 750: a NVIDIA não oferece driver para o Leap 16. O sistema continua com o driver livre (nouveau)."
+msgstr "La {model} es anterior a la GTX 750: NVIDIA no ofrece driver para Leap 16. El sistema sigue con el driver libre (nouveau)."
+
+msgid "A {model} usa o driver G06, que não carrega com o Secure Boot ligado no Lyra OS. Desligue o Secure Boot na configuração do computador (UEFI) e tente de novo."
+msgstr "La {model} usa el driver G06, que no carga con Secure Boot activado en Lyra OS. Desactiva Secure Boot en la configuración del equipo (UEFI) e inténtalo de nuevo."
+
+msgid "Instalar o driver NVIDIA?"
+msgstr "¿Instalar el driver NVIDIA?"
+
+msgid "Placa: {model}. O Vega adiciona o repositório oficial da NVIDIA (chave {fingerprint}) e instala o {package}, com um snapshot antes. Depois, reinicie. Se a tela ficar preta, volte ao snapshot pelo menu de boot."
+msgstr "Tarjeta: {model}. Vega agrega el repositorio oficial de NVIDIA (clave {fingerprint}) e instala {package}, con un snapshot antes. Después, reinicia. Si la pantalla queda negra, vuelve al snapshot desde el menú de arranque."
+
+msgid "o driver NVIDIA ser carregado (depois, confira com nvidia-smi)"
+msgstr "que se cargue el driver NVIDIA (después, compruébalo con nvidia-smi)"

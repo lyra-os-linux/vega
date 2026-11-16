@@ -16,6 +16,7 @@ import { h, banner, button, confirm, fail } from "./ui.js";
 const REASONS = {
   flatpak: N_("os apps do Flathub aparecerem no menu"),
   ia32: N_("os programas de 32 bits do Windows funcionarem"),
+  nvidia: N_("o driver NVIDIA ser carregado (depois, confira com nvidia-smi)"),
 };
 
 let bootId = null;

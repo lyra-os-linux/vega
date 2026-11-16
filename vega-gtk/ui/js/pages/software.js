@@ -71,7 +71,7 @@ const memory = {
 };
 
 const queueKey = (pkg) => `${pkg.origin}\u0000${pkg.id}`;
-const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "vscode" ? "VS Code" : origin === "link" ? t("Site") : origin === "mainframe" ? "TK5" : origin === "appimage" ? "AppImage" : origin === "receita" ? t("Receita Federal") : origin === "preset" ? t("Perfil") : origin === "webapp" ? t("Webapp") : origin === "fonts" ? "Microsoft" : origin);
+const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "vscode" ? "VS Code" : origin === "link" ? t("Site") : origin === "mainframe" ? "TK5" : origin === "appimage" ? "AppImage" : origin === "receita" ? t("Receita Federal") : origin === "preset" ? t("Perfil") : origin === "webapp" ? t("Webapp") : origin === "fonts" ? "Microsoft" : origin === "nvidia" ? "NVIDIA" : origin);
 const rankOrigin = (a, b) => (ORIGIN_RANK[a.origin] ?? 2) - (ORIGIN_RANK[b.origin] ?? 2);
 
 function packageIcon(pkg, size = 40) {
@@ -482,13 +482,14 @@ export default {
         else if (app.origin === "receita") installReceita(app);
         else if (app.origin === "preset") installPreset(app);
         else if (app.origin === "fonts") installMsFonts(app);
+        else if (app.origin === "nvidia") installNvidia(app);
         else if (app.origin === "webapp") installWebapp(app);
         else if (app.repo?.package) installFromRepoPackage(app);
         else if (app.repo) installFromRepo(app);
         else packageAction(pkg);
       } });
       // Apps instalados na conta do usuário não têm detalhes no vegad.
-      const open = disabled || USER_ORIGINS.has(app.origin) || app.origin === "link" ? undefined : () => openDetails(pkg);
+      const open = disabled || USER_ORIGINS.has(app.origin) || app.origin === "link" || app.origin === "nvidia" ? undefined : () => openDetails(pkg);
       // div, e não button: o cartão contém o botão Instalar.
       return h("div", {
         class: `card sw-card sw-popular ${locked ? "locked" : installed ? "installed" : "interactive"}`,
@@ -927,6 +928,40 @@ export default {
     }
 
     /**
+     * Driver NVIDIA (nvidia.rs): segue o guia do fórum. Detecta a placa e o
+     * Secure Boot, adiciona o repositório oficial da NVIDIA com a chave
+     * conferida e instala o metapacote pelo vegad (polkit e snapshot).
+     * A migração da integração antiga (lyra-nvidia) fica no guia.
+     */
+    async function installNvidia(app) {
+      const plan = await call("nvidia_plan").catch(() => null);
+      if (!plan) return fail(t("Não foi possível identificar a placa de vídeo."), t("Driver NVIDIA"));
+      if (plan.lyra_nvidia) {
+        return fail(t("Este computador ainda tem o driver instalado pela integração antiga do Vega (lyra-nvidia). Siga a migração do guia NVIDIA no fórum; depois o cartão volta a funcionar."), t("Driver NVIDIA"));
+      }
+      if (plan.generation === "none") return fail(t("Nenhuma placa NVIDIA foi encontrada neste computador."), t("Driver NVIDIA"));
+      if (plan.generation === "legacy") {
+        return fail(t("A {model} é anterior à GTX 750: a NVIDIA não oferece driver para o Leap 16. O sistema continua com o driver livre (nouveau).", { model: plan.model }), t("Driver NVIDIA"));
+      }
+      if (plan.generation === "g06" && plan.secure_boot) {
+        return fail(t("A {model} usa o driver G06, que não carrega com o Secure Boot ligado no Lyra OS. Desligue o Secure Boot na configuração do computador (UEFI) e tente de novo.", { model: plan.model }), t("Driver NVIDIA"));
+      }
+      const ok = await confirm({
+        title: t("Instalar o driver NVIDIA?"),
+        text: t("Placa: {model}. O Vega adiciona o repositório oficial da NVIDIA (chave {fingerprint}) e instala o {package}, com um snapshot antes. Depois, reinicie. Se a tela ficar preta, volte ao snapshot pelo menu de boot.", { model: plan.model, fingerprint: app.repo.fingerprint, package: plan.package }),
+        ic: "download",
+        confirmLabel: t("Instalar"),
+        required: true,
+      });
+      if (!ok) return;
+      if (!(await ensureRepo(app.repo))) return;
+      const result = await transact({ kind: "install", origin: "official", id: plan.package }, t("Instalando {name}…", { name: plan.package }), { reload: false });
+      popularInstalled = null;
+      load();
+      if (result?.success) requireRestart("nvidia");
+    }
+
+    /**
      * Fontes da Microsoft (ms_fonts.rs): instala o cabextract pelo vegad, se
      * faltar, e depois baixa, confere e extrai as fontes na conta do usuário.
      */
@@ -998,7 +1033,7 @@ export default {
       // (instalador próprio na conta do usuário); se o comando existe, o
       // cartão mostra "Instalado".
       const byCommand = Object.values(SHOWCASES).flatMap((showcase) => showcase.catalog.flatMap((section) => section.apps)).filter((app) => app.command);
-      const [details, packages, windows, npmApps, vscodeExtensions, mainframes, appImages, receita, presets, msFonts, webapps, encoders, ia32, boot, commands] = await Promise.all([
+      const [details, packages, windows, npmApps, vscodeExtensions, mainframes, appImages, receita, presets, msFonts, nvidiaPlan, webapps, encoders, ia32, boot, commands] = await Promise.all([
         call("software_details", { origin: "official", id: "flatpak" }).catch(() => null),
         call("software_installed"),
         call("windows_installed").catch(() => []),
@@ -1009,6 +1044,7 @@ export default {
         call("receita_installed").catch(() => []),
         call("easyeffects_presets_installed").catch(() => []),
         call("ms_fonts_installed").catch(() => []),
+        call("nvidia_plan").catch(() => null),
         call("webapps_installed").catch(() => []),
         call("obs_encoders").catch(() => null),
         call("windows_ia32").catch(() => true),
@@ -1029,6 +1065,7 @@ export default {
         ...receita.map((id) => queueKey({ origin: "receita", id })),
         ...presets.map((id) => queueKey({ origin: "preset", id })),
         ...msFonts.map((id) => queueKey({ origin: "fonts", id })),
+        ...(nvidiaPlan?.installed ? [queueKey({ origin: "nvidia", id: "nvidia-driver" })] : []),
         ...webapps.map((id) => queueKey({ origin: "webapp", id })),
       ]);
       const found = new Set(commands);
@@ -1078,7 +1115,7 @@ export default {
 
     /** Apps dos catálogos instalados na conta do usuário, sem repetir. */
     async function loadUserInstalled() {
-      const [windows, npmApps, vscodeExtensions, mainframes, appImages, receita, presets, msFonts, webapps] = await Promise.all([
+      const [windows, npmApps, vscodeExtensions, mainframes, appImages, receita, presets, msFonts, nvidiaPlan, webapps] = await Promise.all([
         call("windows_installed").catch(() => []),
         call("npm_installed").catch(() => []),
         call("vscode_extensions_installed").catch(() => []),
@@ -1087,6 +1124,7 @@ export default {
         call("receita_installed").catch(() => []),
         call("easyeffects_presets_installed").catch(() => []),
         call("ms_fonts_installed").catch(() => []),
+        call("nvidia_plan").catch(() => null),
         call("webapps_installed").catch(() => []),
       ]);
       const keys = new Set([
@@ -1098,6 +1136,7 @@ export default {
         ...receita.map((id) => queueKey({ origin: "receita", id })),
         ...presets.map((id) => queueKey({ origin: "preset", id })),
         ...msFonts.map((id) => queueKey({ origin: "fonts", id })),
+        ...(nvidiaPlan?.installed ? [queueKey({ origin: "nvidia", id: "nvidia-driver" })] : []),
         ...webapps.map((id) => queueKey({ origin: "webapp", id })),
       ]);
       const apps = new Map();
@@ -1289,7 +1328,7 @@ export default {
     }
 
     /** Adiciona o repositório (aprovando a chave, se pedir); devolve se ficou pronto para uso. */
-    async function addRepo(name, url) {
+    async function addRepo(name, url, fingerprint) {
       let started;
       let ready = false;
       try {
@@ -1301,7 +1340,9 @@ export default {
       showTask(started.task);
       const result = await started.done;
       const key = started.task.keyPending;
-      if (!result.success && key) {
+      if (!result.success && key && fingerprint && fingerprintOf(key.fingerprint) !== fingerprintOf(fingerprint)) {
+        fail(t("A chave do repositório ({got}) não é a esperada ({want}). Nada foi instalado.", { got: key.fingerprint, want: fingerprint }), t("Chave inesperada"));
+      } else if (!result.success && key) {
         toast(t("Repositório adicionado — assinatura pendente de aprovação"), { ic: "key" });
         ready = await approveKey(key);
       } else if (!result.success) {
@@ -1322,7 +1363,7 @@ export default {
      * Garante o repositório `{ name, url }` no sistema e habilitado: adiciona
      * com a aprovação da chave (addRepo) ou habilita o que estava desligado.
      */
-    async function ensureRepo({ name, url }) {
+    async function ensureRepo({ name, url, fingerprint }) {
       let current;
       try {
         current = await call("software_repos");
@@ -1331,7 +1372,7 @@ export default {
         return false;
       }
       const existing = current.find((repo) => repo.name === name);
-      if (!existing) return Boolean(await addRepo(name, url));
+      if (!existing) return Boolean(await addRepo(name, url, fingerprint));
       if (existing.enabled) return true;
       try {
         await call("software_set_repo_enabled", { repo: existing.name, enabled: true });

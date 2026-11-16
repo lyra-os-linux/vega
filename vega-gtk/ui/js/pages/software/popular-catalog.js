@@ -17,6 +17,17 @@ import { N_ } from "../../i18n.js";
 
 export const POPULAR = [
   {
+    // Driver NVIDIA pelo guia do fórum (backend/nvidia.rs): repositório
+    // oficial da NVIDIA para o Leap 16.1, chave conferida, e o metapacote
+    // G07 (aberto, assinado pela SUSE) ou G06 conforme a placa. Primeiro de
+    // Populares, a pedido do mantenedor em 16/11/2026.
+    id: "nvidia",
+    title: N_("Placa de vídeo"),
+    apps: [
+      { name: "Driver NVIDIA", origin: "nvidia", id: "nvidia-driver", repo: { name: "repo-nvidia", url: "https://download.nvidia.com/opensuse/leap/16.1", fingerprint: "2FB03195DECD49492BD1C17AB1D0D788DB27FD5A" }, tags: [N_("GeForce"), N_("RTX"), N_("jogos"), N_("CUDA")], text: N_("Driver oficial da NVIDIA para GeForce e RTX, do repositório da NVIDIA; o Vega escolhe o pacote certo para a sua placa") },
+    ],
+  },
+  {
     // Discussão #273. Chrome, Brave e Opera vêm do Flathub: os repositórios
     // deles não publicam a chave junto (repomd.xml.key), e o Vega só confia
     // em chave aprovada pelo usuário. O Edge publica, e segue o fluxo

@@ -47,7 +47,7 @@ import urllib.request
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 GTK = ROOT / "vega-gtk"
 CATALOGS = sorted((GTK / "ui" / "js" / "pages" / "software").glob("*-catalog.js"))
-ORIGINS = {"official", "flathub", "windows", "npm", "vscode", "link", "mainframe", "appimage", "receita", "preset", "webapp", "fonts"}
+ORIGINS = {"official", "flathub", "windows", "npm", "vscode", "link", "mainframe", "appimage", "receita", "preset", "webapp", "fonts", "nvidia"}
 FLATHUB_ID = re.compile(r"^[A-Za-z_][\w-]*(\.[A-Za-z_][\w-]*){2,}$")
 REPOS = [
     "https://download.opensuse.org/distribution/leap/16.1/repo/oss/",
