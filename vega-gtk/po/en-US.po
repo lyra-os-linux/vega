@@ -7203,3 +7203,33 @@ msgstr "Bank web apps open the website in their own Chromium window. Vega instal
 
 msgid "Também instala o Chromium, onde os webapps abrem numa janela própria."
 msgstr "It also installs Chromium, where the web apps open in their own window."
+
+msgid "Extensão desconhecida."
+msgstr "Unknown extension."
+
+msgid "A instalação da extensão pelo VS Code falhou."
+msgstr "Installing the extension with VS Code failed."
+
+msgid "A remoção da extensão pelo VS Code falhou."
+msgstr "Removing the extension with VS Code failed."
+
+msgid "COBOL e mainframe"
+msgstr "COBOL and mainframe"
+
+msgid "Compilador COBOL (cobc) que gera executáveis nativos; depura com o GDB"
+msgstr "COBOL compiler (cobc) that builds native executables; debug with GDB"
+
+msgid "Pré-compilador de SQL embutido (EXEC SQL) para programas do GnuCOBOL"
+msgstr "Embedded SQL (EXEC SQL) precompiler for GnuCOBOL programs"
+
+msgid "Extensões gratuitas do VS Code para COBOL, JCL, HLASM e PL/I, com o Zowe Explorer"
+msgstr "Free VS Code extensions for COBOL, JCL, HLASM and PL/I, with Zowe Explorer"
+
+msgid "A extensão é removida da sua conta pelo VS Code, sem senha. As configurações dela continuam no VS Code."
+msgstr "VS Code removes the extension from your account, without a password. Its settings stay in VS Code."
+
+msgid "O Vega instala antes o VS Code, do repositório oficial da Microsoft, com a senha de administrador. Depois instala a extensão na sua conta, sem senha."
+msgstr "Vega first installs VS Code from Microsoft's official repository, with the administrator password. Then it installs the extension in your account, without a password."
+
+msgid "A extensão é instalada na sua conta pelo VS Code, sem senha."
+msgstr "VS Code installs the extension in your account, without a password."

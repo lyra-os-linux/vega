@@ -7774,3 +7774,33 @@ msgstr ""
 
 msgid "O programa e os atalhos saem da sua conta, sem senha. As declarações são guardadas antes em ~/ProgramasRFB, numa pasta com \"declarações\" no nome."
 msgstr ""
+
+msgid "Extensão desconhecida."
+msgstr ""
+
+msgid "A instalação da extensão pelo VS Code falhou."
+msgstr ""
+
+msgid "A remoção da extensão pelo VS Code falhou."
+msgstr ""
+
+msgid "COBOL e mainframe"
+msgstr ""
+
+msgid "Compilador COBOL (cobc) que gera executáveis nativos; depura com o GDB"
+msgstr ""
+
+msgid "Pré-compilador de SQL embutido (EXEC SQL) para programas do GnuCOBOL"
+msgstr ""
+
+msgid "Extensões gratuitas do VS Code para COBOL, JCL, HLASM e PL/I, com o Zowe Explorer"
+msgstr ""
+
+msgid "A extensão é removida da sua conta pelo VS Code, sem senha. As configurações dela continuam no VS Code."
+msgstr ""
+
+msgid "O Vega instala antes o VS Code, do repositório oficial da Microsoft, com a senha de administrador. Depois instala a extensão na sua conta, sem senha."
+msgstr ""
+
+msgid "A extensão é instalada na sua conta pelo VS Code, sem senha."
+msgstr ""

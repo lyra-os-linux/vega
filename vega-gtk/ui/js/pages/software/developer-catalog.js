@@ -221,6 +221,19 @@ export const DEVELOPER = [
     ],
   },
   {
+    // vega#187: GnuCOBOL do Leap 16.1; a extensão Code4z (Broadcom, gratuita)
+    // vai para a conta do usuário pelo próprio VS Code (backend/vscode_ext.rs).
+    id: "mainframe",
+    title: N_("COBOL e mainframe"),
+
+    tasks: ["code"],
+    apps: [
+      { name: "GnuCOBOL", origin: "official", id: "gnucobol", text: N_("Compilador COBOL (cobc) que gera executáveis nativos; depura com o GDB") },
+      { name: "GnuCOBOL ESQL", origin: "official", id: "gnucobol-esql", text: N_("Pré-compilador de SQL embutido (EXEC SQL) para programas do GnuCOBOL") },
+      { name: "Code4z", origin: "vscode", id: "broadcomMFD.code4z-extension-pack", text: N_("Extensões gratuitas do VS Code para COBOL, JCL, HLASM e PL/I, com o Zowe Explorer") },
+    ],
+  },
+  {
     id: "mobile",
     title: N_("Android"),
 

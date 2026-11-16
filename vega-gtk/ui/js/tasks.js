@@ -149,6 +149,14 @@ export async function runNpm(install, id, title) {
   return started;
 }
 
+/** Extensão do VS Code, na conta do usuário. */
+export async function runVscodeExtension(install, id, title) {
+  const callId = await call(install ? "vscode_extension_install" : "vscode_extension_remove", { extension: id });
+  const started = track(`software:${callId}`, title, "software");
+  started.task.action = { kind: install ? "install" : "remove", origin: "vscode", id };
+  return started;
+}
+
 /** Programa do Windows escolhido pelo usuário, rodado na sessão. */
 export async function runWindowsFile(path, title) {
   const id = await call("windows_run_file", { path });

@@ -7203,3 +7203,33 @@ msgstr "Las aplicaciones web de los bancos abren el sitio en su propia ventana d
 
 msgid "Também instala o Chromium, onde os webapps abrem numa janela própria."
 msgstr "También instala Chromium, donde las aplicaciones web abren en su propia ventana."
+
+msgid "Extensão desconhecida."
+msgstr "Extensión desconocida."
+
+msgid "A instalação da extensão pelo VS Code falhou."
+msgstr "La instalación de la extensión con VS Code falló."
+
+msgid "A remoção da extensão pelo VS Code falhou."
+msgstr "La eliminación de la extensión con VS Code falló."
+
+msgid "COBOL e mainframe"
+msgstr "COBOL y mainframe"
+
+msgid "Compilador COBOL (cobc) que gera executáveis nativos; depura com o GDB"
+msgstr "Compilador COBOL (cobc) que genera ejecutables nativos; depura con GDB"
+
+msgid "Pré-compilador de SQL embutido (EXEC SQL) para programas do GnuCOBOL"
+msgstr "Precompilador de SQL embebido (EXEC SQL) para programas de GnuCOBOL"
+
+msgid "Extensões gratuitas do VS Code para COBOL, JCL, HLASM e PL/I, com o Zowe Explorer"
+msgstr "Extensiones gratuitas de VS Code para COBOL, JCL, HLASM y PL/I, con Zowe Explorer"
+
+msgid "A extensão é removida da sua conta pelo VS Code, sem senha. As configurações dela continuam no VS Code."
+msgstr "VS Code elimina la extensión de tu cuenta, sin contraseña. Su configuración se queda en VS Code."
+
+msgid "O Vega instala antes o VS Code, do repositório oficial da Microsoft, com a senha de administrador. Depois instala a extensão na sua conta, sem senha."
+msgstr "Vega instala antes VS Code, del repositorio oficial de Microsoft, con la contraseña de administrador. Después instala la extensión en tu cuenta, sin contraseña."
+
+msgid "A extensão é instalada na sua conta pelo VS Code, sem senha."
+msgstr "VS Code instala la extensión en tu cuenta, sin contraseña."

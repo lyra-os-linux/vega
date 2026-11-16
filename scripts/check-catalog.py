@@ -7,6 +7,7 @@ Sem opções, só a validação offline, usada na CI de PR:
 - id do Flathub no formato de id de app (com.empresa.App);
 - apps do Windows, AppImages e programas da Receita existem em
   windows_apps.rs, appimage_apps.rs e receita_apps.rs; webapps em webapps.rs;
+  extensões do VS Code em vscode_ext.rs;
 - `tasks` (seção ou cartão) entre as de TASKS (catalog-search.js) e `tags`
   como lista de textos;
 - textos e tags com tradução em en-US e es-ES (po/*.po).
@@ -46,7 +47,7 @@ import urllib.request
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 GTK = ROOT / "vega-gtk"
 CATALOGS = sorted((GTK / "ui" / "js" / "pages" / "software").glob("*-catalog.js"))
-ORIGINS = {"official", "flathub", "windows", "npm", "appimage", "receita", "preset", "webapp"}
+ORIGINS = {"official", "flathub", "windows", "npm", "vscode", "appimage", "receita", "preset", "webapp"}
 FLATHUB_ID = re.compile(r"^[A-Za-z_][\w-]*(\.[A-Za-z_][\w-]*){2,}$")
 REPOS = [
     "https://download.opensuse.org/distribution/leap/16.1/repo/oss/",
@@ -132,6 +133,12 @@ def appimages():
     return apps
 
 
+def vscode_extensions():
+    text = (GTK / "src" / "backend" / "vscode_ext.rs").read_text(encoding="utf-8")
+    block = re.search(r"pub const EXTENSIONS: &\[&str\] = &\[(.*?)\];", text, re.S).group(1)
+    return set(re.findall(r'"([^"]+)"', block))
+
+
 def receita_programs():
     """Programas da Receita: {id: (URL do instalador, tamanho)}."""
     text = (GTK / "src" / "backend" / "receita_apps.rs").read_text(encoding="utf-8")
@@ -167,6 +174,7 @@ def check_offline(entries):
     windows_ids = verbs() | set(recipes())
     appimage_ids = set(appimages())
     receita_ids = set(receita_programs())
+    vscode_ids = vscode_extensions()
     translations = {lang: po_translations(GTK / "po" / f"{lang}.po") for lang in ("en-US", "es-ES")}
     texts = set()
     for where, section, app in entries:
@@ -187,6 +195,8 @@ def check_offline(entries):
             errors.append(f"{label}: {app_id!r} não está em PRESETS (easyeffects_presets.rs)")
         if origin == "webapp" and f'id: "{app_id}"' not in (GTK / "src" / "backend" / "webapps.rs").read_text(encoding="utf-8"):
             errors.append(f"{label}: {app_id!r} não está em WEBAPPS (webapps.rs)")
+        if origin == "vscode" and app_id not in vscode_ids:
+            errors.append(f"{label}: {app_id!r} não está em EXTENSIONS (vscode_ext.rs)")
         if origin == "receita" and app_id not in receita_ids:
             errors.append(f"{label}: {app_id!r} não está em PROGRAMS (receita_apps.rs)")
         repo = app.get("repo")

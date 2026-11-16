@@ -37,6 +37,7 @@ pub mod software;
 pub mod storage;
 pub mod system;
 pub mod users;
+pub mod vscode_ext;
 pub mod webapps;
 pub mod windows_apps;
 
