@@ -7320,3 +7320,15 @@ msgstr "Apagando MVS. Sal de TSO; Hercules se cierra solo en unos minutos."
 
 msgid "Não foi possível pedir o desligamento ao Hercules."
 msgstr "No se pudo pedir a Hercules que se apague."
+
+msgid "Logon no TSO: HERC01 ou HERC02, senha CUL8TR (administradores)"
+msgstr "Inicio de sesión en TSO: HERC01 o HERC02, contraseña CUL8TR (administradores)"
+
+msgid "HERC03 ou HERC04, senha PASS4U (usuários comuns)"
+msgstr "HERC03 o HERC04, contraseña PASS4U (usuarios comunes)"
+
+msgid "IBMUSER, senha IBMPASS, só para recuperação"
+msgstr "IBMUSER, contraseña IBMPASS, solo para recuperación"
+
+msgid "São as senhas padrão do TK5, iguais em toda instalação. O terminal só aceita conexões deste computador; troque-as pelo RAKF, logado como HERC01."
+msgstr "Son las contraseñas predeterminadas de TK5, iguales en toda instalación. La terminal solo acepta conexiones desde este equipo; cámbialas con RAKF, con la sesión de HERC01."

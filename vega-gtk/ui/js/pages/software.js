@@ -775,6 +775,14 @@ export default {
         title: t("Instalar {name}?", { name: app.name }),
         text: t("O MVS 3.8j costuma ser tratado como domínio público, mas esse status é contestado, e o Lyra não distribui a imagem. O Vega baixa o TK5 ({version}, 475 MB) do site de Rob Prins, confere o SHA-256 verificado pelo Lyra e instala na sua conta, sem senha. Ocupa cerca de 1 GB. Use só para estudo.", { version: "Update 5" })
           + (missing.length ? " " + t("Antes, instala {packages}, com a senha de administrador.", { packages: missing.join(", ") }) : ""),
+        // Usuários e senhas padrão do TK5 (manual do TK5): iguais em toda
+        // instalação; o terminal 3270 só escuta em 127.0.0.1.
+        facts: [
+          { icon: "key", text: t("Logon no TSO: HERC01 ou HERC02, senha CUL8TR (administradores)") },
+          { icon: "user", text: t("HERC03 ou HERC04, senha PASS4U (usuários comuns)") },
+          { icon: "shield", text: t("IBMUSER, senha IBMPASS, só para recuperação") },
+          { icon: "lock", warn: true, text: t("São as senhas padrão do TK5, iguais em toda instalação. O terminal só aceita conexões deste computador; troque-as pelo RAKF, logado como HERC01.") },
+        ],
         ic: "download",
         confirmLabel: t("Aceitar e instalar"),
         required: true,

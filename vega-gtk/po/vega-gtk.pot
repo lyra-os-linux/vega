@@ -7891,3 +7891,15 @@ msgstr ""
 
 msgid "Não foi possível pedir o desligamento ao Hercules."
 msgstr ""
+
+msgid "Logon no TSO: HERC01 ou HERC02, senha CUL8TR (administradores)"
+msgstr ""
+
+msgid "HERC03 ou HERC04, senha PASS4U (usuários comuns)"
+msgstr ""
+
+msgid "IBMUSER, senha IBMPASS, só para recuperação"
+msgstr ""
+
+msgid "São as senhas padrão do TK5, iguais em toda instalação. O terminal só aceita conexões deste computador; troque-as pelo RAKF, logado como HERC01."
+msgstr ""
