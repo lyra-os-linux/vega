@@ -60,7 +60,21 @@ pub enum Kind {
         dir: &'static str,
         name: &'static str,
     },
+    /// MSI de ferramenta Oracle (vega#191): antes, o Instant Client para
+    /// Windows (`ORACLE_CLIENT`) vai para `C:\oracle`, com o `tnsnames.ora` do
+    /// Oracle Database Free local, e entra no PATH e no TNS_ADMIN do prefixo.
+    OracleMsi,
 }
+
+/// Instant Client para Windows 64 bits, pré-requisito do PL/SQL Developer e
+/// do Toad. Não é oferecido sozinho (não está em `RECIPES`).
+pub const ORACLE_CLIENT: Recipe = Recipe {
+    id: "oracle-instantclient-win",
+    url: "https://download.oracle.com/otn_software/nt/instantclient/2326400/instantclient-basic-windows.x64-23.26.4.0.0.zip",
+    sha256: "09e9b81cd492f5ce6f671317c23a0e1f5dee5e786258149d216321c3dad3023f",
+    file: "instantclient-basic-windows.x64-23.26.4.0.0.zip",
+    kind: Kind::Msi,
+};
 
 /// Receita do Vega: instalador oficial com checksum fixado.
 #[derive(Debug, Clone, Copy)]
@@ -228,6 +242,15 @@ pub const RECIPES: &[Recipe] = &[
         sha256: "96c4c4beb63c7c5ad6b1a206f96560d7a9a2b6063f3cd175a82f392977a9af5d",
         file: "WinDirStat-x64.msi",
         kind: Kind::Msi,
+    },
+    // PL/SQL Developer 17 (Allround Automations): versão de avaliação de 30
+    // dias, comercial; o MSI vem do site do fabricante (vega#191).
+    Recipe {
+        id: "plsqldev",
+        url: "https://www.allroundautomations.com/files/trial/plsqldev1704x64.msi",
+        sha256: "45bfa3899727147a8b6c1d0fdb94fd08c141aab067ffcf056d809117039c865e",
+        file: "plsqldev1704x64.msi",
+        kind: Kind::OracleMsi,
     },
     Recipe {
         id: "dude",
@@ -698,6 +721,72 @@ fn install_portable(
     )
 }
 
+/// Instant Client para Windows no prefixo, com as conexões do Oracle Free
+/// local e as variáveis de ambiente do usuário do Wine.
+fn prepare_oracle_client(prefix: &Path) -> Result<(), String> {
+    if !prefix.join("system.reg").is_file() {
+        let mut boot = Command::new("wineboot");
+        boot.arg("-i")
+            .env("WINEPREFIX", prefix)
+            .env("WINEDEBUG", "-all");
+        crate::webkit_env::clean_command(&mut boot);
+        boot.status().map_err(|error| error.to_string())?;
+    }
+    let oracle = prefix.join("drive_c/oracle");
+    if !oracle.join("instantclient_23_26/oci.dll").is_file() {
+        let zip = fetch_verified(&ORACLE_CLIENT)?;
+        std::fs::create_dir_all(&oracle).map_err(|error| error.to_string())?;
+        let mut unzip = Command::new("unzip");
+        unzip.arg("-q").arg("-o").arg(&zip).arg("-d").arg(&oracle);
+        crate::webkit_env::clean_command(&mut unzip);
+        let status = unzip.status().map_err(|error| error.to_string())?;
+        if !status.success() {
+            return Err(gettext(
+                "Não foi possível extrair o Instant Client para Windows.",
+            ));
+        }
+    }
+    let tnsnames = oracle.join("network/admin/tnsnames.ora");
+    if !tnsnames.is_file() {
+        std::fs::create_dir_all(tnsnames.parent().unwrap_or(&oracle))
+            .map_err(|error| error.to_string())?;
+        std::fs::write(
+            &tnsnames,
+            super::oracle_tools::TNSNAMES.replace('\n', "\r\n"),
+        )
+        .map_err(|error| error.to_string())?;
+    }
+    for (name, value) in oracle_environment() {
+        let mut reg = Command::new("wine");
+        reg.args([
+            "reg",
+            "add",
+            "HKCU\\Environment",
+            "/v",
+            name,
+            "/t",
+            "REG_EXPAND_SZ",
+            "/d",
+            value,
+            "/f",
+        ])
+        .env("WINEPREFIX", prefix)
+        .env("WINEDEBUG", "-all");
+        crate::webkit_env::clean_command(&mut reg);
+        reg.status().map_err(|error| error.to_string())?;
+    }
+    Ok(())
+}
+
+/// Variáveis de ambiente do usuário do Wine para achar o Instant Client
+/// (`oci.dll`) e as conexões.
+pub fn oracle_environment() -> [(&'static str, &'static str); 2] {
+    [
+        ("PATH", "C:\\oracle\\instantclient_23_26;%PATH%"),
+        ("TNS_ADMIN", "C:\\oracle\\network\\admin"),
+    ]
+}
+
 fn record_installed(prefix: &Path, id: &str) {
     if let Ok(mut log) = std::fs::OpenOptions::new()
         .create(true)
@@ -751,6 +840,36 @@ fn run_recipe(app: &AppHandle, tx: u32, recipe: &Recipe, prefix: &Path) {
             });
         }
         Kind::Msi => {
+            let mut command = Command::new("wine");
+            command
+                .arg("msiexec")
+                .arg("/i")
+                .arg(&file)
+                .arg("/qn")
+                .env("WINEPREFIX", prefix)
+                .env("WINEDEBUG", "-all");
+            crate::webkit_env::clean_command(&mut command);
+            follow_then(app, tx, command, "wine", failed, |success| {
+                if success {
+                    record_installed(prefix, recipe.id);
+                }
+                after_install(prefix);
+            });
+        }
+        Kind::OracleMsi => {
+            emit(TransactionEvent::Progress {
+                id: tx,
+                percent: 20,
+                message: gettext("Preparando o Instant Client para Windows…"),
+            });
+            if let Err(message) = prepare_oracle_client(prefix) {
+                emit(TransactionEvent::Finished {
+                    id: tx,
+                    success: false,
+                    message,
+                });
+                return;
+            }
             let mut command = Command::new("wine");
             command
                 .arg("msiexec")
@@ -1068,6 +1187,13 @@ pub const REMOVALS: &[(&str, Removal)] = &[
     (
         "hercules",
         Removal::Files(&["drive_c/Program Files/Hercules"]),
+    ),
+    (
+        "plsqldev",
+        Removal::Uninstaller {
+            display: "PL/SQL Developer",
+            args: &[],
+        },
     ),
 ];
 

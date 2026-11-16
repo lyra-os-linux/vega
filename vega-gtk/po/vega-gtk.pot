@@ -8062,3 +8062,12 @@ msgstr ""
 
 msgid "As conexões FREE e FREEPDB1 com o Oracle Database Free local (Vega → Contêineres) já vêm em ~/.local/opt/oracle/network/admin/tnsnames.ora."
 msgstr ""
+
+msgid "Não foi possível extrair o Instant Client para Windows."
+msgstr ""
+
+msgid "Preparando o Instant Client para Windows…"
+msgstr ""
+
+msgid "IDE de PL/SQL para Oracle (avaliação de 30 dias); já vem com o Instant Client e as conexões do Oracle Free local"
+msgstr ""

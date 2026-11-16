@@ -7491,3 +7491,12 @@ msgstr "Vega descarga la herramienta del sitio de Oracle, distribuida bajo los O
 
 msgid "As conexões FREE e FREEPDB1 com o Oracle Database Free local (Vega → Contêineres) já vêm em ~/.local/opt/oracle/network/admin/tnsnames.ora."
 msgstr "Las conexiones FREE y FREEPDB1 con el Oracle Database Free local (Vega → Contenedores) ya vienen en ~/.local/opt/oracle/network/admin/tnsnames.ora."
+
+msgid "Não foi possível extrair o Instant Client para Windows."
+msgstr "No se pudo extraer el Instant Client para Windows."
+
+msgid "Preparando o Instant Client para Windows…"
+msgstr "Preparando el Instant Client para Windows…"
+
+msgid "IDE de PL/SQL para Oracle (avaliação de 30 dias); já vem com o Instant Client e as conexões do Oracle Free local"
+msgstr "IDE de PL/SQL para Oracle (prueba de 30 días); viene con el Instant Client y las conexiones del Oracle Free local"

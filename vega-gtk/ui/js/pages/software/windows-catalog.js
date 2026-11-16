@@ -91,6 +91,7 @@ export const WINDOWS = [
     gated: true,
     apps: [
       { name: "Dev-C++", origin: "windows", id: "devcpp", text: N_("IDE de C e C++ usada no ensino, com o compilador GCC") },
+      { name: "PL/SQL Developer", origin: "windows", id: "plsqldev", text: N_("IDE de PL/SQL para Oracle (avaliação de 30 dias); já vem com o Instant Client e as conexões do Oracle Free local") },
       { name: "Inno Setup", origin: "windows", id: "innosetup", text: N_("Cria instaladores para programas do Windows") },
     ],
   },
