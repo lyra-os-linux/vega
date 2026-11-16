@@ -158,8 +158,8 @@ export async function runOracle(install, id, title) {
 }
 
 /** Serviço em contêiner (Podman sem root): baixa a imagem do catálogo. */
-export async function runContainerInstall(id, title) {
-  const callId = await call("containers_install", { id });
+export async function runContainerInstall(id, title, acceptLicense = false) {
+  const callId = await call("containers_install", { id, acceptLicense });
   const started = track(`software:${callId}`, title, "software");
   started.task.action = { kind: "install", origin: "container", id };
   return started;

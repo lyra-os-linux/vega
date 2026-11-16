@@ -8101,3 +8101,30 @@ msgstr ""
 
 msgid "Baixe o instalador no site que abriu no navegador. A instalação começa sozinha quando o arquivo chegar na pasta de downloads."
 msgstr ""
+
+msgid "É preciso aceitar a licença para instalar."
+msgstr ""
+
+msgid "A senha do administrador ({users}) é gerada pelo Vega e fica só na sua conta; copie-a aqui depois."
+msgstr ""
+
+msgid "Li e aceito a licença do fabricante"
+msgstr ""
+
+msgid "Ler os termos da licença"
+msgstr ""
+
+msgid "Instalação cancelada"
+msgstr ""
+
+msgid "Conexão: {connection} (usuário {users})"
+msgstr ""
+
+msgid "Terminal:"
+msgstr ""
+
+msgid "SQL Server"
+msgstr ""
+
+msgid "Consultas e IntelliSense para o SQL Server no VS Code; o do Vega → Contêineres conecta em localhost,1433 com o usuário sa"
+msgstr ""
