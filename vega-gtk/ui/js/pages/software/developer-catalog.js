@@ -221,6 +221,29 @@ export const DEVELOPER = [
     ],
   },
   {
+    // vega#187: GnuCOBOL do Leap 16.1; a extensão Code4z (Broadcom, gratuita)
+    // vai para a conta do usuário pelo próprio VS Code (backend/vscode_ext.rs).
+    // vega#188: x3270 (pacote do Lyra, link do Base:System), tn5250 do Leap,
+    // Zowe CLI pelo npm e Zowe Explorer pelo VS Code, na conta do usuário. O
+    // IBM Z Xplore é um z/OS remoto e gratuito: o cartão só abre o site.
+    // vega#194: MVS 3.8j TK5 no Hercules do Lyra (backend/mainframe.rs).
+    id: "mainframe",
+    title: N_("COBOL e mainframe"),
+
+    tasks: ["code"],
+    apps: [
+      { name: "GnuCOBOL", origin: "official", id: "gnucobol", text: N_("Compilador COBOL (cobc) que gera executáveis nativos; depura com o GDB") },
+      { name: "GnuCOBOL ESQL", origin: "official", id: "gnucobol-esql", text: N_("Pré-compilador de SQL embutido (EXEC SQL) para programas do GnuCOBOL") },
+      { name: "Code4z", origin: "vscode", id: "broadcomMFD.code4z-extension-pack", text: N_("Extensões gratuitas do VS Code para COBOL, JCL, HLASM e PL/I, com o Zowe Explorer") },
+      { name: "x3270 e c3270", origin: "official", id: "x3270", command: "c3270", text: N_("Terminais 3270 para mainframes IBM (TSO/ISPF, CICS), em janela e no terminal") },
+      { name: "tn5250", origin: "official", id: "tn5250", text: N_("Terminal 5250 para o IBM i (AS/400)") },
+      { name: "Zowe CLI", origin: "npm", id: "@zowe/cli", command: "zowe", text: N_("Linha de comando da Open Mainframe Project para z/OS: jobs, datasets e USS") },
+      { name: "Zowe Explorer", origin: "vscode", id: "Zowe.vscode-extension-for-zowe", text: N_("Datasets, jobs e USS do z/OS no VS Code; já vem no Code4z") },
+      { name: "Mainframe de treinamento (MVS 3.8j)", origin: "mainframe", id: "tk5", text: N_("MVS 3.8j TK5 no Hercules, com TSO, ISPF, JES2 e compiladores COBOL e Assembler; liga e desliga pelo menu") },
+      { name: "IBM Z Xplore", origin: "link", id: "ibm-z-xplore", url: "https://www.ibm.com/products/z/resources/zxplore", text: N_("z/OS real, remoto e gratuito da IBM para aprender JCL, COBOL, REXX e Db2 com o VS Code e o Zowe") },
+    ],
+  },
+  {
     id: "mobile",
     title: N_("Android"),
 

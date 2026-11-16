@@ -23,6 +23,7 @@ pub mod guided_download;
 pub mod hardware;
 pub mod kernel;
 pub mod logs;
+pub mod mainframe;
 pub mod monitor;
 pub mod network;
 pub mod notify;
@@ -37,6 +38,7 @@ pub mod software;
 pub mod storage;
 pub mod system;
 pub mod users;
+pub mod vscode_ext;
 pub mod webapps;
 pub mod windows_apps;
 

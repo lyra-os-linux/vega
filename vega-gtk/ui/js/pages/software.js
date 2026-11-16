@@ -6,7 +6,7 @@ import { call, pick } from "../api.js";
 import { refreshUpdates } from "../health.js";
 import { N_, t } from "../i18n.js";
 import { local, saveLocal } from "../store.js";
-import { runSoftware, runWindows, runWindowsFile, runWindowsRemove, runNpm, runAppImage, runReceita, runningTasks, onTasks, transactionPanel } from "../tasks.js";
+import { runSoftware, runWindows, runWindowsFile, runWindowsRemove, runNpm, runVscodeExtension, runMainframe, runAppImage, runReceita, runningTasks, onTasks, transactionPanel } from "../tasks.js";
 import { h, icon, clear, button, badge, segmented, list, section, empty, skeletonRows, confirm, sheet, toast, fail, tile, normalize, meter, banner } from "../ui.js";
 import { preparationPanel } from "./software/preparation.js";
 import { requireRestart } from "../restart.js";
@@ -54,7 +54,7 @@ const SHOWCASES = {
 /** Cartões de todas as vitrines, para a busca offline do catálogo curado. */
 const CURATED = curatedEntries(Object.entries(SHOWCASES).map(([tab, { label, catalog }]) => ({ tab, label, catalog })));
 /** Origens instaladas na conta do usuário: sem detalhes no vegad, removidas pelo cartão. */
-const USER_ORIGINS = new Set(["windows", "npm", "appimage", "receita", "preset", "webapp"]);
+const USER_ORIGINS = new Set(["windows", "npm", "vscode", "mainframe", "appimage", "receita", "preset", "webapp"]);
 const ORIGIN_RANK = { official: 0, flathub: 1 };
 
 // Estado que sobrevive à troca de página, como os widgets do vega-gtk.
@@ -70,7 +70,7 @@ const memory = {
 };
 
 const queueKey = (pkg) => `${pkg.origin}\u0000${pkg.id}`;
-const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "appimage" ? "AppImage" : origin === "receita" ? t("Receita Federal") : origin === "preset" ? t("Perfil") : origin === "webapp" ? t("Webapp") : origin);
+const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "vscode" ? "VS Code" : origin === "link" ? t("Site") : origin === "mainframe" ? "TK5" : origin === "appimage" ? "AppImage" : origin === "receita" ? t("Receita Federal") : origin === "preset" ? t("Perfil") : origin === "webapp" ? t("Webapp") : origin);
 const rankOrigin = (a, b) => (ORIGIN_RANK[a.origin] ?? 2) - (ORIGIN_RANK[b.origin] ?? 2);
 
 function packageIcon(pkg, size = 40) {
@@ -448,7 +448,12 @@ export default {
         : packageIcon(app, 48);
       const progress = cardProgress(app);
       let action;
-      if (progress) action = progress;
+      // `link`: serviço remoto, nada a instalar; o cartão só abre o site.
+      if (app.origin === "link") action = button(t("Abrir site"), { size: "sm", icon: "external", onClick: (e) => {
+        e.stopPropagation();
+        call("open_uri", { uri: app.url }).catch((error) => fail(error, t("Não foi possível abrir o site")));
+      } });
+      else if (progress) action = progress;
       // Apps do Windows instalados podem ser removidos aqui mesmo: não
       // aparecem na aba Instalados, que lista pacotes e Flatpaks.
       else if (external) action = button(t("Instalado"), { size: "sm", icon: "check", disabled: true, title: t("Já instalado fora do Vega") });
@@ -470,6 +475,8 @@ export default {
         e.stopPropagation();
         if (app.origin === "windows") installWindows(app);
         else if (app.origin === "npm") installNpm(app);
+        else if (app.origin === "vscode") installVscodeExtension(app);
+        else if (app.origin === "mainframe") installMainframe(app);
         else if (app.origin === "appimage") installAppImage(app);
         else if (app.origin === "receita") installReceita(app);
         else if (app.origin === "preset") installPreset(app);
@@ -479,7 +486,7 @@ export default {
         else packageAction(pkg);
       } });
       // Apps instalados na conta do usuário não têm detalhes no vegad.
-      const open = disabled || USER_ORIGINS.has(app.origin) ? undefined : () => openDetails(pkg);
+      const open = disabled || USER_ORIGINS.has(app.origin) || app.origin === "link" ? undefined : () => openDetails(pkg);
       // div, e não button: o cartão contém o botão Instalar.
       return h("div", {
         class: `card sw-card sw-popular ${locked ? "locked" : installed ? "installed" : "interactive"}`,
@@ -502,6 +509,7 @@ export default {
     const isInstalled = (app) => popularInstalled.has(queueKey(app));
     /** Pacotes do FUSE 2 que um AppImage precisa para abrir (installAppImage). */
     const APPIMAGE_FUSE = ["libfuse2", "fuse"];
+    const MAINFRAME_PACKAGES = ["hercules", "x3270"];
 
     const IA32_ON = /(^|\s)ia32_emulation=(1|y|yes|on|true)(\s|$)/i;
     /** ia32_emulation=1 já está no boot, mas o kernel em execução ainda é o antigo. */
@@ -676,6 +684,8 @@ export default {
         return load();
       }
       const npm = app.origin === "npm";
+      const vscode = app.origin === "vscode";
+      const mainframe = app.origin === "mainframe";
       const appimage = app.origin === "appimage";
       const receita = app.origin === "receita";
       const ok = await confirm({
@@ -684,6 +694,10 @@ export default {
           ? t("O programa e os atalhos saem da sua conta, sem senha. As declarações são guardadas antes em ~/ProgramasRFB, numa pasta com \"declarações\" no nome.")
           : npm
           ? t("A ferramenta é removida da sua conta pelo npm, sem senha. As configurações e o login dela continuam na sua pasta pessoal.")
+          : mainframe
+          ? t("Os volumes do MVS saem da sua conta, com tudo o que você gravou neles (datasets, JCL, programas). O Hercules e o x3270 continuam instalados.")
+          : vscode
+          ? t("A extensão é removida da sua conta pelo VS Code, sem senha. As configurações dela continuam no VS Code.")
           : appimage
             ? t("O AppImage e o atalho saem da sua conta, sem senha. Os aplicativos que ele instalou e as configurações dele continuam no sistema.")
             : t("O desinstalador do programa roda pelo Wine, na sua conta, sem senha. Arquivos que você salvou com ele, como documentos, não são apagados."),
@@ -699,6 +713,8 @@ export default {
         const title = t("Removendo {name}…", { name: app.name });
         started = receita ? await runReceita(false, app.id, title)
           : npm ? await runNpm(false, app.id, title)
+          : vscode ? await runVscodeExtension(false, app.id, title)
+          : mainframe ? await runMainframe(false, app.id, title)
           : appimage ? await runAppImage(false, app.id, title)
           : await runWindowsRemove(app.id, title);
       } catch (error) {
@@ -737,6 +753,83 @@ export default {
       let started;
       try {
         started = await runNpm(true, app.id, t("Instalando {name}…", { name: app.name }));
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      showTask(started.task);
+      paint();
+      const result = await started.done;
+      if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
+      popularInstalled = null;
+      load();
+    }
+
+    /**
+     * Mainframe de treinamento (vega#194): instala o Hercules e o x3270 dos
+     * repositórios do Lyra (pede a senha) e o TK5 na conta do usuário, depois
+     * do aviso de licença do MVS 3.8j.
+     */
+    async function installMainframe(app) {
+      const missing = MAINFRAME_PACKAGES.filter((id) => !isInstalled({ origin: "official", id }));
+      const ok = await confirm({
+        title: t("Instalar {name}?", { name: app.name }),
+        text: t("O MVS 3.8j costuma ser tratado como domínio público, mas esse status é contestado, e o Lyra não distribui a imagem. O Vega baixa o TK5 ({version}, 475 MB) do site de Rob Prins, confere o SHA-256 verificado pelo Lyra e instala na sua conta, sem senha. Ocupa cerca de 1 GB. Use só para estudo.", { version: "Update 5" })
+          + (missing.length ? " " + t("Antes, instala {packages}, com a senha de administrador.", { packages: missing.join(", ") }) : ""),
+        // Usuários e senhas padrão do TK5 (manual do TK5): iguais em toda
+        // instalação; o terminal 3270 só escuta em 127.0.0.1.
+        facts: [
+          { icon: "key", text: t("Logon no TSO: HERC01 ou HERC02, senha CUL8TR (administradores)") },
+          { icon: "user", text: t("HERC03 ou HERC04, senha PASS4U (usuários comuns)") },
+          { icon: "shield", text: t("IBMUSER, senha IBMPASS, só para recuperação") },
+          { icon: "lock", warn: true, text: t("São as senhas padrão do TK5, iguais em toda instalação. O terminal só aceita conexões deste computador; troque-as pelo RAKF, logado como HERC01.") },
+        ],
+        ic: "download",
+        confirmLabel: t("Aceitar e instalar"),
+        required: true,
+      });
+      if (!ok) return;
+      for (const id of missing) {
+        const result = await transact({ kind: "install", origin: "official", id }, t("Instalando {name}…", { name: id }), { reload: false });
+        if (!result?.success) return;
+      }
+      let started;
+      try {
+        started = await runMainframe(true, app.id, t("Instalando {name}…", { name: app.name }));
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      showTask(started.task);
+      paint();
+      const result = await started.done;
+      if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
+      else toast(result.message);
+      popularInstalled = null;
+      userInstalled = null;
+      load();
+    }
+
+    /**
+     * Extensão do VS Code na conta do usuário. Sem o VS Code, instala antes o
+     * editor pelo repositório da Microsoft (pede a senha e a aprovação da
+     * chave), como o cartão do VS Code faz.
+     */
+    async function installVscodeExtension(app) {
+      const editor = DEVELOPER.flatMap((section) => section.apps).find((entry) => entry.id === "code");
+      const needsCode = !isInstalled(editor) && !popularExternal.has(queueKey(editor));
+      const ok = await confirm({
+        title: t("Instalar {name}?", { name: app.name }),
+        text: needsCode
+          ? t("O Vega instala antes o VS Code, do repositório oficial da Microsoft, com a senha de administrador. Depois instala a extensão na sua conta, sem senha.")
+          : t("A extensão é instalada na sua conta pelo VS Code, sem senha."),
+        ic: "download",
+        confirmLabel: t("Instalar"),
+        required: true,
+      });
+      if (!ok) return;
+      if (needsCode && !(await installFromRepoPackage(editor, { ask: false }))) return;
+      let started;
+      try {
+        started = await runVscodeExtension(true, app.id, t("Instalando {name}…", { name: app.name }));
       } catch (error) {
         return fail(error, t("Não foi possível concluir a operação"));
       }
@@ -873,11 +966,13 @@ export default {
       // (instalador próprio na conta do usuário); se o comando existe, o
       // cartão mostra "Instalado".
       const byCommand = Object.values(SHOWCASES).flatMap((showcase) => showcase.catalog.flatMap((section) => section.apps)).filter((app) => app.command);
-      const [details, packages, windows, npmApps, appImages, receita, presets, webapps, encoders, ia32, boot, commands] = await Promise.all([
+      const [details, packages, windows, npmApps, vscodeExtensions, mainframes, appImages, receita, presets, webapps, encoders, ia32, boot, commands] = await Promise.all([
         call("software_details", { origin: "official", id: "flatpak" }).catch(() => null),
         call("software_installed"),
         call("windows_installed").catch(() => []),
         call("npm_installed").catch(() => []),
+        call("vscode_extensions_installed").catch(() => []),
+        call("mainframe_installed").catch(() => []),
         call("appimage_installed").catch(() => []),
         call("receita_installed").catch(() => []),
         call("easyeffects_presets_installed").catch(() => []),
@@ -895,6 +990,8 @@ export default {
         ...packages.map(queueKey),
         ...windows.map((id) => queueKey({ origin: "windows", id })),
         ...npmApps.map((id) => queueKey({ origin: "npm", id })),
+        ...vscodeExtensions.map((id) => queueKey({ origin: "vscode", id })),
+        ...mainframes.map((id) => queueKey({ origin: "mainframe", id })),
         ...appImages.map((id) => queueKey({ origin: "appimage", id })),
         ...receita.map((id) => queueKey({ origin: "receita", id })),
         ...presets.map((id) => queueKey({ origin: "preset", id })),
@@ -947,9 +1044,11 @@ export default {
 
     /** Apps dos catálogos instalados na conta do usuário, sem repetir. */
     async function loadUserInstalled() {
-      const [windows, npmApps, appImages, receita, presets, webapps] = await Promise.all([
+      const [windows, npmApps, vscodeExtensions, mainframes, appImages, receita, presets, webapps] = await Promise.all([
         call("windows_installed").catch(() => []),
         call("npm_installed").catch(() => []),
+        call("vscode_extensions_installed").catch(() => []),
+        call("mainframe_installed").catch(() => []),
         call("appimage_installed").catch(() => []),
         call("receita_installed").catch(() => []),
         call("easyeffects_presets_installed").catch(() => []),
@@ -958,6 +1057,8 @@ export default {
       const keys = new Set([
         ...windows.map((id) => queueKey({ origin: "windows", id })),
         ...npmApps.map((id) => queueKey({ origin: "npm", id })),
+        ...vscodeExtensions.map((id) => queueKey({ origin: "vscode", id })),
+        ...mainframes.map((id) => queueKey({ origin: "mainframe", id })),
         ...appImages.map((id) => queueKey({ origin: "appimage", id })),
         ...receita.map((id) => queueKey({ origin: "receita", id })),
         ...presets.map((id) => queueKey({ origin: "preset", id })),
@@ -1117,9 +1218,9 @@ export default {
      * confere a impressão digital esperada, deixa o usuário aprovar e instala
      * o aplicativo. Sem isso o zypper ignora o repositório para sempre.
      */
-    async function installFromRepoPackage(app) {
+    async function installFromRepoPackage(app, { ask = true } = {}) {
       const { package: repoPackage, name: repoName, fingerprint } = app.repo;
-      const ok = await confirm({
+      const ok = !ask || await confirm({
         title: t("Instalar {name}?", { name: app.name }),
         text: t("O {name} vem do repositório oficial do fabricante. O Vega instala o registro desse repositório, mostra a chave de assinatura para você aprovar e instala o {name}. Pede a senha de administrador.", { name: app.name }),
         ic: "download",
@@ -1147,7 +1248,8 @@ export default {
         }
         if (!(await approveKey(key))) return;
       }
-      await transact({ kind: "install", origin: app.origin, id: app.id }, t("{verb} {name}", { verb: t("Instalar"), name: app.name }));
+      const installed = await transact({ kind: "install", origin: app.origin, id: app.id }, t("{verb} {name}", { verb: t("Instalar"), name: app.name }), { reload: ask });
+      return Boolean(installed?.success);
     }
 
     /** Adiciona o repositório (aprovando a chave, se pedir); devolve se ficou pronto para uso. */

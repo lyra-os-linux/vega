@@ -7202,3 +7202,132 @@ msgstr "Os webapps de bancos abrem o site numa janela própria do Chromium. O Ve
 
 msgid "Também instala o Chromium, onde os webapps abrem numa janela própria."
 msgstr "Também instala o Chromium, onde os webapps abrem numa janela própria."
+
+msgid "Extensão desconhecida."
+msgstr "Extensão desconhecida."
+
+msgid "A instalação da extensão pelo VS Code falhou."
+msgstr "A instalação da extensão pelo VS Code falhou."
+
+msgid "A remoção da extensão pelo VS Code falhou."
+msgstr "A remoção da extensão pelo VS Code falhou."
+
+msgid "COBOL e mainframe"
+msgstr "COBOL e mainframe"
+
+msgid "Compilador COBOL (cobc) que gera executáveis nativos; depura com o GDB"
+msgstr "Compilador COBOL (cobc) que gera executáveis nativos; depura com o GDB"
+
+msgid "Pré-compilador de SQL embutido (EXEC SQL) para programas do GnuCOBOL"
+msgstr "Pré-compilador de SQL embutido (EXEC SQL) para programas do GnuCOBOL"
+
+msgid "Extensões gratuitas do VS Code para COBOL, JCL, HLASM e PL/I, com o Zowe Explorer"
+msgstr "Extensões gratuitas do VS Code para COBOL, JCL, HLASM e PL/I, com o Zowe Explorer"
+
+msgid "A extensão é removida da sua conta pelo VS Code, sem senha. As configurações dela continuam no VS Code."
+msgstr "A extensão é removida da sua conta pelo VS Code, sem senha. As configurações dela continuam no VS Code."
+
+msgid "O Vega instala antes o VS Code, do repositório oficial da Microsoft, com a senha de administrador. Depois instala a extensão na sua conta, sem senha."
+msgstr "O Vega instala antes o VS Code, do repositório oficial da Microsoft, com a senha de administrador. Depois instala a extensão na sua conta, sem senha."
+
+msgid "A extensão é instalada na sua conta pelo VS Code, sem senha."
+msgstr "A extensão é instalada na sua conta pelo VS Code, sem senha."
+
+msgid "Abrir site"
+msgstr "Abrir site"
+
+msgid "Não foi possível abrir o site"
+msgstr "Não foi possível abrir o site"
+
+msgid "Terminais 3270 para mainframes IBM (TSO/ISPF, CICS), em janela e no terminal"
+msgstr "Terminais 3270 para mainframes IBM (TSO/ISPF, CICS), em janela e no terminal"
+
+msgid "Terminal 5250 para o IBM i (AS/400)"
+msgstr "Terminal 5250 para o IBM i (AS/400)"
+
+msgid "Linha de comando da Open Mainframe Project para z/OS: jobs, datasets e USS"
+msgstr "Linha de comando da Open Mainframe Project para z/OS: jobs, datasets e USS"
+
+msgid "Datasets, jobs e USS do z/OS no VS Code; já vem no Code4z"
+msgstr "Datasets, jobs e USS do z/OS no VS Code; já vem no Code4z"
+
+msgid "z/OS real, remoto e gratuito da IBM para aprender JCL, COBOL, REXX e Db2 com o VS Code e o Zowe"
+msgstr "z/OS real, remoto e gratuito da IBM para aprender JCL, COBOL, REXX e Db2 com o VS Code e o Zowe"
+
+msgid "Ligar mainframe (MVS 3.8j)"
+msgstr "Ligar mainframe (MVS 3.8j)"
+
+msgid "Terminal TSO (x3270)"
+msgstr "Terminal TSO (x3270)"
+
+msgid "Terminal TSO no console (c3270)"
+msgstr "Terminal TSO no console (c3270)"
+
+msgid "Desligar mainframe (MVS 3.8j)"
+msgstr "Desligar mainframe (MVS 3.8j)"
+
+msgid "Não foi possível extrair o TK5 ({status})."
+msgstr "Não foi possível extrair o TK5 ({status})."
+
+msgid "Baixando o TK5 (475 MB) do site de Rob Prins…"
+msgstr "Baixando o TK5 (475 MB) do site de Rob Prins…"
+
+msgid "Conferindo o arquivo…"
+msgstr "Conferindo o arquivo…"
+
+msgid "Extraindo os volumes do MVS…"
+msgstr "Extraindo os volumes do MVS…"
+
+msgid "Criando os atalhos…"
+msgstr "Criando os atalhos…"
+
+msgid "O mainframe está ligado. Desligue-o pelo atalho \"Desligar mainframe\" e espere o Hercules fechar antes de remover."
+msgstr "O mainframe está ligado. Desligue-o pelo atalho \"Desligar mainframe\" e espere o Hercules fechar antes de remover."
+
+msgid "Pronto. No menu de aplicativos, use \"Ligar mainframe\" e depois \"Terminal TSO (x3270)\". Logon HERC01, senha CUL8TR. Para desligar, use \"Desligar mainframe\"."
+msgstr "Pronto. No menu de aplicativos, use \"Ligar mainframe\" e depois \"Terminal TSO (x3270)\". Logon HERC01, senha CUL8TR. Para desligar, use \"Desligar mainframe\"."
+
+msgid "MVS 3.8j TK5 no Hercules, com TSO, ISPF, JES2 e compiladores COBOL e Assembler; liga e desliga pelo menu"
+msgstr "MVS 3.8j TK5 no Hercules, com TSO, ISPF, JES2 e compiladores COBOL e Assembler; liga e desliga pelo menu"
+
+msgid "Os volumes do MVS saem da sua conta, com tudo o que você gravou neles (datasets, JCL, programas). O Hercules e o x3270 continuam instalados."
+msgstr "Os volumes do MVS saem da sua conta, com tudo o que você gravou neles (datasets, JCL, programas). O Hercules e o x3270 continuam instalados."
+
+msgid "O MVS 3.8j costuma ser tratado como domínio público, mas esse status é contestado, e o Lyra não distribui a imagem. O Vega baixa o TK5 ({version}, 475 MB) do site de Rob Prins, confere o SHA-256 verificado pelo Lyra e instala na sua conta, sem senha. Ocupa cerca de 1 GB. Use só para estudo."
+msgstr "O MVS 3.8j costuma ser tratado como domínio público, mas esse status é contestado, e o Lyra não distribui a imagem. O Vega baixa o TK5 ({version}, 475 MB) do site de Rob Prins, confere o SHA-256 verificado pelo Lyra e instala na sua conta, sem senha. Ocupa cerca de 1 GB. Use só para estudo."
+
+msgid "Antes, instala {packages}, com a senha de administrador."
+msgstr "Antes, instala {packages}, com a senha de administrador."
+
+msgid "Aceitar e instalar"
+msgstr "Aceitar e instalar"
+
+msgid "Mainframe de treinamento"
+msgstr "Mainframe de treinamento"
+
+msgid "Ligando o MVS. O logon no TSO fica disponível em um ou dois minutos."
+msgstr "Ligando o MVS. O logon no TSO fica disponível em um ou dois minutos."
+
+msgid "O mainframe não abriu a porta 3270. Veja o log com: journalctl --user -u lyra-mainframe"
+msgstr "O mainframe não abriu a porta 3270. Veja o log com: journalctl --user -u lyra-mainframe"
+
+msgid "O mainframe já está desligado."
+msgstr "O mainframe já está desligado."
+
+msgid "Desligando o MVS. Saia do TSO; o Hercules fecha sozinho em alguns minutos."
+msgstr "Desligando o MVS. Saia do TSO; o Hercules fecha sozinho em alguns minutos."
+
+msgid "Não foi possível pedir o desligamento ao Hercules."
+msgstr "Não foi possível pedir o desligamento ao Hercules."
+
+msgid "Logon no TSO: HERC01 ou HERC02, senha CUL8TR (administradores)"
+msgstr "Logon no TSO: HERC01 ou HERC02, senha CUL8TR (administradores)"
+
+msgid "HERC03 ou HERC04, senha PASS4U (usuários comuns)"
+msgstr "HERC03 ou HERC04, senha PASS4U (usuários comuns)"
+
+msgid "IBMUSER, senha IBMPASS, só para recuperação"
+msgstr "IBMUSER, senha IBMPASS, só para recuperação"
+
+msgid "São as senhas padrão do TK5, iguais em toda instalação. O terminal só aceita conexões deste computador; troque-as pelo RAKF, logado como HERC01."
+msgstr "São as senhas padrão do TK5, iguais em toda instalação. O terminal só aceita conexões deste computador; troque-as pelo RAKF, logado como HERC01."
