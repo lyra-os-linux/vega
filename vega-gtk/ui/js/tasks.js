@@ -149,6 +149,14 @@ export async function runNpm(install, id, title) {
   return started;
 }
 
+/** Ferramenta Oracle (Instant Client, SQLcl, SQL Developer…), na conta do usuário. */
+export async function runOracle(install, id, title) {
+  const callId = await call(install ? "oracle_install" : "oracle_remove", { id });
+  const started = track(`software:${callId}`, title, "software");
+  started.task.action = { kind: install ? "install" : "remove", origin: "oracle", id };
+  return started;
+}
+
 /** Serviço em contêiner (Podman sem root): baixa a imagem do catálogo. */
 export async function runContainerInstall(id, title) {
   const callId = await call("containers_install", { id });

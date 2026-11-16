@@ -7458,3 +7458,36 @@ msgstr "Free official learning paths to study Salesforce and prepare for certifi
 
 msgid "Org gratuita da Salesforce para desenvolver e testar, sem prazo de validade"
 msgstr "Free Salesforce org to develop and test, with no expiration date"
+
+msgid "Não foi possível extrair {file} ({status})."
+msgstr "Could not extract {file} ({status})."
+
+msgid "Baixando {file} do site da Oracle…"
+msgstr "Downloading {file} from the Oracle website…"
+
+msgid "Configurando…"
+msgstr "Configuring…"
+
+msgid "A instalação terminou sem o arquivo esperado."
+msgstr "The installation finished without the expected file."
+
+msgid "Bibliotecas cliente do Oracle, SQL*Plus e as ferramentas exp/imp e Data Pump, na sua conta"
+msgstr "Oracle client libraries, SQL*Plus and the exp/imp and Data Pump tools, in your account"
+
+msgid "Linha de comando moderna do Oracle (sql), com histórico, formatação e Liquibase"
+msgstr "Modern Oracle command line (sql), with history, formatting and Liquibase"
+
+msgid "IDE gratuita da Oracle para SQL e PL/SQL, com depurador e relatórios"
+msgstr "Oracle's free IDE for SQL and PL/SQL, with debugger and reports"
+
+msgid "Modelagem lógica e física de bancos Oracle, com engenharia reversa e DDL"
+msgstr "Logical and physical modeling of Oracle databases, with reverse engineering and DDL"
+
+msgid "A ferramenta sai de ~/.local/opt/oracle, com o comando e o atalho dela, sem senha. As conexões em ~/.local/opt/oracle/network/admin ficam."
+msgstr "The tool is removed from ~/.local/opt/oracle, with its command and shortcut, without a password. The connections in ~/.local/opt/oracle/network/admin stay."
+
+msgid "O Vega baixa a ferramenta do site da Oracle, distribuída sob os Oracle Free Use Terms and Conditions, confere o SHA-256 verificado pelo Lyra e instala na sua conta, em ~/.local/opt/oracle, sem senha."
+msgstr "Vega downloads the tool from the Oracle website, distributed under the Oracle Free Use Terms and Conditions, checks the SHA-256 verified by Lyra and installs it in your account, in ~/.local/opt/oracle, without a password."
+
+msgid "As conexões FREE e FREEPDB1 com o Oracle Database Free local (Vega → Contêineres) já vêm em ~/.local/opt/oracle/network/admin/tnsnames.ora."
+msgstr "The FREE and FREEPDB1 connections to the local Oracle Database Free (Vega → Containers) already come in ~/.local/opt/oracle/network/admin/tnsnames.ora."

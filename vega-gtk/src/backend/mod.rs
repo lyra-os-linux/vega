@@ -29,6 +29,7 @@ pub mod monitor;
 pub mod network;
 pub mod notify;
 pub mod npm_apps;
+pub mod oracle_tools;
 pub mod power;
 pub mod preparation;
 pub mod receita_apps;

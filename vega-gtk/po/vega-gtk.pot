@@ -8029,3 +8029,36 @@ msgstr ""
 
 msgid "Org gratuita da Salesforce para desenvolver e testar, sem prazo de validade"
 msgstr ""
+
+msgid "Não foi possível extrair {file} ({status})."
+msgstr ""
+
+msgid "Baixando {file} do site da Oracle…"
+msgstr ""
+
+msgid "Configurando…"
+msgstr ""
+
+msgid "A instalação terminou sem o arquivo esperado."
+msgstr ""
+
+msgid "Bibliotecas cliente do Oracle, SQL*Plus e as ferramentas exp/imp e Data Pump, na sua conta"
+msgstr ""
+
+msgid "Linha de comando moderna do Oracle (sql), com histórico, formatação e Liquibase"
+msgstr ""
+
+msgid "IDE gratuita da Oracle para SQL e PL/SQL, com depurador e relatórios"
+msgstr ""
+
+msgid "Modelagem lógica e física de bancos Oracle, com engenharia reversa e DDL"
+msgstr ""
+
+msgid "A ferramenta sai de ~/.local/opt/oracle, com o comando e o atalho dela, sem senha. As conexões em ~/.local/opt/oracle/network/admin ficam."
+msgstr ""
+
+msgid "O Vega baixa a ferramenta do site da Oracle, distribuída sob os Oracle Free Use Terms and Conditions, confere o SHA-256 verificado pelo Lyra e instala na sua conta, em ~/.local/opt/oracle, sem senha."
+msgstr ""
+
+msgid "As conexões FREE e FREEPDB1 com o Oracle Database Free local (Vega → Contêineres) já vêm em ~/.local/opt/oracle/network/admin/tnsnames.ora."
+msgstr ""

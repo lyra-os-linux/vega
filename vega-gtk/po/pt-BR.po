@@ -7457,3 +7457,36 @@ msgstr "Trilhas gratuitas oficiais para estudar Salesforce e se preparar para as
 
 msgid "Org gratuita da Salesforce para desenvolver e testar, sem prazo de validade"
 msgstr "Org gratuita da Salesforce para desenvolver e testar, sem prazo de validade"
+
+msgid "Não foi possível extrair {file} ({status})."
+msgstr "Não foi possível extrair {file} ({status})."
+
+msgid "Baixando {file} do site da Oracle…"
+msgstr "Baixando {file} do site da Oracle…"
+
+msgid "Configurando…"
+msgstr "Configurando…"
+
+msgid "A instalação terminou sem o arquivo esperado."
+msgstr "A instalação terminou sem o arquivo esperado."
+
+msgid "Bibliotecas cliente do Oracle, SQL*Plus e as ferramentas exp/imp e Data Pump, na sua conta"
+msgstr "Bibliotecas cliente do Oracle, SQL*Plus e as ferramentas exp/imp e Data Pump, na sua conta"
+
+msgid "Linha de comando moderna do Oracle (sql), com histórico, formatação e Liquibase"
+msgstr "Linha de comando moderna do Oracle (sql), com histórico, formatação e Liquibase"
+
+msgid "IDE gratuita da Oracle para SQL e PL/SQL, com depurador e relatórios"
+msgstr "IDE gratuita da Oracle para SQL e PL/SQL, com depurador e relatórios"
+
+msgid "Modelagem lógica e física de bancos Oracle, com engenharia reversa e DDL"
+msgstr "Modelagem lógica e física de bancos Oracle, com engenharia reversa e DDL"
+
+msgid "A ferramenta sai de ~/.local/opt/oracle, com o comando e o atalho dela, sem senha. As conexões em ~/.local/opt/oracle/network/admin ficam."
+msgstr "A ferramenta sai de ~/.local/opt/oracle, com o comando e o atalho dela, sem senha. As conexões em ~/.local/opt/oracle/network/admin ficam."
+
+msgid "O Vega baixa a ferramenta do site da Oracle, distribuída sob os Oracle Free Use Terms and Conditions, confere o SHA-256 verificado pelo Lyra e instala na sua conta, em ~/.local/opt/oracle, sem senha."
+msgstr "O Vega baixa a ferramenta do site da Oracle, distribuída sob os Oracle Free Use Terms and Conditions, confere o SHA-256 verificado pelo Lyra e instala na sua conta, em ~/.local/opt/oracle, sem senha."
+
+msgid "As conexões FREE e FREEPDB1 com o Oracle Database Free local (Vega → Contêineres) já vêm em ~/.local/opt/oracle/network/admin/tnsnames.ora."
+msgstr "As conexões FREE e FREEPDB1 com o Oracle Database Free local (Vega → Contêineres) já vêm em ~/.local/opt/oracle/network/admin/tnsnames.ora."
