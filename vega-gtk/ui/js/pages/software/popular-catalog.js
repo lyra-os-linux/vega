@@ -288,6 +288,9 @@ export const POPULAR = [
     id: "office",
     title: N_("Escritório e anotações"),
     apps: [
+      // Fontes TrueType da Microsoft (ms_fonts.rs): o Leap 16.1 não traz o
+      // fetchmsttfonts; o Vega baixa, confere o SHA-512 e instala na conta.
+      { name: "Fontes da Microsoft", origin: "fonts", id: "ms-core-fonts", tags: [N_("Arial"), N_("Times New Roman"), N_("Verdana"), N_("fontes")], tasks: ["edit", "study"], text: N_("Arial, Times New Roman, Verdana, Courier New e outras, para documentos que ficam iguais aos do Windows") },
       { name: "ONLYOFFICE", origin: "flathub", id: "org.onlyoffice.desktopeditors", tasks: ["edit", "study"], tags: [N_("alternativa ao Microsoft Office"), N_("Word"), N_("Excel"), N_("PowerPoint")], text: N_("Documentos, planilhas e apresentações") },
       // vega#212: IRPF do site da Receita, versão e SHA-256 fixados em
       // backend/receita_apps.rs; instala em ~/ProgramasRFB, sem senha.

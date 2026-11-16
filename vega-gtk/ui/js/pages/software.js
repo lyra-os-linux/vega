@@ -55,7 +55,7 @@ const SHOWCASES = {
 /** Cartões de todas as vitrines, para a busca offline do catálogo curado. */
 const CURATED = curatedEntries(Object.entries(SHOWCASES).map(([tab, { label, catalog }]) => ({ tab, label, catalog })));
 /** Origens instaladas na conta do usuário: sem detalhes no vegad, removidas pelo cartão. */
-const USER_ORIGINS = new Set(["windows", "npm", "vscode", "mainframe", "appimage", "receita", "preset", "webapp"]);
+const USER_ORIGINS = new Set(["windows", "npm", "vscode", "mainframe", "appimage", "receita", "preset", "webapp", "fonts"]);
 const ORIGIN_RANK = { official: 0, flathub: 1 };
 
 // Estado que sobrevive à troca de página, como os widgets do vega-gtk.
@@ -71,7 +71,7 @@ const memory = {
 };
 
 const queueKey = (pkg) => `${pkg.origin}\u0000${pkg.id}`;
-const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "vscode" ? "VS Code" : origin === "link" ? t("Site") : origin === "mainframe" ? "TK5" : origin === "appimage" ? "AppImage" : origin === "receita" ? t("Receita Federal") : origin === "preset" ? t("Perfil") : origin === "webapp" ? t("Webapp") : origin);
+const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "vscode" ? "VS Code" : origin === "link" ? t("Site") : origin === "mainframe" ? "TK5" : origin === "appimage" ? "AppImage" : origin === "receita" ? t("Receita Federal") : origin === "preset" ? t("Perfil") : origin === "webapp" ? t("Webapp") : origin === "fonts" ? "Microsoft" : origin);
 const rankOrigin = (a, b) => (ORIGIN_RANK[a.origin] ?? 2) - (ORIGIN_RANK[b.origin] ?? 2);
 
 function packageIcon(pkg, size = 40) {
@@ -481,6 +481,7 @@ export default {
         else if (app.origin === "appimage") installAppImage(app);
         else if (app.origin === "receita") installReceita(app);
         else if (app.origin === "preset") installPreset(app);
+        else if (app.origin === "fonts") installMsFonts(app);
         else if (app.origin === "webapp") installWebapp(app);
         else if (app.repo?.package) installFromRepoPackage(app);
         else if (app.repo) installFromRepo(app);
@@ -677,9 +678,9 @@ export default {
 
     /** Remove um app instalado na conta do usuário (Windows, npm ou AppImage). */
     async function removeUserApp(app) {
-      if (app.origin === "preset" || app.origin === "webapp") {
+      if (app.origin === "preset" || app.origin === "webapp" || app.origin === "fonts") {
         try {
-          await call(app.origin === "webapp" ? "webapp_remove" : "easyeffects_preset_remove", { id: app.id });
+          await call(app.origin === "webapp" ? "webapp_remove" : app.origin === "fonts" ? "ms_fonts_remove" : "easyeffects_preset_remove", { id: app.id });
         } catch (error) {
           return fail(error, t("Não foi possível concluir a operação"));
         }
@@ -926,6 +927,33 @@ export default {
     }
 
     /**
+     * Fontes da Microsoft (ms_fonts.rs): instala o cabextract pelo vegad, se
+     * faltar, e depois baixa, confere e extrai as fontes na conta do usuário.
+     */
+    async function installMsFonts(app) {
+      const ok = await confirm({
+        title: t("Instalar {name}?", { name: app.name }),
+        text: t("O Vega baixa as fontes do SourceForge, confere cada arquivo e instala na sua conta, em ~/.local/share/fonts, sem senha. Elas seguem a licença da Microsoft, que permite usar, não redistribuir. Se faltar o cabextract, ele é instalado antes."),
+        ic: "download",
+        confirmLabel: t("Instalar"),
+        required: true,
+      });
+      if (!ok) return;
+      const found = await call("commands_present", { names: ["cabextract"] }).catch(() => []);
+      if (!found.includes("cabextract") && !(await transact({ kind: "install", origin: "official", id: "cabextract" }, t("Instalando {name}…", { name: "cabextract" }), { reload: false }))?.success) return;
+      toast(t("Baixando as fontes da Microsoft…"));
+      try {
+        await call("ms_fonts_install");
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      toast(t("Fontes instaladas. Reabra os programas abertos para vê-las."));
+      popularInstalled = null;
+      userInstalled = null;
+      load();
+    }
+
+    /**
      * Webapp de banco (webapps.rs): instala o módulo de segurança, se faltar,
      * e grava o atalho no menu, na conta do usuário, sem senha.
      */
@@ -970,7 +998,7 @@ export default {
       // (instalador próprio na conta do usuário); se o comando existe, o
       // cartão mostra "Instalado".
       const byCommand = Object.values(SHOWCASES).flatMap((showcase) => showcase.catalog.flatMap((section) => section.apps)).filter((app) => app.command);
-      const [details, packages, windows, npmApps, vscodeExtensions, mainframes, appImages, receita, presets, webapps, encoders, ia32, boot, commands] = await Promise.all([
+      const [details, packages, windows, npmApps, vscodeExtensions, mainframes, appImages, receita, presets, msFonts, webapps, encoders, ia32, boot, commands] = await Promise.all([
         call("software_details", { origin: "official", id: "flatpak" }).catch(() => null),
         call("software_installed"),
         call("windows_installed").catch(() => []),
@@ -980,6 +1008,7 @@ export default {
         call("appimage_installed").catch(() => []),
         call("receita_installed").catch(() => []),
         call("easyeffects_presets_installed").catch(() => []),
+        call("ms_fonts_installed").catch(() => []),
         call("webapps_installed").catch(() => []),
         call("obs_encoders").catch(() => null),
         call("windows_ia32").catch(() => true),
@@ -999,6 +1028,7 @@ export default {
         ...appImages.map((id) => queueKey({ origin: "appimage", id })),
         ...receita.map((id) => queueKey({ origin: "receita", id })),
         ...presets.map((id) => queueKey({ origin: "preset", id })),
+        ...msFonts.map((id) => queueKey({ origin: "fonts", id })),
         ...webapps.map((id) => queueKey({ origin: "webapp", id })),
       ]);
       const found = new Set(commands);
@@ -1048,7 +1078,7 @@ export default {
 
     /** Apps dos catálogos instalados na conta do usuário, sem repetir. */
     async function loadUserInstalled() {
-      const [windows, npmApps, vscodeExtensions, mainframes, appImages, receita, presets, webapps] = await Promise.all([
+      const [windows, npmApps, vscodeExtensions, mainframes, appImages, receita, presets, msFonts, webapps] = await Promise.all([
         call("windows_installed").catch(() => []),
         call("npm_installed").catch(() => []),
         call("vscode_extensions_installed").catch(() => []),
@@ -1056,6 +1086,7 @@ export default {
         call("appimage_installed").catch(() => []),
         call("receita_installed").catch(() => []),
         call("easyeffects_presets_installed").catch(() => []),
+        call("ms_fonts_installed").catch(() => []),
         call("webapps_installed").catch(() => []),
       ]);
       const keys = new Set([
@@ -1066,6 +1097,7 @@ export default {
         ...appImages.map((id) => queueKey({ origin: "appimage", id })),
         ...receita.map((id) => queueKey({ origin: "receita", id })),
         ...presets.map((id) => queueKey({ origin: "preset", id })),
+        ...msFonts.map((id) => queueKey({ origin: "fonts", id })),
         ...webapps.map((id) => queueKey({ origin: "webapp", id })),
       ]);
       const apps = new Map();

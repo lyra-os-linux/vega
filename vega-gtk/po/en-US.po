@@ -7599,3 +7599,39 @@ msgstr "Undo kernel tuning"
 
 msgid "Aplicando…"
 msgstr "Applying…"
+
+msgid "O arquivo {file} baixado não confere com o original. Nada foi instalado."
+msgstr "The downloaded file {file} does not match the original. Nothing was installed."
+
+msgid "O cabextract não está instalado."
+msgstr "cabextract is not installed."
+
+msgid "Não foi possível extrair {file}."
+msgstr "Could not extract {file}."
+
+msgid "Nenhuma fonte foi extraída."
+msgstr "No font was extracted."
+
+msgid "Arial"
+msgstr "Arial"
+
+msgid "Times New Roman"
+msgstr "Times New Roman"
+
+msgid "Verdana"
+msgstr "Verdana"
+
+msgid "Arial, Times New Roman, Verdana, Courier New e outras, para documentos que ficam iguais aos do Windows"
+msgstr "Arial, Times New Roman, Verdana, Courier New and others, so documents look the same as on Windows"
+
+msgid "O Vega baixa as fontes do SourceForge, confere cada arquivo e instala na sua conta, em ~/.local/share/fonts, sem senha. Elas seguem a licença da Microsoft, que permite usar, não redistribuir. Se faltar o cabextract, ele é instalado antes."
+msgstr "Vega downloads the fonts from SourceForge, checks each file and installs them in your account, in ~/.local/share/fonts, without a password. They follow Microsoft's license, which allows use, not redistribution. If cabextract is missing, it is installed first."
+
+msgid "Baixando as fontes da Microsoft…"
+msgstr "Downloading the Microsoft fonts…"
+
+msgid "Fontes instaladas. Reabra os programas abertos para vê-las."
+msgstr "Fonts installed. Reopen open programs to see them."
+
+msgid "Fontes da Microsoft"
+msgstr "Microsoft fonts"
