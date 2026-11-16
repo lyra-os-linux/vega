@@ -280,20 +280,28 @@ fn install(tool: &Tool, report: &dyn Fn(u32, String)) -> Result<(), String> {
     let cache = cache_dir(&home);
     std::fs::create_dir_all(&opt).map_err(|error| error.to_string())?;
     std::fs::create_dir_all(&cache).map_err(|error| error.to_string())?;
-    let total = tool.artifacts.len() as u32;
+    let total_steps = tool.artifacts.len() as u32;
     for (index, artifact) in tool.artifacts.iter().enumerate() {
-        let step = 80 * index as u32 / total;
+        let step = 80 * index as u32 / total_steps;
         let zip = cache.join(artifact.expected.file);
-        report(
-            5 + step,
-            gettext("Baixando {file} do site da Oracle…").replace("{file}", artifact.expected.file),
-        );
-        let result = super::receita_apps::download(artifact.url, &zip)
-            .and_then(|()| {
-                guided_download::verify(&artifact.expected, &zip)
-                    .map_err(|rejection| rejection.message(&artifact.expected))
-            })
-            .and_then(|()| unzip(&zip, &opt));
+        let label =
+            gettext("Baixando {file} do site da Oracle…").replace("{file}", artifact.expected.file);
+        report(5 + step, label.clone());
+        let result = super::receita_apps::download_reporting(artifact.url, &zip, |done, total| {
+            let (percent, message) = super::receita_apps::download_step(
+                &label,
+                done,
+                total,
+                5 + step,
+                5 + step + 80 / total_steps,
+            );
+            report(percent, message);
+        })
+        .and_then(|()| {
+            guided_download::verify(&artifact.expected, &zip)
+                .map_err(|rejection| rejection.message(&artifact.expected))
+        })
+        .and_then(|()| unzip(&zip, &opt));
         let _ = std::fs::remove_file(&zip);
         result?;
     }

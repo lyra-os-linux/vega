@@ -8101,3 +8101,15 @@ msgstr ""
 
 msgid "Baixe o instalador no site que abriu no navegador. A instalação começa sozinha quando o arquivo chegar na pasta de downloads."
 msgstr ""
+
+msgid "{done} MB de {total} MB"
+msgstr ""
+
+msgid "{done} MB baixados"
+msgstr ""
+
+msgid "Preparando o download da imagem…"
+msgstr ""
+
+msgid "Baixando a imagem: {done} MB de {total} MB"
+msgstr ""

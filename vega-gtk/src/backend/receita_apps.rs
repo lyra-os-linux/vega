@@ -12,7 +12,7 @@
 //! `aplicacao/dados` dentro da pasta do programa, são movidas antes para
 //! `~/ProgramasRFB/<programa>-declarações`; nada do contribuinte é apagado.
 
-use std::io::Write;
+use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
 use gettextrs::gettext;
@@ -133,6 +133,17 @@ fn installer_desktop_files(data: &Path, dir: &Path) -> Vec<PathBuf> {
 }
 
 pub(crate) fn download(url: &str, target: &Path) -> Result<(), String> {
+    download_reporting(url, target, |_, _| {})
+}
+
+/// `download` que informa os bytes baixados e o total (quando o servidor
+/// manda o `Content-Length`), no máximo uma vez por segundo: um download de
+/// minutos não pode deixar a tela parada (vega#283).
+pub(crate) fn download_reporting(
+    url: &str,
+    target: &Path,
+    mut progress: impl FnMut(u64, Option<u64>),
+) -> Result<(), String> {
     let mut response = reqwest::blocking::Client::builder()
         .https_only(true)
         .user_agent("lyra-vega")
@@ -141,11 +152,58 @@ pub(crate) fn download(url: &str, target: &Path) -> Result<(), String> {
         .and_then(|client| client.get(url).send())
         .and_then(|response| response.error_for_status())
         .map_err(|error| error.to_string())?;
+    let total = response.content_length();
     let mut file = std::fs::File::create(target).map_err(|error| error.to_string())?;
-    response
-        .copy_to(&mut file)
-        .map_err(|error| error.to_string())?;
+    let mut buffer = vec![0u8; 64 * 1024];
+    let mut done = 0u64;
+    let mut last = std::time::Instant::now();
+    loop {
+        let read = response
+            .read(&mut buffer)
+            .map_err(|error| error.to_string())?;
+        if read == 0 {
+            break;
+        }
+        file.write_all(&buffer[..read])
+            .map_err(|error| error.to_string())?;
+        done += read as u64;
+        if last.elapsed() >= std::time::Duration::from_secs(1) {
+            last = std::time::Instant::now();
+            progress(done, total);
+        }
+    }
+    progress(done, total);
     file.flush().map_err(|error| error.to_string())
+}
+
+/// Porcentagem e texto de um download que ocupa a faixa `from..to` da barra.
+/// Sem o total, a barra fica em `from`, mas o texto continua mudando.
+pub(crate) fn download_step(
+    label: &str,
+    done: u64,
+    total: Option<u64>,
+    from: u32,
+    to: u32,
+) -> (u32, String) {
+    let mb = |bytes: u64| (bytes / 1_000_000).to_string();
+    match total.filter(|total| *total > 0) {
+        Some(total) => (
+            from + (u64::from(to - from) * done.min(total) / total) as u32,
+            format!(
+                "{label} {}",
+                gettext("{done} MB de {total} MB")
+                    .replace("{done}", &mb(done))
+                    .replace("{total}", &mb(total))
+            ),
+        ),
+        None => (
+            from,
+            format!(
+                "{label} {}",
+                gettext("{done} MB baixados").replace("{done}", &mb(done))
+            ),
+        ),
+    }
 }
 
 fn install(program: &Program, report: &dyn Fn(u32, String)) -> Result<(), String> {
@@ -157,35 +215,36 @@ fn install(program: &Program, report: &dyn Fn(u32, String)) -> Result<(), String
     }
     std::fs::create_dir_all(&cache).map_err(|error| error.to_string())?;
     let installer = cache.join(program.installer.file);
-    report(
-        5,
-        gettext("Baixando {file} do site da Receita Federal…")
-            .replace("{file}", program.installer.file),
-    );
-    let result = download(program.url, &installer)
-        .and_then(|()| {
-            report(60, gettext("Conferindo o instalador…"));
-            guided_download::verify(&program.installer, &installer)
-                .map_err(|rejection| rejection.message(&program.installer))
-        })
-        .and_then(|()| {
-            report(
-                70,
-                gettext("Instalando {name}…").replace("{name}", program.name),
-            );
-            let mut command = std::process::Command::new("sh");
-            command
-                .arg(&installer)
-                .args(["-q", "-overwrite", "-dir"])
-                .arg(install_dir(&home, program));
-            crate::webkit_env::clean_command(&mut command);
-            let status = command.status().map_err(|error| error.to_string())?;
-            if !status.success() || !launcher(&home, program).is_file() {
-                return Err(gettext("O instalador da Receita falhou ({status}).")
-                    .replace("{status}", &status.to_string()));
-            }
-            Ok(())
-        });
+    let label = gettext("Baixando {file} do site da Receita Federal…")
+        .replace("{file}", program.installer.file);
+    report(5, label.clone());
+    let result = download_reporting(program.url, &installer, |done, total| {
+        let (percent, message) = download_step(&label, done, total, 5, 60);
+        report(percent, message);
+    })
+    .and_then(|()| {
+        report(60, gettext("Conferindo o instalador…"));
+        guided_download::verify(&program.installer, &installer)
+            .map_err(|rejection| rejection.message(&program.installer))
+    })
+    .and_then(|()| {
+        report(
+            70,
+            gettext("Instalando {name}…").replace("{name}", program.name),
+        );
+        let mut command = std::process::Command::new("sh");
+        command
+            .arg(&installer)
+            .args(["-q", "-overwrite", "-dir"])
+            .arg(install_dir(&home, program));
+        crate::webkit_env::clean_command(&mut command);
+        let status = command.status().map_err(|error| error.to_string())?;
+        if !status.success() || !launcher(&home, program).is_file() {
+            return Err(gettext("O instalador da Receita falhou ({status}).")
+                .replace("{status}", &status.to_string()));
+        }
+        Ok(())
+    });
     let _ = std::fs::remove_file(&installer);
     let _ = std::fs::remove_file(legacy_desktop_path(&data, program));
     result
@@ -296,6 +355,28 @@ pub fn receita_remove(app: AppHandle, id: String) -> Result<u32, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn download_step_maps_bytes_into_the_range() {
+        assert_eq!(download_step("TK5", 0, Some(100_000_000), 5, 60).0, 5);
+        assert_eq!(
+            download_step("TK5", 50_000_000, Some(100_000_000), 5, 60).0,
+            32
+        );
+        assert_eq!(
+            download_step("TK5", 200_000_000, Some(100_000_000), 5, 60).0,
+            60
+        );
+        assert!(
+            download_step("TK5", 50_000_000, Some(100_000_000), 5, 60)
+                .1
+                .contains("50")
+        );
+        // Sem Content-Length a barra fica parada, mas o texto muda.
+        let (percent, text) = download_step("TK5", 12_000_000, None, 5, 60);
+        assert_eq!(percent, 5);
+        assert!(text.contains("12"));
+    }
 
     #[test]
     fn programs_are_pinned_to_the_receita_site() {

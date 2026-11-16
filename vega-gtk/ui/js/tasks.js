@@ -290,7 +290,8 @@ export function mountTasksButton(button) {
                   task.state === "running" ? h("span", { class: "spinner" }) : icon(task.state === "done" ? "check-circle" : "alert-circle", 16, "ic"),
                   task.title,
                   h("span", { class: "pct" }, task.state === "running" ? (task.percent != null ? `${task.percent}%` : "") : task.state === "done" ? t("Concluído") : t("Falhou"))),
-                task.state === "running" && task.percent != null ? meter(task.percent / 100) : null,
+                // Sem porcentagem, a barra pulsa: nenhuma tarefa fica sem progresso (vega#285).
+                task.state === "running" && (task.percent != null ? meter(task.percent / 100, { warnAt: 2, critAt: 2 }) : h("div", { class: "meter indeterminate" }, h("i"))),
                 h("small", {}, task.message))),
       );
     };

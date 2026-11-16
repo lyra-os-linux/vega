@@ -7872,3 +7872,15 @@ msgstr "Abrir"
 
 msgid "Não foi possível abrir {name}"
 msgstr "No se pudo abrir {name}"
+
+msgid "{done} MB de {total} MB"
+msgstr "{done} MB de {total} MB"
+
+msgid "{done} MB baixados"
+msgstr "{done} MB descargados"
+
+msgid "Preparando o download da imagem…"
+msgstr "Preparando la descarga de la imagen…"
+
+msgid "Baixando a imagem: {done} MB de {total} MB"
+msgstr "Descargando la imagen: {done} MB de {total} MB"
