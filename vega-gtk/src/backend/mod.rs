@@ -6,6 +6,7 @@
 //! exibe o texto. Operações longas devolvem o id da transação na hora e
 //! repassam o andamento como eventos.
 
+pub mod app_launch;
 pub mod appimage_apps;
 pub mod backup;
 pub mod banks;
@@ -25,11 +26,13 @@ pub mod kernel;
 pub mod logs;
 pub mod mainframe;
 pub mod monitor;
+pub mod ms_fonts;
 pub mod network;
 pub mod notify;
 pub mod npm_apps;
 pub mod power;
 pub mod preparation;
+pub mod profiles;
 pub mod receita_apps;
 pub mod services;
 pub mod session_tx;
