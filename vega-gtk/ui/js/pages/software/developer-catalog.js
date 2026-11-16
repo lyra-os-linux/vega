@@ -227,8 +227,12 @@ export const DEVELOPER = [
     // Zowe CLI pelo npm e Zowe Explorer pelo VS Code, na conta do usuário. O
     // IBM Z Xplore é um z/OS remoto e gratuito: o cartão só abre o site.
     // vega#194: MVS 3.8j TK5 no Hercules do Lyra (backend/mainframe.rs).
-    id: "mainframe",
-    title: N_("COBOL e mainframe"),
+    // E7: Oracle e Oracle ERP entram nesta seção, a pedido do mantenedor
+    // (16/11/2026): estudo e programação de sistemas corporativos num só lugar.
+    // As extensões da Oracle vão pela origem vscode; MyLearn, documentação e
+    // Free Tier são serviços remotos (origem link).
+    id: "corporate",
+    title: N_("Corporativo: COBOL, mainframe, Oracle e ERP"),
 
     tasks: ["code"],
     apps: [
@@ -240,6 +244,11 @@ export const DEVELOPER = [
       { name: "Zowe CLI", origin: "npm", id: "@zowe/cli", command: "zowe", text: N_("Linha de comando da Open Mainframe Project para z/OS: jobs, datasets e USS") },
       { name: "Zowe Explorer", origin: "vscode", id: "Zowe.vscode-extension-for-zowe", text: N_("Datasets, jobs e USS do z/OS no VS Code; já vem no Code4z") },
       { name: "Mainframe de treinamento (MVS 3.8j)", origin: "mainframe", id: "tk5", text: N_("MVS 3.8j TK5 no Hercules, com TSO, ISPF, JES2 e compiladores COBOL e Assembler; liga e desliga pelo menu") },
+      { name: "Oracle SQL Developer for VS Code", origin: "vscode", id: "Oracle.sql-developer", text: N_("Conexões, consultas SQL e PL/SQL no banco Oracle, dentro do VS Code") },
+      { name: "Oracle Developer Tools for VS Code", origin: "vscode", id: "Oracle.oracledevtools", text: N_("Edição e depuração de SQL e PL/SQL, com IntelliSense para o banco Oracle") },
+      { name: "Oracle MyLearn", origin: "link", id: "oracle-mylearn", url: "https://mylearn.oracle.com/", text: N_("Cursos e trilhas oficiais da Oracle University para o Fusion Cloud ERP (Financials, SCM, Procurement); há trilhas gratuitas") },
+      { name: "Documentação do Oracle ERP", origin: "link", id: "oracle-erp-docs", url: "https://docs.oracle.com/en/cloud/saas/financials/", text: N_("Manuais oficiais do Oracle Fusion Cloud Financials: implantação, uso e extensões") },
+      { name: "Oracle Cloud Free Tier", origin: "link", id: "oracle-cloud-free", url: "https://www.oracle.com/cloud/free/", text: N_("Conta gratuita na nuvem da Oracle com Autonomous Database e APEX, para praticar SQL, PL/SQL e extensões do ERP") },
       { name: "IBM Z Xplore", origin: "link", id: "ibm-z-xplore", url: "https://www.ibm.com/products/z/resources/zxplore", text: N_("z/OS real, remoto e gratuito da IBM para aprender JCL, COBOL, REXX e Db2 com o VS Code e o Zowe") },
     ],
   },

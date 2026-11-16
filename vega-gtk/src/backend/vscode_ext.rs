@@ -24,6 +24,8 @@ use super::flatpak_session::follow_then;
 pub const EXTENSIONS: &[&str] = &[
     "broadcomMFD.code4z-extension-pack",
     "Zowe.vscode-extension-for-zowe",
+    "Oracle.sql-developer",
+    "Oracle.oracledevtools",
 ];
 
 /// `~/.vscode/extensions/extensions.json`.

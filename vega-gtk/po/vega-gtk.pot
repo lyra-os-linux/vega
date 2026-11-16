@@ -7903,3 +7903,21 @@ msgstr ""
 
 msgid "São as senhas padrão do TK5, iguais em toda instalação. O terminal só aceita conexões deste computador; troque-as pelo RAKF, logado como HERC01."
 msgstr ""
+
+msgid "Corporativo: COBOL, mainframe, Oracle e ERP"
+msgstr ""
+
+msgid "Conexões, consultas SQL e PL/SQL no banco Oracle, dentro do VS Code"
+msgstr ""
+
+msgid "Edição e depuração de SQL e PL/SQL, com IntelliSense para o banco Oracle"
+msgstr ""
+
+msgid "Cursos e trilhas oficiais da Oracle University para o Fusion Cloud ERP (Financials, SCM, Procurement); há trilhas gratuitas"
+msgstr ""
+
+msgid "Manuais oficiais do Oracle Fusion Cloud Financials: implantação, uso e extensões"
+msgstr ""
+
+msgid "Conta gratuita na nuvem da Oracle com Autonomous Database e APEX, para praticar SQL, PL/SQL e extensões do ERP"
+msgstr ""

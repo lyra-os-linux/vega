@@ -7332,3 +7332,21 @@ msgstr "IBMUSER, contraseña IBMPASS, solo para recuperación"
 
 msgid "São as senhas padrão do TK5, iguais em toda instalação. O terminal só aceita conexões deste computador; troque-as pelo RAKF, logado como HERC01."
 msgstr "Son las contraseñas predeterminadas de TK5, iguales en toda instalación. La terminal solo acepta conexiones desde este equipo; cámbialas con RAKF, con la sesión de HERC01."
+
+msgid "Corporativo: COBOL, mainframe, Oracle e ERP"
+msgstr "Corporativo: COBOL, mainframe, Oracle y ERP"
+
+msgid "Conexões, consultas SQL e PL/SQL no banco Oracle, dentro do VS Code"
+msgstr "Conexiones, consultas SQL y PL/SQL en la base de datos Oracle, dentro de VS Code"
+
+msgid "Edição e depuração de SQL e PL/SQL, com IntelliSense para o banco Oracle"
+msgstr "Edición y depuración de SQL y PL/SQL, con IntelliSense para la base de datos Oracle"
+
+msgid "Cursos e trilhas oficiais da Oracle University para o Fusion Cloud ERP (Financials, SCM, Procurement); há trilhas gratuitas"
+msgstr "Cursos y rutas oficiales de Oracle University para Fusion Cloud ERP (Financials, SCM, Procurement); hay rutas gratuitas"
+
+msgid "Manuais oficiais do Oracle Fusion Cloud Financials: implantação, uso e extensões"
+msgstr "Manuales oficiales de Oracle Fusion Cloud Financials: implantación, uso y extensiones"
+
+msgid "Conta gratuita na nuvem da Oracle com Autonomous Database e APEX, para praticar SQL, PL/SQL e extensões do ERP"
+msgstr "Cuenta gratuita en la nube de Oracle con Autonomous Database y APEX, para practicar SQL, PL/SQL y extensiones del ERP"
