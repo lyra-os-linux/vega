@@ -149,6 +149,14 @@ export async function runNpm(install, id, title) {
   return started;
 }
 
+/** Mainframe de treinamento (MVS 3.8j TK5), na conta do usuário. */
+export async function runMainframe(install, id, title) {
+  const callId = await call(install ? "mainframe_install" : "mainframe_remove", { id });
+  const started = track(`software:${callId}`, title, "software");
+  started.task.action = { kind: install ? "install" : "remove", origin: "mainframe", id };
+  return started;
+}
+
 /** Extensão do VS Code, na conta do usuário. */
 export async function runVscodeExtension(install, id, title) {
   const callId = await call(install ? "vscode_extension_install" : "vscode_extension_remove", { extension: id });

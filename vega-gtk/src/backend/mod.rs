@@ -23,6 +23,7 @@ pub mod guided_download;
 pub mod hardware;
 pub mod kernel;
 pub mod logs;
+pub mod mainframe;
 pub mod monitor;
 pub mod network;
 pub mod notify;

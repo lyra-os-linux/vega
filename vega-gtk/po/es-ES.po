@@ -7254,3 +7254,69 @@ msgstr "Datasets, jobs y USS de z/OS en VS Code; ya viene en Code4z"
 
 msgid "z/OS real, remoto e gratuito da IBM para aprender JCL, COBOL, REXX e Db2 com o VS Code e o Zowe"
 msgstr "z/OS real, remoto y gratuito de IBM para aprender JCL, COBOL, REXX y Db2 con VS Code y Zowe"
+
+msgid "Ligar mainframe (MVS 3.8j)"
+msgstr "Encender mainframe (MVS 3.8j)"
+
+msgid "Terminal TSO (x3270)"
+msgstr "Terminal TSO (x3270)"
+
+msgid "Terminal TSO no console (c3270)"
+msgstr "Terminal TSO en la consola (c3270)"
+
+msgid "Desligar mainframe (MVS 3.8j)"
+msgstr "Apagar mainframe (MVS 3.8j)"
+
+msgid "Não foi possível extrair o TK5 ({status})."
+msgstr "No se pudo extraer TK5 ({status})."
+
+msgid "Baixando o TK5 (475 MB) do site de Rob Prins…"
+msgstr "Descargando TK5 (475 MB) del sitio de Rob Prins…"
+
+msgid "Conferindo o arquivo…"
+msgstr "Comprobando el archivo…"
+
+msgid "Extraindo os volumes do MVS…"
+msgstr "Extrayendo los volúmenes de MVS…"
+
+msgid "Criando os atalhos…"
+msgstr "Creando los accesos directos…"
+
+msgid "O mainframe está ligado. Desligue-o pelo atalho \"Desligar mainframe\" e espere o Hercules fechar antes de remover."
+msgstr "El mainframe está encendido. Apágalo con el acceso directo \"Apagar mainframe\" y espera a que Hercules se cierre antes de eliminarlo."
+
+msgid "Pronto. No menu de aplicativos, use \"Ligar mainframe\" e depois \"Terminal TSO (x3270)\". Logon HERC01, senha CUL8TR. Para desligar, use \"Desligar mainframe\"."
+msgstr "Listo. En el menú de aplicaciones, usa \"Encender mainframe\" y después \"Terminal TSO (x3270)\". Inicia sesión como HERC01, contraseña CUL8TR. Para apagar, usa \"Apagar mainframe\"."
+
+msgid "MVS 3.8j TK5 no Hercules, com TSO, ISPF, JES2 e compiladores COBOL e Assembler; liga e desliga pelo menu"
+msgstr "MVS 3.8j TK5 en Hercules, con TSO, ISPF, JES2 y compiladores COBOL y Assembler; se enciende y apaga desde el menú"
+
+msgid "Os volumes do MVS saem da sua conta, com tudo o que você gravou neles (datasets, JCL, programas). O Hercules e o x3270 continuam instalados."
+msgstr "Los volúmenes de MVS salen de tu cuenta, con todo lo que guardaste en ellos (datasets, JCL, programas). Hercules y x3270 siguen instalados."
+
+msgid "O MVS 3.8j costuma ser tratado como domínio público, mas esse status é contestado, e o Lyra não distribui a imagem. O Vega baixa o TK5 ({version}, 475 MB) do site de Rob Prins, confere o SHA-256 verificado pelo Lyra e instala na sua conta, sem senha. Ocupa cerca de 1 GB. Use só para estudo."
+msgstr "MVS 3.8j suele tratarse como dominio público, pero ese estado es discutido, y Lyra no distribuye la imagen. Vega descarga TK5 ({version}, 475 MB) del sitio de Rob Prins, comprueba el SHA-256 verificado por Lyra y lo instala en tu cuenta, sin contraseña. Ocupa cerca de 1 GB. Úsalo solo para estudiar."
+
+msgid "Antes, instala {packages}, com a senha de administrador."
+msgstr "Antes instala {packages}, con la contraseña de administrador."
+
+msgid "Aceitar e instalar"
+msgstr "Aceptar e instalar"
+
+msgid "Mainframe de treinamento"
+msgstr "Mainframe de entrenamiento"
+
+msgid "Ligando o MVS. O logon no TSO fica disponível em um ou dois minutos."
+msgstr "Encendiendo MVS. El inicio de sesión en TSO estará disponible en uno o dos minutos."
+
+msgid "O mainframe não abriu a porta 3270. Veja o log com: journalctl --user -u lyra-mainframe"
+msgstr "El mainframe no abrió el puerto 3270. Mira el registro con: journalctl --user -u lyra-mainframe"
+
+msgid "O mainframe já está desligado."
+msgstr "El mainframe ya está apagado."
+
+msgid "Desligando o MVS. Saia do TSO; o Hercules fecha sozinho em alguns minutos."
+msgstr "Apagando MVS. Sal de TSO; Hercules se cierra solo en unos minutos."
+
+msgid "Não foi possível pedir o desligamento ao Hercules."
+msgstr "No se pudo pedir a Hercules que se apague."

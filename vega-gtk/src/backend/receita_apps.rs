@@ -132,7 +132,7 @@ fn installer_desktop_files(data: &Path, dir: &Path) -> Vec<PathBuf> {
         .collect()
 }
 
-fn download(url: &str, target: &Path) -> Result<(), String> {
+pub(crate) fn download(url: &str, target: &Path) -> Result<(), String> {
     let mut response = reqwest::blocking::Client::builder()
         .https_only(true)
         .user_agent("lyra-vega")
