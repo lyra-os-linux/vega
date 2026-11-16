@@ -55,6 +55,8 @@ const SHOWCASES = {
 /** Cartões de todas as vitrines, para a busca offline do catálogo curado. */
 const CURATED = curatedEntries(Object.entries(SHOWCASES).map(([tab, { label, catalog }]) => ({ tab, label, catalog })));
 /** Origens instaladas na conta do usuário: sem detalhes no vegad, removidas pelo cartão. */
+// Mensagem do vegad (zypper_friendly.go, kind "not-found") e do zypper.
+const NOT_FOUND = /não foi encontrado nos repositórios ativos|No provider of|not found in package names/;
 const USER_ORIGINS = new Set(["windows", "npm", "vscode", "mainframe", "oracle", "appimage", "receita", "preset", "webapp", "fonts"]);
 const ORIGIN_RANK = { official: 0, flathub: 1 };
 
@@ -168,7 +170,7 @@ export default {
     else if (memory.lastTask) showTask(memory.lastTask);
 
     /** Inicia a transação, mostra o painel e trata o fim como o vega-gtk. */
-    async function transact(action, title, { reload = true } = {}) {
+    async function transact(action, title, { reload = true, retried = false } = {}) {
       let started;
       try {
         started = await runSoftware(action, title);
@@ -179,6 +181,13 @@ export default {
       showTask(started.task);
       paint();
       const result = await started.done;
+      // O Lyra só atualiza os metadados a cada 48 h (repo.refresh.delay):
+      // um pacote publicado depois disso não é encontrado. Atualiza os
+      // repositórios uma vez e tenta de novo, como `sudo zypper ref`.
+      if (!result.success && !retried && action.kind === "install" && NOT_FOUND.test(result.message || "")) {
+        const refreshed = await transact({ kind: "refresh-repos" }, t("Atualizar repositórios"), { reload: false });
+        if (refreshed?.success) return transact(action, title, { reload, retried: true });
+      }
       if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
       if (reload) {
         // As atualizações são limpas mesmo em falha: o estado pode ter mudado.
