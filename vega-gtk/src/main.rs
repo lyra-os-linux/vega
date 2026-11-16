@@ -170,7 +170,7 @@ fn main() -> ExitCode {
             ms_fonts::ms_fonts_installed,
             ms_fonts::ms_fonts_install,
             ms_fonts::ms_fonts_remove,
-            nvidia::nvidia_plan,
+            app_launch::app_launch,
             network::network_interfaces,
             network::network_wifi,
             network::network_proxy,

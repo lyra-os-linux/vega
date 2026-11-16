@@ -17,14 +17,14 @@ import { N_ } from "../../i18n.js";
 
 export const POPULAR = [
   {
-    // Driver NVIDIA pelo guia do fórum (backend/nvidia.rs): repositório
-    // oficial da NVIDIA para o Leap 16.1, chave conferida, e o metapacote
-    // G07 (aberto, assinado pela SUSE) ou G06 conforme a placa. Primeiro de
-    // Populares, a pedido do mantenedor em 16/11/2026.
-    id: "nvidia",
-    title: N_("Placa de vídeo"),
+    // Lyra Driver (lyra-os-linux/lyra-driver): app próprio que detecta a
+    // placa e instala, testa e mantém o driver NVIDIA pelo guia do fórum,
+    // com polkit e snapshot. O Vega só instala o pacote e abre o app
+    // (decisão do mantenedor em 16/11/2026, no lugar do cartão NVIDIA).
+    id: "drivers",
+    title: N_("Drivers"),
     apps: [
-      { name: "Driver NVIDIA", origin: "nvidia", id: "nvidia-driver", repo: { name: "repo-nvidia", url: "https://download.nvidia.com/opensuse/leap/16.1", fingerprint: "2FB03195DECD49492BD1C17AB1D0D788DB27FD5A" }, tags: [N_("GeForce"), N_("RTX"), N_("jogos"), N_("CUDA")], text: N_("Driver oficial da NVIDIA para GeForce e RTX, do repositório da NVIDIA; o Vega escolhe o pacote certo para a sua placa") },
+      { name: "Lyra Driver", origin: "official", id: "lyra-driver", logo: "org.lyraos.LyraDriver", command: "lyra-driver", launch: "org.lyraos.LyraDriver", tags: [N_("NVIDIA"), N_("GeForce"), N_("RTX"), N_("placa de vídeo"), N_("jogos")], text: N_("Detecta a placa de vídeo e instala, testa e mantém o driver oficial da NVIDIA, com ponto de restauração antes de cada mudança") },
     ],
   },
   {
