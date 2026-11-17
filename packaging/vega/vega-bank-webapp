@@ -13,8 +13,11 @@
 #
 # Cada banco tem o próprio perfil do Chromium e a própria classe de janela
 # (lyra-banco-ID, a StartupWMClass do atalho), para aparecer como um app
-# separado no dock. O Chromium usa o NSS do sistema (~/.pki/nssdb), onde o
-# Warsaw instala o certificado dele.
+# separado no dock. O Warsaw instala o certificado dele em ~/.pki/nssdb; o
+# Chromium só usa esse banco se não houver o do XDG (~/.local/share/pki/nssdb)
+# e cria o do XDG quando não acha nenhum. Numa conta onde o Chromium rodou
+# antes do Warsaw, os dois ficam em bancos diferentes e o banco pede o módulo
+# (warsaw#21): por isso o ~/.pki/nssdb vira um link para o banco do XDG.
 #
 # Cada webapp aberto segura a trava em modo compartilhado. Ao fechar, solta e
 # tenta a trava exclusiva: só consegue se nenhum outro webapp estiver aberto,
@@ -53,8 +56,31 @@ if ! systemctl cat "$unit" >/dev/null 2>&1; then
         "O Vega vai abrir na seção Bancos: clique em Habilitar segurança de bancos."
 fi
 
+# warsaw#21: com o banco do XDG e sem ~/.pki/nssdb, o link faz o Warsaw
+# gravar no banco que o Chromium usa. Um ~/.pki/nssdb que já existe não é
+# trocado: pode ter certificados de outros programas.
+xdg_nssdb="${XDG_DATA_HOME:-$HOME/.local/share}/pki/nssdb"
+nssdb_linked=0
+if [ -d "$xdg_nssdb" ] && [ ! -e "$HOME/.pki/nssdb" ] && [ ! -L "$HOME/.pki/nssdb" ]; then
+    mkdir -p -m 700 "$HOME/.pki" && ln -s "$xdg_nssdb" "$HOME/.pki/nssdb" && nssdb_linked=1
+elif [ -d "$xdg_nssdb" ] && [ ! -L "$HOME/.pki/nssdb" ] &&
+    [ ! "$(readlink -f "$HOME/.pki/nssdb")" = "$(readlink -f "$xdg_nssdb")" ]; then
+    echo "vega-bank-webapp: o Chromium usa $xdg_nssdb e o Warsaw grava em $HOME/.pki/nssdb (warsaw#21)" >&2
+    notify "O banco pode pedir o módulo de segurança" \
+        "O Chromium e o módulo usam bancos de certificados diferentes (~/.pki/nssdb e ~/.local/share/pki/nssdb)."
+fi
+
 exec 9>"$state/lock"
 flock -s 9
+
+# Com o link novo, o certificado só vai para o banco do XDG quando o core
+# liga. Se o serviço já estava ligado e nenhum outro webapp está aberto,
+# desliga para o start abaixo ligar de novo (reiniciar pede senha; parar e
+# ligar, não).
+if [ "$nssdb_linked" = 1 ] && systemctl is-active --quiet "$unit" && flock -n -x 9; then
+    systemctl stop "$unit"
+    flock -s 9
+fi
 
 systemctl start "$unit" ||
     give_up "O módulo de segurança dos bancos não ligou" \
