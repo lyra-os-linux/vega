@@ -7911,3 +7911,162 @@ msgstr "Preparando la descarga de la imagen…"
 
 msgid "Baixando a imagem: {done} MB de {total} MB"
 msgstr "Descargando la imagen: {done} MB de {total} MB"
+
+msgid "Site oficial, numa janela própria"
+msgstr "Sitio oficial, en su propia ventana"
+
+msgid "Feche o web app antes de apagar os dados de login."
+msgstr "Cierra la aplicación web antes de borrar los datos de inicio de sesión."
+
+msgid "Não foi possível ler o estado do Chromium"
+msgstr "No se pudo leer el estado de Chromium"
+
+msgid "Os web apps abrem o site numa janela própria do Chromium. O Vega instala o Chromium dos repositórios do openSUSE."
+msgstr "Las aplicaciones web abren el sitio en una ventana propia de Chromium. Vega instala Chromium desde los repositorios de openSUSE."
+
+msgid "gestão de projetos"
+msgstr "gestión de proyectos"
+
+msgid "Gantt"
+msgstr "Gantt"
+
+msgid "alternativa ao Microsoft Project"
+msgstr "alternativa a Microsoft Project"
+
+msgid "Cronogramas, gráficos de Gantt e recursos de projetos"
+msgstr "Cronogramas, diagramas de Gantt y recursos de proyectos"
+
+msgid "Web apps"
+msgstr "Aplicaciones web"
+
+msgid "web app"
+msgstr "aplicación web"
+
+msgid "Microsoft 365"
+msgstr "Microsoft 365"
+
+msgid "e-mail"
+msgstr "correo electrónico"
+
+msgid "E-mail e calendário da Microsoft"
+msgstr "Correo y calendario de Microsoft"
+
+msgid "Office online"
+msgstr "Office en línea"
+
+msgid "Documentos do Microsoft 365 no navegador"
+msgstr "Documentos de Microsoft 365 en el navegador"
+
+msgid "planilhas"
+msgstr "hojas de cálculo"
+
+msgid "Planilhas do Microsoft 365 no navegador"
+msgstr "Hojas de cálculo de Microsoft 365 en el navegador"
+
+msgid "Chat e reuniões do Microsoft 365"
+msgstr "Chat y reuniones de Microsoft 365"
+
+msgid "relatórios"
+msgstr "informes"
+
+msgid "dashboards"
+msgstr "paneles"
+
+msgid "Relatórios e painéis de dados da Microsoft"
+msgstr "Informes y paneles de datos de Microsoft"
+
+msgid "Google Workspace"
+msgstr "Google Workspace"
+
+msgid "E-mail do Google"
+msgstr "Correo de Google"
+
+msgid "arquivos na nuvem"
+msgstr "archivos en la nube"
+
+msgid "Arquivos na nuvem do Google"
+msgstr "Archivos en la nube de Google"
+
+msgid "Google Calendar"
+msgstr "Google Calendar"
+
+msgid "calendário"
+msgstr "calendario"
+
+msgid "Calendário e compromissos do Google"
+msgstr "Calendario y citas de Google"
+
+msgid "documentos"
+msgstr "documentos"
+
+msgid "Documentos do Google no navegador"
+msgstr "Documentos de Google en el navegador"
+
+msgid "Atlassian"
+msgstr "Atlassian"
+
+msgid "Tarefas e projetos de equipes, da Atlassian"
+msgstr "Tareas y proyectos de equipos, de Atlassian"
+
+msgid "wiki"
+msgstr "wiki"
+
+msgid "documentação"
+msgstr "documentación"
+
+msgid "Wiki e documentação de equipes, da Atlassian"
+msgstr "Wiki y documentación de equipos, de Atlassian"
+
+msgid "tarefas"
+msgstr "tareas"
+
+msgid "Tarefas e projetos de equipes"
+msgstr "Tareas y proyectos de equipos"
+
+msgid "kanban"
+msgstr "kanban"
+
+msgid "Quadros kanban para organizar tarefas"
+msgstr "Tableros kanban para organizar tareas"
+
+msgid "quadros"
+msgstr "tableros"
+
+msgid "Quadros de trabalho e projetos de equipes"
+msgstr "Tableros de trabajo y proyectos de equipos"
+
+msgid "Anotações, documentos e wikis"
+msgstr "Notas, documentos y wikis"
+
+msgid "design"
+msgstr "diseño"
+
+msgid "posts"
+msgstr "publicaciones"
+
+msgid "Design de posts, apresentações e materiais"
+msgstr "Diseño de publicaciones, presentaciones y materiales"
+
+msgid "design de interfaces"
+msgstr "diseño de interfaces"
+
+msgid "protótipos"
+msgstr "prototipos"
+
+msgid "Design de interfaces e protótipos"
+msgstr "Diseño de interfaces y prototipos"
+
+msgid "WhatsApp Web"
+msgstr "WhatsApp Web"
+
+msgid "mensagens"
+msgstr "mensajes"
+
+msgid "WhatsApp Web numa janela própria"
+msgstr "WhatsApp Web en su propia ventana"
+
+msgid "O atalho sai do menu de aplicativos e do dock, sem senha."
+msgstr "El acceso directo sale del menú de aplicaciones y del dock, sin contraseña."
+
+msgid "Apagar também os dados de login (cookies e senhas salvas no web app)"
+msgstr "Borrar también los datos de inicio de sesión (cookies y contraseñas guardadas en la aplicación web)"

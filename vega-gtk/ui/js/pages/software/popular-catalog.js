@@ -309,6 +309,8 @@ export const POPULAR = [
       { name: "IRPF 2025", origin: "receita", id: "irpf2025", version: "1.8", tags: [N_("Imposto de Renda"), N_("declaração"), N_("retificação"), N_("Receita Federal")], text: N_("Declaração de 2025, para retificar a que já foi entregue") },
       { name: "WPS Office", origin: "flathub", id: "com.wps.Office", tasks: ["edit", "study"], tags: [N_("alternativa ao Microsoft Office"), N_("Word"), N_("Excel"), N_("PowerPoint"), N_("PDF")], text: N_("Documentos, planilhas, apresentações e PDF, com visual parecido com o do Office") },
       { name: "Obsidian", origin: "flathub", id: "md.obsidian.Obsidian", tasks: ["study"], tags: [N_("anotações"), N_("Markdown")], text: N_("Anotações em Markdown, com links entre as notas") },
+      // vega#203: ProjectLibre do repo-oss (o GanttProject não está nos repositórios).
+      { name: "ProjectLibre", origin: "official", id: "projectlibre", logo: "projectlibre", tags: [N_("gestão de projetos"), N_("Gantt"), N_("alternativa ao Microsoft Project")], text: N_("Cronogramas, gráficos de Gantt e recursos de projetos") },
       { name: "Planify", origin: "flathub", id: "io.github.alainm23.planify", logo: "io.github.alainm23.planify", tags: [N_("lista de tarefas")], text: N_("Tarefas, lembretes e projetos") },
       { name: "Calibre", origin: "official", id: "calibre", logo: "com.calibre_ebook.calibre", tasks: ["study"], tags: [N_("e-book"), N_("Kindle")], text: N_("Biblioteca e conversão de e-books") },
       { name: "Okular", origin: "official", id: "okular", logo: "org.kde.okular", tasks: ["study"], tags: [N_("PDF")], text: N_("Leitor de PDF com anotações") },
