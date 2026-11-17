@@ -12,14 +12,19 @@
 //! de administrador do banco é gerada pelo Vega e guardada num arquivo 0600
 //! na conta do usuário (`~/.config/lyra-containers/<id>.env`).
 
+use std::collections::HashMap;
+use std::io::{BufRead, BufReader, Write as _};
+use std::os::unix::net::UnixStream;
 use std::path::{Path, PathBuf};
-use std::process::Command;
+use std::process::{Child, Command, Stdio};
+use std::time::{Duration, Instant};
 
 use gettextrs::gettext;
 use serde::Serialize;
-use tauri::AppHandle;
+use tauri::{AppHandle, Emitter};
 
 use super::flatpak_session::follow_then;
+use super::software::TransactionEvent;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Service {
@@ -297,6 +302,19 @@ pub fn containers_install(app: AppHandle, id: String) -> Result<u32, String> {
     prepare(service)?;
     let tx = super::session_tx::next();
     std::thread::spawn(move || {
+        let emit = |event: TransactionEvent| {
+            let _ = app.emit("software-transaction", event);
+        };
+        if let Some(result) = pull_via_api(service.image, tx, &emit) {
+            emit(TransactionEvent::Finished {
+                id: tx,
+                success: result.is_ok(),
+                message: result.err().unwrap_or_else(|| gettext("Concluído")),
+            });
+            return;
+        }
+        // Sem o serviço da API, o `podman pull` ainda instala; a barra só
+        // não acompanha os bytes.
         let mut command = Command::new("podman");
         command.args(["pull", service.image]);
         crate::webkit_env::clean_command(&mut command);
@@ -312,6 +330,199 @@ pub fn containers_install(app: AppHandle, id: String) -> Result<u32, String> {
         );
     });
     Ok(tx)
+}
+
+/// `podman system service` temporário, num socket só desta instalação;
+/// encerrado ao sair do escopo.
+struct ApiService {
+    child: Child,
+    socket: PathBuf,
+}
+
+impl Drop for ApiService {
+    fn drop(&mut self) {
+        let _ = self.child.kill();
+        let _ = self.child.wait();
+        let _ = std::fs::remove_file(&self.socket);
+    }
+}
+
+/// Separa `registro/nome:tag` em nome e tag (a tag vem depois da última `/`).
+fn split_image(image: &str) -> (&str, &str) {
+    match image.rsplit_once(':') {
+        Some((name, tag)) if !tag.contains('/') => (name, tag),
+        _ => (image, "latest"),
+    }
+}
+
+/// Soma dos bytes das camadas: (baixados, total das camadas já anunciadas).
+#[derive(Default)]
+struct PullProgress {
+    layers: HashMap<String, (u64, u64)>,
+    percent: u32,
+}
+
+impl PullProgress {
+    /// Lê um evento da API compatível com o Docker. Devolve o erro do
+    /// Podman, se o evento for de erro.
+    fn update(&mut self, event: &serde_json::Value) -> Option<String> {
+        if let Some(error) = event.get("error").and_then(|error| error.as_str()) {
+            return Some(error.to_owned());
+        }
+        let id = event
+            .get("id")
+            .and_then(|id| id.as_str())
+            .unwrap_or_default();
+        let status = event
+            .get("status")
+            .and_then(|status| status.as_str())
+            .unwrap_or_default();
+        let detail = event.get("progressDetail");
+        let number = |key: &str| {
+            detail
+                .and_then(|detail| detail.get(key))
+                .and_then(|value| value.as_u64())
+        };
+        match (status, number("current"), number("total")) {
+            ("Downloading", Some(current), Some(total)) if !id.is_empty() => {
+                self.layers
+                    .insert(id.to_owned(), (current.min(total), total));
+            }
+            ("Download complete", ..) => {
+                if let Some(layer) = self.layers.get_mut(id) {
+                    layer.0 = layer.1;
+                }
+            }
+            _ => {}
+        }
+        None
+    }
+
+    fn bytes(&self) -> (u64, u64) {
+        self.layers.values().fold((0, 0), |(done, total), layer| {
+            (done + layer.0, total + layer.1)
+        })
+    }
+
+    /// De 5% a 95%, sem voltar: o total cresce quando uma camada nova começa.
+    fn advance(&mut self) -> u32 {
+        let (done, total) = self.bytes();
+        if let Some(fraction) = (90 * done).checked_div(total) {
+            self.percent = self.percent.max((5 + fraction as u32).min(95));
+        }
+        self.percent.max(5)
+    }
+}
+
+/// Baixa a imagem pela API compatível com o Docker de um `podman system
+/// service` temporário. Ela informa os bytes de cada camada, o que o
+/// `podman pull` sem terminal não faz (vega#285). `None` quando o serviço não
+/// sobe; aí a instalação volta ao `podman pull`.
+fn pull_via_api(
+    image: &str,
+    tx: u32,
+    emit: &dyn Fn(TransactionEvent),
+) -> Option<Result<(), String>> {
+    let runtime = std::env::var_os("XDG_RUNTIME_DIR").map(PathBuf::from)?;
+    let socket = runtime.join(format!("vega-pull-{}-{tx}.sock", std::process::id()));
+    let _ = std::fs::remove_file(&socket);
+    let mut command = Command::new("podman");
+    command
+        .args(["system", "service", "--time=0"])
+        .arg(format!("unix://{}", socket.display()))
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null());
+    crate::webkit_env::clean_command(&mut command);
+    let service = ApiService {
+        child: command.spawn().ok()?,
+        socket,
+    };
+    emit(TransactionEvent::Progress {
+        id: tx,
+        percent: 2,
+        message: gettext("Preparando o download da imagem…"),
+    });
+    let deadline = Instant::now() + Duration::from_secs(15);
+    let mut stream = loop {
+        if let Ok(stream) = UnixStream::connect(&service.socket) {
+            break stream;
+        }
+        if Instant::now() > deadline {
+            return None;
+        }
+        std::thread::sleep(Duration::from_millis(200));
+    };
+    let (name, tag) = split_image(image);
+    // HTTP/1.0: a resposta vem sem chunked e termina quando o Podman fecha.
+    let request = format!(
+        "POST /v4.0.0/images/create?fromImage={name}&tag={tag} HTTP/1.0\r\nHost: localhost\r\n\r\n"
+    );
+    stream.write_all(request.as_bytes()).ok()?;
+    let mut lines = BufReader::new(stream).lines().map_while(Result::ok);
+    let status = lines.next()?;
+    if !status
+        .split_whitespace()
+        .nth(1)
+        .is_some_and(|code| code == "200")
+    {
+        return None;
+    }
+    let mut progress = PullProgress::default();
+    let mut error = None;
+    let mut last = Instant::now() - Duration::from_secs(1);
+    for line in lines.skip_while(|line| !line.is_empty()) {
+        let Ok(event) = serde_json::from_str::<serde_json::Value>(&line) else {
+            continue;
+        };
+        if let Some(message) = progress.update(&event) {
+            error = Some(message);
+            continue;
+        }
+        let status = event
+            .get("status")
+            .and_then(|status| status.as_str())
+            .unwrap_or_default();
+        if status != "Downloading" {
+            let id = event
+                .get("id")
+                .and_then(|id| id.as_str())
+                .unwrap_or_default();
+            emit(TransactionEvent::Console {
+                id: tx,
+                source: "podman".into(),
+                line: format!("{status} {id}").trim().to_owned(),
+            });
+        }
+        if last.elapsed() >= Duration::from_millis(500) {
+            last = Instant::now();
+            let (done, total) = progress.bytes();
+            let message = if total == 0 {
+                gettext("Preparando o download da imagem…")
+            } else {
+                gettext("Baixando a imagem: {done} MB de {total} MB")
+                    .replace("{done}", &(done / 1_000_000).to_string())
+                    .replace("{total}", &(total / 1_000_000).to_string())
+            };
+            emit(TransactionEvent::Progress {
+                id: tx,
+                percent: progress.advance(),
+                message,
+            });
+        }
+    }
+    drop(service);
+    if let Some(error) = error {
+        return Some(Err(error));
+    }
+    // O fim do fluxo sem erro ainda não garante a imagem: confere no Podman.
+    if run("podman", &["image", "exists", image]).is_some() {
+        Some(Ok(()))
+    } else {
+        Some(Err(gettext(
+            "O download da imagem falhou. Tente de novo: o Podman reaproveita o que já baixou.",
+        )))
+    }
 }
 
 /// Iniciar ou parar. Sem bloquear: a primeira partida cria o banco e leva
@@ -391,6 +602,48 @@ mod tests {
                 service.id
             );
         }
+    }
+
+    #[test]
+    fn image_splits_into_name_and_tag() {
+        assert_eq!(
+            split_image("container-registry.oracle.com/database/free:23.26.3.0"),
+            ("container-registry.oracle.com/database/free", "23.26.3.0")
+        );
+        assert_eq!(
+            split_image("localhost:5000/app"),
+            ("localhost:5000/app", "latest")
+        );
+    }
+
+    #[test]
+    fn pull_progress_sums_layers_and_never_goes_back() {
+        let event = |text: &str| serde_json::from_str::<serde_json::Value>(text).unwrap();
+        let mut progress = PullProgress::default();
+        progress.update(&event(
+            r#"{"status":"Downloading","progressDetail":{"current":50,"total":100},"id":"a"}"#,
+        ));
+        assert_eq!(progress.bytes(), (50, 100));
+        assert_eq!(progress.advance(), 50);
+        // Uma camada nova aumenta o total, mas a barra não volta.
+        progress.update(&event(
+            r#"{"status":"Downloading","progressDetail":{"current":0,"total":900},"id":"b"}"#,
+        ));
+        assert_eq!(progress.advance(), 50);
+        progress.update(&event(
+            r#"{"status":"Download complete","progressDetail":{},"id":"a"}"#,
+        ));
+        progress.update(&event(
+            r#"{"status":"Download complete","progressDetail":{},"id":"b"}"#,
+        ));
+        assert_eq!(progress.bytes(), (1000, 1000));
+        assert_eq!(progress.advance(), 95);
+        assert_eq!(
+            progress.update(&event(
+                r#"{"error":"manifest unknown","errorDetail":{"message":"manifest unknown"}}"#
+            )),
+            Some("manifest unknown".into())
+        );
     }
 
     #[test]
