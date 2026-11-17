@@ -1,6 +1,6 @@
-//! Serviços em contêiner (Vega → Contêineres, vega#186 e vega#190).
+//! Serviços em contêiner (Vega → Contêineres, vega#186, vega#190 e vega#284).
 //!
-//! O Oracle AI Database Free (e, depois, o SAP de estudo) só é distribuído
+//! O Oracle AI Database Free e o Microsoft SQL Server (e, depois, o SAP de estudo) só são distribuídos
 //! como imagem de contêiner. O Vega usa o Podman sem root do Leap 16.1, na
 //! conta do usuário: nada roda como root e nada passa pelo vegad. Cada
 //! serviço vira um Quadlet (`~/.config/containers/systemd/lyra-<id>.container`)
@@ -41,19 +41,70 @@ pub struct Service {
     pub min_disk_gib: u64,
     /// Texto de conexão mostrado na interface (`{password}` não entra aqui).
     pub connection: &'static str,
+    /// Usuários que recebem a senha gerada.
+    pub users: &'static str,
+    /// Comando para abrir o cliente de linha de comando dentro do contêiner.
+    pub terminal: &'static str,
+    /// Variáveis fixas, sem segredo (vão no Quadlet).
+    pub environment: &'static [&'static str],
+    /// Verificação de saúde, quando a imagem não traz uma.
+    pub health: Option<&'static str>,
+    /// Licença que o usuário precisa aceitar antes de instalar.
+    pub license: Option<License>,
 }
 
-pub const SERVICES: &[Service] = &[Service {
-    id: "oracle-free",
-    name: "Oracle AI Database 26ai Free",
-    image: "container-registry.oracle.com/database/free:23.26.3.0",
-    ports: &[(1521, 1521)],
-    data: "/opt/oracle/oradata",
-    password_env: "ORACLE_PWD",
-    min_ram_mib: 2048,
-    min_disk_gib: 16,
-    connection: "localhost:1521/FREEPDB1",
-}];
+#[derive(Debug, Clone, Copy, Serialize)]
+pub struct License {
+    /// Página oficial com os termos.
+    pub url: &'static str,
+    /// Variável que registra o aceite; só entra no Quadlet depois dele.
+    #[serde(skip)]
+    pub accept_env: &'static str,
+}
+
+pub const SERVICES: &[Service] = &[
+    Service {
+        id: "oracle-free",
+        name: "Oracle AI Database 26ai Free",
+        image: "container-registry.oracle.com/database/free:23.26.3.0",
+        ports: &[(1521, 1521)],
+        data: "/opt/oracle/oradata",
+        password_env: "ORACLE_PWD",
+        min_ram_mib: 2048,
+        min_disk_gib: 16,
+        connection: "localhost:1521/FREEPDB1",
+        users: "SYS, SYSTEM, PDBADMIN",
+        terminal: "podman exec -it lyra-oracle-free sqlplus system@FREEPDB1",
+        environment: &[],
+        health: None,
+        license: None,
+    },
+    // vega#284: só a imagem oficial; a instalação nativa do mssql-server
+    // não é suportada no Leap.
+    Service {
+        id: "mssql",
+        name: "Microsoft SQL Server 2022 Developer",
+        image: "mcr.microsoft.com/mssql/server:2022-CU28-ubuntu-22.04",
+        ports: &[(1433, 1433)],
+        data: "/var/opt/mssql",
+        password_env: "MSSQL_SA_PASSWORD",
+        min_ram_mib: 2048,
+        min_disk_gib: 10,
+        connection: "localhost,1433",
+        users: "sa",
+        terminal: "podman exec -it lyra-mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -C",
+        environment: &["MSSQL_PID=Developer"],
+        // A imagem não traz HEALTHCHECK: pronto quando aceita a conexão. O
+        // `$$` chega ao contêiner como `$` (o systemd expande o simples).
+        health: Some(
+            "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -b -Q \"SELECT 1\"",
+        ),
+        license: Some(License {
+            url: "https://go.microsoft.com/fwlink/?linkid=857698",
+            accept_env: "ACCEPT_EULA=Y",
+        }),
+    },
+];
 
 pub fn service(id: &str) -> Option<&'static Service> {
     SERVICES.iter().find(|service| service.id == id)
@@ -110,6 +161,17 @@ pub fn quadlet(service: &Service, env_file: &Path) -> String {
     );
     for (host, container) in service.ports {
         text.push_str(&format!("PublishPort=127.0.0.1:{host}:{container}\n"));
+    }
+    for line in service.environment {
+        text.push_str(&format!("Environment={line}\n"));
+    }
+    if let Some(license) = service.license {
+        text.push_str(&format!("Environment={}\n", license.accept_env));
+    }
+    if let Some(health) = service.health {
+        text.push_str(&format!(
+            "HealthCmd={health}\nHealthInterval=15s\nHealthStartPeriod=60s\n"
+        ));
     }
     // A primeira partida cria o banco e leva minutos.
     text.push_str("\n[Service]\nTimeoutStartSec=900\nTimeoutStopSec=300\n");
@@ -200,6 +262,9 @@ pub struct Status {
     /// healthy, starting, unhealthy ou vazio (sem contêiner).
     pub health: String,
     pub connection: &'static str,
+    pub users: &'static str,
+    pub terminal: &'static str,
+    pub license: Option<License>,
     pub ram_mib: u64,
     pub min_ram_mib: u64,
     pub free_disk_gib: u64,
@@ -243,6 +308,9 @@ pub fn containers_list() -> Vec<Status> {
                 state,
                 health,
                 connection: service.connection,
+                users: service.users,
+                terminal: service.terminal,
+                license: service.license,
                 ram_mib: ram,
                 min_ram_mib: service.min_ram_mib,
                 free_disk_gib: disk,
@@ -297,8 +365,16 @@ fn prepare(service: &Service) -> Result<(), String> {
 
 /// Grava o Quadlet e baixa a imagem, com o progresso do `podman pull`.
 #[tauri::command]
-pub fn containers_install(app: AppHandle, id: String) -> Result<u32, String> {
+pub fn containers_install(
+    app: AppHandle,
+    id: String,
+    accept_license: Option<bool>,
+) -> Result<u32, String> {
     let service = service(&id).ok_or_else(|| gettext("Serviço desconhecido."))?;
+    // O aceite é do usuário, no diálogo: sem ele, nada é gravado.
+    if service.license.is_some() && accept_license != Some(true) {
+        return Err(gettext("É preciso aceitar a licença para instalar."));
+    }
     prepare(service)?;
     let tx = super::session_tx::next();
     std::thread::spawn(move || {
@@ -579,6 +655,29 @@ mod tests {
         assert!(text.contains("PublishPort=127.0.0.1:1521:1521\n"));
         assert!(text.contains("EnvironmentFile=/home/u/.config/lyra-containers/oracle-free.env\n"));
         assert!(!text.contains("[Install]"));
+    }
+
+    #[test]
+    fn sql_server_quadlet_accepts_license_and_checks_health() {
+        let mssql = service("mssql").unwrap();
+        let text = quadlet(
+            mssql,
+            Path::new("/home/u/.config/lyra-containers/mssql.env"),
+        );
+        assert!(text.contains("PublishPort=127.0.0.1:1433:1433\n"));
+        assert!(text.contains("Volume=lyra-mssql-data:/var/opt/mssql\n"));
+        assert!(text.contains("Environment=MSSQL_PID=Developer\n"));
+        assert!(text.contains("Environment=ACCEPT_EULA=Y\n"));
+        assert!(text.contains("HealthCmd=/opt/mssql-tools18/bin/sqlcmd "));
+        // O Oracle não tem licença a aceitar nem verificação própria.
+        let oracle = quadlet(service("oracle-free").unwrap(), Path::new("/x.env"));
+        assert!(!oracle.contains("ACCEPT_EULA") && !oracle.contains("HealthCmd"));
+    }
+
+    #[test]
+    fn license_must_be_accepted() {
+        assert!(service("mssql").unwrap().license.is_some());
+        assert!(service("oracle-free").unwrap().license.is_none());
     }
 
     #[test]

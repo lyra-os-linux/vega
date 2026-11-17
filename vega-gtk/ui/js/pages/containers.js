@@ -1,7 +1,7 @@
 // Serviços em contêiner (vega#186): Podman sem root na conta do usuário, cada
 // serviço como Quadlet do systemd do usuário (backend/containers.rs). Só os
 // serviços do catálogo do Vega; a página manda apenas o id. Primeiro serviço:
-// Oracle AI Database Free (vega#190).
+// Oracle AI Database Free (vega#190); depois, Microsoft SQL Server (vega#284).
 
 import { call } from "../api.js";
 import { N_, t } from "../i18n.js";
@@ -24,7 +24,7 @@ export default {
   title: N_("Contêineres"),
   icon: "box",
   group: "main",
-  keywords: ["podman", "container", "conteiner", "oracle", "banco", "database", "sap", "quadlet"],
+  keywords: ["podman", "container", "conteiner", "oracle", "sql server", "mssql", "banco", "database", "sap", "quadlet"],
 
   render(ctx) {
     let services = null;
@@ -57,26 +57,32 @@ export default {
           haveRam: Math.floor(service.ram_mib / 1024), haveDisk: service.free_disk_gib,
         }), t("Requisitos não atendidos"));
       }
+      // Licença do fabricante (EULA do SQL Server): aceite explícito, nunca implícito.
+      const accept = service.license && h("input", { type: "checkbox", id: "ct-license" });
       const ok = await confirm({
         title: t("Instalar {name}?", { name: service.name }),
         text: t("O Vega baixa a imagem oficial ({image}) com o Podman, na sua conta, sem senha, e cria o serviço. O download tem alguns GB; se falhar, tente de novo que o Podman reaproveita o que já baixou."
           , { image: service.image })
           + (service.podman ? "" : " " + t("Antes, instala o Podman, com a senha de administrador.")),
         facts: [
-          { icon: "key", text: t("A senha do administrador (SYS, SYSTEM e PDBADMIN) é gerada pelo Vega e fica só na sua conta; copie-a aqui depois.") },
+          { icon: "key", text: t("A senha do administrador ({users}) é gerada pelo Vega e fica só na sua conta; copie-a aqui depois.", { users: service.users }) },
           { icon: "database", text: t("Conexão: {connection}, só deste computador.", { connection: service.connection }) },
           { icon: "power", text: t("O serviço não liga sozinho com o computador; use Iniciar.") },
         ],
+        extra: accept && h("div", {},
+          h("label", { class: "row-flex", for: "ct-license" }, accept, t("Li e aceito a licença do fabricante")),
+          h("button", { class: "btn flat sm", onclick: () => call("open_uri", { uri: service.license.url }).catch(fail) }, icon("external", 14), t("Ler os termos da licença"))),
         ic: "box",
         confirmLabel: t("Instalar"),
         required: true,
       });
       if (!ok) return;
+      if (accept && !accept.checked) return fail(t("É preciso aceitar a licença para instalar."), t("Instalação cancelada"));
       busy = true;
       paint();
       try {
         if (!service.podman && !(await installPodman())) return;
-        const started = await runContainerInstall(service.id, t("Baixando {name}…", { name: service.name }));
+        const started = await runContainerInstall(service.id, t("Baixando {name}…", { name: service.name }), Boolean(accept?.checked));
         const result = await started.done;
         if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
         else toast(t("{name} instalado. Use Iniciar para ligar o banco.", { name: service.name }));
@@ -142,7 +148,8 @@ export default {
       return h("div", { class: "card" },
         h("div", { class: "row-flex" }, icon("database", 22), h("strong", {}, service.name), h("div", { class: "spacer" }), badge(state.label, state.tone, state.icon)),
         h("p", { class: "small muted selectable" }, service.image),
-        service.installed && h("p", { class: "small selectable" }, t("Conexão: {connection} (usuário SYSTEM ou PDBADMIN)", { connection: service.connection })),
+        service.installed && h("p", { class: "small selectable" }, t("Conexão: {connection} (usuário {users})", { connection: service.connection, users: service.users })),
+        service.installed && h("p", { class: "small muted" }, t("Terminal:"), " ", h("code", { class: "selectable" }, service.terminal)),
         h("div", { class: "row-flex" }, actions));
     }
 

@@ -7872,6 +7872,33 @@ msgstr "Abrir"
 msgid "Não foi possível abrir {name}"
 msgstr "Não foi possível abrir {name}"
 
+msgid "É preciso aceitar a licença para instalar."
+msgstr "É preciso aceitar a licença para instalar."
+
+msgid "A senha do administrador ({users}) é gerada pelo Vega e fica só na sua conta; copie-a aqui depois."
+msgstr "A senha do administrador ({users}) é gerada pelo Vega e fica só na sua conta; copie-a aqui depois."
+
+msgid "Li e aceito a licença do fabricante"
+msgstr "Li e aceito a licença do fabricante"
+
+msgid "Ler os termos da licença"
+msgstr "Ler os termos da licença"
+
+msgid "Instalação cancelada"
+msgstr "Instalação cancelada"
+
+msgid "Conexão: {connection} (usuário {users})"
+msgstr "Conexão: {connection} (usuário {users})"
+
+msgid "Terminal:"
+msgstr "Terminal:"
+
+msgid "SQL Server"
+msgstr "SQL Server"
+
+msgid "Consultas e IntelliSense para o SQL Server no VS Code; o do Vega → Contêineres conecta em localhost,1433 com o usuário sa"
+msgstr "Consultas e IntelliSense para o SQL Server no VS Code; o do Vega → Contêineres conecta em localhost,1433 com o usuário sa"
+
 msgid "{done} MB de {total} MB"
 msgstr "{done} MB de {total} MB"
 

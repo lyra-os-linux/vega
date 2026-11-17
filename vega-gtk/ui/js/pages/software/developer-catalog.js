@@ -256,6 +256,7 @@ export const DEVELOPER = [
       { name: "SQLite", origin: "official", id: "sqlite3", text: N_("Banco de dados num arquivo, pelo terminal") },
       { name: "Draco Postgres", origin: "official", id: "postgres-draco", logo: "postgres-draco", text: N_("Cliente PostgreSQL nativo, com editor SQL, diagrama ER e administração") },
       { name: "DBeaver", origin: "flathub", id: "io.dbeaver.DBeaverCommunity", tags: [N_("SQL")], text: N_("Cliente gráfico para vários bancos de dados") },
+      { name: "SQL Server (mssql) para VS Code", origin: "vscode", id: "ms-mssql.mssql", tags: [N_("SQL Server")], text: N_("Consultas e IntelliSense para o SQL Server no VS Code; o do Vega → Contêineres conecta em localhost,1433 com o usuário sa") },
       { name: "Postman", origin: "flathub", id: "com.getpostman.Postman", tags: [N_("API REST")], text: N_("Testa e documenta APIs") },
       { name: "Bruno", origin: "flathub", id: "com.usebruno.Bruno", tags: [N_("API REST")], text: N_("Cliente de APIs de código aberto; coleções ficam no Git") },
       { name: "Insomnia", origin: "flathub", id: "rest.insomnia.Insomnia", tags: [N_("API REST")], text: N_("Cliente de APIs REST, GraphQL e gRPC") },
