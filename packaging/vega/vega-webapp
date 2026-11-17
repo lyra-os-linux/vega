@@ -1,0 +1,38 @@
+#!/bin/bash
+# Web app de site do Vega (vega#203): abre o site no Chromium em modo app,
+# numa janela própria, sem abas nem barra de endereço. É o mesmo mecanismo dos
+# webapps de bancos (vega-bank-webapp), mas sem o módulo de segurança Warsaw.
+#
+# Sem o Chromium, o site não abre: o Vega abre na seção Web apps, onde o
+# usuário instala o web app de novo para instalar o Chromium.
+#
+# Uso: vega-webapp ID URL
+#
+# Cada site tem o próprio perfil do Chromium (os logins ficam separados) e a
+# própria classe de janela (lyra-webapp-ID, a StartupWMClass do atalho), para
+# aparecer como um app separado no dock.
+set -u
+
+id=${1:?uso: vega-webapp ID URL}
+url=${2:?uso: vega-webapp ID URL}
+case $id in
+    *[!a-z0-9-]*) echo "vega-webapp: id inválido: $id" >&2; exit 2 ;;
+esac
+
+vega_webapps=vega://software/popular/webapps
+profile="${XDG_DATA_HOME:-$HOME/.local/share}/lyra-webapps/$id"
+
+if ! command -v chromium >/dev/null; then
+    command -v notify-send >/dev/null && notify-send -a Vega -i dialog-warning \
+        "Os web apps precisam do Chromium" \
+        "O Vega vai abrir na seção Web apps: instale o web app de novo para instalar o Chromium."
+    setsid vega-gtk "$vega_webapps" >/dev/null 2>&1 &
+    exit 1
+fi
+mkdir -p "$profile"
+
+# --ozone-platform=x11: no Wayland, o Chromium em modo app ignora --class e o
+# GNOME liga a janela ao app Chromium, com o ícone dele. Pelo XWayland a classe
+# vale e o dock mostra o web app com o nome e o ícone do site.
+exec chromium --ozone-platform=x11 --user-data-dir="$profile" --class="lyra-webapp-$id" \
+    --start-maximized --no-first-run --no-default-browser-check --app="$url"
