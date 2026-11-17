@@ -256,16 +256,20 @@ fn install(report: &dyn Fn(u32, String)) -> Result<(), String> {
     if !base.join("tk5/conf/tk5.cnf").is_file() {
         std::fs::create_dir_all(&cache).map_err(|error| error.to_string())?;
         let zip = cache.join(TK5.file);
-        report(5, gettext("Baixando o TK5 (475 MB) do site de Rob Prins…"));
-        let result = super::receita_apps::download(URL, &zip)
-            .and_then(|()| {
-                report(60, gettext("Conferindo o arquivo…"));
-                guided_download::verify(&TK5, &zip).map_err(|rejection| rejection.message(&TK5))
-            })
-            .and_then(|()| {
-                report(70, gettext("Extraindo os volumes do MVS…"));
-                extract(&zip, &base)
-            });
+        let label = gettext("Baixando o TK5 (475 MB) do site de Rob Prins…");
+        report(5, label.clone());
+        let result = super::receita_apps::download_reporting(URL, &zip, |done, total| {
+            let (percent, message) = super::receita_apps::download_step(&label, done, total, 5, 60);
+            report(percent, message);
+        })
+        .and_then(|()| {
+            report(60, gettext("Conferindo o arquivo…"));
+            guided_download::verify(&TK5, &zip).map_err(|rejection| rejection.message(&TK5))
+        })
+        .and_then(|()| {
+            report(70, gettext("Extraindo os volumes do MVS…"));
+            extract(&zip, &base)
+        });
         let _ = std::fs::remove_file(&zip);
         result?;
     }
