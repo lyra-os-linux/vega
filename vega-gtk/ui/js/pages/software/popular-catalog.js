@@ -309,11 +309,41 @@ export const POPULAR = [
       { name: "IRPF 2025", origin: "receita", id: "irpf2025", version: "1.8", tags: [N_("Imposto de Renda"), N_("declaração"), N_("retificação"), N_("Receita Federal")], text: N_("Declaração de 2025, para retificar a que já foi entregue") },
       { name: "WPS Office", origin: "flathub", id: "com.wps.Office", tasks: ["edit", "study"], tags: [N_("alternativa ao Microsoft Office"), N_("Word"), N_("Excel"), N_("PowerPoint"), N_("PDF")], text: N_("Documentos, planilhas, apresentações e PDF, com visual parecido com o do Office") },
       { name: "Obsidian", origin: "flathub", id: "md.obsidian.Obsidian", tasks: ["study"], tags: [N_("anotações"), N_("Markdown")], text: N_("Anotações em Markdown, com links entre as notas") },
+      // vega#203: ProjectLibre do repo-oss (o GanttProject não está nos repositórios).
+      { name: "ProjectLibre", origin: "official", id: "projectlibre", logo: "projectlibre", tags: [N_("gestão de projetos"), N_("Gantt"), N_("alternativa ao Microsoft Project")], text: N_("Cronogramas, gráficos de Gantt e recursos de projetos") },
       { name: "Planify", origin: "flathub", id: "io.github.alainm23.planify", logo: "io.github.alainm23.planify", tags: [N_("lista de tarefas")], text: N_("Tarefas, lembretes e projetos") },
       { name: "Calibre", origin: "official", id: "calibre", logo: "com.calibre_ebook.calibre", tasks: ["study"], tags: [N_("e-book"), N_("Kindle")], text: N_("Biblioteca e conversão de e-books") },
       { name: "Okular", origin: "official", id: "okular", logo: "org.kde.okular", tasks: ["study"], tags: [N_("PDF")], text: N_("Leitor de PDF com anotações") },
       { name: "Font Manager", origin: "official", id: "font-manager", logo: "com.github.FontManager.FontManager", tasks: ["edit"], tags: [N_("fontes"), N_("tipografia")], text: N_("Visualiza, compara, instala e organiza fontes") },
       { name: "Scribus", origin: "official", id: "scribus", logo: "net.scribus.Scribus", tasks: ["edit"], tags: [N_("diagramação"), N_("alternativa ao InDesign")], text: N_("Diagramação de revistas e folhetos") },
+    ],
+  },
+  {
+    // vega#203: sites como apps. Atalhos no menu que abrem o site oficial no
+    // Chromium em modo app (backend/webapps.rs, vega-webapp), cada um com o
+    // próprio perfil, sem o módulo de segurança dos bancos. Sem `logo`: ícone
+    // ainda pendente (Teams, Google Drive e Google Agenda).
+    id: "webapps",
+    title: N_("Web apps"),
+    apps: [
+      { name: "Outlook", origin: "webapp", id: "outlook", logo: "lyra-webapp-outlook", tags: [N_("web app"), N_("Microsoft 365"), N_("e-mail")], text: N_("E-mail e calendário da Microsoft") },
+      { name: "Word", origin: "webapp", id: "word", logo: "lyra-webapp-word", tags: [N_("web app"), N_("Microsoft 365"), N_("Office online")], text: N_("Documentos do Microsoft 365 no navegador") },
+      { name: "Excel", origin: "webapp", id: "excel", logo: "lyra-webapp-excel", tags: [N_("web app"), N_("Microsoft 365"), N_("Office online"), N_("planilhas")], text: N_("Planilhas do Microsoft 365 no navegador") },
+      { name: "Microsoft Teams", origin: "webapp", id: "teams", tags: [N_("web app"), N_("Microsoft 365"), N_("reunião online"), N_("videoconferência")], text: N_("Chat e reuniões do Microsoft 365") },
+      { name: "Power BI", origin: "webapp", id: "power-bi", logo: "lyra-webapp-power-bi", tags: [N_("web app"), N_("Microsoft 365"), N_("relatórios"), N_("dashboards")], text: N_("Relatórios e painéis de dados da Microsoft") },
+      { name: "Gmail", origin: "webapp", id: "gmail", logo: "lyra-webapp-gmail", tags: [N_("web app"), N_("Google Workspace"), N_("e-mail")], text: N_("E-mail do Google") },
+      { name: "Google Drive", origin: "webapp", id: "google-drive", tags: [N_("web app"), N_("Google Workspace"), N_("arquivos na nuvem")], text: N_("Arquivos na nuvem do Google") },
+      { name: "Google Agenda", origin: "webapp", id: "google-agenda", tags: [N_("web app"), N_("Google Workspace"), N_("Google Calendar"), N_("calendário")], text: N_("Calendário e compromissos do Google") },
+      { name: "Google Docs", origin: "webapp", id: "google-docs", logo: "lyra-webapp-google-docs", tags: [N_("web app"), N_("Google Workspace"), N_("documentos")], text: N_("Documentos do Google no navegador") },
+      { name: "Jira", origin: "webapp", id: "jira", logo: "lyra-webapp-jira", tags: [N_("web app"), N_("Atlassian"), N_("gestão de projetos")], text: N_("Tarefas e projetos de equipes, da Atlassian") },
+      { name: "Confluence", origin: "webapp", id: "confluence", logo: "lyra-webapp-confluence", tags: [N_("web app"), N_("Atlassian"), N_("wiki"), N_("documentação")], text: N_("Wiki e documentação de equipes, da Atlassian") },
+      { name: "Asana", origin: "webapp", id: "asana", logo: "lyra-webapp-asana", tags: [N_("web app"), N_("gestão de projetos"), N_("tarefas")], text: N_("Tarefas e projetos de equipes") },
+      { name: "Trello", origin: "webapp", id: "trello", logo: "lyra-webapp-trello", tags: [N_("web app"), N_("kanban"), N_("tarefas")], text: N_("Quadros kanban para organizar tarefas") },
+      { name: "monday.com", origin: "webapp", id: "monday", logo: "lyra-webapp-monday", tags: [N_("web app"), N_("gestão de projetos"), N_("quadros")], text: N_("Quadros de trabalho e projetos de equipes") },
+      { name: "Notion", origin: "webapp", id: "notion", logo: "lyra-webapp-notion", tags: [N_("web app"), N_("anotações"), N_("wiki")], text: N_("Anotações, documentos e wikis") },
+      { name: "Canva", origin: "webapp", id: "canva", logo: "lyra-webapp-canva", tags: [N_("web app"), N_("design"), N_("posts"), N_("apresentações")], text: N_("Design de posts, apresentações e materiais") },
+      { name: "Figma", origin: "webapp", id: "figma", logo: "lyra-webapp-figma", tags: [N_("web app"), N_("design de interfaces"), N_("protótipos")], text: N_("Design de interfaces e protótipos") },
+      { name: "WhatsApp", origin: "webapp", id: "whatsapp", logo: "lyra-webapp-whatsapp", tags: [N_("web app"), N_("WhatsApp Web"), N_("mensagens")], text: N_("WhatsApp Web numa janela própria") },
     ],
   },
   {

@@ -22,7 +22,7 @@ import { t } from "../../i18n.js";
 import { h, button, banner, section, confirm, fail } from "../../ui.js";
 
 const PACKAGE = "warsaw";
-/** Os webapps rodam no Chromium em modo app (vega-bank-webapp), do repo-oss. */
+/** Os webapps rodam no Chromium em modo app (vega-bank-webapp e vega-webapp), do repo-oss. */
 const BROWSER = "chromium";
 const UNIT = "warsaw.service";
 const REPO = { name: "lyra-warsaw", url: "https://download.opensuse.org/repositories/home:/rodrigosbrito:/warsaw/openSUSE_Leap_16.1/" };
@@ -38,6 +38,32 @@ async function installModule({ transact, ensureRepo }, health) {
   if (!(await ensureRepo(REPO))) return false;
   if (health === "broken" && !(await packageStep(transact, "remove"))?.success) return false;
   return Boolean((await packageStep(transact, "install"))?.success);
+}
+
+const installBrowser = (deps) => deps.transact({ kind: "install", origin: "official", id: BROWSER }, t("Instalando {name}…", { name: "Chromium" }), { reload: false });
+
+/**
+ * Antes de instalar um web app de site (vega#203): ele só precisa do
+ * Chromium. Se faltar, pede confirmação e instala dos repositórios do
+ * openSUSE. Devolve true se o Chromium ficou instalado.
+ */
+export async function ensureChromium(deps) {
+  let browser;
+  try {
+    browser = await call("software_details", { origin: "official", id: BROWSER });
+  } catch (error) {
+    fail(error, t("Não foi possível ler o estado do Chromium"));
+    return false;
+  }
+  if (browser?.installed) return true;
+  const ok = await confirm({
+    title: t("Instalar o Chromium?"),
+    text: t("Os web apps abrem o site numa janela própria do Chromium. O Vega instala o Chromium dos repositórios do openSUSE."),
+    ic: "download",
+    confirmLabel: t("Instalar"),
+    required: true,
+  });
+  return ok && Boolean((await installBrowser(deps))?.success);
 }
 
 /**
@@ -69,7 +95,7 @@ export async function ensureBankModule(deps) {
       confirmLabel: t("Instalar"),
       required: true,
     });
-    return ok && Boolean((await deps.transact({ kind: "install", origin: "official", id: BROWSER }, t("Instalando {name}…", { name: "Chromium" }), { reload: false }))?.success);
+    return ok && Boolean((await installBrowser(deps))?.success);
   }
   const ok = await confirm({
     title: t("Habilitar a segurança de bancos?"),
@@ -84,7 +110,7 @@ export async function ensureBankModule(deps) {
   state.module = null;
   if (!(await installModule(deps, module.health))) return false;
   if (!needsBrowser) return true;
-  return Boolean((await deps.transact({ kind: "install", origin: "official", id: BROWSER }, t("Instalando {name}…", { name: "Chromium" }), { reload: false }))?.success);
+  return Boolean((await installBrowser(deps))?.success);
 }
 
 /** Botão Atualizar da página: lê o estado de novo no próximo desenho. */

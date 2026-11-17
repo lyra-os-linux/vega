@@ -7911,3 +7911,162 @@ msgstr "Preparing the image download…"
 
 msgid "Baixando a imagem: {done} MB de {total} MB"
 msgstr "Downloading the image: {done} MB of {total} MB"
+
+msgid "Site oficial, numa janela própria"
+msgstr "Official website, in its own window"
+
+msgid "Feche o web app antes de apagar os dados de login."
+msgstr "Close the web app before deleting the sign-in data."
+
+msgid "Não foi possível ler o estado do Chromium"
+msgstr "Could not read the Chromium status"
+
+msgid "Os web apps abrem o site numa janela própria do Chromium. O Vega instala o Chromium dos repositórios do openSUSE."
+msgstr "Web apps open the website in a dedicated Chromium window. Vega installs Chromium from the openSUSE repositories."
+
+msgid "gestão de projetos"
+msgstr "project management"
+
+msgid "Gantt"
+msgstr "Gantt"
+
+msgid "alternativa ao Microsoft Project"
+msgstr "Microsoft Project alternative"
+
+msgid "Cronogramas, gráficos de Gantt e recursos de projetos"
+msgstr "Project schedules, Gantt charts and resources"
+
+msgid "Web apps"
+msgstr "Web apps"
+
+msgid "web app"
+msgstr "web app"
+
+msgid "Microsoft 365"
+msgstr "Microsoft 365"
+
+msgid "e-mail"
+msgstr "email"
+
+msgid "E-mail e calendário da Microsoft"
+msgstr "Microsoft email and calendar"
+
+msgid "Office online"
+msgstr "Office online"
+
+msgid "Documentos do Microsoft 365 no navegador"
+msgstr "Microsoft 365 documents in the browser"
+
+msgid "planilhas"
+msgstr "spreadsheets"
+
+msgid "Planilhas do Microsoft 365 no navegador"
+msgstr "Microsoft 365 spreadsheets in the browser"
+
+msgid "Chat e reuniões do Microsoft 365"
+msgstr "Microsoft 365 chat and meetings"
+
+msgid "relatórios"
+msgstr "reports"
+
+msgid "dashboards"
+msgstr "dashboards"
+
+msgid "Relatórios e painéis de dados da Microsoft"
+msgstr "Microsoft data reports and dashboards"
+
+msgid "Google Workspace"
+msgstr "Google Workspace"
+
+msgid "E-mail do Google"
+msgstr "Google email"
+
+msgid "arquivos na nuvem"
+msgstr "cloud files"
+
+msgid "Arquivos na nuvem do Google"
+msgstr "Google cloud files"
+
+msgid "Google Calendar"
+msgstr "Google Calendar"
+
+msgid "calendário"
+msgstr "calendar"
+
+msgid "Calendário e compromissos do Google"
+msgstr "Google calendar and appointments"
+
+msgid "documentos"
+msgstr "documents"
+
+msgid "Documentos do Google no navegador"
+msgstr "Google documents in the browser"
+
+msgid "Atlassian"
+msgstr "Atlassian"
+
+msgid "Tarefas e projetos de equipes, da Atlassian"
+msgstr "Team tasks and projects, by Atlassian"
+
+msgid "wiki"
+msgstr "wiki"
+
+msgid "documentação"
+msgstr "documentation"
+
+msgid "Wiki e documentação de equipes, da Atlassian"
+msgstr "Team wiki and documentation, by Atlassian"
+
+msgid "tarefas"
+msgstr "tasks"
+
+msgid "Tarefas e projetos de equipes"
+msgstr "Team tasks and projects"
+
+msgid "kanban"
+msgstr "kanban"
+
+msgid "Quadros kanban para organizar tarefas"
+msgstr "Kanban boards to organize tasks"
+
+msgid "quadros"
+msgstr "boards"
+
+msgid "Quadros de trabalho e projetos de equipes"
+msgstr "Work boards and team projects"
+
+msgid "Anotações, documentos e wikis"
+msgstr "Notes, documents and wikis"
+
+msgid "design"
+msgstr "design"
+
+msgid "posts"
+msgstr "posts"
+
+msgid "Design de posts, apresentações e materiais"
+msgstr "Design for posts, presentations and materials"
+
+msgid "design de interfaces"
+msgstr "interface design"
+
+msgid "protótipos"
+msgstr "prototypes"
+
+msgid "Design de interfaces e protótipos"
+msgstr "Interface design and prototypes"
+
+msgid "WhatsApp Web"
+msgstr "WhatsApp Web"
+
+msgid "mensagens"
+msgstr "messages"
+
+msgid "WhatsApp Web numa janela própria"
+msgstr "WhatsApp Web in its own window"
+
+msgid "O atalho sai do menu de aplicativos e do dock, sem senha."
+msgstr "The shortcut is removed from the app menu and the dock, without a password."
+
+msgid "Apagar também os dados de login (cookies e senhas salvas no web app)"
+msgstr "Also delete the sign-in data (cookies and passwords saved in the web app)"

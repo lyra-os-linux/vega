@@ -73,6 +73,9 @@ ln -s vega-gtk %{buildroot}%{_bindir}/lyra-vega-gtk
 # Webapps de bancos (vega#210): abre o site e liga o Warsaw enquanto aberto.
 install -Dm755 packaging/vega/vega-bank-webapp \
   %{buildroot}%{_bindir}/vega-bank-webapp
+# Web apps de sites (vega#203): abre o site no Chromium em modo app.
+install -Dm755 packaging/vega/vega-webapp \
+  %{buildroot}%{_bindir}/vega-webapp
 
 install -Dm644 packaging/vega/vega.desktop \
   %{buildroot}%{_datadir}/applications/vega.desktop
@@ -94,6 +97,7 @@ done
 %{_bindir}/vega-update-notifier
 %{_bindir}/lyra-vega-gtk
 %{_bindir}/vega-bank-webapp
+%{_bindir}/vega-webapp
 %{_datadir}/applications/vega.desktop
 %{_datadir}/applications/org.lyraos.Vega.UpdateNotifier.desktop
 %{_sysconfdir}/xdg/autostart/vega-update-notifier.desktop

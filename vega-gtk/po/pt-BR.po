@@ -7910,3 +7910,162 @@ msgstr "Preparando o download da imagem…"
 
 msgid "Baixando a imagem: {done} MB de {total} MB"
 msgstr "Baixando a imagem: {done} MB de {total} MB"
+
+msgid "Site oficial, numa janela própria"
+msgstr "Site oficial, numa janela própria"
+
+msgid "Feche o web app antes de apagar os dados de login."
+msgstr "Feche o web app antes de apagar os dados de login."
+
+msgid "Não foi possível ler o estado do Chromium"
+msgstr "Não foi possível ler o estado do Chromium"
+
+msgid "Os web apps abrem o site numa janela própria do Chromium. O Vega instala o Chromium dos repositórios do openSUSE."
+msgstr "Os web apps abrem o site numa janela própria do Chromium. O Vega instala o Chromium dos repositórios do openSUSE."
+
+msgid "gestão de projetos"
+msgstr "gestão de projetos"
+
+msgid "Gantt"
+msgstr "Gantt"
+
+msgid "alternativa ao Microsoft Project"
+msgstr "alternativa ao Microsoft Project"
+
+msgid "Cronogramas, gráficos de Gantt e recursos de projetos"
+msgstr "Cronogramas, gráficos de Gantt e recursos de projetos"
+
+msgid "Web apps"
+msgstr "Web apps"
+
+msgid "web app"
+msgstr "web app"
+
+msgid "Microsoft 365"
+msgstr "Microsoft 365"
+
+msgid "e-mail"
+msgstr "e-mail"
+
+msgid "E-mail e calendário da Microsoft"
+msgstr "E-mail e calendário da Microsoft"
+
+msgid "Office online"
+msgstr "Office online"
+
+msgid "Documentos do Microsoft 365 no navegador"
+msgstr "Documentos do Microsoft 365 no navegador"
+
+msgid "planilhas"
+msgstr "planilhas"
+
+msgid "Planilhas do Microsoft 365 no navegador"
+msgstr "Planilhas do Microsoft 365 no navegador"
+
+msgid "Chat e reuniões do Microsoft 365"
+msgstr "Chat e reuniões do Microsoft 365"
+
+msgid "relatórios"
+msgstr "relatórios"
+
+msgid "dashboards"
+msgstr "dashboards"
+
+msgid "Relatórios e painéis de dados da Microsoft"
+msgstr "Relatórios e painéis de dados da Microsoft"
+
+msgid "Google Workspace"
+msgstr "Google Workspace"
+
+msgid "E-mail do Google"
+msgstr "E-mail do Google"
+
+msgid "arquivos na nuvem"
+msgstr "arquivos na nuvem"
+
+msgid "Arquivos na nuvem do Google"
+msgstr "Arquivos na nuvem do Google"
+
+msgid "Google Calendar"
+msgstr "Google Calendar"
+
+msgid "calendário"
+msgstr "calendário"
+
+msgid "Calendário e compromissos do Google"
+msgstr "Calendário e compromissos do Google"
+
+msgid "documentos"
+msgstr "documentos"
+
+msgid "Documentos do Google no navegador"
+msgstr "Documentos do Google no navegador"
+
+msgid "Atlassian"
+msgstr "Atlassian"
+
+msgid "Tarefas e projetos de equipes, da Atlassian"
+msgstr "Tarefas e projetos de equipes, da Atlassian"
+
+msgid "wiki"
+msgstr "wiki"
+
+msgid "documentação"
+msgstr "documentação"
+
+msgid "Wiki e documentação de equipes, da Atlassian"
+msgstr "Wiki e documentação de equipes, da Atlassian"
+
+msgid "tarefas"
+msgstr "tarefas"
+
+msgid "Tarefas e projetos de equipes"
+msgstr "Tarefas e projetos de equipes"
+
+msgid "kanban"
+msgstr "kanban"
+
+msgid "Quadros kanban para organizar tarefas"
+msgstr "Quadros kanban para organizar tarefas"
+
+msgid "quadros"
+msgstr "quadros"
+
+msgid "Quadros de trabalho e projetos de equipes"
+msgstr "Quadros de trabalho e projetos de equipes"
+
+msgid "Anotações, documentos e wikis"
+msgstr "Anotações, documentos e wikis"
+
+msgid "design"
+msgstr "design"
+
+msgid "posts"
+msgstr "posts"
+
+msgid "Design de posts, apresentações e materiais"
+msgstr "Design de posts, apresentações e materiais"
+
+msgid "design de interfaces"
+msgstr "design de interfaces"
+
+msgid "protótipos"
+msgstr "protótipos"
+
+msgid "Design de interfaces e protótipos"
+msgstr "Design de interfaces e protótipos"
+
+msgid "WhatsApp Web"
+msgstr "WhatsApp Web"
+
+msgid "mensagens"
+msgstr "mensagens"
+
+msgid "WhatsApp Web numa janela própria"
+msgstr "WhatsApp Web numa janela própria"
+
+msgid "O atalho sai do menu de aplicativos e do dock, sem senha."
+msgstr "O atalho sai do menu de aplicativos e do dock, sem senha."
+
+msgid "Apagar também os dados de login (cookies e senhas salvas no web app)"
+msgstr "Apagar também os dados de login (cookies e senhas salvas no web app)"

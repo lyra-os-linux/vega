@@ -13,7 +13,7 @@ import { requireRestart } from "../restart.js";
 import { flatpakPanel } from "./software/flatpak.js";
 import { POPULAR } from "./software/popular-catalog.js";
 import { studioBanner } from "./software/studio-mode.js";
-import { bankSection, resetBankSection, ensureBankModule } from "./software/banks.js";
+import { bankSection, resetBankSection, ensureBankModule, ensureChromium } from "./software/banks.js";
 import { DEVELOPER } from "./software/developer-catalog.js";
 import { NETWORK } from "./software/network-catalog.js";
 import { WINDOWS, WINDOWS_BASE } from "./software/windows-catalog.js";
@@ -57,6 +57,8 @@ const CURATED = curatedEntries(Object.entries(SHOWCASES).map(([tab, { label, cat
 /** Origens instaladas na conta do usuário: sem detalhes no vegad, removidas pelo cartão. */
 // Mensagem do vegad (zypper_friendly.go, kind "not-found") e do zypper.
 const NOT_FOUND = /não foi encontrado nos repositórios ativos|No provider of|not found in package names/;
+/** Webapps de bancos: instalam o módulo de segurança; os de sites, só o Chromium. */
+const BANK_WEBAPPS = new Set(POPULAR.filter((category) => category.bank).flatMap((category) => category.apps.map((app) => app.id)));
 const USER_ORIGINS = new Set(["windows", "npm", "vscode", "mainframe", "oracle", "appimage", "receita", "preset", "webapp", "fonts"]);
 const ORIGIN_RANK = { official: 0, flathub: 1 };
 
@@ -705,11 +707,39 @@ export default {
       return banner("info", "cpu", t("Sem codificação por hardware"), t("O OBS usa o processador (x264). Para gravar em alta resolução, prefira presets mais leves."));
     }
 
+    /**
+     * Remove o atalho do webapp. Os logins ficam no perfil do Chromium; por
+     * padrão continuam, para reinstalar já logado (vega#203).
+     */
+    async function removeWebapp(app) {
+      const wipe = h("input", { type: "checkbox", id: "sw-webapp-wipe" });
+      const ok = await confirm({
+        title: t("Remover {name}?", { name: app.name }),
+        text: t("O atalho sai do menu de aplicativos e do dock, sem senha."),
+        extra: h("label", { class: "row-flex", for: "sw-webapp-wipe" }, wipe, t("Apagar também os dados de login (cookies e senhas salvas no web app)")),
+        ic: "trash",
+        tone: "danger",
+        confirmLabel: t("Remover"),
+        confirmKind: "danger",
+        required: true,
+      });
+      if (!ok) return;
+      try {
+        await call("webapp_remove", { id: app.id, deleteData: wipe.checked });
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      popularInstalled = null;
+      userInstalled = null;
+      return load();
+    }
+
     /** Remove um app instalado na conta do usuário (Windows, npm ou AppImage). */
     async function removeUserApp(app) {
-      if (app.origin === "preset" || app.origin === "webapp" || app.origin === "fonts") {
+      if (app.origin === "webapp") return removeWebapp(app);
+      if (app.origin === "preset" || app.origin === "fonts") {
         try {
-          await call(app.origin === "webapp" ? "webapp_remove" : app.origin === "fonts" ? "ms_fonts_remove" : "easyeffects_preset_remove", { id: app.id });
+          await call(app.origin === "fonts" ? "ms_fonts_remove" : "easyeffects_preset_remove", { id: app.id });
         } catch (error) {
           return fail(error, t("Não foi possível concluir a operação"));
         }
@@ -1069,12 +1099,14 @@ export default {
     }
 
     /**
-     * Webapp de banco (webapps.rs): instala o módulo de segurança, se faltar,
-     * e grava o atalho no menu, na conta do usuário, sem senha.
+     * Webapp (webapps.rs): o de banco instala o módulo de segurança, se
+     * faltar; o de site (vega#203) só o Chromium. Depois grava o atalho no
+     * menu, na conta do usuário, sem senha.
      */
     async function installWebapp(app) {
       // Todo webapp de banco liga o módulo de segurança antes de abrir o site.
-      if (!(await ensureBankModule({ transact, ensureRepo }))) return;
+      const ready = BANK_WEBAPPS.has(app.id) ? ensureBankModule({ transact, ensureRepo }) : ensureChromium({ transact });
+      if (!(await ready)) return;
       try {
         await call("webapp_install", { id: app.id });
       } catch (error) {

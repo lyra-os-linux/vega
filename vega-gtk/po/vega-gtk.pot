@@ -8140,3 +8140,162 @@ msgstr ""
 
 msgid "Baixando a imagem: {done} MB de {total} MB"
 msgstr ""
+
+msgid "Site oficial, numa janela própria"
+msgstr ""
+
+msgid "Feche o web app antes de apagar os dados de login."
+msgstr ""
+
+msgid "Não foi possível ler o estado do Chromium"
+msgstr ""
+
+msgid "Os web apps abrem o site numa janela própria do Chromium. O Vega instala o Chromium dos repositórios do openSUSE."
+msgstr ""
+
+msgid "gestão de projetos"
+msgstr ""
+
+msgid "Gantt"
+msgstr ""
+
+msgid "alternativa ao Microsoft Project"
+msgstr ""
+
+msgid "Cronogramas, gráficos de Gantt e recursos de projetos"
+msgstr ""
+
+msgid "Web apps"
+msgstr ""
+
+msgid "web app"
+msgstr ""
+
+msgid "Microsoft 365"
+msgstr ""
+
+msgid "e-mail"
+msgstr ""
+
+msgid "E-mail e calendário da Microsoft"
+msgstr ""
+
+msgid "Office online"
+msgstr ""
+
+msgid "Documentos do Microsoft 365 no navegador"
+msgstr ""
+
+msgid "planilhas"
+msgstr ""
+
+msgid "Planilhas do Microsoft 365 no navegador"
+msgstr ""
+
+msgid "Chat e reuniões do Microsoft 365"
+msgstr ""
+
+msgid "relatórios"
+msgstr ""
+
+msgid "dashboards"
+msgstr ""
+
+msgid "Relatórios e painéis de dados da Microsoft"
+msgstr ""
+
+msgid "Google Workspace"
+msgstr ""
+
+msgid "E-mail do Google"
+msgstr ""
+
+msgid "arquivos na nuvem"
+msgstr ""
+
+msgid "Arquivos na nuvem do Google"
+msgstr ""
+
+msgid "Google Calendar"
+msgstr ""
+
+msgid "calendário"
+msgstr ""
+
+msgid "Calendário e compromissos do Google"
+msgstr ""
+
+msgid "documentos"
+msgstr ""
+
+msgid "Documentos do Google no navegador"
+msgstr ""
+
+msgid "Atlassian"
+msgstr ""
+
+msgid "Tarefas e projetos de equipes, da Atlassian"
+msgstr ""
+
+msgid "wiki"
+msgstr ""
+
+msgid "documentação"
+msgstr ""
+
+msgid "Wiki e documentação de equipes, da Atlassian"
+msgstr ""
+
+msgid "tarefas"
+msgstr ""
+
+msgid "Tarefas e projetos de equipes"
+msgstr ""
+
+msgid "kanban"
+msgstr ""
+
+msgid "Quadros kanban para organizar tarefas"
+msgstr ""
+
+msgid "quadros"
+msgstr ""
+
+msgid "Quadros de trabalho e projetos de equipes"
+msgstr ""
+
+msgid "Anotações, documentos e wikis"
+msgstr ""
+
+msgid "design"
+msgstr ""
+
+msgid "posts"
+msgstr ""
+
+msgid "Design de posts, apresentações e materiais"
+msgstr ""
+
+msgid "design de interfaces"
+msgstr ""
+
+msgid "protótipos"
+msgstr ""
+
+msgid "Design de interfaces e protótipos"
+msgstr ""
+
+msgid "WhatsApp Web"
+msgstr ""
+
+msgid "mensagens"
+msgstr ""
+
+msgid "WhatsApp Web numa janela própria"
+msgstr ""
+
+msgid "O atalho sai do menu de aplicativos e do dock, sem senha."
+msgstr ""
+
+msgid "Apagar também os dados de login (cookies e senhas salvas no web app)"
+msgstr ""
