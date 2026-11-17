@@ -46,3 +46,11 @@
   .vm-grid { grid-template-columns: minmax(0, 1fr); }
 }
 .vm-more { margin: -6px -8px -6px 0; }
+
+/* Contêineres */
+
+.ct-grid { display: grid; gap: var(--gap); grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+.ct-card { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.ct-head { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.ct-head .vm-meta { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.ct-image { overflow-wrap: anywhere; }
