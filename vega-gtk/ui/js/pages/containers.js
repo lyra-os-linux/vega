@@ -145,9 +145,11 @@ export default {
           button(t("Copiar senha"), { size: "sm", icon: "key", onClick: () => copyPassword(service) }),
           button(t("Remover"), { size: "sm", icon: "trash", kind: "danger", disabled: running, title: running ? t("Pare o serviço antes de remover") : undefined, onClick: () => remove(service) }),
         ];
-      return h("div", { class: "card" },
-        h("div", { class: "row-flex" }, icon("database", 22), h("strong", {}, service.name), h("div", { class: "spacer" }), badge(state.label, state.tone, state.icon)),
-        h("p", { class: "small muted selectable" }, service.image),
+      return h("div", { class: "card ct-card" },
+        h("div", { class: "ct-head" },
+          h("div", { class: "vm-avatar" }, icon("database", 22)),
+          h("div", { class: "vm-meta" }, h("div", { class: "vm-name", title: service.name }, service.name), badge(state.label, state.tone, state.icon))),
+        h("p", { class: "mono muted selectable ct-image" }, service.image),
         service.installed && h("p", { class: "small selectable" }, t("Conexão: {connection} (usuário {users})", { connection: service.connection, users: service.users })),
         service.installed && h("p", { class: "small muted" }, t("Terminal:"), " ", h("code", { class: "selectable" }, service.terminal)),
         h("div", { class: "row-flex" }, actions));
@@ -157,7 +159,7 @@ export default {
       if (!services) return;
       clear(body,
         !services[0]?.podman && banner("info", "box", t("O Podman ainda não está instalado"), t("Ele é instalado junto com o primeiro serviço, com a senha de administrador.")),
-        section(t("Serviços disponíveis"), { sub: String(services.length) }, h("div", { class: "grid auto" }, services.map(row))));
+        section(t("Serviços disponíveis"), { sub: String(services.length) }, h("div", { class: "ct-grid" }, services.map(row))));
     }
 
     load();
