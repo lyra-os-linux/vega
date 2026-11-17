@@ -76,7 +76,12 @@ done
 # --ozone-platform=x11: no Wayland, o Chromium em modo app ignora --class e o
 # GNOME liga a janela ao app Chromium, com o ícone dele. Pelo XWayland a classe
 # vale e o dock mostra o webapp com o nome e o ícone do banco.
+# --disable-features=LocalNetworkAccessChecks...: o Chromium bloqueia, sem
+# perguntar, o site do banco de abrir wss://127.0.0.1:30900, onde o Warsaw
+# escuta, e o banco pede o módulo de segurança (warsaw#18). Vale só para este
+# perfil, que só abre o site do banco.
 chromium --ozone-platform=x11 --user-data-dir="$profile" --class="lyra-banco-$id" \
+    --disable-features=LocalNetworkAccessChecks,LocalNetworkAccessChecksWebSockets \
     --start-maximized --no-first-run --no-default-browser-check --app="$url"
 
 flock -u 9
