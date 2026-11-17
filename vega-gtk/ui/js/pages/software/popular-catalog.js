@@ -321,19 +321,18 @@ export const POPULAR = [
   {
     // vega#203: sites como apps. Atalhos no menu que abrem o site oficial no
     // Chromium em modo app (backend/webapps.rs, vega-webapp), cada um com o
-    // próprio perfil, sem o módulo de segurança dos bancos. Sem `logo`: ícone
-    // ainda pendente (Teams, Google Drive e Google Agenda).
+    // próprio perfil, sem o módulo de segurança dos bancos.
     id: "webapps",
     title: N_("Web apps"),
     apps: [
       { name: "Outlook", origin: "webapp", id: "outlook", logo: "lyra-webapp-outlook", tags: [N_("web app"), N_("Microsoft 365"), N_("e-mail")], text: N_("E-mail e calendário da Microsoft") },
       { name: "Word", origin: "webapp", id: "word", logo: "lyra-webapp-word", tags: [N_("web app"), N_("Microsoft 365"), N_("Office online")], text: N_("Documentos do Microsoft 365 no navegador") },
       { name: "Excel", origin: "webapp", id: "excel", logo: "lyra-webapp-excel", tags: [N_("web app"), N_("Microsoft 365"), N_("Office online"), N_("planilhas")], text: N_("Planilhas do Microsoft 365 no navegador") },
-      { name: "Microsoft Teams", origin: "webapp", id: "teams", tags: [N_("web app"), N_("Microsoft 365"), N_("reunião online"), N_("videoconferência")], text: N_("Chat e reuniões do Microsoft 365") },
+      { name: "Microsoft Teams", origin: "webapp", id: "teams", logo: "lyra-webapp-teams", tags: [N_("web app"), N_("Microsoft 365"), N_("reunião online"), N_("videoconferência")], text: N_("Chat e reuniões do Microsoft 365") },
       { name: "Power BI", origin: "webapp", id: "power-bi", logo: "lyra-webapp-power-bi", tags: [N_("web app"), N_("Microsoft 365"), N_("relatórios"), N_("dashboards")], text: N_("Relatórios e painéis de dados da Microsoft") },
       { name: "Gmail", origin: "webapp", id: "gmail", logo: "lyra-webapp-gmail", tags: [N_("web app"), N_("Google Workspace"), N_("e-mail")], text: N_("E-mail do Google") },
-      { name: "Google Drive", origin: "webapp", id: "google-drive", tags: [N_("web app"), N_("Google Workspace"), N_("arquivos na nuvem")], text: N_("Arquivos na nuvem do Google") },
-      { name: "Google Agenda", origin: "webapp", id: "google-agenda", tags: [N_("web app"), N_("Google Workspace"), N_("Google Calendar"), N_("calendário")], text: N_("Calendário e compromissos do Google") },
+      { name: "Google Drive", origin: "webapp", id: "google-drive", logo: "lyra-webapp-google-drive", tags: [N_("web app"), N_("Google Workspace"), N_("arquivos na nuvem")], text: N_("Arquivos na nuvem do Google") },
+      { name: "Google Agenda", origin: "webapp", id: "google-agenda", logo: "lyra-webapp-google-agenda", tags: [N_("web app"), N_("Google Workspace"), N_("Google Calendar"), N_("calendário")], text: N_("Calendário e compromissos do Google") },
       { name: "Google Docs", origin: "webapp", id: "google-docs", logo: "lyra-webapp-google-docs", tags: [N_("web app"), N_("Google Workspace"), N_("documentos")], text: N_("Documentos do Google no navegador") },
       { name: "Jira", origin: "webapp", id: "jira", logo: "lyra-webapp-jira", tags: [N_("web app"), N_("Atlassian"), N_("gestão de projetos")], text: N_("Tarefas e projetos de equipes, da Atlassian") },
       { name: "Confluence", origin: "webapp", id: "confluence", logo: "lyra-webapp-confluence", tags: [N_("web app"), N_("Atlassian"), N_("wiki"), N_("documentação")], text: N_("Wiki e documentação de equipes, da Atlassian") },

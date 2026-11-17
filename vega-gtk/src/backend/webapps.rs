@@ -313,8 +313,14 @@ fn site_icon(id: &str) -> Option<&'static [u8]> {
         "excel" => Some(include_bytes!("../../ui/img/popular/lyra-webapp-excel.png")),
         "figma" => Some(include_bytes!("../../ui/img/popular/lyra-webapp-figma.png")),
         "gmail" => Some(include_bytes!("../../ui/img/popular/lyra-webapp-gmail.png")),
+        "google-agenda" => Some(include_bytes!(
+            "../../ui/img/popular/lyra-webapp-google-agenda.png"
+        )),
         "google-docs" => Some(include_bytes!(
             "../../ui/img/popular/lyra-webapp-google-docs.png"
+        )),
+        "google-drive" => Some(include_bytes!(
+            "../../ui/img/popular/lyra-webapp-google-drive.png"
         )),
         "jira" => Some(include_bytes!("../../ui/img/popular/lyra-webapp-jira.png")),
         "monday" => Some(include_bytes!(
@@ -329,6 +335,7 @@ fn site_icon(id: &str) -> Option<&'static [u8]> {
         "power-bi" => Some(include_bytes!(
             "../../ui/img/popular/lyra-webapp-power-bi.png"
         )),
+        "teams" => Some(include_bytes!("../../ui/img/popular/lyra-webapp-teams.png")),
         "trello" => Some(include_bytes!(
             "../../ui/img/popular/lyra-webapp-trello.png"
         )),
@@ -583,11 +590,7 @@ mod tests {
         assert!(desktop_entry(webapp("caixa").unwrap(), None).contains("Icon=web-browser\n"));
         assert!(bb.contains("StartupWMClass=lyra-banco-banco-do-brasil\n"));
         for app in WEBAPPS {
-            // Teams, Google Drive e Google Agenda: ícones ainda pendentes
-            // (vega#203).
-            if !["teams", "google-drive", "google-agenda"].contains(&app.id) {
-                assert!(icon(app).is_some(), "{} sem ícone", app.id);
-            }
+            assert!(icon(app).is_some(), "{} sem ícone", app.id);
         }
     }
 
