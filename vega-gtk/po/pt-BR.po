@@ -7898,6 +7898,7 @@ msgstr "SQL Server"
 
 msgid "Consultas e IntelliSense para o SQL Server no VS Code; o do Vega → Contêineres conecta em localhost,1433 com o usuário sa"
 msgstr "Consultas e IntelliSense para o SQL Server no VS Code; o do Vega → Contêineres conecta em localhost,1433 com o usuário sa"
+
 msgid "{done} MB de {total} MB"
 msgstr "{done} MB de {total} MB"
 
