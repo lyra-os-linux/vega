@@ -8199,3 +8199,21 @@ msgstr "Digital certificate"
 
 msgid "Certificado ICP-Brasil para gov.br, Receita, Justiça e emissores de nota: o A1 é um arquivo .pfx; o A3 fica num token USB ou cartão."
 msgstr "ICP-Brasil certificate for gov.br, Receita Federal, the courts and invoice issuers: A1 is a .pfx file; A3 lives on a USB token or smart card."
+
+msgid "Internet banking pelo navegador, sem módulo de segurança; várias operações só existem no app"
+msgstr "Internet banking in the browser, without a security module; several operations exist only in the app"
+
+msgid "Pessoa física usa só o app do celular; o site atende as contas PJ. Sem módulo de segurança"
+msgstr "Personal accounts use only the phone app; the website serves business accounts. No security module"
+
+msgid "Sem módulo de segurança; para pagar e transferir, cadastre o computador com o código de liberação"
+msgstr "No security module; to pay and transfer, register the computer with the release code"
+
+msgid "Sem módulo de segurança; o acesso pelo computador é confirmado no app do celular (i-Safe)"
+msgstr "No security module; access from the computer is confirmed in the phone app (i-Safe)"
+
+msgid "Pessoa física usa só o app do celular; o Web Banking do C6 Empresas é só para Windows e Mac"
+msgstr "Personal accounts use only the phone app; C6 Empresas Web Banking is only for Windows and Mac"
+
+msgid "Sem módulo de segurança; o acesso costuma ser pelo app do celular"
+msgstr "No security module; access is usually through the phone app"

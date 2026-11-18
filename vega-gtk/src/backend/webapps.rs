@@ -25,8 +25,19 @@ pub struct Webapp {
     pub id: &'static str,
     pub name: &'static str,
     pub url: &'static str,
-    /// Banco: abre com o módulo de segurança, pelo `vega-bank-webapp`.
+    /// Banco: fica na seção Bancos, com o perfil em `lyra-bancos` e a
+    /// classe `lyra-banco-`. Liga o módulo de segurança, a menos que esteja
+    /// em [`WITHOUT_MODULE`].
     pub bank: bool,
+}
+
+/// Bancos que não usam módulo de segurança no navegador (vega#200, #224):
+/// abrem pelo `vega-webapp`, sem ligar o Warsaw nem pedir a instalação dele.
+pub const WITHOUT_MODULE: &[&str] = &["santander", "nubank", "sicoob", "inter", "c6", "btg"];
+
+/// O webapp liga o Warsaw antes de abrir o site.
+pub fn uses_module(app: &Webapp) -> bool {
+    app.bank && !WITHOUT_MODULE.contains(&app.id)
 }
 
 pub const WEBAPPS: &[Webapp] = &[
@@ -378,7 +389,7 @@ pub fn desktop_entry(app: &Webapp, icon_file: Option<&Path>) -> String {
          Type=Application\n\
          Name={name}\n\
          Comment={comment}\n\
-         Exec={launcher} {id} {url}\n\
+         Exec={launcher} {id} {url}{kind}\n\
          Icon={icon}\n\
          Terminal=false\n\
          Categories={categories}\n\
@@ -391,10 +402,16 @@ pub fn desktop_entry(app: &Webapp, icon_file: Option<&Path>) -> String {
         } else {
             gettext("Site oficial, numa janela própria")
         },
-        launcher = if app.bank {
+        launcher = if uses_module(app) {
             "vega-bank-webapp"
         } else {
             "vega-webapp"
+        },
+        // Banco sem módulo: o `vega-webapp` usa o perfil e a classe de banco.
+        kind = if app.bank && !uses_module(app) {
+            " banco"
+        } else {
+            ""
         },
         categories = if app.bank {
             "Network;Finance;"
@@ -470,7 +487,25 @@ fn refresh_menu(data: &Path) {
     let _ = command.status();
 }
 
+/// Atalhos de bancos que deixaram de usar o módulo (#224) ainda chamam o
+/// `vega-bank-webapp`: regrava só a linha de comando, com o mesmo arquivo,
+/// perfil e favorito, para o banco abrir sem ligar o Warsaw.
+fn migrate_without_module(data: &Path) {
+    for app in WEBAPPS.iter().filter(|app| app.bank && !uses_module(app)) {
+        let path = desktop_path(data, app);
+        let Ok(entry) = std::fs::read_to_string(&path) else {
+            continue;
+        };
+        if !entry.contains("Exec=vega-bank-webapp ") {
+            continue;
+        }
+        let icon_file = icon(app).map(|_| icon_path(data, app));
+        let _ = std::fs::write(&path, desktop_entry(app, icon_file.as_deref()));
+    }
+}
+
 pub fn installed_in(data: &Path) -> Vec<String> {
+    migrate_without_module(data);
     WEBAPPS
         .iter()
         .filter(|app| desktop_path(data, app).is_file())
@@ -578,6 +613,41 @@ mod tests {
             "Exec=vega-bank-webapp banco-do-brasil https://www.bb.com.br/
 "
         ));
+    }
+
+    #[test]
+    fn banks_without_module_open_without_warsaw_and_keep_their_profile() {
+        let inter = desktop_entry(webapp("inter").unwrap(), None);
+        assert!(inter.contains("Exec=vega-webapp inter https://inter.co/ banco\n"));
+        assert!(inter.contains("StartupWMClass=lyra-banco-inter\n"));
+        for id in WITHOUT_MODULE {
+            assert!(webapp(id).is_some_and(|app| app.bank), "{id}");
+        }
+    }
+
+    #[test]
+    fn old_bank_shortcuts_are_rewritten_without_the_module() {
+        let data = std::env::temp_dir().join(format!("vega-webapps-mig-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&data);
+        std::fs::create_dir_all(data.join("applications")).unwrap();
+        let c6 = data.join("applications/lyra-banco-c6.desktop");
+        std::fs::write(
+            &c6,
+            "[Desktop Entry]\nExec=vega-bank-webapp c6 https://www.c6bank.com.br/\n",
+        )
+        .unwrap();
+        let bb = data.join("applications/lyra-banco-banco-do-brasil.desktop");
+        let bb_entry = desktop_entry(webapp("banco-do-brasil").unwrap(), None);
+        std::fs::write(&bb, &bb_entry).unwrap();
+        let installed = installed_in(&data);
+        assert!(installed.contains(&"c6".to_owned()));
+        assert!(
+            std::fs::read_to_string(&c6)
+                .unwrap()
+                .contains("Exec=vega-webapp c6 https://www.c6bank.com.br/ banco\n")
+        );
+        assert_eq!(std::fs::read_to_string(&bb).unwrap(), bb_entry);
+        std::fs::remove_dir_all(&data).unwrap();
     }
 
     #[test]
