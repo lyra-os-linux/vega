@@ -8070,3 +8070,132 @@ msgstr "The shortcut is removed from the app menu and the dock, without a passwo
 
 msgid "Apagar também os dados de login (cookies e senhas salvas no web app)"
 msgstr "Also delete the sign-in data (cookies and passwords saved in the web app)"
+
+msgid "Chromium, Edge e web apps do Vega"
+msgstr "Chromium, Edge and Vega web apps"
+
+msgid "Não foi possível criar o banco de certificados em {path}."
+msgstr "Could not create the certificate database in {path}."
+
+msgid "O OpenSC não está instalado."
+msgstr "OpenSC is not installed."
+
+msgid "Não foi possível registrar o token em {browser}."
+msgstr "Could not register the token in {browser}."
+
+msgid "Senha incorreta."
+msgstr "Wrong password."
+
+msgid "O arquivo não é um certificado A1 válido."
+msgstr "The file is not a valid A1 certificate."
+
+msgid "Não foi possível importar o certificado em {browser}."
+msgstr "Could not import the certificate into {browser}."
+
+msgid "Vencido em {date}"
+msgstr "Expired on {date}"
+
+msgid "Vence em {days} dias"
+msgstr "Expires in {days} days"
+
+msgid "Válido até {date}"
+msgstr "Valid until {date}"
+
+msgid "Senha do certificado"
+msgstr "Certificate password"
+
+msgid "Importar {name}?"
+msgstr "Import {name}?"
+
+msgid "Digite a senha do certificado. O Vega importa o certificado no Firefox, no Chromium, no Edge e nos web apps, só na sua conta. A senha não fica guardada."
+msgstr "Type the certificate password. Vega imports the certificate into Firefox, Chromium, Edge and the web apps, only in your account. The password is not stored."
+
+msgid "Token registrado em: {list}. Reabra o Firefox se ele estiver aberto."
+msgstr "Token registered in: {list}. Reopen Firefox if it is open."
+
+msgid "Escolha o certificado A1"
+msgstr "Choose the A1 certificate"
+
+msgid "Certificado A1"
+msgstr "A1 certificate"
+
+msgid "Certificado de {holder} importado, mas está vencido desde {date}."
+msgstr "Certificate of {holder} imported, but it expired on {date}."
+
+msgid "Certificado de {holder} importado. Ele vence em {days} dias: providencie a renovação."
+msgstr "Certificate of {holder} imported. It expires in {days} days: arrange the renewal."
+
+msgid "Certificado de {holder} importado, válido até {date}. Reabra o navegador para usá-lo."
+msgstr "Certificate of {holder} imported, valid until {date}. Reopen the browser to use it."
+
+msgid "Diagnóstico copiado. Ele não tem seu nome, CPF nem número de série."
+msgstr "Diagnostics copied. They do not include your name, CPF or serial number."
+
+msgid "Importar certificado A1…"
+msgstr "Import A1 certificate…"
+
+msgid "Copiar diagnóstico"
+msgstr "Copy diagnostics"
+
+msgid "Não foi possível ler o estado do certificado"
+msgstr "Could not read the certificate status"
+
+msgid "Procurando leitoras e certificados…"
+msgstr "Looking for readers and certificates…"
+
+msgid "Certificado A3: instale o suporte a leitoras"
+msgstr "A3 certificate: install reader support"
+
+msgid "Para usar token ou cartão, o Vega instala o pcsc-lite, o pcsc-ccid e o OpenSC dos repositórios do openSUSE. Para o A1 não precisa."
+msgstr "To use a token or smart card, Vega installs pcsc-lite, pcsc-ccid and OpenSC from the openSUSE repositories. A1 does not need them."
+
+msgid "Nenhuma leitora ou token conectado. Conecte e clique em Atualizar."
+msgstr "No reader or token connected. Connect it and click Refresh."
+
+msgid "com cartão"
+msgstr "card inserted"
+
+msgid "sem cartão"
+msgstr "no card"
+
+msgid "Token não reconhecido pelo OpenSC"
+msgstr "Token not recognized by OpenSC"
+
+msgid "Este token precisa do programa do fabricante (SafeNet, Watchdata, GD Burti…). O suporte a esses tokens vem numa próxima etapa. Copie o diagnóstico e relate o modelo para entrar na lista."
+msgstr "This token needs the vendor's software (SafeNet, Watchdata, GD Burti…). Support for these tokens comes in a later stage. Copy the diagnostics and report the model to get it on the list."
+
+msgid "Reportar problema"
+msgstr "Report a problem"
+
+msgid "Registrar o token nos navegadores"
+msgstr "Register the token in the browsers"
+
+msgid "O Firefox, o Chromium, o Edge e os web apps do Vega passam a pedir o PIN do token nos sites que exigem certificado. Faltam: {list}."
+msgstr "Firefox, Chromium, Edge and the Vega web apps will ask for the token PIN on sites that require a certificate. Missing: {list}."
+
+msgid "Registrar"
+msgstr "Register"
+
+msgid "Token registrado no Firefox, no Chromium, no Edge e nos web apps."
+msgstr "Token registered in Firefox, Chromium, Edge and the web apps."
+
+msgid "Navegadores Flatpak não usam o token"
+msgstr "Flatpak browsers do not use the token"
+
+msgid "{list} rodam isolados e não enxergam o token. Use o Firefox, o Chromium ou o Edge nos sites que pedem certificado."
+msgstr "{list} run sandboxed and cannot see the token. Use Firefox, Chromium or Edge on sites that ask for a certificate."
+
+msgid "A3 (token ou cartão)"
+msgstr "A3 (token or card)"
+
+msgid "A1 (arquivo)"
+msgstr "A1 (file)"
+
+msgid "Nenhum certificado encontrado ainda."
+msgstr "No certificate found yet."
+
+msgid "Certificado digital"
+msgstr "Digital certificate"
+
+msgid "Certificado ICP-Brasil para gov.br, Receita, Justiça e emissores de nota: o A1 é um arquivo .pfx; o A3 fica num token USB ou cartão."
+msgstr "ICP-Brasil certificate for gov.br, Receita Federal, the courts and invoice issuers: A1 is a .pfx file; A3 lives on a USB token or smart card."
