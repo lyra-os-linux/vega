@@ -362,8 +362,9 @@ export const POPULAR = [
     // Webapps: atalhos no menu que abrem o site oficial no Chromium em modo app
     // `logo`: ícone do banco, do site dele ou do Wikimedia Commons (decisão do
     // mantenedor em 15/11/2026: é só um atalho para o banco).
-    // (backend/webapps.rs); todo webapp liga o módulo de segurança (Warsaw)
-    // antes de abrir o site e o desliga quando fecha.
+    // (backend/webapps.rs); o webapp liga o módulo de segurança (Warsaw)
+    // antes de abrir o site e o desliga quando fecha. `warsaw: false`: banco
+    // sem módulo (vega#224, WITHOUT_MODULE), abre só no Chromium.
     apps: [
       { name: "Banco do Brasil", origin: "webapp", id: "banco-do-brasil", logo: "lyra-banco-banco-do-brasil", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
       { name: "Caixa", origin: "webapp", id: "caixa", logo: "lyra-banco-caixa", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
@@ -376,12 +377,12 @@ export const POPULAR = [
       { name: "Banco da Amazônia", origin: "webapp", id: "banco-da-amazonia", logo: "lyra-banco-banco-da-amazonia", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
       { name: "Bradesco", origin: "webapp", id: "bradesco", logo: "lyra-banco-bradesco", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
       { name: "Banrisul", origin: "webapp", id: "banrisul", logo: "lyra-banco-banrisul", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
-      { name: "Santander", origin: "webapp", id: "santander", logo: "lyra-banco-santander", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
-      { name: "Nubank", origin: "webapp", id: "nubank", logo: "lyra-banco-nubank", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
-      { name: "Sicoob", origin: "webapp", id: "sicoob", logo: "lyra-banco-sicoob", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
-      { name: "Inter", origin: "webapp", id: "inter", logo: "lyra-banco-inter", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
-      { name: "C6 Bank", origin: "webapp", id: "c6", logo: "lyra-banco-c6", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
-      { name: "BTG Pactual", origin: "webapp", id: "btg", logo: "lyra-banco-btg", tags: [N_("banco"), N_("internet banking")], text: N_("Site do banco numa janela própria; liga o módulo de segurança enquanto estiver aberto") },
+      { name: "Santander", origin: "webapp", id: "santander", logo: "lyra-banco-santander", tags: [N_("banco"), N_("internet banking")], warsaw: false, text: N_("Internet banking pelo navegador, sem módulo de segurança; várias operações só existem no app") },
+      { name: "Nubank", origin: "webapp", id: "nubank", logo: "lyra-banco-nubank", tags: [N_("banco"), N_("internet banking")], warsaw: false, text: N_("Pessoa física usa só o app do celular; o site atende as contas PJ. Sem módulo de segurança") },
+      { name: "Sicoob", origin: "webapp", id: "sicoob", logo: "lyra-banco-sicoob", tags: [N_("banco"), N_("internet banking")], warsaw: false, text: N_("Sem módulo de segurança; para pagar e transferir, cadastre o computador com o código de liberação") },
+      { name: "Inter", origin: "webapp", id: "inter", logo: "lyra-banco-inter", tags: [N_("banco"), N_("internet banking")], warsaw: false, text: N_("Sem módulo de segurança; o acesso pelo computador é confirmado no app do celular (i-Safe)") },
+      { name: "C6 Bank", origin: "webapp", id: "c6", logo: "lyra-banco-c6", tags: [N_("banco"), N_("internet banking")], warsaw: false, text: N_("Pessoa física usa só o app do celular; o Web Banking do C6 Empresas é só para Windows e Mac") },
+      { name: "BTG Pactual", origin: "webapp", id: "btg", logo: "lyra-banco-btg", tags: [N_("banco"), N_("internet banking")], warsaw: false, text: N_("Sem módulo de segurança; o acesso costuma ser pelo app do celular") },
     ],
   },
   {

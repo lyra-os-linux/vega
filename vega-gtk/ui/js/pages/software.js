@@ -59,7 +59,8 @@ const CURATED = curatedEntries(Object.entries(SHOWCASES).map(([tab, { label, cat
 // Mensagem do vegad (zypper_friendly.go, kind "not-found") e do zypper.
 const NOT_FOUND = /não foi encontrado nos repositórios ativos|No provider of|not found in package names/;
 /** Webapps de bancos: instalam o módulo de segurança; os de sites, só o Chromium. */
-const BANK_WEBAPPS = new Set(POPULAR.filter((category) => category.bank).flatMap((category) => category.apps.map((app) => app.id)));
+// Webapps de bancos que ligam o Warsaw; os de `warsaw: false` (vega#224) só precisam do Chromium.
+const BANK_WEBAPPS = new Set(POPULAR.filter((category) => category.bank).flatMap((category) => category.apps.filter((app) => app.warsaw !== false).map((app) => app.id)));
 const USER_ORIGINS = new Set(["windows", "npm", "vscode", "mainframe", "oracle", "appimage", "receita", "preset", "webapp", "fonts"]);
 const ORIGIN_RANK = { official: 0, flathub: 1 };
 
@@ -591,7 +592,7 @@ export default {
                 h("strong", {}, t("Rodar um programa do Windows")),
                 h("p", { class: "small muted" }, t("Escolha o instalador (.exe ou .msi) que você baixou do site do fabricante. Ele roda pelo Wine, na sua conta, sem senha."))),
               button(t("Escolher arquivo…"), { kind: "primary", icon: "folder", disabled: busy, onClick: runExe })))),
-        catalog.map((category) => category.certificate ? certificateSection({ transact, repaint: paint, busy }) : category.bank ? bankSection({ transact, ensureRepo, repaint: paint, busy, hasWebapps: category.apps.some(isInstalled), cards: h("div", { class: "grid auto sw-cards" }, category.apps.map((app) => popularCard(app))) }) : section(t(category.title), { sub: String(category.apps.length), id: `section-${category.id}` },
+        catalog.map((category) => category.certificate ? certificateSection({ transact, repaint: paint, busy }) : category.bank ? bankSection({ transact, ensureRepo, repaint: paint, busy, hasWebapps: category.apps.some((app) => BANK_WEBAPPS.has(app.id) && isInstalled(app)), cards: h("div", { class: "grid auto sw-cards" }, category.apps.map((app) => popularCard(app))) }) : section(t(category.title), { sub: String(category.apps.length), id: `section-${category.id}` },
           category.encoders && h("div", { class: "sw-encoders" }, encodersBanner()),
           category.studio && h("div", { class: "sw-encoders" }, studioBanner(paint, busy)),
           category.pluginNote && h("div", { class: "sw-encoders" }, banner("info", "plug", t("RPM e Flatpak não compartilham plugins"),

@@ -8199,3 +8199,21 @@ msgstr "Certificado digital"
 
 msgid "Certificado ICP-Brasil para gov.br, Receita, Justiça e emissores de nota: o A1 é um arquivo .pfx; o A3 fica num token USB ou cartão."
 msgstr "Certificado ICP-Brasil para gov.br, Receita Federal, la Justicia y emisores de facturas: el A1 es un archivo .pfx; el A3 está en un token USB o tarjeta."
+
+msgid "Internet banking pelo navegador, sem módulo de segurança; várias operações só existem no app"
+msgstr "Banca por internet en el navegador, sin módulo de seguridad; varias operaciones solo existen en la app"
+
+msgid "Pessoa física usa só o app do celular; o site atende as contas PJ. Sem módulo de segurança"
+msgstr "Las cuentas personales usan solo la app del celular; el sitio atiende a las cuentas de empresa. Sin módulo de seguridad"
+
+msgid "Sem módulo de segurança; para pagar e transferir, cadastre o computador com o código de liberação"
+msgstr "Sin módulo de seguridad; para pagar y transferir, registre la computadora con el código de liberación"
+
+msgid "Sem módulo de segurança; o acesso pelo computador é confirmado no app do celular (i-Safe)"
+msgstr "Sin módulo de seguridad; el acceso desde la computadora se confirma en la app del celular (i-Safe)"
+
+msgid "Pessoa física usa só o app do celular; o Web Banking do C6 Empresas é só para Windows e Mac"
+msgstr "Las cuentas personales usan solo la app del celular; el Web Banking de C6 Empresas es solo para Windows y Mac"
+
+msgid "Sem módulo de segurança; o acesso costuma ser pelo app do celular"
+msgstr "Sin módulo de seguridad; el acceso suele ser por la app del celular"
