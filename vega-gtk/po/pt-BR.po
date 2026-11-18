@@ -8216,3 +8216,72 @@ msgstr "Pessoa física usa só o app do celular; o Web Banking do C6 Empresas é
 
 msgid "Sem módulo de segurança; o acesso costuma ser pelo app do celular"
 msgstr "Sem módulo de segurança; o acesso costuma ser pelo app do celular"
+
+msgid "O pacote baixado não é um .deb válido."
+msgstr "O pacote baixado não é um .deb válido."
+
+msgid "Baixando {file} do site do Serpro…"
+msgstr "Baixando {file} do site do Serpro…"
+
+msgid "Conferindo o pacote…"
+msgstr "Conferindo o pacote…"
+
+msgid "Governo"
+msgstr "Governo"
+
+msgid "Assinar um PDF no Lyra"
+msgstr "Assinar um PDF no Lyra"
+
+msgid "Com conta gov.br prata ou ouro, use a Assinatura gov.br: é gratuita e não instala nada. Com certificado ICP-Brasil (A1 ou A3, configurado em Certificado digital), use o Assinador Serpro ou o Okular (Ferramentas → Assinar digitalmente). Para conferir a assinatura de um documento, use o Verificador do ITI."
+msgstr "Com conta gov.br prata ou ouro, use a Assinatura gov.br: é gratuita e não instala nada. Com certificado ICP-Brasil (A1 ou A3, configurado em Certificado digital), use o Assinador Serpro ou o Okular (Ferramentas → Assinar digitalmente). Para conferir a assinatura de um documento, use o Verificador do ITI."
+
+msgid "governo"
+msgstr "governo"
+
+msgid "serviços públicos"
+msgstr "serviços públicos"
+
+msgid "Serviços do governo federal com a sua conta gov.br; o nível ouro pode usar o certificado digital"
+msgstr "Serviços do governo federal com a sua conta gov.br; o nível ouro pode usar o certificado digital"
+
+msgid "assinar PDF"
+msgstr "assinar PDF"
+
+msgid "assinatura eletrônica"
+msgstr "assinatura eletrônica"
+
+msgid "Assina documentos de graça com a conta gov.br prata ou ouro, sem instalar nada"
+msgstr "Assina documentos de graça com a conta gov.br prata ou ouro, sem instalar nada"
+
+msgid "validar assinatura"
+msgstr "validar assinatura"
+
+msgid "ICP-Brasil"
+msgstr "ICP-Brasil"
+
+msgid "Confere se a assinatura digital de um documento é válida"
+msgstr "Confere se a assinatura digital de um documento é válida"
+
+msgid "certificado digital"
+msgstr "certificado digital"
+
+msgid "Assina e valida documentos com certificado ICP-Brasil A1 ou A3; usado por vários sites do governo"
+msgstr "Assina e valida documentos com certificado ICP-Brasil A1 ou A3; usado por vários sites do governo"
+
+msgid "Leitor de PDF que assina com o certificado digital configurado no Lyra"
+msgstr "Leitor de PDF que assina com o certificado digital configurado no Lyra"
+
+msgid "Site oficial"
+msgstr "Site oficial"
+
+msgid "O assinador e o atalho saem da sua conta, sem senha. A configuração dele em ~/.serpro fica."
+msgstr "O assinador e o atalho saem da sua conta, sem senha. A configuração dele em ~/.serpro fica."
+
+msgid "O Vega baixa o assinador do site oficial, confere o SHA-256 verificado pelo Lyra e instala na sua conta, em ~/.local/opt, sem senha. Ele abre pelo menu de aplicativos, só quando você precisar."
+msgstr "O Vega baixa o assinador do site oficial, confere o SHA-256 verificado pelo Lyra e instala na sua conta, em ~/.local/opt, sem senha. Ele abre pelo menu de aplicativos, só quando você precisar."
+
+msgid "Roda com o Java do Lyra OS, que recebe atualizações de segurança, e não com o Java antigo que vem no pacote do fornecedor."
+msgstr "Roda com o Java do Lyra OS, que recebe atualizações de segurança, e não com o Java antigo que vem no pacote do fornecedor."
+
+msgid "Na primeira vez que abre, o assinador instala no Firefox uma autoridade certificadora local, para os sites conversarem com ele no seu computador."
+msgstr "Na primeira vez que abre, o assinador instala no Firefox uma autoridade certificadora local, para os sites conversarem com ele no seu computador."

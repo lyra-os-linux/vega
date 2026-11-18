@@ -8217,3 +8217,72 @@ msgstr "Personal accounts use only the phone app; C6 Empresas Web Banking is onl
 
 msgid "Sem módulo de segurança; o acesso costuma ser pelo app do celular"
 msgstr "No security module; access is usually through the phone app"
+
+msgid "O pacote baixado não é um .deb válido."
+msgstr "The downloaded package is not a valid .deb."
+
+msgid "Baixando {file} do site do Serpro…"
+msgstr "Downloading {file} from the Serpro website…"
+
+msgid "Conferindo o pacote…"
+msgstr "Checking the package…"
+
+msgid "Governo"
+msgstr "Government"
+
+msgid "Assinar um PDF no Lyra"
+msgstr "Signing a PDF on Lyra"
+
+msgid "Com conta gov.br prata ou ouro, use a Assinatura gov.br: é gratuita e não instala nada. Com certificado ICP-Brasil (A1 ou A3, configurado em Certificado digital), use o Assinador Serpro ou o Okular (Ferramentas → Assinar digitalmente). Para conferir a assinatura de um documento, use o Verificador do ITI."
+msgstr "With a silver or gold gov.br account, use Assinatura gov.br: it is free and installs nothing. With an ICP-Brasil certificate (A1 or A3, set up in Digital certificate), use Assinador Serpro or Okular (Tools → Digitally Sign). To check a document's signature, use the ITI verifier."
+
+msgid "governo"
+msgstr "government"
+
+msgid "serviços públicos"
+msgstr "public services"
+
+msgid "Serviços do governo federal com a sua conta gov.br; o nível ouro pode usar o certificado digital"
+msgstr "Federal government services with your gov.br account; the gold level can use the digital certificate"
+
+msgid "assinar PDF"
+msgstr "sign PDF"
+
+msgid "assinatura eletrônica"
+msgstr "electronic signature"
+
+msgid "Assina documentos de graça com a conta gov.br prata ou ouro, sem instalar nada"
+msgstr "Signs documents for free with a silver or gold gov.br account, without installing anything"
+
+msgid "validar assinatura"
+msgstr "validate signature"
+
+msgid "ICP-Brasil"
+msgstr "ICP-Brasil"
+
+msgid "Confere se a assinatura digital de um documento é válida"
+msgstr "Checks whether a document's digital signature is valid"
+
+msgid "certificado digital"
+msgstr "digital certificate"
+
+msgid "Assina e valida documentos com certificado ICP-Brasil A1 ou A3; usado por vários sites do governo"
+msgstr "Signs and validates documents with an ICP-Brasil A1 or A3 certificate; used by many government websites"
+
+msgid "Leitor de PDF que assina com o certificado digital configurado no Lyra"
+msgstr "PDF reader that signs with the digital certificate set up on Lyra"
+
+msgid "Site oficial"
+msgstr "Official website"
+
+msgid "O assinador e o atalho saem da sua conta, sem senha. A configuração dele em ~/.serpro fica."
+msgstr "The signer and its shortcut are removed from your account, without a password. Its settings in ~/.serpro are kept."
+
+msgid "O Vega baixa o assinador do site oficial, confere o SHA-256 verificado pelo Lyra e instala na sua conta, em ~/.local/opt, sem senha. Ele abre pelo menu de aplicativos, só quando você precisar."
+msgstr "Vega downloads the signer from the official website, checks the SHA-256 verified by Lyra and installs it in your account, in ~/.local/opt, without a password. It opens from the applications menu, only when you need it."
+
+msgid "Roda com o Java do Lyra OS, que recebe atualizações de segurança, e não com o Java antigo que vem no pacote do fornecedor."
+msgstr "Runs with Lyra OS's Java, which receives security updates, not with the old Java bundled in the vendor's package."
+
+msgid "Na primeira vez que abre, o assinador instala no Firefox uma autoridade certificadora local, para os sites conversarem com ele no seu computador."
+msgstr "The first time it opens, the signer installs a local certificate authority in Firefox, so websites can talk to it on your computer."

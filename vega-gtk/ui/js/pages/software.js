@@ -6,7 +6,7 @@ import { call, pick } from "../api.js";
 import { refreshUpdates } from "../health.js";
 import { N_, t } from "../i18n.js";
 import { local, saveLocal } from "../store.js";
-import { runSoftware, runWindows, runWindowsGuided, runWindowsFile, runWindowsRemove, runNpm, runVscodeExtension, runMainframe, runOracle, runAppImage, runReceita, runningTasks, onTasks, transactionPanel } from "../tasks.js";
+import { runSoftware, runWindows, runWindowsGuided, runWindowsFile, runWindowsRemove, runNpm, runVscodeExtension, runMainframe, runOracle, runSigner, runAppImage, runReceita, runningTasks, onTasks, transactionPanel } from "../tasks.js";
 import { h, icon, clear, button, badge, segmented, list, section, empty, skeletonRows, confirm, sheet, toast, fail, tile, normalize, meter, banner } from "../ui.js";
 import { preparationPanel } from "./software/preparation.js";
 import { requireRestart } from "../restart.js";
@@ -61,7 +61,7 @@ const NOT_FOUND = /não foi encontrado nos repositórios ativos|No provider of|n
 /** Webapps de bancos: instalam o módulo de segurança; os de sites, só o Chromium. */
 // Webapps de bancos que ligam o Warsaw; os de `warsaw: false` (vega#224) só precisam do Chromium.
 const BANK_WEBAPPS = new Set(POPULAR.filter((category) => category.bank).flatMap((category) => category.apps.filter((app) => app.warsaw !== false).map((app) => app.id)));
-const USER_ORIGINS = new Set(["windows", "npm", "vscode", "mainframe", "oracle", "appimage", "receita", "preset", "webapp", "fonts"]);
+const USER_ORIGINS = new Set(["windows", "npm", "vscode", "mainframe", "oracle", "appimage", "receita", "preset", "webapp", "fonts", "signer"]);
 const ORIGIN_RANK = { official: 0, flathub: 1 };
 
 // Estado que sobrevive à troca de página, como os widgets do vega-gtk.
@@ -77,7 +77,7 @@ const memory = {
 };
 
 const queueKey = (pkg) => `${pkg.origin}\u0000${pkg.id}`;
-const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "vscode" ? "VS Code" : origin === "link" ? t("Site") : origin === "mainframe" ? "TK5" : origin === "oracle" ? "Oracle" : origin === "appimage" ? "AppImage" : origin === "receita" ? t("Receita Federal") : origin === "preset" ? t("Perfil") : origin === "webapp" ? t("Webapp") : origin === "fonts" ? "Microsoft" : origin === "nvidia" ? "NVIDIA" : origin);
+const originLabel = (origin) => (origin === "official" ? t("Oficial") : origin === "flathub" ? "Flathub" : origin === "windows" ? "Windows" : origin === "npm" ? "npm" : origin === "vscode" ? "VS Code" : origin === "link" ? t("Site") : origin === "mainframe" ? "TK5" : origin === "oracle" ? "Oracle" : origin === "appimage" ? "AppImage" : origin === "receita" ? t("Receita Federal") : origin === "signer" ? t("Site oficial") : origin === "preset" ? t("Perfil") : origin === "webapp" ? t("Webapp") : origin === "fonts" ? "Microsoft" : origin === "nvidia" ? "NVIDIA" : origin);
 const rankOrigin = (a, b) => (ORIGIN_RANK[a.origin] ?? 2) - (ORIGIN_RANK[b.origin] ?? 2);
 
 function packageIcon(pkg, size = 40) {
@@ -504,6 +504,7 @@ export default {
         else if (app.origin === "vscode") installVscodeExtension(app);
         else if (app.origin === "mainframe") installMainframe(app);
         else if (app.origin === "oracle") installOracle(app);
+        else if (app.origin === "signer") installSigner(app);
         else if (app.origin === "appimage") installAppImage(app);
         else if (app.origin === "receita") installReceita(app);
         else if (app.origin === "preset") installPreset(app);
@@ -544,6 +545,10 @@ export default {
       "oracle-sqlcl": ["java-21-openjdk"],
       "oracle-sqldeveloper": ["java-21-openjdk-devel"],
       "oracle-datamodeler": ["java-21-openjdk-devel"],
+    };
+    // Pacotes do Leap de que cada assinador precisa (vega#214).
+    const SIGNER_PACKAGES = {
+      "assinador-serpro": ["java-21-openjdk"],
     };
 
     const IA32_ON = /(^|\s)ia32_emulation=(1|y|yes|on|true)(\s|$)/i;
@@ -597,6 +602,7 @@ export default {
           category.studio && h("div", { class: "sw-encoders" }, studioBanner(paint, busy)),
           category.pluginNote && h("div", { class: "sw-encoders" }, banner("info", "plug", t("RPM e Flatpak não compartilham plugins"),
             t("O Ardour e o Qtractor (RPM) enxergam o LSP Plugins RPM. Os apps Flatpak (LMMS, Carla, Hydrogen…) enxergam só os plugins Flatpak, e cada plugin Flatpak exige antes um desses apps instalado. Prefira um lado só."))),
+          category.guide && h("div", { class: "sw-encoders" }, banner("info", category.guide.icon, t(category.guide.title), t(category.guide.text))),
           h("div", { class: "grid auto sw-cards" }, category.apps.map((app) => popularCard(app, { gateNote: category.gated ? gate?.note : null }))))));
     }
 
@@ -753,6 +759,7 @@ export default {
       const vscode = app.origin === "vscode";
       const mainframe = app.origin === "mainframe";
       const oracle = app.origin === "oracle";
+      const signer = app.origin === "signer";
       const appimage = app.origin === "appimage";
       const receita = app.origin === "receita";
       const ok = await confirm({
@@ -761,6 +768,8 @@ export default {
           ? t("O programa e os atalhos saem da sua conta, sem senha. As declarações são guardadas antes em ~/ProgramasRFB, numa pasta com \"declarações\" no nome.")
           : npm
           ? t("A ferramenta é removida da sua conta pelo npm, sem senha. As configurações e o login dela continuam na sua pasta pessoal.")
+          : signer
+          ? t("O assinador e o atalho saem da sua conta, sem senha. A configuração dele em ~/.serpro fica.")
           : oracle
           ? t("A ferramenta sai de ~/.local/opt/oracle, com o comando e o atalho dela, sem senha. As conexões em ~/.local/opt/oracle/network/admin ficam.")
           : mainframe
@@ -785,6 +794,7 @@ export default {
           : vscode ? await runVscodeExtension(false, app.id, title)
           : mainframe ? await runMainframe(false, app.id, title)
           : oracle ? await runOracle(false, app.id, title)
+          : signer ? await runSigner(false, app.id, title)
           : appimage ? await runAppImage(false, app.id, title)
           : await runWindowsRemove(app.id, title);
       } catch (error) {
@@ -904,6 +914,45 @@ export default {
       let started;
       try {
         started = await runOracle(true, app.id, t("Instalando {name}…", { name: app.name }));
+      } catch (error) {
+        return fail(error, t("Não foi possível concluir a operação"));
+      }
+      showTask(started.task);
+      paint();
+      const result = await started.done;
+      if (!result.success) fail(result.message, t("Não foi possível concluir a operação"));
+      popularInstalled = null;
+      userInstalled = null;
+      load();
+    }
+
+    /**
+     * Assinador digital (vega#214): o Vega baixa do site oficial a versão
+     * conferida pelo Lyra e instala na conta do usuário, com o Java 21 do
+     * Leap, que instala antes, com a senha.
+     */
+    async function installSigner(app) {
+      const missing = (SIGNER_PACKAGES[app.id] ?? []).filter((id) => !isInstalled({ origin: "official", id }));
+      const ok = await confirm({
+        title: t("Instalar {name}?", { name: app.name }),
+        text: t("O Vega baixa o assinador do site oficial, confere o SHA-256 verificado pelo Lyra e instala na sua conta, em ~/.local/opt, sem senha. Ele abre pelo menu de aplicativos, só quando você precisar.")
+          + (missing.length ? " " + t("Antes, instala {packages}, com a senha de administrador.", { packages: missing.join(", ") }) : ""),
+        facts: [
+          { icon: "shield", text: t("Roda com o Java do Lyra OS, que recebe atualizações de segurança, e não com o Java antigo que vem no pacote do fornecedor.") },
+          { icon: "key", text: t("Na primeira vez que abre, o assinador instala no Firefox uma autoridade certificadora local, para os sites conversarem com ele no seu computador.") },
+        ],
+        ic: "download",
+        confirmLabel: t("Instalar"),
+        required: true,
+      });
+      if (!ok) return;
+      for (const id of missing) {
+        const result = await transact({ kind: "install", origin: "official", id }, t("Instalando {name}…", { name: id }), { reload: false });
+        if (!result?.success) return;
+      }
+      let started;
+      try {
+        started = await runSigner(true, app.id, t("Instalando {name}…", { name: app.name }));
       } catch (error) {
         return fail(error, t("Não foi possível concluir a operação"));
       }
@@ -1148,7 +1197,7 @@ export default {
       // (instalador próprio na conta do usuário); se o comando existe, o
       // cartão mostra "Instalado".
       const byCommand = Object.values(SHOWCASES).flatMap((showcase) => showcase.catalog.flatMap((section) => section.apps)).filter((app) => app.command);
-      const [details, packages, windows, npmApps, vscodeExtensions, mainframes, oracleTools, appImages, receita, presets, msFonts, webapps, encoders, ia32, boot, commands] = await Promise.all([
+      const [details, packages, windows, npmApps, vscodeExtensions, mainframes, oracleTools, signers, appImages, receita, presets, msFonts, webapps, encoders, ia32, boot, commands] = await Promise.all([
         call("software_details", { origin: "official", id: "flatpak" }).catch(() => null),
         call("software_installed"),
         call("windows_installed").catch(() => []),
@@ -1156,6 +1205,7 @@ export default {
         call("vscode_extensions_installed").catch(() => []),
         call("mainframe_installed").catch(() => []),
         call("oracle_installed").catch(() => []),
+        call("signers_installed").catch(() => []),
         call("appimage_installed").catch(() => []),
         call("receita_installed").catch(() => []),
         call("easyeffects_presets_installed").catch(() => []),
@@ -1177,6 +1227,7 @@ export default {
         ...vscodeExtensions.map((id) => queueKey({ origin: "vscode", id })),
         ...mainframes.map((id) => queueKey({ origin: "mainframe", id })),
         ...oracleTools.map((id) => queueKey({ origin: "oracle", id })),
+        ...signers.map((id) => queueKey({ origin: "signer", id })),
         ...appImages.map((id) => queueKey({ origin: "appimage", id })),
         ...receita.map((id) => queueKey({ origin: "receita", id })),
         ...presets.map((id) => queueKey({ origin: "preset", id })),
@@ -1230,12 +1281,13 @@ export default {
 
     /** Apps dos catálogos instalados na conta do usuário, sem repetir. */
     async function loadUserInstalled() {
-      const [windows, npmApps, vscodeExtensions, mainframes, oracleTools, appImages, receita, presets, msFonts, webapps] = await Promise.all([
+      const [windows, npmApps, vscodeExtensions, mainframes, oracleTools, signers, appImages, receita, presets, msFonts, webapps] = await Promise.all([
         call("windows_installed").catch(() => []),
         call("npm_installed").catch(() => []),
         call("vscode_extensions_installed").catch(() => []),
         call("mainframe_installed").catch(() => []),
         call("oracle_installed").catch(() => []),
+        call("signers_installed").catch(() => []),
         call("appimage_installed").catch(() => []),
         call("receita_installed").catch(() => []),
         call("easyeffects_presets_installed").catch(() => []),
@@ -1248,6 +1300,7 @@ export default {
         ...vscodeExtensions.map((id) => queueKey({ origin: "vscode", id })),
         ...mainframes.map((id) => queueKey({ origin: "mainframe", id })),
         ...oracleTools.map((id) => queueKey({ origin: "oracle", id })),
+        ...signers.map((id) => queueKey({ origin: "signer", id })),
         ...appImages.map((id) => queueKey({ origin: "appimage", id })),
         ...receita.map((id) => queueKey({ origin: "receita", id })),
         ...presets.map((id) => queueKey({ origin: "preset", id })),

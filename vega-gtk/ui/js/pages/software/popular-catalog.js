@@ -386,6 +386,26 @@ export const POPULAR = [
     ],
   },
   {
+    // vega#214: gov.br e assinatura de documentos. Os sites são webapps no
+    // Chromium, que lê o certificado configurado em Certificado digital; o
+    // Assinador Serpro é instalado na conta com o Java do Leap
+    // (backend/signers.rs). `guide`: banner com o caminho para assinar um PDF.
+    id: "government",
+    title: N_("Governo"),
+    guide: {
+      icon: "key",
+      title: N_("Assinar um PDF no Lyra"),
+      text: N_("Com conta gov.br prata ou ouro, use a Assinatura gov.br: é gratuita e não instala nada. Com certificado ICP-Brasil (A1 ou A3, configurado em Certificado digital), use o Assinador Serpro ou o Okular (Ferramentas → Assinar digitalmente). Para conferir a assinatura de um documento, use o Verificador do ITI."),
+    },
+    apps: [
+      { name: "gov.br", origin: "webapp", id: "gov-br", logo: "lyra-webapp-gov-br", tags: [N_("web app"), N_("governo"), N_("serviços públicos")], text: N_("Serviços do governo federal com a sua conta gov.br; o nível ouro pode usar o certificado digital") },
+      { name: "Assinatura gov.br", origin: "webapp", id: "assinatura-gov-br", logo: "lyra-webapp-gov-br", tags: [N_("web app"), N_("assinar PDF"), N_("assinatura eletrônica")], text: N_("Assina documentos de graça com a conta gov.br prata ou ouro, sem instalar nada") },
+      { name: "Verificador do ITI", origin: "webapp", id: "verificador-iti", logo: "lyra-webapp-gov-br", tags: [N_("web app"), N_("validar assinatura"), N_("ICP-Brasil")], text: N_("Confere se a assinatura digital de um documento é válida") },
+      { name: "Assinador Serpro", origin: "signer", id: "assinador-serpro", logo: "lyra-assinador-serpro", version: "2.7.0", tags: [N_("assinar PDF"), N_("certificado digital"), N_("ICP-Brasil")], text: N_("Assina e valida documentos com certificado ICP-Brasil A1 ou A3; usado por vários sites do governo") },
+      { name: "Okular", origin: "official", id: "okular", logo: "org.kde.okular", tags: [N_("assinar PDF"), N_("certificado digital")], text: N_("Leitor de PDF que assina com o certificado digital configurado no Lyra") },
+    ],
+  },
+  {
     id: "games",
     title: N_("Jogos"),
 

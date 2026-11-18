@@ -252,6 +252,25 @@ pub const WEBAPPS: &[Webapp] = &[
         url: "https://web.whatsapp.com/",
         bank: false,
     },
+    // Governo (vega#214).
+    Webapp {
+        id: "gov-br",
+        name: "gov.br",
+        url: "https://www.gov.br/",
+        bank: false,
+    },
+    Webapp {
+        id: "assinatura-gov-br",
+        name: "Assinatura gov.br",
+        url: "https://assinador.iti.br/",
+        bank: false,
+    },
+    Webapp {
+        id: "verificador-iti",
+        name: "Verificador do ITI",
+        url: "https://validar.iti.gov.br/",
+        bank: false,
+    },
 ];
 
 /// Prefixo do atalho, do ícone e da classe da janela (`StartupWMClass`).
@@ -349,6 +368,10 @@ fn site_icon(id: &str) -> Option<&'static [u8]> {
         "teams" => Some(include_bytes!("../../ui/img/popular/lyra-webapp-teams.png")),
         "trello" => Some(include_bytes!(
             "../../ui/img/popular/lyra-webapp-trello.png"
+        )),
+        // Os três serviços do governo usam o símbolo do gov.br (vega#214).
+        "gov-br" | "assinatura-gov-br" | "verificador-iti" => Some(include_bytes!(
+            "../../ui/img/popular/lyra-webapp-gov-br.png"
         )),
         "whatsapp" => Some(include_bytes!(
             "../../ui/img/popular/lyra-webapp-whatsapp.png"
