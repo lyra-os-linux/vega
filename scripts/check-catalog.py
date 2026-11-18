@@ -47,7 +47,7 @@ import urllib.request
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 GTK = ROOT / "vega-gtk"
 CATALOGS = sorted((GTK / "ui" / "js" / "pages" / "software").glob("*-catalog.js"))
-ORIGINS = {"official", "flathub", "windows", "npm", "vscode", "link", "mainframe", "oracle", "appimage", "receita", "preset", "webapp", "fonts", "nvidia"}
+ORIGINS = {"official", "flathub", "windows", "npm", "vscode", "link", "mainframe", "oracle", "appimage", "receita", "preset", "webapp", "fonts", "nvidia", "signer"}
 FLATHUB_ID = re.compile(r"^[A-Za-z_][\w-]*(\.[A-Za-z_][\w-]*){2,}$")
 REPOS = [
     "https://download.opensuse.org/distribution/leap/16.1/repo/oss/",
@@ -199,6 +199,8 @@ def check_offline(entries):
             errors.append(f"{label}: {app_id!r} não está em WEBAPPS (webapps.rs)")
         if origin == "oracle" and f'id: "{app_id}"' not in (GTK / "src" / "backend" / "oracle_tools.rs").read_text(encoding="utf-8"):
             errors.append(f"{label}: {app_id!r} não está em TOOLS (oracle_tools.rs)")
+        if origin == "signer" and f'id: "{app_id}"' not in (GTK / "src" / "backend" / "signers.rs").read_text(encoding="utf-8"):
+            errors.append(f"{label}: {app_id!r} não está em SIGNERS (signers.rs)")
         if origin == "mainframe" and app_id != "tk5":
             errors.append(f"{label}: mainframe só aceita o id tk5 (mainframe.rs)")
         if origin == "link" and not str(app.get("url", "")).startswith("https://"):

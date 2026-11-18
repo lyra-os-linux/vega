@@ -39,6 +39,7 @@ pub mod profiles;
 pub mod receita_apps;
 pub mod services;
 pub mod session_tx;
+pub mod signers;
 pub mod snapshots;
 pub mod software;
 pub mod storage;
