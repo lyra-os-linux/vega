@@ -346,6 +346,14 @@ export const POPULAR = [
     ],
   },
   {
+    // vega#211: assistente de certificado digital ICP-Brasil (A1 e A3).
+    // Não é cartão de app: software.js desenha a seção com certificateSection().
+    id: "certificate",
+    title: N_("Certificado digital"),
+    certificate: true,
+    apps: [],
+  },
+  {
     // vega#210: módulo de segurança dos bancos (Warsaw) e guia por banco.
     // Não é cartão de app: software.js desenha a seção com bankSection().
     id: "banks",

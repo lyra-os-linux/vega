@@ -11,6 +11,7 @@ pub mod appimage_apps;
 pub mod backup;
 pub mod banks;
 pub mod bluetooth;
+pub mod certificates;
 pub mod cleanup;
 pub mod commands_present;
 pub mod containers;
