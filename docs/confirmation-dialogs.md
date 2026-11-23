@@ -16,8 +16,6 @@ formulários automaticamente.
   URL continuam obrigatórios com a preferência ligada ou desligada.
 
 A descrição da preferência informa a regra em português, inglês e espanhol.
-Propostas da IA sempre exigem aprovação explícita, conforme a política de
-[privacidade do Assistente](ai-privacidade.md).
 
 ## Validação da issue #125
 

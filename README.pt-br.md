@@ -26,7 +26,7 @@ componentes têm cada um seu próprio repositório — ver
 - armazenamento, data, hora e idioma;
 - rede, Wi-Fi, Bluetooth, firewall, VPN, proxy e IPv4;
 - usuários, serviços, logs e monitor de processos em tempo real;
-- papel de parede, bloqueio de tela e assistente com múltiplos provedores de IA.
+- papel de parede e bloqueio de tela.
 
 Recursos que dependem de programas opcionais aparecem como indisponíveis quando
 a dependência não está instalada, sem impedir o uso das outras telas.
@@ -161,8 +161,9 @@ O script remove os pacotes `vega-gtk`, `vegad` e `vega-cli` que estiverem
 instalados. Use `VEGA_PURGE=1` para também apagar configurações de backup em
 `/etc/vega` e logs exportados em `/var/log/vega`.
 
-As preferências por usuário do assistente, em
-`~/.local/share/vega-gtk/ai-settings.json`, são preservadas.
+As preferências por usuário deixadas pelo assistente de IA de versões
+anteriores, em `~/.local/share/vega-gtk/ai-settings.json`, são preservadas;
+remova-as manualmente se quiser.
 
 ## Desenvolvimento
 
@@ -206,11 +207,5 @@ contrato D-Bus.
   bytes transferidos.
 - Snapper e Timeshift são opcionais. Recursos avançados de diff e retenção
   continuam específicos do Snapper.
-- Wi-Fi, Bluetooth, tela e assistente de IA pertencem à sessão gráfica e não
-  fazem parte do Vega CLI.
-
-## Privacidade do assistente
-
-O assistente é opcional. Chaves são armazenadas no Secret Service da sessão, e
-ações que modificam o sistema são apresentadas como propostas antes de qualquer
-execução. Consulte [docs/ai-privacidade.md](docs/ai-privacidade.md) para detalhes.
+- Wi-Fi, Bluetooth e tela pertencem à sessão gráfica e não fazem parte do Vega
+  CLI.

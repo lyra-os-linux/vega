@@ -25,7 +25,7 @@ repository — see [Architecture](#architecture) below.
 - storage, date, time, and locale;
 - network, Wi-Fi, Bluetooth, firewall, VPN, proxy, and IPv4;
 - users, services, logs, and live process monitoring;
-- wallpaper, screen-lock preferences, and a multi-provider AI assistant.
+- wallpaper and screen-lock preferences.
 
 Vega does not install or switch drivers and does not install optional
 hardware firmware. The NVIDIA driver is installed following the openSUSE
@@ -187,8 +187,9 @@ The script removes any installed `vega-gtk`, `vegad`, and `vega-cli` packages.
 Set `VEGA_PURGE=1` to also delete backup configuration under `/etc/vega` and
 exported logs under `/var/log/vega`.
 
-Per-user assistant preferences in
-`~/.local/share/vega-gtk/ai-settings.json` are preserved.
+Per-user settings left by the AI assistant of earlier versions, in
+`~/.local/share/vega-gtk/ai-settings.json`, are preserved; remove them
+manually if you want.
 
 ## Development
 
@@ -232,16 +233,10 @@ D-Bus contract.
   transferred.
 - Snapper and Timeshift are optional. Advanced diff and retention features
   remain Snapper-specific.
-- Wi-Fi, Bluetooth, screen settings, and the AI assistant belong to a graphical
-  session and are not included in Vega CLI.
+- Wi-Fi, Bluetooth, and screen settings belong to a graphical session and are
+  not included in Vega CLI.
 
-## Assistant privacy
-
-The assistant is optional. Keys are stored in the session Secret Service, and
-system-changing actions are presented as proposals before anything is executed.
-See [docs/ai-privacidade.md](docs/ai-privacidade.md) for details.
-
-### Desktop profile command
+## Desktop profile command
 
 Vega GTK 5.1.33 exposes a local command for setup applications such as Lyra
 Welcome, without opening a GTK window or contacting vegad:
@@ -274,7 +269,7 @@ and clicks opening and closing the GNOME workspace overview in a private
 compositor. `tests/native-profiles/extension.js` is the older monolithic
 extension probe, using `VEGA_PROFILE_TEST_BINARY`.
 
-### Desktop icons and Lyra Floating
+## Desktop icons and Lyra Floating
 
 The Lyra Floating preset uses a centered floating bottom dock with icon magnification,
 a flush top bar and the Lyra application logo at the left. Each profile restores

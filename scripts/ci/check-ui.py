@@ -13,7 +13,7 @@ import sys
 
 UI = pathlib.Path(__file__).resolve().parents[2] / "vega-gtk" / "ui"
 PAGE_IDS = {
-    "dashboard", "software", "backup", "virtualization", "assistant", "hardware", "datetime",
+    "dashboard", "software", "backup", "virtualization", "hardware", "datetime",
     "screen", "monitor", "storage", "network", "desktop", "services", "users", "logs",
 }
 

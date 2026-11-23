@@ -307,7 +307,7 @@ function openPreferences() {
       row({ title: t("Página inicial"), suffix: select(prefs.start_page, pages.map((p) => [p.id, t(p.title)]), (v) => save({ start_page: v }), t("Página inicial")) }),
       row({ title: t("Idioma do Vega"), subtitle: t("A alteração será aplicada ao reabrir o Vega."), wrap: true, suffix: select(prefs.language, [["system", t("Seguir o sistema")], ["pt_BR", "Português (Brasil)"], ["en_US", "English"], ["es_ES", "Español"]], (v) => save({ language: v }), t("Idioma do Vega")) }),
       row({ title: t("Atualizar informações do painel"), subtitle: t("Intervalo em minutos para atualizar os dados exibidos no Vega."), wrap: true, suffix: number }),
-      row({ title: t("Confirmar ações administrativas"), subtitle: t("Confirmar ações já definidas. Formulários, propostas da IA e revisões de segurança sempre serão exibidos."), wrap: true, suffix: sw("confirm_actions", t("Confirmar ações administrativas")) }),
+      row({ title: t("Confirmar ações administrativas"), subtitle: t("Confirmar ações já definidas. Formulários e revisões de segurança sempre serão exibidos."), wrap: true, suffix: sw("confirm_actions", t("Confirmar ações administrativas")) }),
     )),
     h("div", { class: "pref-group" }, h("h4", {}, t("Notificações")), list(
       row({ title: t("Atualizações disponíveis"), suffix: sw("notify_updates", t("Atualizações disponíveis")) }),
@@ -316,10 +316,6 @@ function openPreferences() {
       hasCapability("diagnostics-periodic-v1") && row({ title: t("Novidades na saúde do sistema"), suffix: sw("notify_health", t("Novidades na saúde do sistema")) }),
     )),
     health,
-    h("div", { class: "pref-group" }, h("h4", {}, t("Privacidade da IA")), list(
-      row({ title: t("Ocultar dados sensíveis"), subtitle: t("Remove credenciais e identificadores antes do envio"), wrap: true, suffix: sw("redact_ai_data", t("Ocultar dados sensíveis")) }),
-      row({ title: t("Salvar histórico local"), subtitle: t("Mantém as conversas da IA neste dispositivo"), wrap: true, suffix: sw("save_ai_history", t("Salvar histórico local")) }),
-    )),
     h("div", { class: "pref-group" }, h("h4", {}, t("Densidade")), segmented(
       [{ id: "comfortable", label: t("Confortável") }, { id: "compact", label: t("Compacta") }],
       local.density,

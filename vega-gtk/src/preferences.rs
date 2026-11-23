@@ -12,8 +12,6 @@ pub struct Settings {
     pub notify_service_failures: bool,
     pub notify_backups: bool,
     pub notify_health: bool,
-    pub redact_ai_data: bool,
-    pub save_ai_history: bool,
 }
 
 impl Default for Settings {
@@ -27,8 +25,6 @@ impl Default for Settings {
             notify_service_failures: true,
             notify_backups: true,
             notify_health: true,
-            redact_ai_data: true,
-            save_ai_history: true,
         }
     }
 }
@@ -57,14 +53,6 @@ pub fn save(settings: &Settings) {
     if let Ok(raw) = serde_json::to_string_pretty(settings) {
         let _ = fs::write(path, raw);
     }
-}
-
-pub fn redact_ai_data() -> bool {
-    load().redact_ai_data
-}
-
-pub fn save_ai_history() -> bool {
-    load().save_ai_history
 }
 
 #[cfg(test)]

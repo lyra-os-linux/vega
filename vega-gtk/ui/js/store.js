@@ -13,8 +13,6 @@ export const prefs = {
   notify_service_failures: true,
   notify_backups: true,
   notify_health: true,
-  redact_ai_data: true,
-  save_ai_history: true,
 };
 
 export async function loadPrefs() {

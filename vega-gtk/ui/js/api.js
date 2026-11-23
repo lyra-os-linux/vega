@@ -19,7 +19,6 @@ export function on(event, handler) {
 
 /** Domínios com entrada única (`op` + `args`). */
 export const personalization = (op, args = {}) => call("personalization_call", { op, args });
-export const assistant = (op, args = {}) => call("assistant_call", { op, args });
 export const vms = (op, args = {}) => call("vms_call", { op, args });
 
 /**

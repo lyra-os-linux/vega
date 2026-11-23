@@ -6,7 +6,7 @@ use std::time::Instant;
 
 use serde::Serialize;
 
-use crate::{assistant, i18n, model, preferences};
+use crate::{i18n, model, preferences};
 
 pub struct Startup {
     pub started: Instant,
@@ -114,11 +114,7 @@ pub fn prefs_get() -> preferences::Settings {
 
 #[tauri::command]
 pub fn prefs_set(settings: preferences::Settings) -> Result<(), String> {
-    let previous = preferences::load();
     preferences::save(&settings);
-    if previous.save_ai_history && !settings.save_ai_history {
-        assistant::clear_history().map_err(|error| error.to_string())?;
-    }
     Ok(())
 }
 

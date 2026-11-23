@@ -2,7 +2,6 @@
 
 mod app;
 mod appearance;
-mod assistant;
 mod backend;
 mod dock;
 mod i18n;
@@ -228,7 +227,6 @@ fn main() -> ExitCode {
             datetime::datetime_load,
             datetime::datetime_apply,
             personalization::personalization_call,
-            assistant::commands::assistant_call,
             virtualization::vms_call,
         ])
         .run(tauri::generate_context!())
