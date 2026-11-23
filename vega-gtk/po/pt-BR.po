@@ -8285,3 +8285,7 @@ msgstr "Roda com o Java do Lyra OS, que recebe atualizações de segurança, e n
 
 msgid "Na primeira vez que abre, o assinador instala no Firefox uma autoridade certificadora local, para os sites conversarem com ele no seu computador."
 msgstr "Na primeira vez que abre, o assinador instala no Firefox uma autoridade certificadora local, para os sites conversarem com ele no seu computador."
+
+#: vega-gtk/ui/js/pages/software.js
+msgid "Atualizar os Flatpaks e as ferramentas de terminal agora? Não é preciso senha."
+msgstr "Atualizar os Flatpaks e as ferramentas de terminal agora? Não é preciso senha."

@@ -247,13 +247,16 @@ export default {
     // pacotes do sistema passam pelo vegad e pedem autorização.
     async function updateAll() {
       const pending = updates ?? [];
-      const flatpaks = pending.filter((pkg) => pkg.origin === "flathub");
-      const native = pending.some((pkg) => pkg.origin !== "flathub");
+      // Flatpaks e assistentes do npm vão pela sessão, um a um, sem senha.
+      const flatpaks = pending.filter((pkg) => pkg.origin === "flathub" || pkg.origin === "npm");
+      const native = pending.some((pkg) => pkg.origin !== "flathub" && pkg.origin !== "npm");
       const ok = await confirm({
         title: t("Atualizar tudo?"),
         text: native
           ? t("Atualizar os pacotes do sistema e os Flatpaks agora? Os pacotes do sistema pedem a senha de administrador; os Flatpaks, não.")
-          : t("Atualizar os Flatpaks agora? Não é preciso senha."),
+          : pending.some((pkg) => pkg.origin === "npm")
+            ? t("Atualizar os Flatpaks e as ferramentas de terminal agora? Não é preciso senha.")
+            : t("Atualizar os Flatpaks agora? Não é preciso senha."),
         ic: "download",
         confirmLabel: t("Atualizar"),
         required: false,
@@ -1345,6 +1348,18 @@ export default {
         items.length > shown.length && h("p", { class: "sw-status" }, t("Mostrando {shown} de {total}", { shown: shown.length, total: items.length })));
     }
 
+    /**
+     * Pacotes do sistema e Flatpaks pelo vegad, mais os assistentes de
+     * terminal instalados pelo npm na conta do usuário (vega#305), com o
+     * nome que o catálogo mostra.
+     */
+    async function loadUpdates() {
+      const [system, npm] = await Promise.all([call("software_updates"), call("npm_updates").catch(() => [])]);
+      const names = new Map(Object.values(SHOWCASES).flatMap((showcase) => showcase.catalog.flatMap((section) => section.apps))
+        .filter((app) => app.origin === "npm").map((app) => [app.id, app.name]));
+      return [...system, ...npm.map((pkg) => ({ ...pkg, name: names.get(pkg.id) ?? pkg.name }))];
+    }
+
     function drawUpdates() {
       if (loadError) return empty("alert-circle", t("Falha: {message}", { message: loadError }));
       if (!updates) return h("div", {}, h("p", { class: "sw-status" }, t("Verificando atualizações…")), skeletonRows(5));
@@ -1360,7 +1375,7 @@ export default {
       return h("div", {}, [...groups].map(([repo, items]) =>
         section(repo, { sub: String(items.length) }, collection(items.map((pkg) => item(pkg, {
           description: pkg.description || (pkg.origin === "flathub" ? t("Atualização disponível") : ""),
-          onOpen: () => openDetails(pkg),
+          onOpen: pkg.origin === "npm" ? undefined : () => openDetails(pkg),
           suffix: [h("button", { class: "btn sm", disabled: busy, onclick: (e) => { e.stopPropagation(); updateOne(pkg); } }, icon("download", 14), t("Atualizar"))],
         }))))));
     }
@@ -1647,7 +1662,7 @@ export default {
         // A busca mostra os cartões curados, que precisam do mesmo estado das vitrines.
         if ((SHOWCASES[current] || current === "search") && !popularInstalled) await loadPopular();
         else if (current === "installed" && (!installed || !userInstalled)) [installed, userInstalled] = await Promise.all([call("software_installed"), loadUserInstalled()]);
-        else if (current === "updates" && !updates) updates = await call("software_updates");
+        else if (current === "updates" && !updates) updates = await loadUpdates();
         else return;
         loadError = null;
       } catch (error) {

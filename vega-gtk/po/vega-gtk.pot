@@ -8299,3 +8299,7 @@ msgstr ""
 
 msgid "Apagar também os dados de login (cookies e senhas salvas no web app)"
 msgstr ""
+
+#: vega-gtk/ui/js/pages/software.js
+msgid "Atualizar os Flatpaks e as ferramentas de terminal agora? Não é preciso senha."
+msgstr ""
