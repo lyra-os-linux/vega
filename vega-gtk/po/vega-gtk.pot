@@ -818,7 +818,7 @@ msgid "Confirmar ações administrativas"
 msgstr ""
 
 #: vega-gtk/ui/js/main.js:266
-msgid "Confirmar ações já definidas. Formulários, propostas da IA e revisões de segurança sempre serão exibidos."
+msgid "Confirmar ações já definidas. Formulários e revisões de segurança sempre serão exibidos."
 msgstr ""
 
 #: vega-gtk/ui/js/main.js:268

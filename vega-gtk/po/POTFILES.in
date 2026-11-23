@@ -1,5 +1,3 @@
-src/assistant/commands.rs
-src/assistant.rs
 src/backend/cleanup.rs
 src/backend/fwupd_update.rs
 src/backend/users.rs
@@ -14,7 +12,6 @@ src/virtualization.rs
 ui/js/health.js
 ui/js/i18n.js
 ui/js/main.js
-ui/js/pages/assistant.js
 ui/js/pages/backup.js
 ui/js/pages/bluetooth.js
 ui/js/pages/dashboard.js
