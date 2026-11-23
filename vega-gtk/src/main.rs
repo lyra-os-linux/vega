@@ -117,6 +117,7 @@ fn main() -> ExitCode {
             power::system_boot_id,
             power::system_reboot,
             npm_apps::npm_installed,
+            npm_apps::npm_updates,
             npm_apps::npm_install,
             npm_apps::npm_remove,
             vscode_ext::vscode_extensions_installed,

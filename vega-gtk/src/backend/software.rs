@@ -254,6 +254,13 @@ pub async fn software_run(app: AppHandle, state: State<'_>, action: Action) -> C
     if let Some((operation, id)) = session {
         return super::flatpak_session::start(app, operation, id.clone());
     }
+    // Assistentes de terminal (vega#305): atualizar é reinstalar a última
+    // versão pelo npm, na conta do usuário, sem senha.
+    if let Action::UpdatePackage { origin, id } = &action
+        && origin == "npm"
+    {
+        return super::npm_apps::npm_install(app, id.clone());
+    }
     if let Action::UpdateFirmware = &action {
         return super::fwupd_update::start(app);
     }

@@ -139,6 +139,68 @@ fn add_to_fish_path(dir: &Path) {
     let _ = command.status();
 }
 
+/// Pacotes da lista com versão mais nova no npm, a partir do JSON de
+/// `npm outdated --json`: `(pacote, instalada, mais nova)`.
+pub fn parse_outdated(raw: &str) -> Vec<(String, String, String)> {
+    let Ok(serde_json::Value::Object(map)) = serde_json::from_str(raw) else {
+        return Vec::new();
+    };
+    PACKAGES
+        .iter()
+        .filter_map(|package| {
+            let entry = map.get(*package)?;
+            let current = entry.get("current")?.as_str()?;
+            let latest = entry.get("latest")?.as_str()?;
+            (current != latest)
+                .then(|| ((*package).to_owned(), current.to_owned(), latest.to_owned()))
+        })
+        .collect()
+}
+
+/// Atualizações dos assistentes instalados pelo Vega, para a lista de
+/// Atualizações do Software (vega#305). Consulta o registro do npm; sem npm,
+/// sem rede ou sem nada instalado, devolve a lista vazia.
+#[tauri::command]
+pub async fn npm_updates() -> Vec<super::software::Package> {
+    tauri::async_runtime::spawn_blocking(|| {
+        let prefix = prefix()?;
+        if installed_under(&prefix).is_empty() {
+            return None;
+        }
+        let mut command = Command::new("npm");
+        command
+            .args(["outdated", "--global", "--json", "--prefix"])
+            .arg(&prefix)
+            .current_dir(&prefix)
+            .env("npm_config_update_notifier", "false")
+            .stdin(std::process::Stdio::null())
+            .stderr(std::process::Stdio::null());
+        crate::webkit_env::clean_command(&mut command);
+        // `npm outdated` sai com 1 quando há atualização: vale a saída.
+        let output = command.output().ok()?;
+        let raw = String::from_utf8_lossy(&output.stdout);
+        Some(
+            parse_outdated(&raw)
+                .into_iter()
+                .map(|(id, current, latest)| super::software::Package {
+                    origin: "npm".into(),
+                    name: id.clone(),
+                    id,
+                    description: format!("{current} → {latest}"),
+                    installed: true,
+                    icon: String::new(),
+                    repository: "npm".into(),
+                    icon_data: None,
+                })
+                .collect(),
+        )
+    })
+    .await
+    .ok()
+    .flatten()
+    .unwrap_or_default()
+}
+
 #[tauri::command]
 pub fn npm_install(app: AppHandle, package: String) -> Result<u32, String> {
     start(app, true, package)
@@ -180,6 +242,25 @@ mod tests {
                 "opencode-ai"
             ]
         );
+    }
+
+    #[test]
+    fn outdated_keeps_only_listed_packages_with_a_newer_version() {
+        let raw = r#"{
+            "@openai/codex": {"current": "0.169.0", "wanted": "0.171.0", "latest": "0.171.0"},
+            "opencode-ai": {"current": "1.0.0", "wanted": "1.0.0", "latest": "1.0.0"},
+            "left-pad": {"current": "1.0.0", "latest": "2.0.0"}
+        }"#;
+        assert_eq!(
+            parse_outdated(raw),
+            vec![(
+                "@openai/codex".to_owned(),
+                "0.169.0".to_owned(),
+                "0.171.0".to_owned()
+            )]
+        );
+        assert!(parse_outdated("{}").is_empty());
+        assert!(parse_outdated("not json").is_empty());
     }
 
     #[test]
